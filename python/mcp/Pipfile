@@ -1,0 +1,22 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+langchain = "*"
+jupyter = "*"
+dotenv = "*"
+langchain-openai = "*"
+langchain-community = "*"
+langchain-core = "*"
+pandas = "*"
+langgraph = "*"
+scikit-learn = "*"
+galileo = {extras = ["openai"], version = "*"}
+mcp = {extras = ["cli"], version = "*"}
+
+[dev-packages]
+
+[requires]
+python_version = "3.12"
