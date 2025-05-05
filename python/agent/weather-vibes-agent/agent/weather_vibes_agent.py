@@ -90,7 +90,9 @@ class WeatherVibesAgent(Agent):
 
         # Set up template environment
         template_dir = Path(__file__).parent.parent / "templates"
-        self.template_env = Environment(loader=FileSystemLoader(template_dir), trim_blocks=True, lstrip_blocks=True)
+        self.template_env = Environment(
+            loader=FileSystemLoader(template_dir), trim_blocks=True, lstrip_blocks=True
+        )
 
         # Set up OpenAI client instead of OpenAIChat
         self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -122,14 +124,18 @@ class WeatherVibesAgent(Agent):
             self.youtube_tool = YouTubeTool()
 
             # Register tools with metadata and implementation
-            self.tool_registry.register(metadata=WeatherTool.metadata(), implementation=self.weather_tool)
+            self.tool_registry.register(
+                metadata=WeatherTool.metadata(), implementation=self.weather_tool
+            )
 
             self.tool_registry.register(
                 metadata=RecommendationsTool.metadata(),
                 implementation=self.recommendations_tool,
             )
 
-            self.tool_registry.register(metadata=YouTubeTool.metadata(), implementation=self.youtube_tool)
+            self.tool_registry.register(
+                metadata=YouTubeTool.metadata(), implementation=self.youtube_tool
+            )
 
             logger.info("Tools registered successfully")
 
@@ -235,11 +241,17 @@ class WeatherVibesAgent(Agent):
 
             # Step 2: Get recommendations
             logger.info(f"Getting recommendations based on weather")
-            recommendations = await self.recommendations_tool.execute(weather=weather_result, max_items=max_recommendations)
+            recommendations = await self.recommendations_tool.execute(
+                weather=weather_result, max_items=max_recommendations
+            )
 
             # Step 3: Get matching YouTube video
-            logger.info(f"Finding YouTube video matching weather condition: {weather_result['condition']}")
-            video_result = await self.youtube_tool.execute(weather_condition=weather_result["condition"], mood_override=video_mood)
+            logger.info(
+                f"Finding YouTube video matching weather condition: {weather_result['condition']}"
+            )
+            video_result = await self.youtube_tool.execute(
+                weather_condition=weather_result["condition"], mood_override=video_mood
+            )
 
             # Prepare the response
             result = {

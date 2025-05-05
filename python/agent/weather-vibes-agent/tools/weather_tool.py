@@ -46,7 +46,7 @@ class WeatherTool(BaseTool):
             "q": location,
             "days": days,
             "aqi": "yes",  # Include air quality data
-            "alerts": "yes"  # Include weather alerts
+            "alerts": "yes",  # Include weather alerts
         }
 
         try:
@@ -57,7 +57,7 @@ class WeatherTool(BaseTool):
             # Extract relevant weather information
             current = data["current"]
             location_data = data["location"]
-            
+
             weather_info = {
                 "location": location_data["name"],
                 "region": location_data["region"],
@@ -74,20 +74,22 @@ class WeatherTool(BaseTool):
                 "feels_like_f": current["feelslike_f"],
                 "is_day": current["is_day"] == 1,
             }
-            
+
             # Add forecast information if requested
             if days > 1 and "forecast" in data:
                 forecast_days = []
                 for day in data["forecast"]["forecastday"]:
-                    forecast_days.append({
-                        "date": day["date"],
-                        "max_temp_c": day["day"]["maxtemp_c"],
-                        "min_temp_c": day["day"]["mintemp_c"],
-                        "condition": day["day"]["condition"]["text"],
-                        "chance_of_rain": day["day"]["daily_chance_of_rain"],
-                    })
+                    forecast_days.append(
+                        {
+                            "date": day["date"],
+                            "max_temp_c": day["day"]["maxtemp_c"],
+                            "min_temp_c": day["day"]["mintemp_c"],
+                            "condition": day["day"]["condition"]["text"],
+                            "chance_of_rain": day["day"]["daily_chance_of_rain"],
+                        }
+                    )
                 weather_info["forecast"] = forecast_days
-            
+
             # Add alerts if available
             if "alerts" in data and data["alerts"].get("alert"):
                 weather_info["alerts"] = data["alerts"]["alert"]
