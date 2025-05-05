@@ -24,13 +24,13 @@ This cookbook will guide you through building, understanding, and monitoring the
 - Python 3.8+
 - API keys for:
   - OpenAI
-  - OpenWeatherMap
+  - WeatherAPI
   - YouTube Data API
   - Galileo
 - Basic Python knowledge
 - Terminal/command-line familiarity
 
-## Recipe 1: Environment Setup
+## Environment Setup
 
 **Ingredients:**
 - git
@@ -46,7 +46,8 @@ This cookbook will guide you through building, understanding, and monitoring the
    ```
 
 2. **Create a virtual environment:**
-   ```bash
+  
+  ```bash
    # Using standard venv
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
@@ -68,23 +69,13 @@ This cookbook will guide you through building, understanding, and monitoring the
 4. **Create a .env file** in the project root:
    ```
    OPENAI_API_KEY=your_openai_key_here
-   OPENWEATHER_API_KEY=your_openweather_key_here
+   WeatherAPI_KEY=your_weatherapi_key_here
    YOUTUBE_API_KEY=your_youtube_key_here
    GALILEO_API_KEY=your_galileo_key_here
    GALILEO_LOG_STREAM=weather_vibes_agent
    ```
 
-5. **Fix import paths** if needed:
-   Open the `agent/weather_vibes_agent.py` file and ensure the imports use the correct paths:
-   ```python
-   # Should be
-   from tools.weather_tool import WeatherTool
-   from tools.recommendation_tool import RecommendationsTool
-   from tools.youtube_tool import YouTubeTool
-   from agent.descriptor import WEATHER_VIBES_DESCRIPTOR
-   ```
-
-## Recipe 2: Understanding the Agent Architecture
+## Understanding the Agent Architecture
 
 The Weather Vibes Agent consists of several key components:
 
@@ -93,7 +84,7 @@ Handles the main agent logic, coordinates tools, and processes requests.
 
 ### 🛠️ Tools
 Specialized modules for specific tasks:
-- **Weather Tool (`tools/weather_tool.py`)**: Fetches weather data from OpenWeatherMap
+- **Weather Tool (`tools/weather_tool.py`)**: Fetches weather data from WeatherAPI.com
 - **Recommendations Tool (`tools/recommendation_tool.py`)**: Generates weather-appropriate item suggestions
 - **YouTube Tool (`tools/youtube_tool.py`)**: Finds videos matching the weather mood
 
@@ -111,7 +102,7 @@ Contains Jinja templates for generating system prompts.
 Let's examine the Weather Tool to understand how it works and where Galileo fits in.
 
 **Key Ingredients:**
-- OpenWeatherMap API
+- WeatherAPI.com
 - Async HTTP requests
 - Error handling
 - Response parsing
@@ -119,31 +110,41 @@ Let's examine the Weather Tool to understand how it works and where Galileo fits
 **How it works:**
 
 1. **API Integration:**
-   The tool makes requests to the OpenWeatherMap API to get current weather data.
+   The tool makes requests to the WeatherAPI.com to get current weather data.
 
 2. **Request Formatting:**
    ```python
-   url = f"https://api.openweathermap.org/data/2.5/weather"
+   url = "http://api.weatherapi.com/v1/forecast.json"
    params = {
+       "key": api_key,
        "q": location,
-       "units": units,
-       "appid": api_key
+       "days": days,
+       "aqi": "yes",
+       "alerts": "yes"
    }
    ```
 
 3. **Response Processing:**
    The tool extracts and formats relevant information from the API response:
    ```python
+   current = data["current"]
+   location_data = data["location"]
+   
    return {
-       "location": data["name"],
-       "temperature": data["main"]["temp"],
-       "feels_like": data["main"]["feels_like"],
-       "humidity": data["main"]["humidity"],
-       "pressure": data["main"]["pressure"],
-       "wind_speed": data["wind"]["speed"],
-       "condition": data["weather"][0]["main"],
-       "description": data["weather"][0]["description"],
-       "icon": data["weather"][0]["icon"]
+       "location": location_data["name"],
+       "region": location_data["region"],
+       "country": location_data["country"],
+       "temperature_c": current["temp_c"],
+       "temperature_f": current["temp_f"],
+       "condition": current["condition"]["text"],
+       "condition_icon": current["condition"]["icon"],
+       "humidity": current["humidity"],
+       "wind_kph": current["wind_kph"],
+       "wind_mph": current["wind_mph"],
+       "wind_direction": current["wind_dir"],
+       "feels_like_c": current["feelslike_c"],
+       "feels_like_f": current["feelslike_f"],
+       "is_day": current["is_day"] == 1,
    }
    ```
 
@@ -155,14 +156,14 @@ The tool itself doesn't directly use Galileo. Instead, the main `agent.py` wraps
 
 ```python
 @log(span_type="tool", name="weather_tool")
-async def get_weather(weather_tool, location, units="metric"):
+async def get_weather(weather_tool, location, days=1):
     """Get weather data with Galileo tracing"""
-    result = await weather_tool.execute(location=location, units=units)
+    result = await weather_tool.execute(location=location, days=days)
     return result
 ```
 
 This creates a span in Galileo that:
-- Captures the input location and units
+- Captures the input location and days parameter
 - Records the tool's output
 - Measures execution time
 - Tracks any errors
@@ -184,10 +185,10 @@ This tool generates clothing and item recommendations based on weather condition
    prompt = (
        f"Based on the following weather conditions:\n"
        f"Location: {weather['location']}\n"
-       f"Temperature: {weather['temperature']}°{temp_unit}\n"
+       f"Temperature: {weather['temperature_c']}°C ({weather['temperature_f']}°F)\n"
        f"Condition: {weather['condition']}\n"
        f"Humidity: {weather['humidity']}%\n"
-       f"Wind Speed: {weather['wind_speed']} {speed_unit}\n\n"
+       f"Wind Speed: {weather['wind_kph']} km/h ({weather['wind_mph']} mph)\n\n"
        f"Recommend {max_items} items a person should bring or wear. "
        f"Return just a simple list of items, no explanations."
    )
@@ -399,7 +400,7 @@ Here are some problems you might encounter and how to fix them:
 
 **Solution:**
 - Double-check your `.env` file
-- For OpenWeatherMap, new keys take a few hours to activate
+- For WeatherAPI.com, make sure you have signed up and confirmed your email
 - For YouTube, ensure the API is enabled in Google Cloud Console
 
 ### Template Issues

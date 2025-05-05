@@ -49,7 +49,7 @@ The Galileo-instrumented version of the agent includes several span types:
 
 3. **Tool Spans** (`tool`):
    - Individual tool executions:
-     - `weather_tool`: OpenWeatherMap API call
+     - `weather_tool`: WeatherAPI call
      - `recommendations_tool`: Weather-based recommendations generation
      - `youtube_tool`: YouTube video search
 

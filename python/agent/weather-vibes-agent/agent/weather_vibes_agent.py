@@ -225,7 +225,7 @@ class WeatherVibesAgent(Agent):
             # Step 1: Get weather information
             logger.info(f"Getting weather for location: {location}")
 
-            weather_result = await self.weather_tool.execute(location=location, units=units)
+            weather_result = await self.weather_tool.execute(location=location, days=1)
             if "error" in weather_result:
                 logger.error(f"Weather API error: {weather_result['message']}")
                 return {
@@ -252,10 +252,10 @@ class WeatherVibesAgent(Agent):
             if not verbose and "weather" in result:
                 result["weather"] = {
                     "location": weather_result["location"],
-                    "temperature": weather_result["temperature"],
+                    "temperature_c": weather_result["temperature_c"],
                     "condition": weather_result["condition"],
                     "humidity": weather_result["humidity"],
-                    "wind_speed": weather_result["wind_speed"],
+                    "wind_kph": weather_result["wind_kph"],
                 }
 
             # Format response according to ACP standards

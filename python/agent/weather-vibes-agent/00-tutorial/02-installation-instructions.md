@@ -68,9 +68,9 @@ You'll need four API keys to make the Weather Vibes Agent work:
 4. Click "Create new secret key"
 5. Copy the key (you won't see it again!)
 
-### OpenWeatherMap API Key
+### WeatherAPI Key
 
-1. Visit [OpenWeatherMap](https://home.openweathermap.org/users/sign_up)
+1. Visit [WeatherAPI](https://www.weatherapi.com)
 2. Create a free account
 3. After logging in, go to "API Keys" tab
 4. Copy your API key (or create a new one)
@@ -97,7 +97,7 @@ Create a `.env` file in the project root directory with your API keys:
 
 ```
 OPENAI_API_KEY=your_openai_key_here
-OPENWEATHER_API_KEY=your_openweather_key_here
+WEATHERAPI_KEY=your_weatherapi_key_here
 YOUTUBE_API_KEY=your_youtube_key_here
 GALILEO_API_KEY=your_galileo_key_here
 GALILEO_LOG_STREAM=weather_vibes_agent
@@ -180,7 +180,7 @@ pip install git+https://github.com/rungalileo/simple-agent-framework.git@main
 **Solutions**:
 - Double-check your `.env` file for typos
 - Make sure your `.env` file is in the correct location (project root)
-- For OpenWeatherMap: New API keys may take a few hours to activate
+- For WeatherAPI: New API keys may take a few hours to activate
 - For YouTube: Ensure the API is enabled in Google Cloud Console
 - For OpenAI: Check your account has billing set up
 
@@ -215,7 +215,7 @@ echo "You are a helpful weather agent. Help the user based on their request." > 
 **Solutions**:
 - OpenAI: Wait a minute and try again, or upgrade your plan
 - YouTube: Create a new API key with higher quotas
-- OpenWeatherMap: Upgrade to a paid plan for more requests
+- WeatherAPI: Upgrade to a paid plan for more requests
 
 ### SSL Certificate Errors
 
