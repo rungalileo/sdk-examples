@@ -24,7 +24,9 @@ QUESTIONS = [
 ]
 
 # Different system prompts to test hallucination prevention
-SYSTEM_PROMPTS = {"unconstrained": "You are a helpful assistant. Answer the user's questions."}
+SYSTEM_PROMPTS = {
+    "unconstrained": "You are a helpful assistant. Answer the user's questions."
+}
 
 
 def generate_response(question: str, system_prompt: str) -> str:
@@ -76,7 +78,9 @@ def run_hallucination_demo():
             response = generate_response(question, system_prompt)
 
             # Store results
-            question_results["responses"].append({"prompt_type": prompt_name, "response": response})
+            question_results["responses"].append(
+                {"prompt_type": prompt_name, "response": response}
+            )
 
             # Print results for this question
             print(f"\n--- PROMPT TYPE: {prompt_name} ---")
@@ -87,7 +91,9 @@ def run_hallucination_demo():
         # Conclude the trace with a summary of responses
         summary = {
             "question": question,
-            "responses": {k: v["response"] for k, v in enumerate(question_results["responses"])},
+            "responses": {
+                k: v["response"] for k, v in enumerate(question_results["responses"])
+            },
         }
         logger.conclude(output=json.dumps(summary))
 

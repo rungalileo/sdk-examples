@@ -40,7 +40,9 @@ def query(question: str):
     print("Project:", os.getenv("GALILEO_PROJECT", "chunk-utilization"))
     print("Log stream: basic_approach")
 
-    client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"), base_url=os.getenv("OPENAI_BASE_URL"))
+    client = openai.OpenAI(
+        api_key=os.getenv("OPENAI_API_KEY"), base_url=os.getenv("OPENAI_BASE_URL")
+    )
 
     # Basic approach: more results but no reranking
     docs = DocumentStore(num_docs=500, k=5, use_reranking=False).search(question)

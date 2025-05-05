@@ -14,7 +14,9 @@ dotenv_path = ".env"
 # Load the .env file
 load_dotenv(dotenv_path)
 
-EXAMPLE_QUESTION = "Who discovered penicillin and what were the key details of this discovery?"
+EXAMPLE_QUESTION = (
+    "Who discovered penicillin and what were the key details of this discovery?"
+)
 
 SYSTEM_PROMPT = """You are a knowledgeable science historian tasked with providing comprehensive answers by analyzing and synthesizing information from multiple provided documents.
 
@@ -53,7 +55,9 @@ def format_documents_with_citations(documents: list) -> str:
 
 
 def query(question: str):
-    client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"), base_url=os.getenv("OPENAI_BASE_URL"))
+    client = openai.OpenAI(
+        api_key=os.getenv("OPENAI_API_KEY"), base_url=os.getenv("OPENAI_BASE_URL")
+    )
 
     # Enhanced approach: more documents with reranking
     current_dir = Path(__file__).resolve().parent
@@ -68,7 +72,9 @@ def query(question: str):
     )
     docs = store.search(question)
 
-    prompt = Prompts.ENHANCED.format(query=question, documents=format_documents_with_citations(docs))
+    prompt = Prompts.ENHANCED.format(
+        query=question, documents=format_documents_with_citations(docs)
+    )
 
     response = client.chat.completions.create(
         model="gpt-4",

@@ -24,7 +24,9 @@ class DocumentStoreBasic:
         # Load documents based on source
         if source == "custom":
             if not custom_documents_path:
-                raise ValueError("custom_documents_path must be provided when source is 'custom'")
+                raise ValueError(
+                    "custom_documents_path must be provided when source is 'custom'"
+                )
             self._load_custom_documents(custom_documents_path, chunk_size)
         else:
             raise ValueError(f"Unsupported source: {source}. Use 'custom'")
@@ -40,7 +42,9 @@ class DocumentStoreBasic:
         """Helper method to load custom documents from a file"""
         documents_path = Path(documents_path)
         if not documents_path.exists():
-            raise FileNotFoundError(f"Custom documents file not found: {documents_path}")
+            raise FileNotFoundError(
+                f"Custom documents file not found: {documents_path}"
+            )
 
         with open(documents_path, "r") as f:
             text = f.read()
@@ -102,18 +106,24 @@ class DocumentStoreBasic:
         query_vector = query_vector.reshape(1, -1)
 
         # Get only one result
-        distances, indices = self.index.search(query_vector.astype("float32"), self.num_docs)
+        distances, indices = self.index.search(
+            query_vector.astype("float32"), self.num_docs
+        )
 
         # Process results
         results = []
         for distance, idx in zip(distances[0], indices[0]):
             doc = self.documents[idx].copy()
             doc["metadata"] = doc["metadata"].copy()
-            doc["metadata"]["score"] = float(1 / (1 + distance))  # Simple distance to score conversion
+            doc["metadata"]["score"] = float(
+                1 / (1 + distance)
+            )  # Simple distance to score conversion
             results.append(doc)
 
         return results
 
 
 def format_documents(documents: list) -> str:
-    return "\n\n".join(f"Document {i+1}:\n{doc['text']}" for i, doc in enumerate(documents))
+    return "\n\n".join(
+        f"Document {i+1}:\n{doc['text']}" for i, doc in enumerate(documents)
+    )

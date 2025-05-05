@@ -49,10 +49,14 @@ def format_documents_enhanced(documents: list) -> str:
 
 
 def query(question: str):
-    client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"), base_url=os.getenv("OPENAI_BASE_URL"))
+    client = openai.OpenAI(
+        api_key=os.getenv("OPENAI_API_KEY"), base_url=os.getenv("OPENAI_BASE_URL")
+    )
 
     # Enhanced approach: use reranking with more initial documents
-    docs = DocumentStore(num_docs=500, k=5, use_reranking=True, reranking_threshold=0.6).search(question)
+    docs = DocumentStore(
+        num_docs=500, k=5, use_reranking=True, reranking_threshold=0.6
+    ).search(question)
 
     prompt = Prompts.ENHANCED.format(query=question, documents=format_documents(docs))
 

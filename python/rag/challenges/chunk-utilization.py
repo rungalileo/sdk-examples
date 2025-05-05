@@ -159,7 +159,9 @@ class DocumentStore:
 
         if mixed_relevance:
             # Replace some highly relevant documents with low relevance ones
-            low_relevance_docs = [doc for doc in self.documents if doc["metadata"]["relevance"] == "low"]
+            low_relevance_docs = [
+                doc for doc in self.documents if doc["metadata"]["relevance"] == "low"
+            ]
             if low_relevance_docs:
                 num_to_replace = min(len(retrieved_docs) // 2, len(low_relevance_docs))
                 for i in range(num_to_replace):
@@ -188,7 +190,9 @@ def retrieve_verbose_documents(query: str, mixed_relevance: bool = False):
     start_time = perf_counter_ns()
     try:
         documents = doc_store.search(query, k=3, mixed_relevance=mixed_relevance)
-        logger.add_retriever_span(input=query, output=documents, duration_ns=perf_counter_ns() - start_time)
+        logger.add_retriever_span(
+            input=query, output=documents, duration_ns=perf_counter_ns() - start_time
+        )
         return documents
     except Exception as e:
         logger.add_retriever_span(
@@ -223,7 +227,9 @@ def rag_with_poor_utilization(query: str, mixed_relevance: bool = False):
         {formatted_docs}
         """
 
-        console.print("[bold blue]Generating answer (with poor chunk utilization)...[/bold blue]")
+        console.print(
+            "[bold blue]Generating answer (with poor chunk utilization)...[/bold blue]"
+        )
         response = client.chat.completions.create(
             model="gpt-4",
             messages=[
@@ -288,7 +294,9 @@ def rag_with_better_utilization(query: str, mixed_relevance: bool = False):
         {formatted_docs}
         """
 
-        console.print("[bold green]Generating answer (with improved chunk utilization)...[/bold green]")
+        console.print(
+            "[bold green]Generating answer (with improved chunk utilization)...[/bold green]"
+        )
         response = client.chat.completions.create(
             model="gpt-4",
             messages=[
@@ -366,7 +374,9 @@ def main():
             "What are the different types of machine learning?",
         ]
 
-        console.print("\n[bold yellow]Suggested queries (these will demonstrate the chunk utilization problem):[/bold yellow]")
+        console.print(
+            "\n[bold yellow]Suggested queries (these will demonstrate the chunk utilization problem):[/bold yellow]"
+        )
         for i, q in enumerate(suggested_queries):
             console.print(f"[yellow]{i+1}. {q}[/yellow]")
 
@@ -411,10 +421,16 @@ def main():
 
             try:
                 # Display the retrieved context - using direct search without tracing
-                display_documents = doc_store.search(query, k=3, mixed_relevance=mixed_relevance)
-                console.print("\n[bold cyan]Retrieved Context (Verbose Chunks):[/bold cyan]")
+                display_documents = doc_store.search(
+                    query, k=3, mixed_relevance=mixed_relevance
+                )
+                console.print(
+                    "\n[bold cyan]Retrieved Context (Verbose Chunks):[/bold cyan]"
+                )
                 for i, doc in enumerate(display_documents):
-                    relevance_color = "green" if doc["metadata"]["relevance"] == "high" else "yellow"
+                    relevance_color = (
+                        "green" if doc["metadata"]["relevance"] == "high" else "yellow"
+                    )
                     console.print(
                         Panel(
                             f"[bold]Source:[/bold] {doc['metadata']['source']}\n[bold]Relevance:[/bold] [{relevance_color}]{doc['metadata']['relevance']}[/{relevance_color}]\n\n[dim]{doc['content']}[/dim]",
@@ -425,12 +441,20 @@ def main():
 
                 # Generate and display response based on chosen workflow
                 if workflow == "Poor Chunk Utilization (Bad State)":
-                    result = rag_with_poor_utilization(query, mixed_relevance=mixed_relevance)
-                    console.print("\n[bold red]Response with Poor Chunk Utilization:[/bold red]")
+                    result = rag_with_poor_utilization(
+                        query, mixed_relevance=mixed_relevance
+                    )
+                    console.print(
+                        "\n[bold red]Response with Poor Chunk Utilization:[/bold red]"
+                    )
                     console.print(Panel(Markdown(result), border_style="red"))
                 else:  # Improved Chunk Utilization
-                    result = rag_with_better_utilization(query, mixed_relevance=mixed_relevance)
-                    console.print("\n[bold green]Response with Improved Chunk Utilization:[/bold green]")
+                    result = rag_with_better_utilization(
+                        query, mixed_relevance=mixed_relevance
+                    )
+                    console.print(
+                        "\n[bold green]Response with Improved Chunk Utilization:[/bold green]"
+                    )
                     console.print(Panel(Markdown(result), border_style="green"))
 
                 # Conclude this query's trace
@@ -440,7 +464,9 @@ def main():
                 )
 
                 # Ask if user wants to continue
-                continue_session = questionary.confirm("Do you want to ask another question?", default=True).ask()
+                continue_session = questionary.confirm(
+                    "Do you want to ask another question?", default=True
+                ).ask()
 
                 if not continue_session:
                     break
