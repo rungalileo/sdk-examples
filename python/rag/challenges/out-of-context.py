@@ -186,9 +186,7 @@ def rag_with_constraint(query: str):
 @log
 def main():
     print("Out-of-Context RAG Demo")
-    print(
-        "This demo shows how RAG systems can generate out-of-context information and how to prevent it."
-    )
+    print("This demo shows how RAG systems can generate out-of-context information and how to prevent it.")
 
     # Check environment setup
     if logging_enabled:
@@ -243,9 +241,7 @@ def main():
             print(constrained_result)
 
             # Ask if user wants to continue
-            continue_session = questionary.confirm(
-                "Do you want to ask another question?", default=True
-            ).ask()
+            continue_session = questionary.confirm("Do you want to ask another question?", default=True).ask()
 
             if not continue_session:
                 break

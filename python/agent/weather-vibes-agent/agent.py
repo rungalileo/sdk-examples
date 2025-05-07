@@ -62,9 +62,7 @@ async def get_recommendations(recommendations_tool, weather, max_items=5):
 @log(span_type="tool", name="youtube_tool")
 async def find_weather_video(youtube_tool, weather_condition, mood_override=None):
     """Find YouTube videos with Galileo tracing"""
-    result = await youtube_tool.execute(
-        weather_condition=weather_condition, mood_override=mood_override
-    )
+    result = await youtube_tool.execute(weather_condition=weather_condition, mood_override=mood_override)
     return result
 
 
@@ -105,13 +103,9 @@ async def process_request(agent, request):
                 "message": f"Weather API error: {weather_result['message']}",
             }
 
-        recommendations = await get_recommendations(
-            agent.recommendations_tool, weather_result, max_recommendations
-        )
+        recommendations = await get_recommendations(agent.recommendations_tool, weather_result, max_recommendations)
 
-        video_result = await find_weather_video(
-            agent.youtube_tool, weather_result["condition"], video_mood
-        )
+        video_result = await find_weather_video(agent.youtube_tool, weather_result["condition"], video_mood)
 
         # Prepare response
         result = {
@@ -184,14 +178,10 @@ async def run_agent_with_inputs(location, units, mood, recommendations, verbose)
 
         # Display weather
         print(f"\n🌤️  WEATHER FOR {weather['location']} 🌤️")
-        print(
-            f"• Temperature: {weather.get(temp_key, weather.get('temperature_c'))}{temp_unit}"
-        )
+        print(f"• Temperature: {weather.get(temp_key, weather.get('temperature_c'))}{temp_unit}")
         print(f"• Condition: {weather['condition']}")
         print(f"• Humidity: {weather['humidity']}%")
-        print(
-            f"• Wind Speed: {weather.get(wind_key, weather.get('wind_kph'))} {speed_unit}"
-        )
+        print(f"• Wind Speed: {weather.get(wind_key, weather.get('wind_kph'))} {speed_unit}")
 
         if verbose and "feels_like_c" in weather:
             feels_like_key = "feels_like_f" if units == "imperial" else "feels_like_c"
@@ -228,9 +218,7 @@ async def run_agent_with_inputs(location, units, mood, recommendations, verbose)
 async def main():
     """Main entry point that uses galileo_context to set up the trace environment"""
     # Parse arguments
-    parser = argparse.ArgumentParser(
-        description="Run the Galileo-instrumented Weather Vibes Agent"
-    )
+    parser = argparse.ArgumentParser(description="Run the Galileo-instrumented Weather Vibes Agent")
     parser.add_argument("location", nargs="?", help="Location (e.g., 'Tokyo')")
     parser.add_argument(
         "-l",
@@ -246,12 +234,8 @@ async def main():
         help="Units (metric/imperial)",
     )
     parser.add_argument("-m", "--mood", help="Video mood (e.g., 'relaxing', 'upbeat')")
-    parser.add_argument(
-        "-r", "--recommendations", type=int, default=5, help="Number of recommendations"
-    )
-    parser.add_argument(
-        "-v", "--verbose", action="store_true", help="Show detailed weather info"
-    )
+    parser.add_argument("-r", "--recommendations", type=int, default=5, help="Number of recommendations")
+    parser.add_argument("-v", "--verbose", action="store_true", help="Show detailed weather info")
     args = parser.parse_args()
 
     # Get location

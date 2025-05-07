@@ -38,15 +38,10 @@ class RecommendationsTool(BaseTool):
         # Basic recommendation logic based on weather conditions
         condition = weather.get("condition", "").lower()
         # Use temperature_c as primary, with fallback to other temperature fields
-        temp = weather.get(
-            "temperature_c", weather.get("temp_c", weather.get("temperature", 0))
-        )
+        temp = weather.get("temperature_c", weather.get("temp_c", weather.get("temperature", 0)))
 
         # Rain-related recommendations
-        if any(
-            x in condition.lower()
-            for x in ["rain", "drizzle", "shower", "precipitation", "wet"]
-        ):
+        if any(x in condition.lower() for x in ["rain", "drizzle", "shower", "precipitation", "wet"]):
             recommendations.extend(["☔ Umbrella", "🧥 Raincoat"])
 
         # Sun-related recommendations
@@ -72,9 +67,7 @@ class RecommendationsTool(BaseTool):
             recommendations.extend(["👙 Swimwear", "🌴 Water bottle", "🩴 Sandals"])
 
         # Wind-related recommendations
-        wind_speed = weather.get(
-            "wind_kph", weather.get("wind_mph", weather.get("wind_speed", 0))
-        )
+        wind_speed = weather.get("wind_kph", weather.get("wind_mph", weather.get("wind_speed", 0)))
         if wind_speed > 20:
             recommendations.extend(["🌬️ Windbreaker", "🪁 Hat with strap"])
 

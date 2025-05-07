@@ -73,9 +73,7 @@ def rag(query: str):
     # Format documents for better readability in the prompt
     formatted_docs = ""
     for i, doc in enumerate(documents):
-        formatted_docs += (
-            f"Document {i+1} (Source: {doc['metadata']['source']}):\n{doc['text']}\n\n"
-        )
+        formatted_docs += f"Document {i+1} (Source: {doc['metadata']['source']}):\n{doc['text']}\n\n"
 
     prompt = f"""
     Answer the following question based on the context provided. If the answer is not in the context, say you don't know.
@@ -143,9 +141,7 @@ def main():
             console.print(Panel(Markdown(result), border_style="green"))
 
             # Ask if user wants to continue
-            continue_session = questionary.confirm(
-                "Do you want to ask another question?", default=True
-            ).ask()
+            continue_session = questionary.confirm("Do you want to ask another question?", default=True).ask()
 
             if not continue_session:
                 break

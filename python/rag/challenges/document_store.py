@@ -58,18 +58,12 @@ class DocumentStore:
                             filtered_articles.append(article)
 
                     if not filtered_articles:
-                        print(
-                            f"No Wikipedia articles found for query: {wikipedia_query}"
-                        )
+                        print(f"No Wikipedia articles found for query: {wikipedia_query}")
                         if custom_documents_path:
                             print("Falling back to custom documents...")
-                            self._load_custom_documents(
-                                custom_documents_path, chunk_size
-                            )
+                            self._load_custom_documents(custom_documents_path, chunk_size)
                         else:
-                            raise ValueError(
-                                "No documents found and no custom documents path provided"
-                            )
+                            raise ValueError("No documents found and no custom documents path provided")
                     else:
                         dataset = filtered_articles[:num_docs]
                         self._process_wikipedia_documents(dataset, chunk_size)
@@ -87,25 +81,17 @@ class DocumentStore:
 
         elif source == "custom":
             if not custom_documents_path:
-                raise ValueError(
-                    "custom_documents_path must be provided when source is 'custom'"
-                )
+                raise ValueError("custom_documents_path must be provided when source is 'custom'")
             self._load_custom_documents(custom_documents_path, chunk_size)
 
         else:
-            raise ValueError(
-                f"Unsupported source: {source}. Use 'wikipedia' or 'custom'"
-            )
+            raise ValueError(f"Unsupported source: {source}. Use 'wikipedia' or 'custom'")
 
         if not self.documents:
             raise ValueError("No documents were successfully loaded")
 
-        print(
-            f"Processed {len(self.documents)} chunks from {len(set(doc['metadata']['source'] for doc in self.documents))} documents"
-        )
-        print(
-            f"Average chunk length: {sum(doc['metadata']['length'] for doc in self.documents) / len(self.documents):.0f} characters"
-        )
+        print(f"Processed {len(self.documents)} chunks from {len(set(doc['metadata']['source'] for doc in self.documents))} documents")
+        print(f"Average chunk length: {sum(doc['metadata']['length'] for doc in self.documents) / len(self.documents):.0f} characters")
 
         self._build_index()
 
@@ -139,9 +125,7 @@ class DocumentStore:
         """Helper method to load custom documents from a file"""
         documents_path = Path(documents_path)
         if not documents_path.exists():
-            raise FileNotFoundError(
-                f"Custom documents file not found: {documents_path}"
-            )
+            raise FileNotFoundError(f"Custom documents file not found: {documents_path}")
 
         with open(documents_path, "r") as f:
             text = f.read()
@@ -216,9 +200,7 @@ class DocumentStore:
         faiss.normalize_L2(self.embeddings)
 
         # Create an index that's optimized for cosine similarity
-        self.index = faiss.IndexFlatIP(
-            dimension
-        )  # Inner product is equivalent to cosine similarity for normalized vectors
+        self.index = faiss.IndexFlatIP(dimension)  # Inner product is equivalent to cosine similarity for normalized vectors
         self.index.add(self.embeddings.astype("float32"))
         print("Index built successfully")
 
@@ -241,17 +223,11 @@ class DocumentStore:
         reranked_docs = []
         for doc, score in zip(docs, cross_scores):
             # Normalize score to 0-1 range
-            normalized_score = (
-                (score - min_score) / score_range if score_range > 0 else 0.5
-            )
+            normalized_score = (score - min_score) / score_range if score_range > 0 else 0.5
 
             if normalized_score >= self.reranking_threshold:
                 doc["metadata"]["combined_score"] = normalized_score
-                doc["metadata"]["relevance"] = (
-                    "high"
-                    if normalized_score > 0.8
-                    else "medium" if normalized_score > 0.6 else "low"
-                )
+                doc["metadata"]["relevance"] = "high" if normalized_score > 0.8 else "medium" if normalized_score > 0.6 else "low"
                 reranked_docs.append(doc)
 
         # Sort by combined score
@@ -284,11 +260,7 @@ class DocumentStore:
         else:
             # For basic search, just update relevance based on score
             for doc in results:
-                doc["metadata"]["relevance"] = (
-                    "high"
-                    if doc["metadata"]["score"] > 0.8
-                    else "medium" if doc["metadata"]["score"] > 0.6 else "low"
-                )
+                doc["metadata"]["relevance"] = "high" if doc["metadata"]["score"] > 0.8 else "medium" if doc["metadata"]["score"] > 0.6 else "low"
             return results[: self.k]
 
 

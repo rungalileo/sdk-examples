@@ -14,13 +14,9 @@ dotenv_path = ".env"
 # Load the .env file
 load_dotenv(dotenv_path)
 
-EXAMPLE_QUESTION = (
-    "Who discovered penicillin and what were the key details of this discovery?"
-)
+EXAMPLE_QUESTION = "Who discovered penicillin and what were the key details of this discovery?"
 
-SYSTEM_PROMPT = (
-    "You are a helpful assistant. Answer questions based on the provided document."
-)
+SYSTEM_PROMPT = "You are a helpful assistant. Answer questions based on the provided document."
 
 
 class Prompts:
@@ -33,9 +29,7 @@ Please provide an answer based on the document above."""
 
 
 def query(question: str):
-    client = openai.OpenAI(
-        api_key=os.getenv("OPENAI_API_KEY"), base_url=os.getenv("OPENAI_BASE_URL")
-    )
+    client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"), base_url=os.getenv("OPENAI_BASE_URL"))
 
     # Basic approach: single document, no reranking
     current_dir = Path(__file__).resolve().parent
