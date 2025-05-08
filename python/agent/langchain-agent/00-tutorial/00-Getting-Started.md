@@ -16,7 +16,7 @@ This guide will walk you through setting up a Python project that uses [LangChai
 Open a terminal and run:
 
 ```sh
-pip install langchain langchain-openai python-dotenv galileo
+pip install -r requirements.txt
 ```
 
 - `langchain` and `langchain-openai` are for building and running the agent.
