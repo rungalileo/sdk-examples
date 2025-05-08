@@ -13,9 +13,11 @@ This guide will walk you through setting up a Python project that uses [LangChai
 
 ## 2. Install Required Packages
 
-Open a terminal and run:
+Open a terminal, create a virtual environment and install the required packages:
 
 ```sh
+python -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
 ```
 
@@ -27,7 +29,7 @@ pip install -r requirements.txt
 
 ## 3. Set Up Environment Variables
 
-Create a `.env` file in your project directory with the following content:
+Copy the existing `.env.example` file, and rename it to `.env` in your project directory. 
 
 ```
 OPENAI_API_KEY=your-openai-api-key
