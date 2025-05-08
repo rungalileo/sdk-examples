@@ -37,30 +37,50 @@ class RecommendationsTool(BaseTool):
 
         # Basic recommendation logic based on weather conditions
         condition = weather.get("condition", "").lower()
-        temp = weather.get("temperature", 0)
-        description = weather.get("description", "").lower()
+        # Use temperature_c as primary, with fallback to other temperature fields
+        temp = weather.get("temperature_c", weather.get("temp_c", weather.get("temperature", 0)))
 
         # Rain-related recommendations
-        if any(x in condition.lower() or x in description.lower() for x in ["rain", "drizzle", "shower"]):
-            recommendations.extend(["☔", "🧥"])
+        if any(x in condition.lower() for x in ["rain", "drizzle", "shower", "precipitation", "wet"]):
+            recommendations.extend(["☔ Umbrella", "🧥 Raincoat"])
 
         # Sun-related recommendations
-        if any(x in condition.lower() or x in description.lower() for x in ["clear", "sun"]):
-            recommendations.extend(["🕶️", "🧴", "🧢"])
+        if any(x in condition.lower() for x in ["clear", "sun", "sunny"]):
+            recommendations.extend(["🕶️ Sunglasses", "🧴 Sunscreen", "🧢 Cap"])
+
+        # Cloud-related recommendations
+        if any(x in condition.lower() for x in ["cloud", "overcast", "fog", "mist"]):
+            recommendations.extend(["🔦 Flashlight", "📸 Camera"])
+
+        # Snow-related recommendations
+        if any(x in condition.lower() for x in ["snow", "blizzard", "sleet", "ice"]):
+            recommendations.extend(["❄️ Snow boots", "🧤 Gloves", "⛄ Snow gear"])
 
         # Temperature-based recommendations
         if temp < 5:  # Cold
-            recommendations.extend(["🎿", "🧤", "🧣", "🥶"])
+            recommendations.extend(["🧣 Scarf", "🧥 Heavy coat", "🔥 Hand warmers"])
         elif temp < 15:  # Cool
-            recommendations.extend(["👖", "🧦", "🌫️"])
+            recommendations.extend(["👖 Jeans", "🧦 Warm socks", "🧥 Light jacket"])
         elif temp < 25:  # Warm
-            recommendations.extend(["👕", "🩳", "☀️"])
+            recommendations.extend(["👕 T-shirt", "🩳 Shorts", "🧴 Sunscreen"])
         else:  # Hot
-            recommendations.extend(["🥵", "👙", "🌴", "🩴"])
+            recommendations.extend(["👙 Swimwear", "🌴 Water bottle", "🩴 Sandals"])
 
         # Wind-related recommendations
-        if weather.get("wind_speed", 0) > 20:
-            recommendations.extend(["🌬️", "🪁"])
+        wind_speed = weather.get("wind_kph", weather.get("wind_mph", weather.get("wind_speed", 0)))
+        if wind_speed > 20:
+            recommendations.extend(["🌬️ Windbreaker", "🪁 Hat with strap"])
+
+        # Humidity-based recommendations
+        humidity = weather.get("humidity", 0)
+        if humidity > 70:
+            recommendations.append("💦 Moisture-wicking clothes")
+
+        # Check for air quality if available
+        if "air_quality" in weather and isinstance(weather["air_quality"], dict):
+            aqi = weather["air_quality"].get("us-epa-index", 0)
+            if aqi > 3:  # Moderate or worse air quality
+                recommendations.append("😷 Face mask")
 
         # Return unique recommendations, limited to max_items
         unique_recommendations = list(set(recommendations))

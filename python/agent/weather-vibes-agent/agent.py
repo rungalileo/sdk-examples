@@ -23,7 +23,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 # Quick environment check
 required_keys = [
     "OPENAI_API_KEY",
-    "OPENWEATHER_API_KEY",
+    "WEATHERAPI_KEY",
     "YOUTUBE_API_KEY",
     "GALILEO_API_KEY",
 ]
@@ -46,9 +46,9 @@ from agent.weather_vibes_agent import WeatherVibesAgent
 
 # Tool wrappers with Galileo instrumentation
 @log(span_type="tool", name="weather_tool")
-async def get_weather(weather_tool, location, units="metric"):
+async def get_weather(weather_tool, location, days=1):
     """Get weather data with Galileo tracing"""
-    result = await weather_tool.execute(location=location, units=units)
+    result = await weather_tool.execute(location=location, days=days)
     return result
 
 
@@ -96,7 +96,7 @@ async def process_request(agent, request):
                 agent.state.search_history = agent.state.search_history[-5:]
 
         # Execute tools
-        weather_result = await get_weather(agent.weather_tool, location, units)
+        weather_result = await get_weather(agent.weather_tool, location, days=1)
         if "error" in weather_result:
             return {
                 "error": 500,
@@ -118,10 +118,11 @@ async def process_request(agent, request):
         if not verbose and "weather" in result:
             result["weather"] = {
                 "location": weather_result["location"],
-                "temperature": weather_result["temperature"],
+                "temperature_c": weather_result["temperature_c"],
+                "temperature_f": weather_result["temperature_f"],
                 "condition": weather_result["condition"],
                 "humidity": weather_result["humidity"],
-                "wind_speed": weather_result["wind_speed"],
+                "wind_kph": weather_result["wind_kph"],
             }
 
         # Build final response
@@ -171,18 +172,22 @@ async def run_agent_with_inputs(location, units, mood, recommendations, verbose)
         output = response["output"]
         weather = output["weather"]
         temp_unit = "°F" if units == "imperial" else "°C"
-        speed_unit = "mph" if units == "imperial" else "m/s"
+        temp_key = "temperature_f" if units == "imperial" else "temperature_c"
+        wind_key = "wind_mph" if units == "imperial" else "wind_kph"
+        speed_unit = "mph" if units == "imperial" else "km/h"
 
         # Display weather
         print(f"\n🌤️  WEATHER FOR {weather['location']} 🌤️")
-        print(f"• Temperature: {weather['temperature']}{temp_unit}")
+        print(f"• Temperature: {weather.get(temp_key, weather.get('temperature_c'))}{temp_unit}")
         print(f"• Condition: {weather['condition']}")
         print(f"• Humidity: {weather['humidity']}%")
-        print(f"• Wind Speed: {weather['wind_speed']} {speed_unit}")
+        print(f"• Wind Speed: {weather.get(wind_key, weather.get('wind_kph'))} {speed_unit}")
 
-        if verbose and "feels_like" in weather:
-            print(f"• Feels Like: {weather['feels_like']}{temp_unit}")
-            print(f"• Description: {weather.get('description', '')}")
+        if verbose and "feels_like_c" in weather:
+            feels_like_key = "feels_like_f" if units == "imperial" else "feels_like_c"
+            print(f"• Feels Like: {weather.get(feels_like_key)}{temp_unit}")
+            print(f"• Region: {weather.get('region', '')}")
+            print(f"• Country: {weather.get('country', '')}")
 
         # Display recommendations
         print(f"\n🧳 RECOMMENDATIONS:")
