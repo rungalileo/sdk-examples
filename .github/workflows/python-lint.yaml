@@ -1,0 +1,35 @@
+name: Python Lint
+
+on:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'  # Specify the Python version
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install black pylint
+
+      - name: Install project requirements
+        run: |
+          find python/ -name "requirements.txt" -type f -exec pip install -r {} \;
+
+      - name: Run Black
+        run: |
+          black --line-length 160 --check python/
+
+      - name: Run Pylint
+        continue-on-error: true
+        run: |
+          pylint --rcfile=.pylintrc python/**/*.py

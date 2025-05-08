@@ -12,7 +12,7 @@ from typing import List, Dict
 # Find the .env file in the parent directory
 current_dir = Path(__file__).resolve().parent
 root_dir = current_dir.parent
-dotenv_path = root_dir / '.env'
+dotenv_path = root_dir / ".env"
 
 # Load the .env file
 load_dotenv(dotenv_path)
@@ -32,11 +32,13 @@ IMPORTANT INSTRUCTIONS:
 
 Your response should demonstrate thorough analysis and integration of information from all relevant documents, making clear how different sources contributed to the complete answer. Explain mathematical concepts clearly, connect related ideas, and highlight fundamental principles while maintaining accuracy."""
 
+
 class Prompts:
     ENHANCED = """Question: {query}
 
 Documents:
 {documents}"""
+
 
 def format_documents_enhanced(documents: list) -> str:
     return "\n\n".join(
@@ -45,49 +47,38 @@ def format_documents_enhanced(documents: list) -> str:
         for i, doc in enumerate(documents)
     )
 
+
 def query(question: str):
-    client = openai.OpenAI(
-        api_key=os.getenv("OPENAI_API_KEY"),
-        base_url=os.getenv("OPENAI_BASE_URL")
-    )
-    
+    client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"), base_url=os.getenv("OPENAI_BASE_URL"))
+
     # Enhanced approach: use reranking with more initial documents
-    docs = DocumentStore(
-        num_docs=500,
-        k=5,
-        use_reranking=True,
-        reranking_threshold=0.6
-    ).search(question)
-    
-    prompt = Prompts.ENHANCED.format(
-        query=question,
-        documents=format_documents(docs)
-    )
+    docs = DocumentStore(num_docs=500, k=5, use_reranking=True, reranking_threshold=0.6).search(question)
+
+    prompt = Prompts.ENHANCED.format(query=question, documents=format_documents(docs))
 
     response = client.chat.completions.create(
         model="gpt-4",
         messages=[
-            {
-                "role": "system", 
-                "content": SYSTEM_PROMPT
-            },
-            {"role": "user", "content": prompt}
-        ]
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": prompt},
+        ],
     )
-    
+
     return response.choices[0].message.content.strip()
+
 
 def main():
     with galileo_context(
         project=os.getenv("GALILEO_PROJECT", "chunk-utilization"),
-        log_stream="enhanced_approach"
+        log_stream="enhanced_approach",
     ):
         console = Console()
         console.print("\nEnhanced Chunk Utilization Demo")
         console.print("\nUsing example question:", EXAMPLE_QUESTION)
-        
+
         console.print("\nResponse:")
         console.print(query(EXAMPLE_QUESTION))
 
+
 if __name__ == "__main__":
-    main() 
+    main()

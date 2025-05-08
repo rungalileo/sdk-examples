@@ -8,16 +8,16 @@ WEATHER_VIBES_DESCRIPTOR = {
         "ref": {
             "name": "org.example.weathervibes",
             "version": "0.1.0",
-            "url": "https://github.com/agntcy/agentic-apps/weather_vibes"
+            "url": "https://github.com/agntcy/agentic-apps/weather_vibes",
         },
-        "description": "An agent that provides weather information, item recommendations, and matching YouTube videos."
+        "description": "An agent that provides weather information, item recommendations, and matching YouTube videos.",
     },
     "specs": {
         "capabilities": {
             "threads": True,
             "interrupts": False,
             "callbacks": False,
-            "streaming": True
+            "streaming": True,
         },
         "input": {
             "type": "object",
@@ -25,16 +25,16 @@ WEATHER_VIBES_DESCRIPTOR = {
             "properties": {
                 "location": {
                     "type": "string",
-                    "description": "The location to get weather for (city name, zip code, etc.)"
+                    "description": "The location to get weather for (city name, zip code, etc.)",
                 },
                 "units": {
                     "type": "string",
                     "enum": ["metric", "imperial"],
                     "default": "metric",
-                    "description": "Unit system for temperature and measurements"
-                }
+                    "description": "Unit system for temperature and measurements",
+                },
             },
-            "required": ["location"]
+            "required": ["location"],
         },
         "output": {
             "type": "object",
@@ -48,13 +48,13 @@ WEATHER_VIBES_DESCRIPTOR = {
                         "temperature": {"type": "number"},
                         "condition": {"type": "string"},
                         "humidity": {"type": "number"},
-                        "wind_speed": {"type": "number"}
-                    }
+                        "wind_speed": {"type": "number"},
+                    },
                 },
                 "recommendations": {
                     "type": "array",
                     "description": "Items recommended to bring based on the weather",
-                    "items": {"type": "string"}
+                    "items": {"type": "string"},
                 },
                 "video": {
                     "type": "object",
@@ -62,10 +62,10 @@ WEATHER_VIBES_DESCRIPTOR = {
                     "properties": {
                         "title": {"type": "string"},
                         "url": {"type": "string"},
-                        "thumbnail": {"type": "string"}
-                    }
-                }
-            }
+                        "thumbnail": {"type": "string"},
+                    },
+                },
+            },
         },
         "config": {
             "type": "object",
@@ -74,18 +74,18 @@ WEATHER_VIBES_DESCRIPTOR = {
                 "verbose": {
                     "type": "boolean",
                     "default": False,
-                    "description": "Whether to include detailed weather information"
+                    "description": "Whether to include detailed weather information",
                 },
                 "max_recommendations": {
                     "type": "integer",
                     "default": 5,
-                    "description": "Maximum number of recommendations to provide"
+                    "description": "Maximum number of recommendations to provide",
                 },
                 "video_mood": {
                     "type": "string",
-                    "description": "Optional mood override for video selection"
-                }
-            }
+                    "description": "Optional mood override for video selection",
+                },
+            },
         },
         "thread_state": {
             "type": "object",
@@ -94,14 +94,14 @@ WEATHER_VIBES_DESCRIPTOR = {
                 "search_history": {
                     "type": "array",
                     "description": "History of previously searched locations",
-                    "items": {"type": "string"}
+                    "items": {"type": "string"},
                 },
                 "favorite_locations": {
                     "type": "array",
                     "description": "User's favorite locations",
-                    "items": {"type": "string"}
-                }
-            }
-        }
-    }
-} 
+                    "items": {"type": "string"},
+                },
+            },
+        },
+    },
+}

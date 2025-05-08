@@ -14,21 +14,24 @@ if prompt_template is None:
         name="geography-prompt",
         project=project,
         messages=[
-            Message(role=MessageRole.system, content="You are a geography expert. Respond with only the continent name."),
-            Message(role=MessageRole.user, content="{{input}}")
-        ]
+            Message(
+                role=MessageRole.system,
+                content="You are a geography expert. Respond with only the continent name.",
+            ),
+            Message(role=MessageRole.user, content="{{input}}"),
+        ],
     )
 
 results = run_experiment(
-	"geography-experiment",
-	dataset=get_dataset(name="countries"),
-	prompt_template=prompt_template,
-	# Optional
-	prompt_settings={
-		"max_tokens": 256,
-		"model_alias": "GPT-4o", # Make sure you have an integration set up for the model alias you're using
-		"temperature": 0.8
-	},
-	metrics=["correctness"],
-	project=project
+    "geography-experiment",
+    dataset=get_dataset(name="countries"),
+    prompt_template=prompt_template,
+    # Optional
+    prompt_settings={
+        "max_tokens": 256,
+        "model_alias": "GPT-4o",  # Make sure you have an integration set up for the model alias you're using
+        "temperature": 0.8,
+    },
+    metrics=["correctness"],
+    project=project,
 )

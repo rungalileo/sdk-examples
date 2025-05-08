@@ -9,7 +9,7 @@ Before we dive into the code ocean, make sure you've packed:
 - **Python 3.8+** installed on your system
 - **API Keys** (free options available):
   - OpenAI API key (for agent reasoning)
-  - OpenWeatherMap API key (for weather data)
+  - WeatherAPI key (for weather data)
   - YouTube API key (for video recommendations)
   - Galileo API key (for monitoring and evaluation)
 - **Development Environment**:
@@ -32,7 +32,7 @@ By completing this tutorial, you will:
 
 1. **Build a Multi-Function AI Agent**: Create an agent that combines multiple tools and APIs
 2. **Implement API Integrations**:
-   - Weather data retrieval from OpenWeatherMap
+   - Weather data retrieval from WeatherAPI
    - Video recommendations from YouTube
    - AI-based recommendations using OpenAI
 3. **Use Galileo for Agent Evaluation**:
@@ -101,7 +101,7 @@ By completing this tutorial, you will:
    Create a `.env` file in the project root:
    ```
    OPENAI_API_KEY=your_openai_key
-   OPENWEATHER_API_KEY=your_openweather_key
+   WEATHERAPI_KEY=your_weatherapi_key
    YOUTUBE_API_KEY=your_youtube_key
    GALILEO_API_KEY=your_galileo_key
    GALILEO_LOG_STREAM=weather_vibes_agent

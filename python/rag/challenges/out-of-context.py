@@ -13,6 +13,7 @@ galileo_context.init(project="out-of-context", log_stream="dev")
 # Initialize OpenAI client
 client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
+
 @log(span_type="retriever")
 def retrieve_documents(query: str):
     """
@@ -28,8 +29,8 @@ def retrieve_documents(query: str):
                     "id": "doc1",
                     "source": "travel_guide",
                     "category": "landmarks",
-                    "relevance": "high"
-                }
+                    "relevance": "high",
+                },
             }
         ],
         "python language": [
@@ -39,19 +40,21 @@ def retrieve_documents(query: str):
                     "id": "doc1",
                     "source": "programming_guide",
                     "category": "languages",
-                    "relevance": "high"
-                }
+                    "relevance": "high",
+                },
             }
         ],
         "climate change": [
             {
-                "content": "Climate change refers to long-term shifts in temperatures and weather patterns. Human activities have been the main driver of climate change since the 1800s.",
+                "content": (
+                    "Climate change refers to long-term shifts in temperatures and weather patterns. Human activities have been the main driver of climate change since the 1800s."
+                ),
                 "metadata": {
                     "id": "doc1",
                     "source": "environmental_science",
                     "category": "global_issues",
-                    "relevance": "high"
-                }
+                    "relevance": "high",
+                },
             }
         ],
         "artificial intelligence": [
@@ -61,8 +64,8 @@ def retrieve_documents(query: str):
                     "id": "doc1",
                     "source": "technology_overview",
                     "category": "ai",
-                    "relevance": "high"
-                }
+                    "relevance": "high",
+                },
             }
         ],
         "quantum computing": [
@@ -72,12 +75,12 @@ def retrieve_documents(query: str):
                     "id": "doc1",
                     "source": "computing_technology",
                     "category": "quantum",
-                    "relevance": "high"
-                }
+                    "relevance": "high",
+                },
             }
-        ]
+        ],
     }
-    
+
     # Default case for queries not in our predefined list
     default_docs = [
         {
@@ -86,17 +89,18 @@ def retrieve_documents(query: str):
                 "id": "default_doc",
                 "source": "general_knowledge",
                 "category": "miscellaneous",
-                "relevance": "low"
-            }
+                "relevance": "low",
+            },
         }
     ]
-    
+
     # Find the most relevant predefined query
     for key in incomplete_contexts:
         if key in query.lower():
             return incomplete_contexts[key]
-    
+
     return default_docs
+
 
 @log(name="rag_with_hallucination")
 def rag_with_hallucination(query: str):
@@ -105,7 +109,7 @@ def rag_with_hallucination(query: str):
     a system prompt that doesn't properly constrain the model.
     """
     documents = retrieve_documents(query)
-    
+
     # Format documents for better readability in the prompt
     formatted_docs = ""
     for i, doc in enumerate(documents):
@@ -127,12 +131,13 @@ def rag_with_hallucination(query: str):
             model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are a helpful assistant."},
-                {"role": "user", "content": weak_prompt}
+                {"role": "user", "content": weak_prompt},
             ],
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
         return f"Error generating response: {str(e)}"
+
 
 @log(name="rag_with_constraint")
 def rag_with_constraint(query: str):
@@ -141,7 +146,7 @@ def rag_with_constraint(query: str):
     by using a stronger system prompt and explicit instructions.
     """
     documents = retrieve_documents(query)
-    
+
     # Format documents for better readability in the prompt
     formatted_docs = ""
     for i, doc in enumerate(documents):
@@ -166,82 +171,84 @@ def rag_with_constraint(query: str):
         response = client.chat.completions.create(
             model="gpt-4o",
             messages=[
-                {"role": "system", "content": "You are a helpful assistant that ONLY answers based on the provided context. Never use external knowledge."},
-                {"role": "user", "content": strong_prompt}
+                {
+                    "role": "system",
+                    "content": "You are a helpful assistant that ONLY answers based on the provided context. Never use external knowledge.",
+                },
+                {"role": "user", "content": strong_prompt},
             ],
         )
         return response.choices[0].message.content.strip()
     except Exception as e:
         return f"Error generating response: {str(e)}"
 
+
 @log
 def main():
     print("Out-of-Context RAG Demo")
     print("This demo shows how RAG systems can generate out-of-context information and how to prevent it.")
-    
+
     # Check environment setup
     if logging_enabled:
         print("Galileo logging is enabled")
     else:
         print("Galileo logging is disabled")
-    
+
     api_key = os.environ.get("OPENAI_API_KEY")
     if not api_key:
         print("OpenAI API Key is missing")
         return
-    
+
     # Suggested queries
     suggested_queries = [
         "When was the Eiffel Tower completed?",
         "Who created the Python language and when?",
         "What are the main effects of climate change?",
         "When was artificial intelligence first developed?",
-        "How many qubits are in the most powerful quantum computer?"
+        "How many qubits are in the most powerful quantum computer?",
     ]
-    
+
     print("\nSuggested queries (these will demonstrate the problem):")
     for i, q in enumerate(suggested_queries):
         print(f"{i+1}. {q}")
-    
+
     # Main interaction loop
     while True:
         try:
             # Get user query
             query = questionary.text(
                 "Enter your question (or type a number 1-5 to use a suggested query):",
-                validate=lambda text: len(text) > 0
+                validate=lambda text: len(text) > 0,
             ).ask()
-            
-            if query.lower() in ['exit', 'quit', 'q']:
+
+            if query.lower() in ["exit", "quit", "q"]:
                 break
-                
+
             # Check if user entered a number for suggested queries
             if query.isdigit() and 1 <= int(query) <= len(suggested_queries):
-                query = suggested_queries[int(query)-1]
+                query = suggested_queries[int(query) - 1]
                 print(f"Using query: {query}")
-            
+
             # Generate both types of responses
             hallucinated_result = rag_with_hallucination(query)
             constrained_result = rag_with_constraint(query)
-            
+
             # Display the responses
             print("\nUnconstrained Response (Prone to Out-of-Context Information):")
             print(hallucinated_result)
-            
+
             print("\nConstrained Response (Limited to Context):")
             print(constrained_result)
-            
+
             # Ask if user wants to continue
-            continue_session = questionary.confirm(
-                "Do you want to ask another question?",
-                default=True
-            ).ask()
-            
+            continue_session = questionary.confirm("Do you want to ask another question?", default=True).ask()
+
             if not continue_session:
                 break
-                
+
         except Exception as e:
             print(f"Error: {str(e)}")
+
 
 if __name__ == "__main__":
     try:

@@ -4,3 +4,4 @@ venv
 scrap/
 *node_modules/
 .cursorrules
+.DS_Store

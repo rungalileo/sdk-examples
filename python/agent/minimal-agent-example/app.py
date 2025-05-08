@@ -138,10 +138,7 @@ def get_weather_forecast(destination: str) -> str:
 # LLM call: Generate a destination overview.
 # =============================================================================
 def generate_destination_overview(destination: str) -> str:
-    prompt = (
-        f"Provide a brief overview of {destination}, including its top attractions, "
-        "cultural highlights, and essential travel tips."
-    )
+    prompt = f"Provide a brief overview of {destination}, including its top attractions, " "cultural highlights, and essential travel tips."
     # Call the OpenAI API (assuming proper API key configuration)
     response = client.chat.completions.create(
         model="gpt-4o-mini",
@@ -173,12 +170,8 @@ Important:
 # =============================================================================
 # LLM call: Estimate a travel budget.
 # =============================================================================
-def estimate_travel_budget(
-    destination: str, days: int, itinerary: str | None = None
-) -> str:
-    itinerary_prompt = (
-        f"\n\nHere is the itinerary:\n\n {itinerary}" if itinerary else ""
-    )
+def estimate_travel_budget(destination: str, days: int, itinerary: str | None = None) -> str:
+    itinerary_prompt = f"\n\nHere is the itinerary:\n\n {itinerary}" if itinerary else ""
     prompt = (
         f"Estimate a travel budget for a {days}-day trip to {destination} that covers accommodation, "
         "food, transportation, and activities. Provide a rough breakdown of the costs (in USD)."
@@ -238,35 +231,17 @@ Important:
 
         if function_name == "generate_destination_overview":
             destination_overview_request = DestinationOverviewRequest(**function_args)
-            info_callback(
-                f"Generating a destination overview for {destination_overview_request.destination}..."
-            )
-            destination_overview = (
-                destination_overview
-                + "\n"
-                + generate_destination_overview(
-                    destination_overview_request.destination
-                )
-            )
+            info_callback(f"Generating a destination overview for {destination_overview_request.destination}...")
+            destination_overview = destination_overview + "\n" + generate_destination_overview(destination_overview_request.destination)
 
         elif function_name == "generate_itinerary":
             itinerary_request = ItineraryRequest(**function_args)
-            info_callback(
-                f"Generating an itinerary for {itinerary_request.destination}..."
-            )
-            itinerary = (
-                itinerary
-                + "\n"
-                + generate_itinerary(
-                    itinerary_request.destination, itinerary_request.days
-                )
-            )
+            info_callback(f"Generating an itinerary for {itinerary_request.destination}...")
+            itinerary = itinerary + "\n" + generate_itinerary(itinerary_request.destination, itinerary_request.days)
 
         elif function_name == "estimate_travel_budget":
             budget_request = BudgetRequest(**function_args)
-            info_callback(
-                f"Generating a travel budget for {budget_request.destination}..."
-            )
+            info_callback(f"Generating a travel budget for {budget_request.destination}...")
             budget = (
                 budget
                 + "\n"
@@ -279,9 +254,7 @@ Important:
 
         elif function_name == "get_weather_forecast":
             weather_request = WeatherRequest(**function_args)
-            info_callback(
-                f"Generating a weather forecast for {weather_request.destination}..."
-            )
+            info_callback(f"Generating a weather forecast for {weather_request.destination}...")
             weather = weather + "\n" + get_weather_forecast(weather_request.destination)
 
     #

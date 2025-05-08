@@ -17,9 +17,4 @@ except ImportError:
     pass  # Handle the case if the tools aren't ready yet
 
 # Define what's available from this package
-__all__ = [
-    'WeatherVibesAgent',
-    'WeatherTool',
-    'RecommendationsTool',
-    'YouTubeTool'
-] 
+__all__ = ["WeatherVibesAgent", "WeatherTool", "RecommendationsTool", "YouTubeTool"]

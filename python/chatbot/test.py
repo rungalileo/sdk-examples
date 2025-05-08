@@ -11,7 +11,10 @@ load_dotenv()
 logger = GalileoLogger(project="chatbot", log_stream="test")
 
 # Initialize the standard OpenAI client
-client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY"), organization=os.environ.get("OPENAI_ORGANIZATION"))
+client = openai.OpenAI(
+    api_key=os.environ.get("OPENAI_API_KEY"),
+    organization=os.environ.get("OPENAI_ORGANIZATION"),
+)
 
 # Start a trace
 # prompt = f"Explain the following topic succinctly: Newton's First Law"
@@ -45,7 +48,7 @@ logger.add_llm_span(
     duration_ns=end_time - start_time,
     num_input_tokens=response.usage.prompt_tokens,
     num_output_tokens=response.usage.completion_tokens,
-    total_tokens=response.usage.total_tokens
+    total_tokens=response.usage.total_tokens,
 )
 
 # Conclude the trace
