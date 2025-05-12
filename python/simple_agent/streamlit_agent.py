@@ -234,23 +234,26 @@ def create_schema_preserving_wrapper(tool_name, tool_description, args_schema, m
         try:
             async def run_tool():
                 # Create a new client
-                client = MultiServerMCPClient({
-                    "math": {
-                        "command": "python",
-                        "args": [math_server_path],
-                        "transport": "stdio",
-                    },
-                    "weather": {
-                        "url": "http://localhost:8000/sse",
-                        "transport": "sse",
-                    }
-                })
-                
+                client = None
                 try:
+                    client = MultiServerMCPClient({
+                        "math": {
+                            "command": "python",
+                            "args": [math_server_path],
+                            "transport": "stdio",
+                        },
+                        "weather": {
+                            "url": "http://localhost:8000/sse",
+                            "transport": "sse",
+                        }
+                    })
+                    
                     # Start the client
                     await client.__aenter__()
+                    
                     # Get tools
                     tools = client.get_tools()
+                    
                     # Find matching tool
                     for tool in tools:
                         if tool.name == tool_name:
@@ -258,13 +261,37 @@ def create_schema_preserving_wrapper(tool_name, tool_description, args_schema, m
                             result = await tool.ainvoke(input=input_dict)
                             return result
                     return f"Tool {tool_name} not found"
+                except Exception as e:
+                    print(f"Error in async execution: {e}")
+                    return f"Error: {str(e)}"
                 finally:
-                    pass
+                    # Properly close the client if it was created
+                    if client is not None:
+                        try:
+                            await client.__aexit__(None, None, None)
+                        except Exception as e:
+                            print(f"Error closing client: {e}")
             
-            return loop.run_until_complete(run_tool())
+            # Use a timeout to prevent hanging
+            return loop.run_until_complete(asyncio.wait_for(run_tool(), timeout=10.0))
+        except asyncio.TimeoutError:
+            return f"Error: Tool {tool_name} execution timed out"
         except Exception as e:
+            print(f"Error in sync wrapper: {e}")
             return f"Error executing {tool_name}: {str(e)}"
         finally:
+            # Clean up pending tasks
+            pending_tasks = asyncio.all_tasks(loop)
+            for task in pending_tasks:
+                task.cancel()
+            
+            # Run the event loop a bit more to process cancellations
+            try:
+                loop.run_until_complete(asyncio.gather(*pending_tasks, return_exceptions=True))
+            except Exception:
+                pass
+                
+            # Finally close the loop
             loop.close()
     
     # Use StructuredTool with the original schema
