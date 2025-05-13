@@ -391,15 +391,22 @@ def handle_human_assistance():
 def handle_user_input():
     """Handle normal user input and agent response."""
     user_input = st.chat_input("Ask the AI assistant...")
-    if user_input:
-        # Add user message to chat history
+    
+    if user_input and "last_input" not in st.session_state:
+        # Store the current user input for processing
+        st.session_state.last_input = user_input
+        # Add to message history
         st.session_state.messages.append(HumanMessage(content=user_input))
+        # Force rerun to show the user message immediately
+        st.rerun()
+    
+    # Process any stored input after displaying history
+    if "last_input" in st.session_state:
+        user_input = st.session_state.last_input
+        # Remove from session state to prevent reprocessing
+        del st.session_state.last_input
         
-        # Display user message
-        with st.chat_message("user"):
-            st.write(user_input)
-        
-        # Process agent response
+        # Now process the agent response
         with st.chat_message("assistant"):
             response_placeholder = st.empty()
             
@@ -410,12 +417,21 @@ def handle_user_input():
                 stream_mode="values",
             )
             
+            ai_message = None
             for event in events:
                 if "messages" in event:
                     ai_message = event["messages"][-1]
                     response_placeholder.write(ai_message.content)
-                    # Store the message
-                    st.session_state.messages.append(ai_message)
+            
+            if ai_message:
+                # Store the message
+                st.session_state.messages.append(ai_message)
+                
+                # Display tool calls if present
+                if hasattr(ai_message, "tool_calls") and ai_message.tool_calls:
+                    with st.expander("Tool calls"):
+                        for tool_call in ai_message.tool_calls:
+                            st.code(f"Tool: {tool_call['name']}\nArgs: {tool_call['args']}")
             
             # Check if we hit an interrupt
             snapshot = st.session_state.agent.get_state(st.session_state.config)
@@ -430,13 +446,16 @@ def handle_user_input():
                                 st.session_state.human_query = tool_call["args"]["query"]
                                 break
                 
-                # If waiting for human input, force a rerun to show the input form
+                # If waiting for human input, force a rerun
                 if st.session_state.waiting_for_human:
                     st.rerun()
 
 
 def display_chat_history():
     """Display all messages in the chat history."""
+    if not st.session_state.messages:
+        return
+        
     for message in st.session_state.messages:
         if isinstance(message, HumanMessage):
             with st.chat_message("user"):
@@ -444,11 +463,6 @@ def display_chat_history():
         elif isinstance(message, AIMessage):
             with st.chat_message("assistant"):
                 st.write(message.content)
-                # Display tool calls if present
-                if hasattr(message, "tool_calls") and message.tool_calls:
-                    with st.expander("Tool calls"):
-                        for tool_call in message.tool_calls:
-                            st.code(f"Tool: {tool_call['name']}\nArgs: {tool_call['args']}")
 
 
 def main():
