@@ -134,7 +134,6 @@ def main(galileo_callback):
 
 
 if __name__ == "__main__":
-    # Set up environment variables
     os.environ["GALILEO_PROJECT"] = "langgraph-demo1-test"
     os.environ["GALILEO_LOG_STREAM"] = "dev"
 
