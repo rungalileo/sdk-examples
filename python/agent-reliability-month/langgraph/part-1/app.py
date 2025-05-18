@@ -73,10 +73,13 @@ def display_chat_history():
         elif isinstance(message, AIMessage):
             with st.chat_message("assistant"):
                 st.write(message.content)
+        else:
+            print("!!!!!! OTHER MESSAGE TYPE:")
+            print(message)
 
 
 
-def main(galileo_callback):
+def main(galileo_callback, session_name="Custom session name"):
     """Main function for the Streamlit app."""
 
     # Streamlit app title
@@ -85,13 +88,14 @@ def main(galileo_callback):
     # Initialize session state for chat history
     if "messages" not in st.session_state:
         st.session_state.messages = []
+    if "agent_initialized" not in st.session_state:
         st.session_state.agent_initialized = False
 
     # Initialize the agent if not already done
     if not st.session_state.agent_initialized:
         with st.spinner("Initializing AI agent..."):
             galileo_context = GalileoDecorator()
-            galileo_context.start_session(name="Test Chat")
+            galileo_context.start_session(name=session_name)
 
             tavily_tool = TavilySearch(max_results=2)
             all_tools = [tavily_tool, assess_disruption_risk, check_supplier_compliance]
@@ -139,4 +143,4 @@ if __name__ == "__main__":
 
     galileo_v2_callback = GalileoCallback()
     
-    main(galileo_v2_callback)
+    main(galileo_v2_callback, session_name="Test Chat- 4 turn: v1")
