@@ -7,7 +7,6 @@ from typing import Annotated, Dict, List, Any, Tuple
 
 from typing_extensions import TypedDict
 
-from langchain.chat_models import init_chat_model
 from langchain_tavily import TavilySearch
 from langchain_mcp_adapters.client import MultiServerMCPClient
 from langchain_core.tools import BaseTool, Tool, tool
@@ -16,8 +15,10 @@ from langchain_core.messages import AIMessage, HumanMessage
 from langgraph.graph import StateGraph, START, END
 from langgraph.graph.message import add_messages
 from langgraph.checkpoint.memory import MemorySaver
-from langgraph.types import interrupt, Command
+from langgraph.types import Command
 from langgraph.prebuilt import ToolNode, tools_condition
+
+from langchain_openai import ChatOpenAI
 
 
 def create_standalone_tool_wrapper(tool_name, tool_description, math_server_path, weather_server_path):
@@ -157,7 +158,7 @@ async def setup_mcp(math_server_path: str, weather_server_path: str):
     return client, async_mcp_tools
 
 
-def initialize_agent():
+def initialize_agent(callbacks=[]):
     """Initialize the agent with all tools."""
     @tool
     def human_assistance(query: str) -> str:
@@ -206,7 +207,7 @@ def initialize_agent():
     all_tools = [tavily_tool, human_assistance] + mcp_tools
     
     # Create the agent
-    graph, config = create_agent(all_tools)
+    graph, config = create_agent(all_tools, callbacks=callbacks)
     
     return graph, all_tools, config
 
@@ -313,7 +314,7 @@ def create_schema_preserving_wrapper(tool_name, tool_description, args_schema, m
         )
 
 
-def create_agent(tools: List[BaseTool]) -> Tuple[Any, Dict]:
+def create_agent(tools: List[BaseTool], callbacks=[]) -> Tuple[Any, Dict]:
     """Create the LangGraph agent with the specified tools."""
     # Define the state type
     class State(TypedDict):
@@ -324,7 +325,8 @@ def create_agent(tools: List[BaseTool]) -> Tuple[Any, Dict]:
     memory = MemorySaver()
 
     # Initialize LLM
-    llm = init_chat_model("openai:gpt-4.1-mini")
+    # llm = init_chat_model("openai:gpt-4.1-mini")
+    llm = ChatOpenAI(model="gpt-3.5-turbo", callbacks=callbacks)
     llm_with_tools = llm.bind_tools(tools)
 
     # Define chatbot node
@@ -465,12 +467,37 @@ def display_chat_history():
                 st.write(message.content)
 
 
+
 def main():
     """Main function for the Streamlit app."""
     # Set up environment variables
     os.environ["GALILEO_PROJECT"] = "demo-simple-agent-langgraph"
     os.environ["GALILEO_LOG_STREAM"] = "dev"
     os.environ["LANGCHAIN_PROJECT"] = "galileo-demo-simple-agent-langgraph"
+
+    from galileo.handlers.langchain import GalileoCallback
+    from galileo import GalileoDecorator
+
+    os.environ["GALILEO_PROJECT"] = "sessions-demo"
+    os.environ["GALILEO_LOG_STREAM"]="dev"
+
+    os.environ["LANGCHAIN_PROJECT"]="galileo-sessions-demo"
+
+    # Create a callback with the custom logger
+    galileo_v2_callback = GalileoCallback(
+        start_new_trace=True,   # Whether to start a new trace for each chain
+        flush_on_chain_end=True # Whether to flush traces when chains end
+    )
+    galileo_context = GalileoDecorator()
+
+    galileo_context.start_session(name="Test Chat")
+
+    from braintrust import init_logger
+    from braintrust_langchain import BraintrustCallbackHandler
+
+    init_logger(project="Sessions Demo", api_key=os.environ.get("BRAINTRUST_API_KEY"))
+    braintrust_callback = BraintrustCallbackHandler()
+
 
     # Streamlit app title
     st.title("LangGraph AI Agent")
@@ -485,7 +512,7 @@ def main():
     # Initialize the agent if not already done
     if not st.session_state.agent_initialized:
         with st.spinner("Initializing AI agent..."):
-            st.session_state.agent, st.session_state.tools, st.session_state.config = initialize_agent()
+            st.session_state.agent, st.session_state.tools, st.session_state.config = initialize_agent(callbacks=[galileo_v2_callback, braintrust_callback])
             st.session_state.agent_initialized = True
 
     # Display chat history
