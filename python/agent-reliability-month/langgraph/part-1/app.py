@@ -6,7 +6,7 @@ from typing import Annotated, Dict, List, Any, Tuple
 from typing_extensions import TypedDict
 
 from galileo.handlers.langchain import GalileoCallback
-from galileo import GalileoDecorator
+from galileo import galileo_context
 
 from langchain_tavily import TavilySearch
 from langchain_core.tools import BaseTool
@@ -79,7 +79,7 @@ def display_chat_history():
 
 
 
-def main(galileo_callback, session_name="Custom session name"):
+def main(session_name="Custom session name"):
     """Main function for the Streamlit app."""
 
     # Streamlit app title
@@ -94,14 +94,14 @@ def main(galileo_callback, session_name="Custom session name"):
     # Initialize the agent if not already done
     if not st.session_state.agent_initialized:
         with st.spinner("Initializing AI agent..."):
-            galileo_context = GalileoDecorator()
+            galileo_context.start_session(name=session_name)
             galileo_context.start_session(name=session_name)
 
             tavily_tool = TavilySearch(max_results=2)
             all_tools = [tavily_tool, assess_disruption_risk, check_supplier_compliance]
             # Create the agent
             st.session_state.agent, st.session_state.config = create_agent(
-                all_tools, callbacks=[galileo_callback]
+                all_tools, callbacks=[GalileoCallback()]
             )
             st.session_state.tools = all_tools
             st.session_state.agent_initialized = True
@@ -140,7 +140,4 @@ def main(galileo_callback, session_name="Custom session name"):
 if __name__ == "__main__":
     os.environ["GALILEO_PROJECT"] = "langgraph-demo1-test"
     os.environ["GALILEO_LOG_STREAM"] = "dev"
-
-    galileo_v2_callback = GalileoCallback()
-    
-    main(galileo_v2_callback, session_name="Test Chat- 4 turn: v1")
+    main(session_name="Test Chat- 4 turn: v2")
