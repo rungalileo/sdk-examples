@@ -4,10 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+pydantic = "*"
 
 [dev-packages]
-ipykernel = "*"
-ipython = "*"
 
 [requires]
 python_version = "3.13"

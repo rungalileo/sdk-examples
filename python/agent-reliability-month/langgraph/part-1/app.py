@@ -95,7 +95,6 @@ def main(session_name="Custom session name"):
     if not st.session_state.agent_initialized:
         with st.spinner("Initializing AI agent..."):
             galileo_context.start_session(name=session_name)
-            galileo_context.start_session(name=session_name)
 
             tavily_tool = TavilySearch(max_results=2)
             all_tools = [tavily_tool, assess_disruption_risk, check_supplier_compliance]
@@ -140,4 +139,4 @@ def main(session_name="Custom session name"):
 if __name__ == "__main__":
     os.environ["GALILEO_PROJECT"] = "langgraph-demo1-test"
     os.environ["GALILEO_LOG_STREAM"] = "dev"
-    main(session_name="Test Chat- 4 turn: v2")
+    main(session_name="Test Chat- 4 turn: v5")
