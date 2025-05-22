@@ -7,6 +7,10 @@ name = "pypi"
 pydantic = "*"
 
 [dev-packages]
+graphviz = "*"
+networkx = "*"
+matplotlib = "*"
+pyvis = "*"
 
 [requires]
 python_version = "3.13"
