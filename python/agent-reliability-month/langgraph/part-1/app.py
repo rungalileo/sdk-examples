@@ -1,50 +1,45 @@
 import os
+import time
+from typing import Annotated
+
 import streamlit as st
 from dotenv import load_dotenv
-from typing import Annotated, Dict, List, Any, Tuple
-
-from typing_extensions import TypedDict
-
-from galileo.handlers.langchain import GalileoCallback
 from galileo import galileo_context
-
-from langchain_tavily import TavilySearch
-from langchain_core.tools import BaseTool
+from galileo.handlers.langchain import GalileoCallback
 from langchain_core.messages import AIMessage, HumanMessage
+from langchain_core.runnables import RunnableConfig
 from langchain_openai import ChatOpenAI
-
+from langchain_tavily import TavilySearch
 from langgraph.graph import StateGraph, START
 from langgraph.graph.message import add_messages
+from langgraph.graph.state import CompiledStateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
+from typing_extensions import TypedDict
 
 from tools import check_supplier_compliance, assess_disruption_risk
 
 load_dotenv()
+
+TOOLS = [TavilySearch(max_results=2), assess_disruption_risk, check_supplier_compliance]
+llm_with_tools = ChatOpenAI(model="gpt-4").bind_tools(TOOLS)
 
 
 class State(TypedDict):
     messages: Annotated[list, add_messages]
 
 
-def create_agent(tools: List[BaseTool], callbacks: List) -> Tuple[Any, Dict]:
-    """Create the LangGraph agent with the specified tools."""
+def invoke_chatbot(state):
+    """Create an LLM with the specified tools."""
+    message = llm_with_tools.invoke(state["messages"])
+    return {"messages": [message]}
 
-    # Initialize graph builder
+
+def build_graph() -> CompiledStateGraph:
     graph_builder = StateGraph(State)
-
-    # Initialize LLM
-    llm = ChatOpenAI(model="gpt-4", callbacks=callbacks)
-    llm_with_tools = llm.bind_tools(tools)
-
-    # Define chatbot node
-    def chatbot(state: State):
-        message = llm_with_tools.invoke(state["messages"])
-        return {"messages": [message]}
-
-    graph_builder.add_node("chatbot", chatbot)
+    graph_builder.add_node("chatbot", invoke_chatbot)
 
     # Set up tool node
-    tool_node = ToolNode(tools=tools)
+    tool_node = ToolNode(tools=TOOLS)
     graph_builder.add_node("tools", tool_node)
 
     # Set up graph edges
@@ -54,12 +49,7 @@ def create_agent(tools: List[BaseTool], callbacks: List) -> Tuple[Any, Dict]:
     )
     graph_builder.add_edge("tools", "chatbot")
     graph_builder.add_edge(START, "chatbot")
-    
-    # Compile the graph
-    graph = graph_builder.compile()
-    config = {"configurable": {"thread_id": "1"}}
-    
-    return graph, config
+    return graph_builder.compile()
 
 def display_chat_history():
     """Display all messages in the chat history."""
@@ -95,14 +85,11 @@ def main(session_name="Custom session name"):
     if not st.session_state.agent_initialized:
         with st.spinner("Initializing AI agent..."):
             galileo_context.start_session(name=session_name)
-
-            tavily_tool = TavilySearch(max_results=2)
-            all_tools = [tavily_tool, assess_disruption_risk, check_supplier_compliance]
             # Create the agent
-            st.session_state.agent, st.session_state.config = create_agent(
-                all_tools, callbacks=[GalileoCallback()]
-            )
-            st.session_state.tools = all_tools
+            st.session_state.agent = build_graph()
+            RunnableConfig()
+            st.session_state.config = {"configurable": {"thread_id": "1"}, "callbacks": [GalileoCallback()]}
+            st.session_state.tools = TOOLS
             st.session_state.agent_initialized = True
 
     # Display chat history
@@ -139,4 +126,4 @@ def main(session_name="Custom session name"):
 if __name__ == "__main__":
     os.environ["GALILEO_PROJECT"] = "langgraph-demo1-test"
     os.environ["GALILEO_LOG_STREAM"] = "dev"
-    main(session_name="Test Chat- 4 turn: v5")
+    main(session_name=f"Test Chat- {int(time.time())}")
