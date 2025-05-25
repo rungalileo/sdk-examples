@@ -143,7 +143,7 @@ def main(session_name="Custom session name"):
         user_message = HumanMessage(content=user_input)
         st.session_state.messages.append(user_message)
 
-        # Display the user message immediately
+        # Display the user message immediately for better UX
         with st.chat_message("user"):
             st.write(user_input)
 
@@ -159,6 +159,9 @@ def main(session_name="Custom session name"):
                 ai_message = result["messages"][-1]
                 st.session_state.messages.append(ai_message)
                 st.write(ai_message.content)
+
+        # Rerun to display the updated chat history
+        st.rerun()
 
 
 if __name__ == "__main__":
