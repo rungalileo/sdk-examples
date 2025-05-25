@@ -9,6 +9,7 @@ langchain-tavily = "*"
 langgraph = "*"
 langchain-openai = "*"
 galileo = "*"
+pinecone = "*"
 
 [dev-packages]
 
