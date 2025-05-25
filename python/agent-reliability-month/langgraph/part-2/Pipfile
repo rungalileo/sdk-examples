@@ -4,8 +4,16 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+pinecone = "*"
+langchain-pinecone = "*"
+langchain-openai = "*"
+langchain-text-splitters = "*"
+langchain = "*"
+dotenv = "*"
+galileo = "*"
 
 [dev-packages]
+ipywidgets = "*"
 
 [requires]
 python_version = "3.13"

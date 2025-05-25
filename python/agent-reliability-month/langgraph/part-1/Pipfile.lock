@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "d18cc214d38cca17259f150587aaed28aa57b413296052a954c83c738b04c7ac"
+            "sha256": "7a6d129ba29abb654ee7534803db741eb37be5a4368a2b620e4e48518446b9c2"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -1236,6 +1236,23 @@
             ],
             "markers": "python_version >= '3.9'",
             "version": "==11.2.1"
+        },
+        "pinecone": {
+            "hashes": [
+                "sha256:49ff7b0f5be4a2ddec5aaa709758a9f2df56baa58ad46507d081409e246a81ec",
+                "sha256:ce7b0dab3c9f7d81e75b24c13fcbca4a51371e08021faaecaf0cd9a45ca1be6c"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.9' and python_version < '4.0'",
+            "version": "==7.0.1"
+        },
+        "pinecone-plugin-interface": {
+            "hashes": [
+                "sha256:875857ad9c9fc8bbc074dbe780d187a2afd21f5bfe0f3b08601924a61ef1bba8",
+                "sha256:b8e6675e41847333aa13923cc44daa3f85676d7157324682dc1640588a982846"
+            ],
+            "markers": "python_version >= '3.8' and python_version < '4.0'",
+            "version": "==0.0.7"
         },
         "propcache": {
             "hashes": [

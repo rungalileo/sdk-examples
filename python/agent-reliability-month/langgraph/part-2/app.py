@@ -13,7 +13,7 @@ from langgraph.graph import StateGraph, START
 from langgraph.graph.message import add_messages
 from langgraph.graph.state import CompiledStateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
-from supply_chain_rag import rag_search, initialize_supply_chain_rag
+from rag_tool import rag_search, initialize_supply_chain_rag
 from typing_extensions import TypedDict
 
 from tools import check_supplier_compliance, assess_disruption_risk
@@ -133,43 +133,6 @@ def main(session_name="Custom session name"):
 
     # Display chat history
     display_chat_history()
-
-    # Add example queries
-    if not st.session_state.messages:
-        st.markdown("### 💡 Try these example queries:")
-        examples = [
-            "What are the key components of supply chain risk management?",
-            "How do I evaluate supplier performance?",
-            "What are the main transportation modes and their characteristics?",
-            "Check compliance status for supplier SUP001",
-            "Assess disruption risk for semiconductors in Southeast Asia"
-        ]
-
-        for example in examples:
-            if st.button(example, key=f"example_{hash(example)}"):
-                # Add user message to chat history
-                user_message = HumanMessage(content=example)
-                st.session_state.messages.append(user_message)
-
-                # Display the user message immediately
-                with st.chat_message("user"):
-                    st.write(example)
-
-                # Get response from agent
-                with st.chat_message("assistant"):
-                    with st.spinner("Thinking..."):
-                        # Run the agent with the user message
-                        result = st.session_state.agent.invoke(
-                            {"messages": user_message},
-                            config=st.session_state.config
-                        )
-
-                        # Get the latest AI message
-                        ai_message = result["messages"][-1]
-                        st.session_state.messages.append(ai_message)
-                        st.write(ai_message.content)
-
-                st.rerun()
 
     # Add chat input
     user_input = st.chat_input("Ask me anything about supply chain management...")
