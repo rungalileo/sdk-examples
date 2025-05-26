@@ -1,31 +1,18 @@
-import os
-import time
-from typing import Annotated
-
-import streamlit as st
 from dotenv import load_dotenv
-from galileo import galileo_context
-from galileo.handlers.langchain import GalileoCallback
-from langchain_core.messages import AIMessage, HumanMessage
 from langchain_openai import ChatOpenAI
 from langchain_tavily import TavilySearch
 from langgraph.graph import StateGraph, START
-from langgraph.graph.message import add_messages
 from langgraph.graph.state import CompiledStateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
-from rag_tool import rag_search, initialize_supply_chain_rag
-from typing_extensions import TypedDict
 
+from rag_tool import rag_search, initialize_supply_chain_rag
+from shared_state import State
 from tools import check_supplier_compliance, assess_disruption_risk
 
 load_dotenv()
 
 TOOLS = [TavilySearch(max_results=2), assess_disruption_risk, check_supplier_compliance, rag_search]
 llm_with_tools = ChatOpenAI(model="gpt-4").bind_tools(TOOLS)
-
-
-class State(TypedDict):
-    messages: Annotated[list, add_messages]
 
 
 def invoke_chatbot(state):
