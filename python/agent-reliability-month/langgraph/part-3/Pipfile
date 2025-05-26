@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+streamlit = "*"
+galileo = "*"
+dotenv = "*"
+langgraph = "*"
+langchain-tavily = "*"
+langchain-core = "*"
+langchain-openai = "*"
+#pinecone = "*"
+#langchain-pinecone = "*"
+pinecone = "==6.0.2"
+langchain-pinecone = "==0.2.6"
+pinecone-plugin-interface = "==0.0.7"
+
+[dev-packages]
+
+[requires]
+python_version = "3.13"
