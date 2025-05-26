@@ -1,55 +1,15 @@
 import os
 import time
-from typing import Annotated
 
 import streamlit as st
 from dotenv import load_dotenv
 from galileo import galileo_context
 from galileo.handlers.langchain import GalileoCallback
 from langchain_core.messages import AIMessage, HumanMessage
-from langchain_openai import ChatOpenAI
-from langchain_tavily import TavilySearch
-from langgraph.graph import StateGraph, START
-from langgraph.graph.message import add_messages
-from langgraph.graph.state import CompiledStateGraph
-from langgraph.prebuilt import ToolNode, tools_condition
-from rag_tool import rag_search, initialize_supply_chain_rag
-from typing_extensions import TypedDict
 
-from tools import check_supplier_compliance, assess_disruption_risk
+from supply_chain_agent import get_supply_chain_agent
 
 load_dotenv()
-
-TOOLS = [TavilySearch(max_results=2), assess_disruption_risk, check_supplier_compliance, rag_search]
-llm_with_tools = ChatOpenAI(model="gpt-4").bind_tools(TOOLS)
-
-
-class State(TypedDict):
-    messages: Annotated[list, add_messages]
-
-
-def invoke_chatbot(state):
-    """Create an LLM with the specified tools."""
-    message = llm_with_tools.invoke(state["messages"])
-    return {"messages": [message]}
-
-
-def build_graph() -> CompiledStateGraph:
-    graph_builder = StateGraph(State)
-    graph_builder.add_node("chatbot", invoke_chatbot)
-
-    # Set up tool node
-    tool_node = ToolNode(tools=TOOLS)
-    graph_builder.add_node("tools", tool_node)
-
-    # Set up graph edges
-    graph_builder.add_conditional_edges(
-        "chatbot",
-        tools_condition
-    )
-    graph_builder.add_edge("tools", "chatbot")
-    graph_builder.add_edge(START, "chatbot")
-    return graph_builder.compile()
 
 
 def display_chat_history():
@@ -73,11 +33,8 @@ def initialize_agent_with_rag():
     """Initialize the agent and RAG system"""
     with st.spinner("Initializing Supply Chain RAG knowledge base..."):
         try:
-            # Initialize the RAG system first
-            initialize_supply_chain_rag()
-
             # Create the agent
-            agent = build_graph()
+            agent = get_supply_chain_agent()
             config = {
                 "configurable": {"thread_id": "1"},
                 "callbacks": [GalileoCallback()]
@@ -128,7 +85,6 @@ def main(session_name="Custom session name"):
         with st.spinner("Initializing AI agent..."):
             galileo_context.start_session(name=session_name)
             st.session_state.agent, st.session_state.config = initialize_agent_with_rag()
-            st.session_state.tools = TOOLS
             st.session_state.agent_initialized = True
 
     # Display chat history
