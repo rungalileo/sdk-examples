@@ -162,7 +162,7 @@ class SupplyChainRAG:
         retrieval_qa_chat_prompt = hub.pull("langchain-ai/retrieval-qa-chat")
         retriever = self.vectorstore.as_retriever(search_kwargs={"k": 4})
 
-        llm = ChatOpenAI(temperature=0.0, model="gpt-4")
+        llm = ChatOpenAI(temperature=0.0, model="gpt-4", name="Retriever- Supply Chain")
 
         combine_docs_chain = create_stuff_documents_chain(
             llm, retrieval_qa_chat_prompt

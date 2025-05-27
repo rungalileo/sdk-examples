@@ -12,7 +12,7 @@ from tools import check_supplier_compliance, assess_disruption_risk
 load_dotenv()
 
 TOOLS = [TavilySearch(max_results=2), assess_disruption_risk, check_supplier_compliance, rag_search]
-llm_with_tools = ChatOpenAI(model="gpt-4").bind_tools(TOOLS)
+llm_with_tools = ChatOpenAI(model="gpt-4", name="Supply Chain Agent").bind_tools(TOOLS)
 
 
 def invoke_chatbot(state):
