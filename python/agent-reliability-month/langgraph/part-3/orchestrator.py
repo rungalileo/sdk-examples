@@ -26,7 +26,7 @@ def intent_classifier(state: State):
         return {"next_agent": "supply_chain_agent"}
 
     # Use LLM to classify intent
-    classifier_llm = ChatOpenAI(model="gpt-4", temperature=0)
+    classifier_llm = ChatOpenAI(model="gpt-4", temperature=0, name="Classifier LLM")
 
     classification_prompt = f"""
     Analyze this user query and classify which agent(s) should handle it.
@@ -150,7 +150,7 @@ def synthesis_followup(state: State):
         financial_result = ai_messages[-1].content
 
     # Synthesize the results
-    synthesis_llm = ChatOpenAI(model="gpt-4", temperature=0)
+    synthesis_llm = ChatOpenAI(model="gpt-4", temperature=0, name="Synthesis LLM")
 
     synthesis_prompt = f"""
     Synthesize a comprehensive response by combining insights from both specialized agents.

@@ -11,7 +11,7 @@ FINANCIAL_TOOLS = [calculate_tco, analyze_financial_risk, compare_supplier_costs
 
 def get_financial_agent() -> CompiledStateGraph:
     """Create the financial analysis agent"""
-    llm_with_financial_tools = ChatOpenAI(model="gpt-4").bind_tools(FINANCIAL_TOOLS)
+    llm_with_financial_tools = ChatOpenAI(model="gpt-4", name="Financial Agent").bind_tools(FINANCIAL_TOOLS)
 
     def invoke_financial_chatbot(state):
         message = llm_with_financial_tools.invoke(state["messages"])
