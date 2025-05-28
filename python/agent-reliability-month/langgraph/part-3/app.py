@@ -2,14 +2,11 @@ import os
 import time
 
 import streamlit as st
-from dotenv import load_dotenv
 from galileo import galileo_context
 from galileo.handlers.langchain import GalileoCallback
 from langchain_core.messages import AIMessage, HumanMessage
 
 from orchestrator import ModularMultiAgentOrchestrator
-
-load_dotenv()
 
 
 def display_chat_history():
@@ -318,6 +315,6 @@ def main(session_name="Modular Multi-Agent Demo"):
 
 
 if __name__ == "__main__":
-    os.environ["GALILEO_PROJECT"] = "modular-multi-agent-supply-chain"
+    os.environ["GALILEO_PROJECT"] = "sid-multi-agent-v1" # "modular-multi-agent-supply-chain"
     os.environ["GALILEO_LOG_STREAM"] = "dev"
     main(session_name=f"Modular Multi-Agent Demo - {int(time.time())}")
