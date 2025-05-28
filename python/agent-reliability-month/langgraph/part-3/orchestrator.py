@@ -8,6 +8,7 @@ from langgraph.graph import StateGraph, START, END
 from supply_chain_agent import get_supply_chain_agent
 from financial_agent import get_financial_agent
 from shared_state import State
+from translators import multilingual_combination, hindi_translation, spanish_translation
 
 
 def intent_classifier(state: State):
@@ -208,6 +209,13 @@ def get_modular_multi_agent():
     # Add synthesis node
     graph_builder.add_node("synthesis_followup", synthesis_followup)
 
+    # Add translation nodes
+    graph_builder.add_node("spanish_translation", spanish_translation)
+    graph_builder.add_node("hindi_translation", hindi_translation)
+
+    # Add final combination node
+    graph_builder.add_node("multilingual_combination", multilingual_combination)
+
     # Set entry point
     graph_builder.add_edge(START, "intent_classifier")
 
@@ -241,8 +249,15 @@ def get_modular_multi_agent():
     # Financial agent always goes to synthesis
     graph_builder.add_edge("financial_agent", "synthesis_followup")
 
-    # Synthesis goes to end
-    graph_builder.add_edge("synthesis_followup", END)
+    graph_builder.add_edge("synthesis_followup", "spanish_translation")
+    graph_builder.add_edge("synthesis_followup", "hindi_translation")
+
+    # Both translation nodes go to final combination
+    graph_builder.add_edge("spanish_translation", "multilingual_combination")
+    graph_builder.add_edge("hindi_translation", "multilingual_combination")
+
+    # Final combination goes to end
+    graph_builder.add_edge("multilingual_combination", END)
 
     return graph_builder.compile()
 
