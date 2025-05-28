@@ -2,12 +2,14 @@ import os
 import time
 
 import streamlit as st
+from dotenv import load_dotenv
 from galileo import galileo_context
 from galileo.handlers.langchain import GalileoCallback
 from langchain_core.messages import AIMessage, HumanMessage
 
 from orchestrator import ModularMultiAgentOrchestrator
 
+load_dotenv()
 
 def display_chat_history():
     """Display all messages in the chat history with agent attribution."""
@@ -50,7 +52,7 @@ def initialize_modular_orchestrator():
 
 
 def display_system_architecture():
-    """Display the modular system architecture"""
+    """Display the modular system architecture with translation support"""
     with st.sidebar:
         st.header("🏗️ Modular Architecture")
 
@@ -62,6 +64,9 @@ def display_system_architecture():
             - `supply_chain_agent` → Compiled subgraph
             - `financial_agent` → Compiled subgraph  
             - `synthesis_followup` → Combines results
+            - `spanish_translation` → ES translation
+            - `hindi_translation` → HI translation
+            - `multilingual_combination` → Final output
             """)
 
         # Supply Chain Subgraph
@@ -84,17 +89,74 @@ def display_system_architecture():
             - ROI analysis
             """)
 
+        # Translation Fork
+        with st.expander("🌍 Translation Fork", expanded=True):
+            st.markdown("""
+            **Parallel Translation:**
+            - Spanish translation node
+            - Hindi translation node
+            - Multilingual combination
+            - Supports 3 languages total
+            """)
+
         st.header("🔄 Workflow Types")
         st.markdown("""
         **Single Agent Workflows:**
         ```
-        intent_classifier → agent → synthesis
+        intent_classifier → agent → synthesis → [translations] → combination
         ```
 
         **Collaborative Workflows:**
         ```
-        intent_classifier → supply_chain → financial → synthesis
+        intent_classifier → supply_chain → financial → synthesis → [translations] → combination
         ```
+
+        **Translation Fork:**
+        ```
+        synthesis_followup
+        ├── spanish_translation ──┐
+        └── hindi_translation ────┤
+                                  └── multilingual_combination
+        ```
+        """)
+
+
+def display_sidebar_status():
+    """Display updated sidebar status with translation info"""
+    with st.sidebar:
+        st.markdown("---")
+        st.caption("🔧 **System Status**")
+        if st.session_state.orchestrator_initialized:
+            st.success("✅ Modular Orchestrator: Ready")
+            st.success("✅ Supply Chain Subgraph: Loaded")
+            st.success("✅ Financial Subgraph: Loaded")
+            st.success("✅ Intent Classifier: Active")
+            st.success("✅ Translation Fork: Ready")
+            st.info("🌍 Languages: EN, ES, HI")
+        else:
+            st.warning("⏳ System: Initializing...")
+
+        st.markdown("---")
+        st.caption("🧩 **Modular Architecture**")
+        st.code("""
+        Main Orchestrator Graph:
+        ├── intent_classifier
+        ├── supply_chain_agent (subgraph)
+        ├── financial_agent (subgraph)  
+        ├── synthesis_followup
+        ├── spanish_translation
+        ├── hindi_translation
+        └── multilingual_combination
+        """)
+
+        st.markdown("---")
+        st.caption("📊 **Benefits**")
+        st.markdown("""
+        - **Independent Development**: Agents can be developed separately
+        - **Reusable Components**: Subgraphs can be used in other contexts
+        - **Clean Composition**: Clear separation of concerns
+        - **Easy Testing**: Each subgraph can be tested independently
+        - **🆕 Global Accessibility**: Multilingual responses
         """)
 
 
@@ -138,21 +200,79 @@ def display_workflow_info(routing_decision):
     """Display information about the workflow being executed"""
     if routing_decision.get("requires_collaboration", False):
         st.info(f"""
-        🔄 **Multi-Agent Collaborative Workflow**
+        🔄 **Multi-Agent Collaborative Workflow with Translation**
 
-        **Flow:** Intent Classifier → {' → '.join(routing_decision['execution_order'])} → Synthesis
+        **Flow:** Intent Classifier → {' → '.join(routing_decision['execution_order'][:-1])} → Translation Fork → Final Response
 
         Each agent runs as an independent compiled subgraph within the main orchestrator.
+        Final response will be provided in English, Spanish, and Hindi.
         """)
     else:
         agent_name = routing_decision.get("primary_agent", "unknown").replace("_agent", "")
         st.info(f"""
-        🎯 **Single Agent Workflow**
+        🎯 **Single Agent Workflow with Translation**
 
-        **Flow:** Intent Classifier → {agent_name.title()} Agent → Synthesis
+        **Flow:** Intent Classifier → {agent_name.title()} Agent → Translation Fork → Multilingual Response
 
-        Direct routing to specialized subgraph.
+        Direct routing to specialized subgraph with multilingual output.
         """)
+
+
+def get_welcome_message():
+    """Get the updated welcome message with translation info"""
+    return AIMessage(content="""
+    Welcome to the Modular Multi-Agent Supply Chain System! 🧩🌍
+
+    **Architecture Highlights:**
+    - **Modular Design**: Each agent is an independent compiled subgraph
+    - **Intelligent Routing**: Intent classifier routes queries to appropriate agents  
+    - **Flexible Composition**: Subgraphs are composed as nodes in the main orchestrator
+    - **Context Sharing**: Agents collaborate when needed while maintaining independence
+    - **🆕 Multilingual Output**: All responses provided in English, Spanish, and Hindi
+
+    **Available Agents:**
+    - 📦 **Supply Chain Agent**: Risk assessment, compliance, operational analysis
+    - 💰 **Financial Agent**: Cost analysis, TCO calculations, financial risk assessment
+    - 🌍 **Translation Fork**: Automatic translation to Spanish and Hindi
+
+    **Response Languages:**
+    - 🇺🇸 English (Original)
+    - 🇪🇸 Spanish (Español)  
+    - 🇮🇳 Hindi (हिंदी)
+
+    Ask me anything, and I'll automatically route to the right agent(s) and provide multilingual results!
+    """)
+
+
+def show_multilingual_progress():
+    """Show progress for multilingual workflows"""
+    progress_bar = st.progress(0)
+    status_text = st.empty()
+
+    steps = [
+        "Intent Classification",
+        "Supply Chain Analysis",
+        "Financial Analysis",
+        "Synthesis",
+        "Spanish Translation",
+        "Hindi Translation",
+        "Multilingual Combination"
+    ]
+
+    for i, step in enumerate(steps):
+        progress = (i + 1) / len(steps)
+        progress_bar.progress(progress)
+
+        if step in ["Spanish Translation", "Hindi Translation"]:
+            status_text.text(f"🌍 {step}...")
+        else:
+            status_text.text(f"🧩 {step}...")
+
+        time.sleep(0.6)
+
+    # Clear progress indicators
+    progress_bar.empty()
+    status_text.empty()
 
 
 def main(session_name="Modular Multi-Agent Demo"):
@@ -317,4 +437,5 @@ def main(session_name="Modular Multi-Agent Demo"):
 if __name__ == "__main__":
     os.environ["GALILEO_PROJECT"] = "sid-multi-agent-v1" # "modular-multi-agent-supply-chain"
     os.environ["GALILEO_LOG_STREAM"] = "dev"
+    print(os.environ["GALILEO_API_KEY"])
     main(session_name=f"Modular Multi-Agent Demo - {int(time.time())}")
