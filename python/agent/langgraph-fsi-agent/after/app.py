@@ -12,16 +12,13 @@ from langchain_core.messages import HumanMessage, AIMessage
 
 from dotenv import load_dotenv
 
-from galileo import GalileoLogger, galileo_context
+from galileo import galileo_context
 from galileo.handlers.langchain import GalileoAsyncCallback
 
 from src.galileo_langgraph_fsi_agent.agents.supervisor_agent import create_supervisor_agent
 
 # Load environment variables from .env file
 load_dotenv()
-
-# Initialize the Galileo logger
-galileo_logger = GalileoLogger()
 
 
 # Build the agent graph
