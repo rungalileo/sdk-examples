@@ -1,0 +1,26 @@
+[project]
+name = "galileo-langgraph-fsi-agent"
+version = "0.1.0"
+description = "A demo langgraph Financial Services agent with Galileo evaluations"
+license = "MIT"
+requires-python = ">=3.11"
+dependencies = [
+  "chainlit~=2.5.5",
+  "galileo~=0.10",
+  "grandalf>=0.8",
+  "langchain-community>=0.3.24",
+  "langchain-pinecone>=0.2.6",
+  "langchain[openai]~=0.3.18",
+  "langgraph~=0.4.7",
+  "langgraph-supervisor>=0.0.26",
+  "pinecone[asyncio]>=6.0.2",
+  "python-dotenv>=1.1.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.11.11",
+]
+
+[tool.ruff]
+line-length = 120

@@ -1,0 +1,35 @@
+from langgraph_supervisor import create_supervisor
+from langchain.chat_models import init_chat_model
+
+from .credit_card_information_agent import create_credit_card_information_agent
+
+# Define the agents that the supervisor will manage
+credit_card_information_agent = create_credit_card_information_agent()
+
+
+def create_supervisor_agent():
+    """
+    Create a supervisor agent that manages all the agents in the Brahe Bank application.
+    """
+    bank_supervisor_agent = create_supervisor(
+        model=init_chat_model("openai:gpt-4.1-mini"),
+        agents=[credit_card_information_agent],
+        prompt=(
+            """
+            You are a supervisor managing the following agents:
+            - a credit card information agent. Assign any tasks related to information about credit cards to this agent
+            Otherwise, only respond with 'I don't know' or 'I cannot answer that question'.
+            If you need to ask the user for more information, do so in a concise manner.
+            """
+        ),
+        add_handoff_back_messages=True,
+        output_mode="full_history",
+        supervisor_name="brahe-bank-supervisor-agent",
+    ).compile()
+    bank_supervisor_agent.name = "brahe-bank-supervisor-agent"
+
+    # Uncomment the following lines to print the compiled graph to the console in Mermaid format
+    # print("Compiled Bank Supervisor Agent Graph:")
+    # print(bank_supervisor_agent.get_graph().draw_mermaid())
+
+    return bank_supervisor_agent
