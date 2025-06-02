@@ -101,9 +101,7 @@ def upload_to_pinecone(chunked_docs, index_name: str, force_upload: bool = False
 
     # Create vector store and upload
     print(f"Uploading {len(chunked_docs)} chunks to Pinecone...")
-    vector_store = PineconeVectorStore.from_documents(
-        documents=chunked_docs, embedding=EMBEDDINGS, index_name=index_name
-    )
+    vector_store = PineconeVectorStore.from_documents(documents=chunked_docs, embedding=EMBEDDINGS, index_name=index_name)
 
     print(f"Successfully uploaded {len(chunked_docs)} document chunks to Pinecone")
     return vector_store
@@ -122,13 +120,7 @@ def test_retrieval(index_name: str, query: str):
         print(f"\n{i}. {doc.page_content[:200]}...")
 
 
-bank_documents = [
-    {
-        "index_name": "credit-card-information",
-        "path": "source-docs/credit-cards",
-        "test_query": "credit card"
-    }
-]
+bank_documents = [{"index_name": "credit-card-information", "path": "source-docs/credit-cards", "test_query": "credit card"}]
 
 
 async def main():
