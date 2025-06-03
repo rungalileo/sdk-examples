@@ -51,148 +51,21 @@ def initialize_modular_orchestrator():
             st.stop()
 
 
-def display_system_architecture():
-    """Display the modular system architecture with translation support"""
-    with st.sidebar:
-        st.header("🏗️ Modular Architecture")
-
-        # System Overview
-        with st.expander("📋 System Components", expanded=True):
-            st.markdown("""
-            **Main Orchestrator Graph:**
-            - `intent_classifier` → Routes queries
-            - `supply_chain_agent` → Compiled subgraph
-            - `financial_agent` → Compiled subgraph  
-            - `synthesis_followup` → Combines results
-            - `spanish_translation` → ES translation
-            - `hindi_translation` → HI translation
-            - `multilingual_combination` → Final output
-            """)
-
-        # Supply Chain Subgraph
-        with st.expander("📦 Supply Chain Subgraph"):
-            st.markdown("""
-            **Independent LangGraph:**
-            - Risk assessment tools
-            - Compliance checking
-            - RAG knowledge base
-            - Web search capabilities
-            """)
-
-        # Financial Subgraph
-        with st.expander("💰 Financial Subgraph"):
-            st.markdown("""
-            **Independent LangGraph:**
-            - TCO calculations
-            - Financial risk analysis
-            - Cost comparisons
-            - ROI analysis
-            """)
-
-        # Translation Fork
-        with st.expander("🌍 Translation Fork", expanded=True):
-            st.markdown("""
-            **Parallel Translation:**
-            - Spanish translation node
-            - Hindi translation node
-            - Multilingual combination
-            - Supports 3 languages total
-            """)
-
-        st.header("🔄 Workflow Types")
-        st.markdown("""
-        **Single Agent Workflows:**
-        ```
-        intent_classifier → agent → synthesis → [translations] → combination
-        ```
-
-        **Collaborative Workflows:**
-        ```
-        intent_classifier → supply_chain → financial → synthesis → [translations] → combination
-        ```
-
-        **Translation Fork:**
-        ```
-        synthesis_followup
-        ├── spanish_translation ──┐
-        └── hindi_translation ────┤
-                                  └── multilingual_combination
-        ```
-        """)
-
-
-def display_sidebar_status():
-    """Display updated sidebar status with translation info"""
-    with st.sidebar:
-        st.markdown("---")
-        st.caption("🔧 **System Status**")
-        if st.session_state.orchestrator_initialized:
-            st.success("✅ Modular Orchestrator: Ready")
-            st.success("✅ Supply Chain Subgraph: Loaded")
-            st.success("✅ Financial Subgraph: Loaded")
-            st.success("✅ Intent Classifier: Active")
-            st.success("✅ Translation Fork: Ready")
-            st.info("🌍 Languages: EN, ES, HI")
-        else:
-            st.warning("⏳ System: Initializing...")
-
-        st.markdown("---")
-        st.caption("🧩 **Modular Architecture**")
-        st.code("""
-        Main Orchestrator Graph:
-        ├── intent_classifier
-        ├── supply_chain_agent (subgraph)
-        ├── financial_agent (subgraph)  
-        ├── synthesis_followup
-        ├── spanish_translation
-        ├── hindi_translation
-        └── multilingual_combination
-        """)
-
-        st.markdown("---")
-        st.caption("📊 **Benefits**")
-        st.markdown("""
-        - **Independent Development**: Agents can be developed separately
-        - **Reusable Components**: Subgraphs can be used in other contexts
-        - **Clean Composition**: Clear separation of concerns
-        - **Easy Testing**: Each subgraph can be tested independently
-        - **🆕 Global Accessibility**: Multilingual responses
-        """)
-
-
 def show_example_queries():
     """Show example queries demonstrating the modular system"""
-    st.header("💡 Try These Modular Examples")
+    st.subheader("Example queries")
 
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("🔄 Multi-Agent Collaboration")
-        if st.button("Should we switch suppliers?", key="supplier_decision"):
-            return "Should we switch from supplier SUP001 to SUP002 for our semiconductor components? Consider both operational and financial factors."
-
-        if st.button("Cost-benefit of risk mitigation?", key="risk_cost"):
-            return "What's the cost-benefit analysis of implementing backup suppliers in Southeast Asia to mitigate supply chain risks?"
+        st.subheader("Multi-Agent")
+        if st.button("Should we switch from supplier SUP001 to SUP002 for our semiconductor components?", key="supplier_decision"):
+            return "Should we switch from supplier SUP001 to SUP002 for our semiconductor components?"
 
     with col2:
-        st.subheader("🎯 Single Agent Routing")
+        st.subheader("Single Agent")
         if st.button("Check SUP001 compliance", key="compliance_single"):
-            return "Check the compliance status for supplier SUP001"
-
-        if st.button("Calculate TCO for SUP002", key="tco_single"):
-            return "Calculate the total cost of ownership for supplier SUP002 with annual volume of 50000 units at $15 per unit"
-
-    # Additional examples in full width
-    col3, col4 = st.columns(2)
-
-    with col3:
-        if st.button("Risk assessment - Southeast Asia", key="risk_assessment"):
-            return "What's the supply chain risk in Southeast Asia right now?"
-
-    with col4:
-        if st.button("Financial risk analysis", key="financial_risk"):
-            return "Analyze the financial risk for supplier SUP001"
-
+            return "Check compliance status for supplier SUP001"
     return None
 
 
@@ -200,12 +73,9 @@ def display_workflow_info(routing_decision):
     """Display information about the workflow being executed"""
     if routing_decision.get("requires_collaboration", False):
         st.info(f"""
-        🔄 **Multi-Agent Collaborative Workflow with Translation**
+        🔄 **Multi-Agent Workflow with Translation**
 
         **Flow:** Intent Classifier → {' → '.join(routing_decision['execution_order'][:-1])} → Translation Fork → Final Response
-
-        Each agent runs as an independent compiled subgraph within the main orchestrator.
-        Final response will be provided in English, Spanish, and Hindi.
         """)
     else:
         agent_name = routing_decision.get("primary_agent", "unknown").replace("_agent", "")
@@ -213,35 +83,12 @@ def display_workflow_info(routing_decision):
         🎯 **Single Agent Workflow with Translation**
 
         **Flow:** Intent Classifier → {agent_name.title()} Agent → Translation Fork → Multilingual Response
-
-        Direct routing to specialized subgraph with multilingual output.
         """)
 
 
 def get_welcome_message():
     """Get the updated welcome message with translation info"""
-    return AIMessage(content="""
-    Welcome to the Modular Multi-Agent Supply Chain System! 🧩🌍
-
-    **Architecture Highlights:**
-    - **Modular Design**: Each agent is an independent compiled subgraph
-    - **Intelligent Routing**: Intent classifier routes queries to appropriate agents  
-    - **Flexible Composition**: Subgraphs are composed as nodes in the main orchestrator
-    - **Context Sharing**: Agents collaborate when needed while maintaining independence
-    - **🆕 Multilingual Output**: All responses provided in English, Spanish, and Hindi
-
-    **Available Agents:**
-    - 📦 **Supply Chain Agent**: Risk assessment, compliance, operational analysis
-    - 💰 **Financial Agent**: Cost analysis, TCO calculations, financial risk assessment
-    - 🌍 **Translation Fork**: Automatic translation to Spanish and Hindi
-
-    **Response Languages:**
-    - 🇺🇸 English (Original)
-    - 🇪🇸 Spanish (Español)  
-    - 🇮🇳 Hindi (हिंदी)
-
-    Ask me anything, and I'll automatically route to the right agent(s) and provide multilingual results!
-    """)
+    return AIMessage(content="Welcome to the Modular Multi-Agent Supply Chain System!")
 
 
 def show_multilingual_progress():
@@ -286,17 +133,7 @@ def main(session_name="Modular Multi-Agent Demo"):
     )
 
     # App title and description
-    st.title("🧩 Modular Multi-Agent Supply Chain System")
-    st.markdown("""
-    This system demonstrates **modular agent composition** where existing compiled agent subgraphs 
-    are used as nodes in a higher-level orchestrator graph. Each agent maintains its independence 
-    while being coordinated by the main workflow.
-    """)
-
-    # Display system architecture
-    display_system_architecture()
-
-    # Initialize session state
+    st.title("Supply Chain System")
     if "messages" not in st.session_state:
         st.session_state.messages = []
     if "orchestrator_initialized" not in st.session_state:
@@ -314,21 +151,7 @@ def main(session_name="Modular Multi-Agent Demo"):
             st.stop()
 
         # Add welcome message
-        welcome_message = AIMessage(content="""
-        Welcome to the Modular Multi-Agent Supply Chain System! 🧩
-
-        **Architecture Highlights:**
-        - **Modular Design**: Each agent is an independent compiled subgraph
-        - **Intelligent Routing**: Intent classifier routes queries to appropriate agents  
-        - **Flexible Composition**: Subgraphs are composed as nodes in the main orchestrator
-        - **Context Sharing**: Agents collaborate when needed while maintaining independence
-
-        **Available Agents:**
-        - 📦 **Supply Chain Agent**: Risk assessment, compliance, operational analysis
-        - 💰 **Financial Agent**: Cost analysis, TCO calculations, financial risk assessment
-
-        Ask me anything, and I'll automatically route to the right agent(s)!
-        """)
+        welcome_message = AIMessage(content="Welcome to the Supply Chain Agent! ")
         st.session_state.messages.append({
             "message": welcome_message,
             "agent": "system"
@@ -341,7 +164,7 @@ def main(session_name="Modular Multi-Agent Demo"):
     display_chat_history()
 
     # Get user input
-    user_input = st.chat_input("Ask about supply chain strategy, costs, risks, or supplier decisions...")
+    user_input = st.chat_input("How can I help you?...")
 
     # Use example query if button was clicked
     if example_query:
@@ -402,40 +225,13 @@ def main(session_name="Modular Multi-Agent Demo"):
         # Rerun to update chat history
         st.rerun()
 
-    # Add footer with system information
-    with st.sidebar:
-        st.markdown("---")
-        st.caption("🔧 **System Status**")
-        if st.session_state.orchestrator_initialized:
-            st.success("✅ Modular Orchestrator: Ready")
-            st.success("✅ Supply Chain Subgraph: Loaded")
-            st.success("✅ Financial Subgraph: Loaded")
-            st.success("✅ Intent Classifier: Active")
-        else:
-            st.warning("⏳ System: Initializing...")
-
-        st.markdown("---")
-        st.caption("🧩 **Modular Architecture**")
-        st.code("""
-        Main Orchestrator Graph:
-        ├── intent_classifier
-        ├── supply_chain_agent (subgraph)
-        ├── financial_agent (subgraph)  
-        └── synthesis_followup
-        """)
-
-        st.markdown("---")
-        st.caption("📊 **Benefits**")
-        st.markdown("""
-        - **Independent Development**: Agents can be developed separately
-        - **Reusable Components**: Subgraphs can be used in other contexts
-        - **Clean Composition**: Clear separation of concerns
-        - **Easy Testing**: Each subgraph can be tested independently
-        """)
-
 
 if __name__ == "__main__":
-    os.environ["GALILEO_PROJECT"] = "sid-multi-agent-v1" # "modular-multi-agent-supply-chain"
+    os.environ["GALILEO_PROJECT"] = "sid-multi-agent-v1"
     os.environ["GALILEO_LOG_STREAM"] = "dev"
-    print(os.environ["GALILEO_API_KEY"])
-    main(session_name=f"Modular Multi-Agent Demo - {int(time.time())}")
+    main(session_name=f"Live Demo - {int(time.time())}")
+
+    # Example queries:
+    # 1. Check compliance status for supplier SUP001
+    # 2. Should we switch from supplier SUP001 to SUP002 for our semiconductor components?
+    # 3. Assess disruption risk for semiconductors in Southeast Asia
