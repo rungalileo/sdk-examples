@@ -5,17 +5,15 @@ name = "pypi"
 
 [packages]
 streamlit = "*"
-galileo = "*"
 dotenv = "*"
 langgraph = "*"
 langchain-tavily = "*"
 langchain-core = "*"
 langchain-openai = "*"
-#pinecone = "*"
-#langchain-pinecone = "*"
 pinecone = "==6.0.2"
 langchain-pinecone = "==0.2.6"
 pinecone-plugin-interface = "==0.0.7"
+galileo = "==0.10"
 
 [dev-packages]
 
