@@ -2,6 +2,7 @@
 A demo Financial Services Agent using Chainlit and LangGraph, with Galileo as the evaluation platform.
 """
 
+from datetime import datetime
 from typing import Any
 import chainlit as cl
 
