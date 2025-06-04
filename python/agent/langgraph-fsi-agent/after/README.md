@@ -15,9 +15,9 @@ This app is a chatbot for the fictional financial services company, Brahe Bank. 
 
 This app uses:
 
-- LangGraph to orchestrate agents
-- Chainlit to provide a UI
-- Pinecone as a vector database
+- [LangGraph](https://www.langchain.com/langgraph) to orchestrate agents
+- [Chainlit](https://chainlit.io/) to provide a UI
+- [Pinecone](https://pinecone.io) as a vector database
 
 ### Agents
 
