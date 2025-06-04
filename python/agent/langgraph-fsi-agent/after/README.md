@@ -2,7 +2,7 @@
 
 This demo app shows how to configure Galileo to monitor and evaluate a multi-agent app built using LangGraph.
 
-![A demo of the banking bot answering a question about what credit cards are on offer, listing out 2 cards and their features](./images/bot-demo.gif)
+![A demo of the banking bot answering a question about what credit cards are on offer, listing out two cards and their features](./images/bot-demo.gif)
 
 ## Overview of this app
 
@@ -85,7 +85,7 @@ To run the app, you need the following:
 1. Copy the `.env.example` file to `.env`
 1. Fill in the values
 
-    For the Galileo values, you MUST create the project up front, but the log stream does not need to be created, it will be created automatically
+    For the Galileo values, you MUST create the project up front, but the log stream does not need to be created; it will be created automatically when the project is created.
 
 ### Install the dependencies
 
@@ -103,7 +103,7 @@ Pinecone is used to store documents that different agents can use. There is a he
 python ./scripts/setup_pinecone.py
 ```
 
-This will take a few seconds and a successful run should look like:
+This will take a few seconds, and a successful run should look like:
 
 ```text
 Loading documents for credit-card-information folder...
@@ -119,7 +119,7 @@ To launch the app, you can use the `chainlit` package that you just installed:
 chainlit run app.py -w
 ```
 
-This will start the app, and launch it on [localhost:8000](http://localhost:8000). The `-w` flag will watch for code changes, and reload if these are made, so you avoid restarting the app if you make code changes.
+This will start the app, and launch it on [localhost:8000](http://localhost:8000). The `-w` flag will watch for code changes and reload if these are made, so you avoid restarting the app if you make code changes.
 
 This project also includes a `launch.json` configured to debug the app in VS Code.
 
