@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+streamlit = "*"
+langchain-tavily = "*"
+langgraph = "*"
+langchain-openai = "*"
+galileo = "*"
+pinecone = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.13"
