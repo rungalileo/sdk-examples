@@ -13,7 +13,7 @@ langchain-openai = "*"
 pinecone = "==6.0.2"
 langchain-pinecone = "==0.2.6"
 pinecone-plugin-interface = "==0.0.7"
-galileo = "==0.10"
+galileo = "==1.0.0"
 
 [dev-packages]
 

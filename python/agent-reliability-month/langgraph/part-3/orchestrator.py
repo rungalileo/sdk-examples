@@ -35,7 +35,7 @@ def intent_classifier(state: State):
     User Query: "{user_query}"
 
     Available Agents:
-    - supply_chain_agent: Handles supply chain management, risk assessment, supplier compliance, logistics, operational analysis
+    - supply_chain_agent: Handles supply chain management, risk assessment, supplier compliance, logistics, operational analysis. This agent can answer questions about everything that impacts supply chains including but not limited to weather and news.
     - financial_agent: Handles cost analysis, financial risk, ROI calculations, budget planning, TCO analysis
     - both_agents: Requires collaboration between both agents
 
@@ -123,7 +123,7 @@ def financial_with_context(state: State):
         return financial_agent.invoke(state, config)
 
 
-def synthesis_followup(state: State):
+def synthesize_followup(state: State):
     """
     Synthesize results from both agents when collaboration is needed
     Similar to compile_followup in the example
@@ -207,7 +207,7 @@ def get_modular_multi_agent():
     graph_builder.add_node("financial_agent", financial_with_context)
 
     # Add synthesis node
-    graph_builder.add_node("synthesis_followup", synthesis_followup)
+    graph_builder.add_node("synthesize_followup", synthesize_followup)
 
     # Add translation nodes
     graph_builder.add_node("spanish_translation", spanish_translation)
@@ -235,22 +235,22 @@ def get_modular_multi_agent():
         if state.get("next_agent") == "both_agents":
             return "financial_agent"
         else:
-            return "synthesis_followup"
+            return "synthesize_followup"
 
     graph_builder.add_conditional_edges(
         "supply_chain_agent",
         after_supply_chain,
         {
             "financial_agent": "financial_agent",
-            "synthesis_followup": "synthesis_followup"
+            "synthesize_followup": "synthesize_followup"
         }
     )
 
     # Financial agent always goes to synthesis
-    graph_builder.add_edge("financial_agent", "synthesis_followup")
+    graph_builder.add_edge("financial_agent", "synthesize_followup")
 
-    graph_builder.add_edge("synthesis_followup", "spanish_translation")
-    graph_builder.add_edge("synthesis_followup", "hindi_translation")
+    graph_builder.add_edge("synthesize_followup", "spanish_translation")
+    graph_builder.add_edge("synthesize_followup", "hindi_translation")
 
     # Both translation nodes go to final combination
     graph_builder.add_edge("spanish_translation", "multilingual_combination")
