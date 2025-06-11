@@ -531,4 +531,5 @@ opentelemetry-instrumentation-tortoiseorm==0.52b0
 opentelemetry-instrumentation-urllib3==0.52b0
 elastic-opentelemetry-instrumentation-openai==0.6.1
 
-galileo_observe
+galileo
+langgraph

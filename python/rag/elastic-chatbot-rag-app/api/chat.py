@@ -14,11 +14,18 @@ from langchain_elasticsearch import (
 from langchain_core.messages.ai import AIMessageChunk
 
 from langgraph.graph import START, StateGraph
-from observe import galileo_handler
+from galileo.handlers.langchain import GalileoCallback
+
+
 
 from utils import State
 
 from llm_integrations import get_llm
+
+
+# Make sure to set your Galileo logging env variables
+callback = GalileoCallback()
+
 
 INDEX = os.getenv("ES_INDEX", "workplace-app-docs")
 INDEX_CHAT_HISTORY = os.getenv("ES_INDEX_CHAT_HISTORY", "workplace-app-docs-chat-history")
@@ -92,7 +99,7 @@ def ask_question(question, session_id):
     for mode, step in graph.stream(
         {"question": question},
         stream_mode=["updates", "messages"],
-        config={"callbacks": [galileo_handler]},
+        config={"callbacks": [callback]},
     ):
         if mode == "updates":
             if not retrieved and "retrieve" in step:

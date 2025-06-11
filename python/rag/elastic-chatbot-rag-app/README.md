@@ -1,10 +1,26 @@
-# Elastic Chatbot RAG App
+# Elastic Chatbot RAG App + Galileo
+
+Read more on how to leverage [Galileo for your chat app](https://v2docs.galileo.ai/cookbooks/use-cases/rag-elastic-langchain-integration)
 
 This is a sample app that combines Elasticsearch, Langchain and a number of different LLMs to create a chatbot experience with ELSER with your own private data.
 
 **Requires at least 8.11.0 of Elasticsearch.**
 
 ![Screenshot of the sample app](./app-demo.gif)
+
+## Setup a Galileo project:
+
+On your cluster or [https://app.galileo.ai](https://app.galileo.ai) create an account, a logstream project and api keys. You can follow [this guide](https://v2docs.galileo.ai/concepts/projects#whats-in-a-project).
+
+Make sure to set your Galileo logging env variables
+```bash
+GALILEO_CONSOLE_URL="https://app.galileo.ai/"
+GALILEO_API_KEY="..."
+GALILEO_PROJECT="elastic-chat-rag-app"
+GALILEO_LOG_STREAM="my_log_stream" 
+# Optional: GALILEO_CONSOLE_URL=https://console...
+```
+
 
 ## Download the Project
 
