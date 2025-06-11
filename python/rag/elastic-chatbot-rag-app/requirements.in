@@ -1,0 +1,23 @@
+# core dependencies
+elasticsearch
+langchain
+langchain-elasticsearch
+tiktoken
+flask
+flask-cors
+halo
+
+# LLM dependencies
+langchain-openai
+langchain-cohere
+langchain-google-vertexai
+langchain-aws
+langchain-mistralai
+
+# EDOT dependencies
+elastic-opentelemetry
+# Additional LLM support not yet in EDOT
+langtrace-python-sdk
+
+# Logging dependencies
+galileo_observe
