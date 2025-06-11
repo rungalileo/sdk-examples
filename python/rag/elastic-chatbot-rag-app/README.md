@@ -14,7 +14,6 @@ On your cluster or [https://app.galileo.ai](https://app.galileo.ai) create an ac
 
 Make sure to set your Galileo logging env variables
 ```bash
-GALILEO_CONSOLE_URL="https://app.galileo.ai/"
 GALILEO_API_KEY="..."
 GALILEO_PROJECT="elastic-chat-rag-app"
 GALILEO_LOG_STREAM="my_log_stream" 
@@ -24,11 +23,10 @@ GALILEO_LOG_STREAM="my_log_stream"
 
 ## Download the Project
 
-Download the project from Github and extract the `chatbot-rag-app` folder.
+Download the project from Github and extract the `chatbot-rag-app` folder from python/rag.
 
 ```bash
-curl https://codeload.github.com/elastic/elasticsearch-labs/tar.gz/main | \
-tar -xz --strip=2 elasticsearch-labs-main/example-apps/chatbot-rag-app
+git clone https://github.com/rungalileo/sdk-examples.git
 ```
 
 ## Make your .env file
