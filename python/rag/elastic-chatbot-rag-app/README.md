@@ -51,7 +51,7 @@ We support several LLM providers, but only one is used at runtime, and selected
 by the `LLM_TYPE` entry in your `.env` file. Edit that file to choose an LLM,
 and configure its templated connection settings:
 
-* azure: [Azure OpenAI Service](https://learn.microsoft.com/en-us/azure/ai-services/openai/)
+* azure: [Azure OpenAI Service](https://learn.microsoft.com/azure/ai-services/openai/)
 * bedrock: [Amazon Bedrock](https://docs.aws.amazon.com/bedrock/)
 * openai: [OpenAI Platform](https://platform.openai.com/docs/overview) and
   services compatible with its API.
