@@ -122,7 +122,7 @@ def show_multilingual_progress():
     status_text.empty()
 
 
-def main(session_name="Modular Multi-Agent Demo"):
+def main():
     """Main function for the Modular Multi-Agent Streamlit app."""
 
     # Configure page
@@ -143,7 +143,7 @@ def main(session_name="Modular Multi-Agent Demo"):
     if not st.session_state.orchestrator_initialized:
         # Start Galileo session BEFORE initializing orchestrator
         try:
-            galileo_context.start_session(name=session_name)
+            galileo_context.start_session()
             st.session_state.orchestrator = initialize_modular_orchestrator()
             st.session_state.orchestrator_initialized = True
         except Exception as e:
@@ -228,8 +228,8 @@ def main(session_name="Modular Multi-Agent Demo"):
 
 if __name__ == "__main__":
     os.environ["GALILEO_PROJECT"] = "sid-multi-agent-v1"
-    os.environ["GALILEO_LOG_STREAM"] = "dev"
-    main(session_name=f"Live Demo - {int(time.time())}")
+    os.environ["GALILEO_LOG_STREAM"] = "dev-v3"
+    main()
 
     # Example queries:
     # 1. Check compliance status for supplier SUP001
