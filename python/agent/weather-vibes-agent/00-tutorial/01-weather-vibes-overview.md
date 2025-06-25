@@ -83,7 +83,7 @@ By completing this tutorial, you will:
 
 1. **Clone the Code**:
    ```bash
-   git clone https://github.com/[organization]/sdk-examples.git
+   git clone https://github.com/rungalileo/sdk-examples.git
    cd sdk-examples/python/agent/weather-vibes-agent
    ```
 
@@ -93,7 +93,7 @@ By completing this tutorial, you will:
    uv venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    
-   # Install deps with uv (lightning fast!)
+   # Install deps with uv
    uv install -r requirements.txt
    ```
 

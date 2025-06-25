@@ -37,21 +37,26 @@ python galileo_agent.py --location "Tokyo" --units imperial --mood relaxing --ve
 ```
 
 ## Understanding the Spans
-The Galileo-instrumented version of the agent includes several span types:
+The Galileo-instrumented version of the agent includes several span types.  Learn more about spans, the atomic unit of logging in Galileo, [here](https://v2docs.galileo.ai/getting-started/logging).
 
-1. **Entrypoint Span** (`entrypoint`): 
-   - Captures the entire application run
-   - Tracks overall execution time and high-level metrics
-
-2. **Workflow Span** (`workflow`):
+1. **Workflow Span** (`workflow`):
    - Captures the main agent workflow in `process_request`
    - Shows how the agent processes the request end-to-end
+   - Also used for the main agent orchestration function
 
-3. **Tool Spans** (`tool`):
+2. **Tool Spans** (`tool`):
    - Individual tool executions:
      - `weather_tool`: WeatherAPI call
      - `recommendations_tool`: Weather-based recommendations generation
      - `youtube_tool`: YouTube video search
+
+3. **LLM Span** (`llm`):
+   - Used when a span invokes an LLM call
+   - Currently not used in this agent but available for future LLM integrations
+
+4. **Retriever Span** (`retriever`):
+   - Used when a span is retrieving data
+   - Currently not used in this agent but available for future retrieval operations
 
 ## Viewing Traces in Galileo
 After running the agent, you can view the traces in the Galileo dashboard. The traces will show:

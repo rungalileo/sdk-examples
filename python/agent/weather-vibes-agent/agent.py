@@ -138,8 +138,8 @@ async def process_request(agent, request):
         return {"error": 500, "message": f"Error: {str(e)}"}
 
 
-# Simple wrapper for logging the inputs
-@log(span_type="entrypoint", name="weather_vibes_agent")
+# Log the inputs using the Galileo decorator
+@log(span_type="workflow", name="weather_vibes_agent")
 async def run_agent_with_inputs(location, units, mood, recommendations, verbose):
     """Run the agent with specific inputs logged via the decorator"""
     print(f"Getting weather for: {location} (with Galileo tracing)")
@@ -161,10 +161,8 @@ async def run_agent_with_inputs(location, units, mood, recommendations, verbose)
     }
 
     try:
-        # Process request
         response = await process_request(agent, request)
 
-        # Display results
         if "error" in response:
             print(f"\n❌ Error: {response['message']}")
             return
@@ -214,7 +212,7 @@ async def run_agent_with_inputs(location, units, mood, recommendations, verbose)
         traceback.print_exc()
 
 
-# Entry point function
+# Use galileo_context to set up the trace environment with further information
 async def main():
     """Main entry point that uses galileo_context to set up the trace environment"""
     # Parse arguments

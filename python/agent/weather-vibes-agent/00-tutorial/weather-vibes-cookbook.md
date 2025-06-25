@@ -298,7 +298,7 @@ The main workflow in `agent.py` ties everything together and adds Galileo instru
 
 2. **Creating the Main Span:**
    ```python
-   @log(span_type="entrypoint", name="weather_vibes_agent")
+   @log(span_type="workflow", name="weather_vibes_agent")
    async def run_agent_with_inputs(location, units, mood, recommendations, verbose):
        # Agent execution logic
    ```
@@ -318,8 +318,8 @@ The main workflow in `agent.py` ties everything together and adds Galileo instru
 
 **Galileo's Role:**
 Galileo creates a hierarchical trace structure:
-- The entrypoint span contains the entire run
-- The workflow span tracks the main agent logic
+- The main workflow span contains the entire agent orchestration
+- The process workflow span tracks the main agent logic
 - Individual tool spans track specific operations
 - Metadata captures important context
 
@@ -364,8 +364,8 @@ Now it's time to see the results of our instrumentation in Galileo!
 
 3. **Explore the Hierarchy:**
    You'll see a visualization showing:
-   - The main entrypoint span
-   - The workflow span
+   - The main workflow span for agent orchestration
+   - The process workflow span
    - Individual tool spans
 
 4. **Analyze Performance:**
