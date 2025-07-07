@@ -24,8 +24,8 @@ def get_financial_agent() -> CompiledStateGraph:
     tool_node = ToolNode(tools=FINANCIAL_TOOLS)
     graph_builder.add_node("tools", tool_node)
 
-    graph_builder.add_conditional_edges("financial_chatbot", tools_condition)
-    graph_builder.add_edge("tools", "financial_chatbot")
-    graph_builder.add_edge(START, "financial_chatbot")
+    graph_builder.add_conditional_edges("chatbot", tools_condition)
+    graph_builder.add_edge("tools", "chatbot")
+    graph_builder.add_edge(START, "chatbot")
 
     return graph_builder.compile()

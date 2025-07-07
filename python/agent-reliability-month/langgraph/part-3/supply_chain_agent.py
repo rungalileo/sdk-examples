@@ -5,7 +5,7 @@ from langgraph.graph import StateGraph, START
 from langgraph.graph.state import CompiledStateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
 
-from rag_tool import rag_search, initialize_supply_chain_rag
+from rag_tool import rag_search
 from shared_state import State
 from tools import check_supplier_compliance, assess_disruption_risk
 
@@ -22,7 +22,6 @@ def invoke_chatbot(state):
 
 
 def get_supply_chain_agent() -> CompiledStateGraph:
-    initialize_supply_chain_rag()
     graph_builder = StateGraph(State)
     graph_builder.add_node("chatbot", invoke_chatbot)
 
