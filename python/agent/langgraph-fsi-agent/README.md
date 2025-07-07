@@ -4,6 +4,12 @@ This demo app shows how to configure Galileo to monitor and evaluate a multi-age
 
 ![A demo of the banking bot answering a question about what credit cards are on offer, listing out 2 cards and their features](./images/bot-demo.gif)
 
+In this folder you will find 2 versions of the app:
+- A [before version](./before/) that contains the app without any evaluations
+- An [after version](./after/) that contains the app with evaluations
+
+To learn how to add evaluations, check out the [Add evaluations to a multi-agent LangGraph application cookbook](https://v2docs.galileo.ai/cookbooks/use-cases/multi-agent-langgraph/multi-agent-langgraph) in the Galileo documentation.
+
 ## Overview of this app
 
 This app is a chatbot for the fictional financial services company, Brahe Bank. You can use the bot to ask about:
