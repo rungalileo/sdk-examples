@@ -1,9 +1,38 @@
 # 📖 Galileo.ai SDK Examples
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) 
 
-This repository contains example implementations and reference code for using the Galileo.ai SDK across both python and typescript applications. Galileo.ai is an evaluation platform for AI applications that helps you monitor, debug, and improve your LLM-powered applications.
+This repository contains example implementations and reference code for using the Galileo.ai SDK across both Python and TypeScript applications. Galileo helps folks build reliable AI applications across a multitude of tech stacks.
 
 **➡️ Sign up for a free account on [Galileo.ai](https://app.galileo.ai/sign-up).**
+
+## 📋 Table of Contents
+
+### 🤖 Agent Examples
+- **[Python Agents](/python/agent/)**
+  - [LangChain Agent](/python/agent/langchain-agent/) - Basic LangChain agent with Galileo integration
+  - [LangGraph FSI Agent](/python/agent/langgraph-fsi-agent/) - Financial services agent with before/after implementations
+  - [Minimal Agent Example](/python/agent/minimal-agent-example/) - Simple agent with basic tool usage
+  - [Weather Vibes Agent](/python/agent/weather-vibes-agent/) - Multi-function agent for weather, recommendations, and YouTube videos
+- **[TypeScript Agents](/typescript/agent/)**
+  - [Minimal Agent](/typescript/agent/) - Basic TypeScript agent implementation
+
+### 💬 Chatbot Examples
+- **[Python Chatbot](/python/chatbot/)** - Simple conversational application with context management
+- **[TypeScript Chatbot](/typescript/chatbot/)** - Basic chatbot implementation in TypeScript
+
+### 🔍 RAG (Retrieval-Augmented Generation) Examples
+- **[Python RAG](/python/rag/)**
+  - [CLI RAG Demo](/python/rag/cli-rag-demo/) - Command-line RAG with chunk utilization challenges
+  - [Elastic Chatbot RAG App](/python/rag/elastic-chatbot-rag-app/) - Full-stack RAG application with Elasticsearch
+- **[TypeScript RAG](/typescript/rag/)** - Basic RAG implementation in TypeScript
+
+### 📊 Dataset & Experiment Examples
+- **[Python Datasets](/python/dataset-experiments/)** - Managing test data and running controlled experiments
+- **[TypeScript Datasets](/typescript/datasets-experiments/)** - Dataset management in TypeScript
+
+### 📚 Additional Resources
+- [Galileo SDK Documentation](/typescript/galileo-sdk-documentation.md) - Comprehensive SDK documentation
+- [Galileo SDK Package](/typescript/galileo-1.4.0.tgz) - TypeScript SDK package
 
 ## 📖 Read the Docs
 - [Galileo.ai Documentation](https://v2docs.galileo.ai/what-is-galileo)
