@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Startup Sim 3000 🚀</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="game-container">
+        <!-- Theme Toggle -->
+        <div class="theme-toggle">
+            <button id="theme-toggle-btn" class="theme-btn" aria-label="Toggle theme">
+                <span class="theme-icon">🌙</span>
+            </button>
+        </div>
+
+        <!-- Start Screen -->
+        <div id="start-screen" class="screen active">
+            <div class="galileo-logo">
+                <img src="{{ url_for('static', filename='images/05-25-Galileo-Logo-Primary-Horizontal-Light.png') }}" alt="Galileo" />
+                <div class="powered-by">POWERED BY</div>
+            </div>
+            <div class="title">
+                <h1>STARTUP SIM 3000</h1>
+                <div class="subtitle">The Ultimate Startup Pitch Generator</div>
+            </div>
+            <div class="menu">
+                <div class="menu-item active" id="start-button">► START GAME</div>
+                <div class="menu-item">  INSTRUCTIONS</div>
+                <div class="menu-item">  CREDITS</div>
+            </div>
+            <div class="footer">
+                <div class="blink">PRESS ENTER TO START</div>
+            </div>
+        </div>
+
+        <!-- Mode Selection Screen -->
+        <div id="mode-screen" class="screen">
+            <div class="mode-container">
+                <h2>SELECT MODE</h2>
+                <div class="mode-options">
+                    <div class="mode-option" id="silly-mode">
+                        <div class="mode-icon">🎭</div>
+                        <div class="mode-title">SILLY MODE</div>
+                        <div class="mode-desc">Generate absurd and fun startup ideas</div>
+                    </div>
+                    <div class="mode-option" id="serious-mode">
+                        <div class="mode-icon">💼</div>
+                        <div class="mode-title">SERIOUS MODE</div>
+                        <div class="mode-desc">Generate professional business concepts</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Input Screen -->
+        <div id="input-screen" class="screen">
+            <div class="header">
+                <h2 id="generator-title">STARTUP GENERATOR v3.0</h2>
+                <div class="stats">
+                    <span>MODE: READY</span>
+                </div>
+            </div>
+
+            <div class="form-container">
+                <div class="input-group">
+                    <label for="industry">INDUSTRY:</label>
+                    <input type="text" id="industry" maxlength="20" placeholder="Enter industry...">
+                    <div class="cursor blink">_</div>
+                </div>
+
+                <div class="input-group">
+                    <label for="audience">TARGET AUDIENCE:</label>
+                    <input type="text" id="audience" maxlength="20" placeholder="Enter audience...">
+                    <div class="cursor blink">_</div>
+                </div>
+
+                <div class="input-group">
+                    <label for="randomWord">RANDOM WORD:</label>
+                    <input type="text" id="randomWord" maxlength="15" placeholder="Enter word...">
+                    <div class="cursor blink">_</div>
+                </div>
+
+                <div class="controls">
+                    <div class="control-hint">USE ↑↓ TO NAVIGATE • ENTER TO CONFIRM</div>
+                    <button id="generate-btn" class="pixel-button">GENERATE STARTUP</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loading-screen" class="screen">
+            <div class="loading-container">
+                <h2>GENERATING STARTUP...</h2>
+                <div class="loading-bar">
+                    <div class="loading-progress"></div>
+                </div>
+                <div class="loading-text">
+                    <div class="loading-step active">► Fetching HackerNews trends...</div>
+                    <div class="loading-step">► Analyzing market data...</div>
+                    <div class="loading-step">► Generating pitch...</div>
+                    <div class="loading-step">► Finalizing results...</div>
+                </div>
+                <div class="spinner">
+                    <div class="pixel-spinner"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="screen">
+            <div class="result-container">
+                <h2>STARTUP GENERATED!</h2>
+                <div class="result-content">
+                    <div class="result-text" id="result-text">
+                        <!-- Result will be populated here -->
+                    </div>
+                </div>
+                <div class="result-actions">
+                    <button id="new-game-btn" class="pixel-button">NEW STARTUP</button>
+                    <button id="copy-btn" class="pixel-button secondary">COPY TEXT</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Error Screen -->
+        <div id="error-screen" class="screen">
+            <div class="error-container">
+                <h2>ERROR!</h2>
+                <div class="error-message" id="error-message">
+                    Something went wrong...
+                </div>
+                <button id="retry-btn" class="pixel-button">TRY AGAIN</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
