@@ -9,11 +9,12 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+
 async def main():
     # Ensure Galileo environment variables are set
     if not os.getenv("GALILEO_API_KEY"):
         print("Warning: GALILEO_API_KEY not set. Galileo logging will be disabled.")
-    
+
     # Prompt user for input
     industry = input("Enter an industry: ")
     audience = input("Enter a target audience: ")
@@ -37,6 +38,7 @@ async def main():
     with galileo_context():
         result = await agent.run(task)
         print(result)
+
 
 if __name__ == "__main__":
     asyncio.run(main())

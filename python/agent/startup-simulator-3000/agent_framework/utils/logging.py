@@ -13,16 +13,18 @@ from agent_framework.utils.hooks import ToolHooks, ToolSelectionHooks
 
 
 # Create a custom theme for our logger
-theme = Theme({
-    "info": "cyan",
-    "warning": "yellow",
-    "error": "red",
-    "success": "green",
-    "timestamp": "dim cyan",
-    "tool": "magenta",
-    "reasoning": "blue",
-    "confidence": "yellow"
-})
+theme = Theme(
+    {
+        "info": "cyan",
+        "warning": "yellow",
+        "error": "red",
+        "success": "green",
+        "timestamp": "dim cyan",
+        "tool": "magenta",
+        "reasoning": "blue",
+        "confidence": "yellow",
+    }
+)
 
 console = Console(theme=theme)
 
@@ -30,46 +32,52 @@ console = Console(theme=theme)
 # This ensures all parts of the application use the same Galileo connection
 _global_galileo_logger = None
 
+
 def get_galileo_logger():
     """Get the global Galileo logger instance, initializing it if needed"""
     global _global_galileo_logger
-    
+
     if _global_galileo_logger is None:
         import os
         from dotenv import load_dotenv
-        
+
         # Load environment variables
         load_dotenv()
-        
+
         # 👀 GALILEO API KEY CHECK: Get the Galileo API key from environment variables
         # This key is required to authenticate with the Galileo service
         api_key = os.getenv("GALILEO_API_KEY")
-        
+
         if api_key:
             try:
                 # 👀 GALILEO IMPORT: Import the GalileoLogger class from the galileo library
                 # This is the main class that handles all Galileo logging functionality
                 from galileo import GalileoLogger
-                
+
                 # 👀 GALILEO INITIALIZATION: Create a new GalileoLogger instance
                 # This logger will automatically use environment variables for configuration:
                 # - GALILEO_API_KEY: Your API key for authentication
                 # - GALILEO_PROJECT: Your project name/ID
                 # - GALILEO_LOG_STREAM: The log stream to use
                 _global_galileo_logger = GalileoLogger()
-                print(f"✅ Galileo logger initialized successfully using environment variables")
+                print(
+                    f"✅ Galileo logger initialized successfully using environment variables"
+                )
             except Exception as e:
                 print(f"⚠️  Warning: Could not initialize Galileo logger: {e}")
                 _global_galileo_logger = None
         else:
-            print("⚠️  Warning: GALILEO_API_KEY not set. Galileo logging will be disabled.")
+            print(
+                "⚠️  Warning: GALILEO_API_KEY not set. Galileo logging will be disabled."
+            )
             _global_galileo_logger = None
-    
+
     return _global_galileo_logger
+
 
 class AgentLogger(ABC):
     """Abstract base class for agent logging"""
-    
+
     def __init__(self, agent_id: str):
         self.agent_id = agent_id
         self._tool_hooks = None
@@ -79,17 +87,17 @@ class AgentLogger(ABC):
     def info(self, message: str, **kwargs) -> None:
         """Log an informational message"""
         pass
-        
+
     @abstractmethod
     def warning(self, message: str, **kwargs) -> None:
         """Log a warning message"""
         pass
-        
+
     @abstractmethod
     def error(self, message: str, **kwargs) -> None:
         """Log an error message"""
         pass
-        
+
     @abstractmethod
     def debug(self, message: str, **kwargs) -> None:
         """Log a debug message"""
@@ -116,7 +124,9 @@ class AgentLogger(ABC):
         pass
 
     @abstractmethod
-    async def on_agent_done(self, result: str, message_history: List[Dict[str, Any]]) -> None:
+    async def on_agent_done(
+        self, result: str, message_history: List[Dict[str, Any]]
+    ) -> None:
         """Log the agent completion"""
         pass
 
@@ -127,28 +137,35 @@ class AgentLogger(ABC):
     def get_tool_selection_hooks(self) -> ToolSelectionHooks:
         """Get tool selection hooks for this logger"""
         return self._tool_selection_hooks
-    
+
+
 class ConsoleAgentLogger(AgentLogger):
     """Console implementation of agent logger"""
-    
+
     def info(self, message: str, **kwargs) -> None:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        console.print(f"[timestamp]{timestamp}[/timestamp] [info]INFO[/info]: {message}")
+        console.print(
+            f"[timestamp]{timestamp}[/timestamp] [info]INFO[/info]: {message}"
+        )
         if kwargs:
             console.print(Panel(json.dumps(kwargs, indent=2), title="Additional Info"))
-            
+
     def warning(self, message: str, **kwargs) -> None:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        console.print(f"[timestamp]{timestamp}[/timestamp] [warning]WARNING[/warning]: {message}")
+        console.print(
+            f"[timestamp]{timestamp}[/timestamp] [warning]WARNING[/warning]: {message}"
+        )
         if kwargs:
             console.print(Panel(json.dumps(kwargs, indent=2), title="Additional Info"))
-            
+
     def error(self, message: str, **kwargs) -> None:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        console.print(f"[timestamp]{timestamp}[/timestamp] [error]ERROR[/error]: {message}")
+        console.print(
+            f"[timestamp]{timestamp}[/timestamp] [error]ERROR[/error]: {message}"
+        )
         if kwargs:
             console.print(Panel(json.dumps(kwargs, indent=2), title="Additional Info"))
-            
+
     def debug(self, message: str, **kwargs) -> None:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         console.print(f"[timestamp]{timestamp}[/timestamp] [dim]DEBUG[/dim]: {message}")
@@ -174,5 +191,7 @@ class ConsoleAgentLogger(AgentLogger):
     def on_agent_start(self, initial_task: str) -> None:
         self.info(f"Starting task: {initial_task}")
 
-    async def on_agent_done(self, result: str, message_history: List[Dict[str, Any]]) -> None:
+    async def on_agent_done(
+        self, result: str, message_history: List[Dict[str, Any]]
+    ) -> None:
         self.info(f"Task completed: {result}")

@@ -3,6 +3,7 @@ import json
 from agent_framework.llm.models import LLMMessage
 from datetime import datetime
 
+
 def ensure_valid_io(data: Any) -> str:
     """Ensure data is in a valid format for Galileo Step IO"""
     if data is None:
@@ -21,6 +22,7 @@ def ensure_valid_io(data: Any) -> str:
             if isinstance(v, list):
                 return [format_value(x) for x in v]
             return v
+
         return json.dumps(format_value(data))
     if isinstance(data, LLMMessage):
         return json.dumps({"role": data.role, "content": data.content})
