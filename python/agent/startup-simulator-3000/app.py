@@ -57,9 +57,7 @@ def generate_startup():
         )
 
         # Start individual trace for this request
-        trace = logger.start_trace(
-            f"Generate startup pitch - {mode} mode - {industry} targeting {audience}"
-        )
+        trace = logger.start_trace(f"Generate startup pitch - {mode} mode - {industry} targeting {audience}")
 
         try:
             # Add LLM span for request processing
@@ -77,9 +75,7 @@ def generate_startup():
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             try:
-                agent_result = loop.run_until_complete(
-                    run_agent(industry, audience, random_word, mode)
-                )
+                agent_result = loop.run_until_complete(run_agent(industry, audience, random_word, mode))
             finally:
                 loop.close()
 
@@ -97,11 +93,7 @@ def generate_startup():
                 "status": "success",
                 "result_length": len(final_output),
                 "mode": mode,
-                "agent_result_preview": (
-                    str(agent_result)[:200] + "..."
-                    if len(str(agent_result)) > 200
-                    else str(agent_result)
-                ),
+                "agent_result_preview": (str(agent_result)[:200] + "..." if len(str(agent_result)) > 200 else str(agent_result)),
             }
             print(f"API Response: {json.dumps(api_response, indent=2)}")
 
@@ -143,9 +135,7 @@ def generate_startup():
         return jsonify({"error": str(e)}), 500
 
 
-async def run_agent(
-    industry: str, audience: str, random_word: str, mode: str = "silly"
-) -> str:
+async def run_agent(industry: str, audience: str, random_word: str, mode: str = "silly") -> str:
     """Run the agent to generate startup pitch"""
     # Set up LLM provider (this could be updated to use the Galileo-wrapped OpenAI client if desired)
     llm_provider = OpenAIProvider(config=LLMConfig(model="gpt-4", temperature=0.7))
@@ -170,9 +160,7 @@ async def run_agent(
         )
 
     # Run the agent with individual parameters (Galileo logging handled by individual traces)
-    result = await agent.run(
-        task, industry=industry, audience=audience, random_word=random_word
-    )
+    result = await agent.run(task, industry=industry, audience=audience, random_word=random_word)
     return result
 
 

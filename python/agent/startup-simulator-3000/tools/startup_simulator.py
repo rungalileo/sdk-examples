@@ -67,9 +67,7 @@ class StartupSimulatorTool(BaseTool):
             },
         )
 
-    async def execute(
-        self, industry: str, audience: str, random_word: str, hn_context: str = ""
-    ) -> str:
+    async def execute(self, industry: str, audience: str, random_word: str, hn_context: str = "") -> str:
         """Execute the startup simulator tool with individual Galileo trace"""
 
         # Log inputs as JSON
@@ -77,9 +75,7 @@ class StartupSimulatorTool(BaseTool):
             "industry": industry,
             "audience": audience,
             "random_word": random_word,
-            "hn_context": (
-                hn_context[:200] + "..." if len(hn_context) > 200 else hn_context
-            ),
+            "hn_context": (hn_context[:200] + "..." if len(hn_context) > 200 else hn_context),
             "mode": "silly",
         }
         print(f"Startup Simulator Inputs: {json.dumps(inputs, indent=2)}")
@@ -88,20 +84,14 @@ class StartupSimulatorTool(BaseTool):
         # This logger will be used to create traces and spans for observability
         logger = self.galileo_logger
         if not logger:
-            print(
-                "⚠️  Warning: Galileo logger not available, proceeding without logging"
-            )
+            print("⚠️  Warning: Galileo logger not available, proceeding without logging")
             # ℹ️ FALLBACK: If Galileo is not available, use the non-logging version
-            return await self._execute_without_galileo(
-                industry, audience, random_word, hn_context
-            )
+            return await self._execute_without_galileo(industry, audience, random_word, hn_context)
 
         # 👀 GALILEO TRACE START: Create a new trace for this tool execution
         # A trace represents the entire lifecycle of this tool call
         # This will appear as a top-level trace in your Galileo dashboard
-        trace = logger.start_trace(
-            f"Startup Simulator - {industry} targeting {audience}"
-        )
+        trace = logger.start_trace(f"Startup Simulator - {industry} targeting {audience}")
 
         try:
             # 👀 GALILEO SPAN START: Add an LLM span to mark the beginning of tool execution
@@ -147,21 +137,9 @@ class StartupSimulatorTool(BaseTool):
                 "hn_context_used": bool(hn_context),
                 "timestamp": datetime.now().isoformat(),
                 "model": "gpt-4",
-                "input_tokens": (
-                    response.usage.prompt_tokens
-                    if hasattr(response.usage, "prompt_tokens")
-                    else 0
-                ),
-                "output_tokens": (
-                    response.usage.completion_tokens
-                    if hasattr(response.usage, "completion_tokens")
-                    else 0
-                ),
-                "total_tokens": (
-                    response.usage.total_tokens
-                    if hasattr(response.usage, "total_tokens")
-                    else 0
-                ),
+                "input_tokens": (response.usage.prompt_tokens if hasattr(response.usage, "prompt_tokens") else 0),
+                "output_tokens": (response.usage.completion_tokens if hasattr(response.usage, "completion_tokens") else 0),
+                "total_tokens": (response.usage.total_tokens if hasattr(response.usage, "total_tokens") else 0),
             }
 
             # Log output as JSON to console and for Galileo observability
@@ -216,9 +194,7 @@ class StartupSimulatorTool(BaseTool):
 
             raise e
 
-    async def _execute_without_galileo(
-        self, industry: str, audience: str, random_word: str, hn_context: str = ""
-    ) -> str:
+    async def _execute_without_galileo(self, industry: str, audience: str, random_word: str, hn_context: str = "") -> str:
         """Fallback execution without Galileo logging"""
         # ℹ️ FALLBACK METHOD: This method runs when Galileo is not available
         # It performs the same functionality but without any observability logging
@@ -251,21 +227,9 @@ class StartupSimulatorTool(BaseTool):
             "hn_context_used": bool(hn_context),
             "timestamp": datetime.now().isoformat(),
             "model": "gpt-4",
-            "input_tokens": (
-                response.usage.prompt_tokens
-                if hasattr(response.usage, "prompt_tokens")
-                else 0
-            ),
-            "output_tokens": (
-                response.usage.completion_tokens
-                if hasattr(response.usage, "completion_tokens")
-                else 0
-            ),
-            "total_tokens": (
-                response.usage.total_tokens
-                if hasattr(response.usage, "total_tokens")
-                else 0
-            ),
+            "input_tokens": (response.usage.prompt_tokens if hasattr(response.usage, "prompt_tokens") else 0),
+            "output_tokens": (response.usage.completion_tokens if hasattr(response.usage, "completion_tokens") else 0),
+            "total_tokens": (response.usage.total_tokens if hasattr(response.usage, "total_tokens") else 0),
         }
 
         # Return JSON string for proper Galileo logging display
