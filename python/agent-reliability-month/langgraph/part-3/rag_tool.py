@@ -186,11 +186,6 @@ class SupplyChainRAG:
 _supply_chain_rag = SupplyChainRAG()
 
 
-def initialize_supply_chain_rag():
-    """Initialize the supply chain RAG system"""
-    _supply_chain_rag.initialize()
-
-
 @tool
 def rag_search(query: str) -> str:
     """
