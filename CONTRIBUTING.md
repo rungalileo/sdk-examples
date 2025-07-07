@@ -150,7 +150,7 @@ Explain any configuration options or settings.
 
 ### Python Standards
 
-- **Python Version**: Target Python 3.8+
+- **Python Version**: Target Python <3.14, >=3.9
 - **Code Style**: Follow PEP 8 guidelines
 - **Dependencies**: Use `requirements.txt` 
 - **Type Hints**: Include type hints for function parameters and return values
