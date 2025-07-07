@@ -1,8 +1,10 @@
-# 🤝 Contributing to Galileo.ai SDK Examples
+# 🤝 Contributing to Galileo SDK Examples
 
-Thank you for your interest in contributing to the Galileo.ai SDK Examples repository! This guide will help you understand how to contribute effectively and maintain the quality of our examples.
+Thank you for your interest in contributing to the Galileo.ai SDK Examples repository! This guide will help you understand how to contribute effectively and maintain the quality of our examples. 
 
-## 📋 Table of Contents
+If you submit a PR to the SDK examples repo — please make sure to either open an issue in the [Galileo Docs Official](https://github.com/rungalileo/docs-official) repo with details on how to use the application, or open a pull request with the completed cookbook so the feature can be added to the [Galileo Documentation](https://v2docs.galileo.ai/what-is-galileo) as well. 
+
+## 📋 Table of contents
 
 - [Getting Started](#getting-started)
 - [Project Structure](#project-structure)
@@ -13,14 +15,14 @@ Thank you for your interest in contributing to the Galileo.ai SDK Examples repos
 - [Pull Request Process](#pull-request-process)
 - [Example Categories](#example-categories)
 
-## 🚀 Getting Started
+## 🚀 Getting started
 
 ### Prerequisites
 
 1. **Galileo.ai Account**: You'll need a free account on [Galileo.ai](https://app.galileo.ai/sign-up)
 2. **API Key**: Obtain your API key from the [Galileo.ai dashboard](https://app.galileo.ai/settings/api-keys)
 3. **Development Environment**: 
-   - For Python examples: Python 3.8+ and pip
+   - For Python examples: Preferred Python 3.8+ (Galileo supports Python <3.14, >=3.9) 
    - For TypeScript examples: Node.js 16+ and npm/yarn
 
 ### Setup
