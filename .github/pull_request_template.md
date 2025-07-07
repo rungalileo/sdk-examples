@@ -44,5 +44,4 @@ Brief description of what this example demonstrates.
 
 ## Screenshots/Demo
 (If applicable)
-```
 
