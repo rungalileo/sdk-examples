@@ -1,5 +1,10 @@
 {
     "recommendations": [
-        "ms-python.black-formatter"
+        "ms-python.black-formatter",
+        "ms-python.python",
+        "ms-python.pylint",
+        "ms-python.flake8",
+        "ms-python.isort",
+        "ms-toolsai.jupyter"
     ]
 }
