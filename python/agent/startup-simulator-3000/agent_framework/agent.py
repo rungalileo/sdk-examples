@@ -66,12 +66,16 @@ class Agent(ABC):
         # Set tool selection hooks
         self.tool_selection_hooks = logger.get_tool_selection_hooks()
 
-    def log_message(self, message: str, level: VerbosityLevel = VerbosityLevel.LOW) -> None:
+    def log_message(
+        self, message: str, level: VerbosityLevel = VerbosityLevel.LOW
+    ) -> None:
         """Log a message if verbosity level is sufficient"""
         if self.config.verbosity.value >= level.value:
             print(message)
 
-    def _create_tool_context(self, tool_name: str, inputs: Dict[str, Any]) -> ToolContext:
+    def _create_tool_context(
+        self, tool_name: str, inputs: Dict[str, Any]
+    ) -> ToolContext:
         """Create a context object for tool execution"""
         if not self.current_task:
             raise ValueError("No active task")
@@ -82,8 +86,12 @@ class Agent(ABC):
             inputs=inputs,
             available_tools=self.tool_registry.get_formatted_tools(),
             previous_tools=[step.tool_name for step in self.current_task.steps],
-            previous_results=[step.result for step in self.current_task.steps if step.result],
-            previous_errors=[step.error for step in self.current_task.steps if step.error],
+            previous_results=[
+                step.result for step in self.current_task.steps if step.result
+            ],
+            previous_errors=[
+                step.error for step in self.current_task.steps if step.error
+            ],
             message_history=self.message_history.copy(),
             agent_id=self.agent_id,
             task_id=self.current_task.task_id,
@@ -142,7 +150,9 @@ class Agent(ABC):
                 await tool.hooks.after_execution(tool_context, None, error=e)
             raise
 
-    async def _execute_tool(self, tool_name: str, inputs: Dict[str, Any]) -> Dict[str, Any]:
+    async def _execute_tool(
+        self, tool_name: str, inputs: Dict[str, Any]
+    ) -> Dict[str, Any]:
         """Execute a tool with given inputs"""
         tool_impl = self.tool_registry.get_implementation(tool_name)
         if not tool_impl:
@@ -231,7 +241,9 @@ class Agent(ABC):
             display_task_header(task)
 
         try:
-            plan: TaskAnalysis = await self.llm_provider.generate_structured(messages, TaskAnalysis, self.llm_provider.config)
+            plan: TaskAnalysis = await self.llm_provider.generate_structured(
+                messages, TaskAnalysis, self.llm_provider.config
+            )
 
             # Log the planning response
             if self.logger:
@@ -300,21 +312,27 @@ class Agent(ABC):
                 self.current_task.status = "completed"
             self._current_plan = None  # Clear the plan
 
-    async def _execute_step(self, step: Dict[str, Any], task: str, plan: TaskAnalysis) -> Any:
+    async def _execute_step(
+        self, step: Dict[str, Any], task: str, plan: TaskAnalysis
+    ) -> Any:
         """Execute a single step in the plan"""
         tool_name = step["tool"]
         if not self.tool_registry.get_tool(tool_name):
             raise ToolNotFoundError(f"Tool {tool_name} not found")
 
         # Map inputs for the tool
-        inputs = await self._map_inputs_to_tool(tool_name, task, step.get("input_mapping", {}))
+        inputs = await self._map_inputs_to_tool(
+            tool_name, task, step.get("input_mapping", {})
+        )
 
         # Create tool context once for both calls
         tool_context = self._create_tool_context(tool_name, inputs)
 
         # Log tool selection first
         if self.logger and (hooks := self.logger.get_tool_selection_hooks()):
-            await hooks.after_selection(tool_context, tool_name, 1.0, [step["reasoning"]])
+            await hooks.after_selection(
+                tool_context, tool_name, 1.0, [step["reasoning"]]
+            )
 
         # Then execute the tool
         result = await self.call_tool(
@@ -327,11 +345,15 @@ class Agent(ABC):
         return result
 
     @abstractmethod
-    async def _format_result(self, task: str, results: List[tuple[str, Dict[str, Any]]]) -> str:
+    async def _format_result(
+        self, task: str, results: List[tuple[str, Dict[str, Any]]]
+    ) -> str:
         """Format the final result from tool executions"""
         pass
 
-    async def _map_inputs_to_tool(self, tool_name: str, task: str, input_mapping: Dict[str, str]) -> Dict[str, Any]:
+    async def _map_inputs_to_tool(
+        self, tool_name: str, task: str, input_mapping: Dict[str, str]
+    ) -> Dict[str, Any]:
         """Map inputs based on tool schema"""
         tool = self.tool_registry.get_tool(tool_name)
         if not tool:
@@ -365,7 +387,9 @@ class Agent(ABC):
         for input_name, input_schema in required_inputs.items():
             # Check for referenced tool outputs in schema
             if "$ref" in input_schema:
-                ref_tool = input_schema.get("$ref").split("/")[-1]  # Get referenced type name
+                ref_tool = input_schema.get("$ref").split("/")[
+                    -1
+                ]  # Get referenced type name
                 # Look for any tool result that matches this type
                 for tool_name, result in self.state.tool_results.items():
                     if result and isinstance(result, dict):  # Basic type check
@@ -381,7 +405,10 @@ class Agent(ABC):
                     mapped_inputs[input_name] = getattr(self, "context_data", "")
                 elif input_name == "hn_context" and hasattr(self, "context_data"):
                     mapped_inputs[input_name] = getattr(self, "context_data", "")
-                elif hasattr(self, "task_parameters") and input_name in self.task_parameters:
+                elif (
+                    hasattr(self, "task_parameters")
+                    and input_name in self.task_parameters
+                ):
                     mapped_inputs[input_name] = self.task_parameters[input_name]
                 else:
                     mapped_inputs[input_name] = task

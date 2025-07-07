@@ -44,4 +44,8 @@ class ToolRegistry:
 
     def get_tools_by_tags(self, tags: List[str]) -> List[Tool]:
         """Get tools that have all specified tags"""
-        return [tool for tool in self.tools.values() if all(tag in tool.tags for tag in tags)]
+        return [
+            tool
+            for tool in self.tools.values()
+            if all(tag in tool.tags for tag in tags)
+        ]
