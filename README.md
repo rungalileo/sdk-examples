@@ -61,6 +61,15 @@ Each directory contains standalone examples with their own setup instructions an
 5. Install dependencies
 6. Run the example
 
+## 🤝 Contributing
+Have a great example of how to use Galileo? Or rather — have something you'd like to see how it works with Galileo?
+ Please see our [Contributing Guide](CONTRIBUTING.md) for detailed information on how to:
+- Open an issue to discuss your idea
+- Add new examples
+- Follow our coding standards
+- Submit pull requests
+- Test your contributions
+
 ## 🗺️ Repository Structure
 
 ``` 
