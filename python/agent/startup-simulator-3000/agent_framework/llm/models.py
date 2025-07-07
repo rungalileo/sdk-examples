@@ -35,15 +35,9 @@ class LLMConfig(BaseModel):
 class ToolSelectionOutput(BaseModel):
     """Output from tool selection"""
 
-    selected_tools: List[str] = Field(
-        description="Names of the selected tools in order of execution"
-    )
-    confidence: float = Field(
-        description="Confidence score for the tool selection (0-1)", ge=0.0, le=1.0
-    )
-    reasoning_steps: List[str] = Field(
-        description="List of reasoning steps that led to the tool selection"
-    )
+    selected_tools: List[str] = Field(description="Names of the selected tools in order of execution")
+    confidence: float = Field(description="Confidence score for the tool selection (0-1)", ge=0.0, le=1.0)
+    reasoning_steps: List[str] = Field(description="List of reasoning steps that led to the tool selection")
 
     @classmethod
     def model_json_schema(cls) -> Dict[str, Any]:

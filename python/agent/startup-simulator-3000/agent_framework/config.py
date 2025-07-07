@@ -17,9 +17,7 @@ class EnvironmentError(Exception):
 class AgentConfiguration:
     """Configuration for the agent framework"""
 
-    llm_config: LLMConfig = field(
-        default_factory=lambda: LLMConfig(model="gpt-4", temperature=0.1)
-    )
+    llm_config: LLMConfig = field(default_factory=lambda: LLMConfig(model="gpt-4", temperature=0.1))
     api_keys: Dict[str, str] = field(default_factory=dict)
     verbosity: VerbosityLevel = field(default=VerbosityLevel.LOW)
     metadata: Dict[str, Any] = field(default_factory=dict)
@@ -32,9 +30,7 @@ class AgentConfiguration:
         return os.getenv(key, default)
 
     @classmethod
-    def from_env(
-        cls, required_keys: List[str], optional_keys: Optional[Dict[str, str]] = None
-    ) -> "AgentConfiguration":
+    def from_env(cls, required_keys: List[str], optional_keys: Optional[Dict[str, str]] = None) -> "AgentConfiguration":
         """Create configuration from environment variables
 
         Args:
@@ -48,10 +44,7 @@ class AgentConfiguration:
         for key_name in required_keys:
             env_value = os.getenv(f"{key_name.upper()}_API_KEY")
             if not env_value:
-                raise EnvironmentError(
-                    f"{key_name.upper()}_API_KEY environment variable is required. "
-                    "Please set it in your .env file"
-                )
+                raise EnvironmentError(f"{key_name.upper()}_API_KEY environment variable is required. " "Please set it in your .env file")
             api_keys[key_name] = env_value
 
         # Load optional API keys
@@ -71,8 +64,7 @@ class AgentConfiguration:
             verbosity=VerbosityLevel(os.getenv("VERBOSITY", "low")),
             metadata={"env": os.getenv("ENVIRONMENT", "development")},
             enable_logging=os.getenv("ENABLE_LOGGING", "true").lower() == "true",
-            enable_tool_selection=os.getenv("ENABLE_TOOL_SELECTION", "true").lower()
-            == "true",
+            enable_tool_selection=os.getenv("ENABLE_TOOL_SELECTION", "true").lower() == "true",
         )
 
     def with_overrides(self, **overrides) -> "AgentConfiguration":

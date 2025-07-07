@@ -17,9 +17,7 @@ class BaseTool(ABC):
     def get_metadata(cls) -> ToolMetadata:
         """Get tool metadata for planning"""
         # Create an instance of the metadata class
-        return (
-            cls.metadata()
-        )  # This will use the default values defined in the metadata class
+        return cls.metadata()  # This will use the default values defined in the metadata class
 
     @abstractmethod
     async def execute(self, **inputs: Any) -> Dict[str, Any]:

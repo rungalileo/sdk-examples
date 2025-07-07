@@ -11,9 +11,7 @@ class ToolRegistry:
     tools: Dict[str, Tool] = field(default_factory=dict)
     _implementations: Dict[str, Type["BaseTool"]] = field(default_factory=dict)
 
-    def register(
-        self, *, metadata: ToolMetadata, implementation: Type["BaseTool"]
-    ) -> None:
+    def register(self, *, metadata: ToolMetadata, implementation: Type["BaseTool"]) -> None:
         """Register a tool and its implementation"""
         if metadata.name in self.tools:
             raise ValueError(f"Tool {metadata.name} is already registered")
@@ -45,11 +43,7 @@ class ToolRegistry:
 
     def get_tools_by_tags(self, tags: List[str]) -> List[Tool]:
         """Get tools that have all specified tags"""
-        return [
-            tool
-            for tool in self.tools.values()
-            if all(tag in tool.tags for tag in tags)
-        ]
+        return [tool for tool in self.tools.values() if all(tag in tool.tags for tag in tags)]
 
     def get_all_tools(self) -> Dict[str, Tool]:
         """Get all registered tools"""
