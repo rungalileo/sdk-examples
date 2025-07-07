@@ -3,7 +3,7 @@ name = "galileo-langgraph-fsi-agent"
 version = "0.1.0"
 description = "A demo langgraph Financial Services agent with Galileo evaluations"
 license = "MIT"
-requires-python = ">=3.11"
+requires-python = "<3.14,>=3.11"
 dependencies = [
   "chainlit~=2.5.5",
   "grandalf>=0.8",
