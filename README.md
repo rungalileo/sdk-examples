@@ -20,6 +20,7 @@ This repository contains example implementations and reference code for using th
 ### 💬 Chatbot Examples
 
 - **[Python Chatbot Examples](/python/chatbot/basic-examples)** - Simple conversational application with context management
+- **[Python LLM Chatbot with experiment](/python/chatbot/sample-project-chatbot/)** - A chatbot that supports a range of LLMs, and can be run as an experiment in a unit test.
 - **[TypeScript Chatbot](/typescript/chatbot/)** - Basic chatbot implementation in TypeScript
 
 ### 🔍 RAG (Retrieval-Augmented Generation) Examples
