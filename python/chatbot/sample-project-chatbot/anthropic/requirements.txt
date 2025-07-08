@@ -1,0 +1,4 @@
+anthropic
+galileo
+python-dotenv
+pytest

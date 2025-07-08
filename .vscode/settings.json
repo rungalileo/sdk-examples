@@ -1,4 +1,7 @@
 {
+    "cSpell.words": [
+        "Ollama"
+    ],
     // Python formatting settings
     "python.formatting.provider": "black",
     "python.formatting.blackArgs": ["--line-length", "160"],
@@ -32,4 +35,4 @@
         "**/env": true,
         "**/.env": true
     }
-} 
+}
