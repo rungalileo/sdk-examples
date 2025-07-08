@@ -76,10 +76,7 @@ LLM = os.environ["LLM"].lower()
 
 # Check if the LLM is valid
 if LLM not in ["openai", "anthropic", "azure"]:
-    raise ValueError(
-        f"Invalid LLM selected: {LLM}. "
-        "Please set the LLM environment variable to one of: OpenAI, Anthropic, or Azure."
-    )
+    raise ValueError(f"Invalid LLM selected: {LLM}. " "Please set the LLM environment variable to one of: OpenAI, Anthropic, or Azure.")
 
 # Start a new session named using the current date and time
 # This way every time you run the application, it will create a new session in Galileo
@@ -133,9 +130,7 @@ def send_chat_to_anthropic() -> str:
         if chat["role"] == "system":
             system_prompt = chat["content"]
         else:
-            chat_history_anthropic.append(
-                {"role": chat["role"], "content": chat["content"]}
-            )
+            chat_history_anthropic.append({"role": chat["role"], "content": chat["content"]})
 
     # Send the chat history to the Anthropic API and get the response
     response = client.messages.create(
@@ -236,11 +231,7 @@ def send_chat_to_openai() -> str:
     # Send the prompt to the LLM and get a streaming response
     # This uses the Galileo OpenAI client which is configured to log the request and response
     # to Galileo automatically in an LLM span, along with token and other information.
-    response = client.chat.completions.create(
-        model=MODEL_NAME,
-        messages=chat_history,
-        stream=True
-    )
+    response = client.chat.completions.create(model=MODEL_NAME, messages=chat_history, stream=True)
 
     # Stream the response to the console
     # Also capture the full response to add to the chat history and return
