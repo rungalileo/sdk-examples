@@ -27,9 +27,7 @@ PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 
 def load_documents(path):
     """Load all markdown documents from source-docs folder"""
-    loader = DirectoryLoader(
-        path, glob="*.md", loader_cls=TextLoader, loader_kwargs={"encoding": "utf-8"}
-    )
+    loader = DirectoryLoader(path, glob="*.md", loader_cls=TextLoader, loader_kwargs={"encoding": "utf-8"})
     documents = loader.load()
     return documents
 
@@ -88,9 +86,7 @@ def check_index_has_data(index) -> bool:
         return False
 
 
-def upload_to_pinecone(
-    chunked_docs, index_name: str, force_upload: bool = False
-) -> PineconeVectorStore:
+def upload_to_pinecone(chunked_docs, index_name: str, force_upload: bool = False) -> PineconeVectorStore:
     """Upload chunked documents to Pinecone"""
 
     # Check if index has data and we're not forcing upload
@@ -105,9 +101,7 @@ def upload_to_pinecone(
 
     # Create vector store and upload
     print(f"Uploading {len(chunked_docs)} chunks to Pinecone...")
-    vector_store = PineconeVectorStore.from_documents(
-        documents=chunked_docs, embedding=EMBEDDINGS, index_name=index_name
-    )
+    vector_store = PineconeVectorStore.from_documents(documents=chunked_docs, embedding=EMBEDDINGS, index_name=index_name)
 
     print(f"Successfully uploaded {len(chunked_docs)} document chunks to Pinecone")
     return vector_store

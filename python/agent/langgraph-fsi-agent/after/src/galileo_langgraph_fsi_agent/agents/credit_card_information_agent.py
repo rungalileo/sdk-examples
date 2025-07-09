@@ -10,9 +10,7 @@ from langgraph.prebuilt import create_react_agent
 from ..tools.pinecone_retrieval_tool import PineconeRetrievalTool
 
 # Create the tools
-credit_card_information_retrieval_tool = PineconeRetrievalTool(
-    "credit-card-information"
-)
+credit_card_information_retrieval_tool = PineconeRetrievalTool("credit-card-information")
 
 
 def create_credit_card_information_agent() -> CompiledGraph:
