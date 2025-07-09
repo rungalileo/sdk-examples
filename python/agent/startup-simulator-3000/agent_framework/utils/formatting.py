@@ -31,7 +31,9 @@ def display_task_header(task: str):
 
 def display_analysis(analysis: str):
     """Display task analysis"""
-    console.print(Panel(Markdown(analysis), title="📋 Task Analysis", border_style="green"))
+    console.print(
+        Panel(Markdown(analysis), title="📋 Task Analysis", border_style="green")
+    )
 
 
 def display_chain_of_thought(steps: List[str]):
@@ -61,11 +63,15 @@ def display_execution_plan(plan: List[Dict[str, Any]]):
 def display_tool_result(tool_name: str, result: Dict[str, Any]):
     """Display tool execution result"""
     if isinstance(result, (dict, list)):
-        result_display = Syntax(format_json(result), "json", theme="monokai", word_wrap=True)
+        result_display = Syntax(
+            format_json(result), "json", theme="monokai", word_wrap=True
+        )
     else:
         result_display = Markdown(str(result))
 
-    console.print(Panel(result_display, title=f"🔧 {tool_name} Result", border_style="yellow"))
+    console.print(
+        Panel(result_display, title=f"🔧 {tool_name} Result", border_style="yellow")
+    )
 
 
 def display_final_result(result: str):
@@ -82,4 +88,8 @@ def display_final_result(result: str):
 
 def display_error(error: str):
     """Display error message"""
-    console.print(Panel(f"[bold red]Error:[/bold red] {error}", title="❌ Error", border_style="red"))
+    console.print(
+        Panel(
+            f"[bold red]Error:[/bold red] {error}", title="❌ Error", border_style="red"
+        )
+    )

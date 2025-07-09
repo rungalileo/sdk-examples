@@ -23,7 +23,9 @@ class OpenAIProvider(LLMProvider):
         # Use provided API key or load from environment
         self.api_key = os.getenv("OPENAI_API_KEY")
         if not self.api_key:
-            raise ValueError("OpenAI API key must be provided or set in OPENAI_API_KEY environment variable")
+            raise ValueError(
+                "OpenAI API key must be provided or set in OPENAI_API_KEY environment variable"
+            )
 
         # Check if this is a project-based key
         self.is_project_key = self.api_key.startswith("sk-proj-")
@@ -46,7 +48,9 @@ class OpenAIProvider(LLMProvider):
         self.client = openai.AsyncOpenAI(api_key=self.api_key)
 
         if self.is_project_key:
-            print(f"Initialized OpenAI client with project-based key (Project ID: {self.project_id})")
+            print(
+                f"Initialized OpenAI client with project-based key (Project ID: {self.project_id})"
+            )
         else:
             print("Initialized OpenAI client with regular API key")
 
@@ -75,13 +79,17 @@ class OpenAIProvider(LLMProvider):
             **cfg.custom_settings,
         }
 
-    async def generate(self, messages: List[LLMMessage], config: Optional[LLMConfig] = None) -> LLMResponse:
+    async def generate(
+        self, messages: List[LLMMessage], config: Optional[LLMConfig] = None
+    ) -> LLMResponse:
         """Generate a response using OpenAI"""
         openai_messages = self._prepare_messages(messages)
         api_config = self._prepare_config(config)
 
         try:
-            response = await self.client.chat.completions.create(messages=openai_messages, **api_config)
+            response = await self.client.chat.completions.create(
+                messages=openai_messages, **api_config
+            )
 
             choice = response.choices[0]
             usage = response.usage.model_dump() if response.usage else {}
@@ -94,16 +102,22 @@ class OpenAIProvider(LLMProvider):
             )
         except Exception as e:
             if "401" in str(e) and self.is_project_key:
-                raise ValueError(f"Project-based key authentication failed. Please check your OPENAI_PROJECT_ID and ensure the project exists. Error: {e}")
+                raise ValueError(
+                    f"Project-based key authentication failed. Please check your OPENAI_PROJECT_ID and ensure the project exists. Error: {e}"
+                )
             raise e
 
-    async def generate_stream(self, messages: List[LLMMessage], config: Optional[LLMConfig] = None) -> AsyncGenerator[LLMResponse, None]:
+    async def generate_stream(
+        self, messages: List[LLMMessage], config: Optional[LLMConfig] = None
+    ) -> AsyncGenerator[LLMResponse, None]:
         """Generate a streaming response using OpenAI"""
         openai_messages = self._prepare_messages(messages)
         api_config = self._prepare_config(config)
 
         try:
-            stream = await self.client.chat.completions.create(messages=openai_messages, stream=True, **api_config)
+            stream = await self.client.chat.completions.create(
+                messages=openai_messages, stream=True, **api_config
+            )
 
             async for chunk in stream:
                 if chunk.choices[0].delta.content:
@@ -114,7 +128,9 @@ class OpenAIProvider(LLMProvider):
                     )
         except Exception as e:
             if "401" in str(e) and self.is_project_key:
-                raise ValueError(f"Project-based key authentication failed. Please check your OPENAI_PROJECT_ID and ensure the project exists. Error: {e}")
+                raise ValueError(
+                    f"Project-based key authentication failed. Please check your OPENAI_PROJECT_ID and ensure the project exists. Error: {e}"
+                )
             raise e
 
     async def generate_structured(
@@ -150,5 +166,7 @@ class OpenAIProvider(LLMProvider):
                 raise ValueError(f"Failed to parse structured output: {e}")
         except Exception as e:
             if "401" in str(e) and self.is_project_key:
-                raise ValueError(f"Project-based key authentication failed. Please check your OPENAI_PROJECT_ID and ensure the project exists. Error: {e}")
+                raise ValueError(
+                    f"Project-based key authentication failed. Please check your OPENAI_PROJECT_ID and ensure the project exists. Error: {e}"
+                )
             raise e
