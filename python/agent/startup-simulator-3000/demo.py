@@ -45,9 +45,7 @@ async def demo_silly_mode():
 
     try:
         # Run the agent
-        result = await agent.run(
-            task, industry=industry, audience=audience, random_word=random_word
-        )
+        result = await agent.run(task, industry=industry, audience=audience, random_word=random_word)
 
         # Parse and display result
         try:
@@ -94,9 +92,7 @@ async def demo_serious_mode():
 
     try:
         # Run the agent
-        result = await agent.run(
-            task, industry=industry, audience=audience, random_word=random_word
-        )
+        result = await agent.run(task, industry=industry, audience=audience, random_word=random_word)
 
         # Parse and display result
         try:
@@ -127,9 +123,7 @@ async def demo_individual_tools():
 
     try:
         tool = StartupSimulatorTool()
-        result = await tool.execute(
-            industry="education", audience="students", random_word="gamification"
-        )
+        result = await tool.execute(industry="education", audience="students", random_word="gamification")
 
         # Parse result
         parsed_result = json.loads(result)
@@ -183,12 +177,8 @@ async def main():
     check_environment()
 
     # Check if OpenAI API key is available
-    if not os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY").startswith(
-        "your-"
-    ):
-        print(
-            "❌ OPENAI_API_KEY not configured. Please edit .env file with your API key."
-        )
+    if not os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY").startswith("your-"):
+        print("❌ OPENAI_API_KEY not configured. Please edit .env file with your API key.")
         print("Get your API key at: https://platform.openai.com/api-keys")
         return
 
