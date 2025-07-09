@@ -15,9 +15,7 @@ class TextAnalyzerTool(BaseTool):
             tags=["text", "analysis", "complexity"],
             input_schema={
                 "type": "object",
-                "properties": {
-                    "text": {"type": "string", "description": "Text to analyze"}
-                },
+                "properties": {"text": {"type": "string", "description": "Text to analyze"}},
                 "required": ["text"],
             },
             output_schema={
@@ -34,11 +32,7 @@ class TextAnalyzerTool(BaseTool):
         """Analyze text complexity"""
         # Simple implementation - in real world would use NLP
         word_count = len(text.split())
-        avg_word_length = (
-            sum(len(word) for word in text.split()) / word_count
-            if word_count > 0
-            else 0
-        )
+        avg_word_length = sum(len(word) for word in text.split()) / word_count if word_count > 0 else 0
 
         # Calculate complexity score (0-10)
         complexity_score = min(10, (avg_word_length - 3) * 2)

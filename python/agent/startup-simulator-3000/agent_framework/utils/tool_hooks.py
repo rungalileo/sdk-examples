@@ -17,9 +17,7 @@ class LoggingToolHooks(ToolHooks):
             task_id=context.task_id,
         )
 
-    async def after_execution(
-        self, context: ToolContext, result: Any, error: Optional[Exception] = None
-    ) -> None:
+    async def after_execution(self, context: ToolContext, result: Any, error: Optional[Exception] = None) -> None:
         if error:
             self.logger.error(
                 f"Tool execution failed: {context.tool_name}",

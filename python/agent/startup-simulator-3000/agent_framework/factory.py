@@ -29,9 +29,7 @@ class AgentFactory:
             return ConsoleAgentLogger(agent_id)
         return None
 
-    def create_agent(
-        self, agent_class: Type[Agent], agent_id: Optional[str] = None, **kwargs
-    ) -> Agent:
+    def create_agent(self, agent_class: Type[Agent], agent_id: Optional[str] = None, **kwargs) -> Agent:
         """Create an agent instance with proper dependencies"""
         # Create core dependencies
         llm_provider = self.get_llm_provider()
@@ -39,12 +37,7 @@ class AgentFactory:
 
         # Create agent with injected dependencies
         agent = agent_class(
-            agent_id=agent_id,
-            llm_provider=llm_provider,
-            logger=logger,
-            verbosity=self.config.verbosity,
-            metadata=self.config.metadata,
-            **kwargs
+            agent_id=agent_id, llm_provider=llm_provider, logger=logger, verbosity=self.config.verbosity, metadata=self.config.metadata, **kwargs
         )
 
         return agent

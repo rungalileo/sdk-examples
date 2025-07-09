@@ -60,16 +60,12 @@ def get_galileo_logger():
                 # - GALILEO_PROJECT: Your project name/ID
                 # - GALILEO_LOG_STREAM: The log stream to use
                 _global_galileo_logger = GalileoLogger()
-                print(
-                    f"✅ Galileo logger initialized successfully using environment variables"
-                )
+                print(f"✅ Galileo logger initialized successfully using environment variables")
             except Exception as e:
                 print(f"⚠️  Warning: Could not initialize Galileo logger: {e}")
                 _global_galileo_logger = None
         else:
-            print(
-                "⚠️  Warning: GALILEO_API_KEY not set. Galileo logging will be disabled."
-            )
+            print("⚠️  Warning: GALILEO_API_KEY not set. Galileo logging will be disabled.")
             _global_galileo_logger = None
 
     return _global_galileo_logger
@@ -124,9 +120,7 @@ class AgentLogger(ABC):
         pass
 
     @abstractmethod
-    async def on_agent_done(
-        self, result: str, message_history: List[Dict[str, Any]]
-    ) -> None:
+    async def on_agent_done(self, result: str, message_history: List[Dict[str, Any]]) -> None:
         """Log the agent completion"""
         pass
 
@@ -144,25 +138,19 @@ class ConsoleAgentLogger(AgentLogger):
 
     def info(self, message: str, **kwargs) -> None:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        console.print(
-            f"[timestamp]{timestamp}[/timestamp] [info]INFO[/info]: {message}"
-        )
+        console.print(f"[timestamp]{timestamp}[/timestamp] [info]INFO[/info]: {message}")
         if kwargs:
             console.print(Panel(json.dumps(kwargs, indent=2), title="Additional Info"))
 
     def warning(self, message: str, **kwargs) -> None:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        console.print(
-            f"[timestamp]{timestamp}[/timestamp] [warning]WARNING[/warning]: {message}"
-        )
+        console.print(f"[timestamp]{timestamp}[/timestamp] [warning]WARNING[/warning]: {message}")
         if kwargs:
             console.print(Panel(json.dumps(kwargs, indent=2), title="Additional Info"))
 
     def error(self, message: str, **kwargs) -> None:
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        console.print(
-            f"[timestamp]{timestamp}[/timestamp] [error]ERROR[/error]: {message}"
-        )
+        console.print(f"[timestamp]{timestamp}[/timestamp] [error]ERROR[/error]: {message}")
         if kwargs:
             console.print(Panel(json.dumps(kwargs, indent=2), title="Additional Info"))
 
@@ -191,7 +179,5 @@ class ConsoleAgentLogger(AgentLogger):
     def on_agent_start(self, initial_task: str) -> None:
         self.info(f"Starting task: {initial_task}")
 
-    async def on_agent_done(
-        self, result: str, message_history: List[Dict[str, Any]]
-    ) -> None:
+    async def on_agent_done(self, result: str, message_history: List[Dict[str, Any]]) -> None:
         self.info(f"Task completed: {result}")
