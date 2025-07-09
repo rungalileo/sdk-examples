@@ -73,7 +73,9 @@ def test_environment():
             print(f"✅ {var} - configured")
 
     if missing_required:
-        print(f"\n⚠️  Missing required environment variables: {', '.join(missing_required)}")
+        print(
+            f"\n⚠️  Missing required environment variables: {', '.join(missing_required)}"
+        )
         print("Please edit .env file with your API keys")
         return False
 

@@ -15,7 +15,9 @@ from dotenv import load_dotenv
 from galileo import galileo_context
 from galileo.handlers.langchain import GalileoAsyncCallback
 
-from src.galileo_langgraph_fsi_agent.agents.supervisor_agent import create_supervisor_agent
+from src.galileo_langgraph_fsi_agent.agents.supervisor_agent import (
+    create_supervisor_agent,
+)
 
 # Load environment variables from .env file
 load_dotenv()
@@ -36,7 +38,9 @@ async def on_chat_start() -> None:
     create_galileo_session()
 
     # Send a welcome message to the user
-    await cl.Message(content="Welcome to the Brahe Bank assistant! How can I help you today?").send()
+    await cl.Message(
+        content="Welcome to the Brahe Bank assistant! How can I help you today?"
+    ).send()
 
 
 def create_galileo_session():
@@ -44,7 +48,9 @@ def create_galileo_session():
         # Start Galileo session with unique session name
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         session_name = f"FSI Agent - {current_time}"
-        galileo_context.start_session(name=session_name, external_id=cl.context.session.id)
+        galileo_context.start_session(
+            name=session_name, external_id=cl.context.session.id
+        )
 
         # Create the callback. This needs to be created in the same thread as the session
         # so that it uses the same session context.
@@ -92,9 +98,14 @@ async def main(msg: cl.Message) -> None:
     runnable_config = RunnableConfig(callbacks=callbacks, **config)
 
     # Call the graph with the user's message and stream the response back to the user
-    async for response_msg in supervisor_agent.astream(input=messages, stream_mode="updates", config=runnable_config):
+    async for response_msg in supervisor_agent.astream(
+        input=messages, stream_mode="updates", config=runnable_config
+    ):
         # Check for a response from the supervisor agent with the final message
-        if supervisor_agent.name in response_msg and "messages" in response_msg[supervisor_agent.name]:
+        if (
+            supervisor_agent.name in response_msg
+            and "messages" in response_msg[supervisor_agent.name]
+        ):
             # Get the last message from the supervisor's response
             message = response_msg[supervisor_agent.name]["messages"][-1]
             # If it is an AI message, then it is the final answer

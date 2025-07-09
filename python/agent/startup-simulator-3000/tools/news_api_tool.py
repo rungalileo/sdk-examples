@@ -76,7 +76,9 @@ class NewsAPITool(BaseTool):
         # This logger will be used to create traces and spans for observability
         logger = self.galileo_logger
         if not logger:
-            print("⚠️  Warning: Galileo logger not available, proceeding without logging")
+            print(
+                "⚠️  Warning: Galileo logger not available, proceeding without logging"
+            )
             # ℹ️ FALLBACK: If Galileo is not available, use the non-logging version
             return await self._execute_without_galileo(category, limit)
 
@@ -112,7 +114,9 @@ class NewsAPITool(BaseTool):
                     data = await response.json()
 
                     if data.get("status") != "ok":
-                        raise Exception(f"NewsAPI error: {data.get('message', 'Unknown error')}")
+                        raise Exception(
+                            f"NewsAPI error: {data.get('message', 'Unknown error')}"
+                        )
 
                     articles = data.get("articles", [])
 
@@ -122,7 +126,9 @@ class NewsAPITool(BaseTool):
                         title = article.get("title", "No title")
                         description = article.get("description", "No description")
                         source = article.get("source", {}).get("name", "Unknown source")
-                        formatted_articles.append(f"• {title} ({source}) - {description}")
+                        formatted_articles.append(
+                            f"• {title} ({source}) - {description}"
+                        )
 
                     context = "\n".join(formatted_articles)
 
@@ -155,6 +161,7 @@ class NewsAPITool(BaseTool):
             # This marks the trace as completed successfully in Galileo
             # The trace will show as "success" in your dashboard
             logger.conclude(output=context, duration_ns=0)
+            logger.flush()
 
             # Return JSON string for proper Galileo logging display
             galileo_output = {
@@ -172,10 +179,13 @@ class NewsAPITool(BaseTool):
             # The trace will show as "error" in your dashboard with error details
             if logger:
                 logger.conclude(output=str(e), duration_ns=0, error=True)
+                logger.flush()
 
             raise e
 
-    async def _execute_without_galileo(self, category: str = "business", limit: int = 5) -> str:
+    async def _execute_without_galileo(
+        self, category: str = "business", limit: int = 5
+    ) -> str:
         """Fallback execution without Galileo logging"""
         # ℹ️ FALLBACK METHOD: This method runs when Galileo is not available
         # It performs the same functionality but without any observability logging
@@ -201,7 +211,9 @@ class NewsAPITool(BaseTool):
                 data = await response.json()
 
                 if data.get("status") != "ok":
-                    raise Exception(f"NewsAPI error: {data.get('message', 'Unknown error')}")
+                    raise Exception(
+                        f"NewsAPI error: {data.get('message', 'Unknown error')}"
+                    )
 
                 articles = data.get("articles", [])
 

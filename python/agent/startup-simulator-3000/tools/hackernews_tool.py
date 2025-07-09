@@ -24,7 +24,9 @@ class HackerNewsTool(BaseTool):
     def __init__(self):
         super().__init__()
         self.name = "hackernews_tool"
-        self.description = "Fetch trending stories from HackerNews for creative inspiration"
+        self.description = (
+            "Fetch trending stories from HackerNews for creative inspiration"
+        )
         # 👀 GALILEO INITIALIZATION: Get the centralized Galileo logger instance
         # This ensures all tools use the same Galileo configuration and connection
         self.galileo_logger = get_galileo_logger()
@@ -67,7 +69,9 @@ class HackerNewsTool(BaseTool):
         # This logger will be used to create traces and spans for observability
         logger = self.galileo_logger
         if not logger:
-            print("⚠️  Warning: Galileo logger not available, proceeding without logging")
+            print(
+                "⚠️  Warning: Galileo logger not available, proceeding without logging"
+            )
             # ℹ️ FALLBACK: If Galileo is not available, use the non-logging version
             return await self._execute_without_galileo(limit)
 
@@ -83,9 +87,13 @@ class HackerNewsTool(BaseTool):
 
             # Fetch top story IDs
             async with aiohttp.ClientSession() as session:
-                async with session.get("https://hacker-news.firebaseio.com/v0/topstories.json") as response:
+                async with session.get(
+                    "https://hacker-news.firebaseio.com/v0/topstories.json"
+                ) as response:
                     if response.status != 200:
-                        raise Exception(f"Failed to fetch top stories: {response.status}")
+                        raise Exception(
+                            f"Failed to fetch top stories: {response.status}"
+                        )
 
                     story_ids = await response.json()
                     story_ids = story_ids[:limit]  # Get only the requested number
@@ -93,7 +101,9 @@ class HackerNewsTool(BaseTool):
                     # Fetch individual story details
                     stories = []
                     for story_id in story_ids:
-                        async with session.get(f"https://hacker-news.firebaseio.com/v0/item/{story_id}.json") as story_response:
+                        async with session.get(
+                            f"https://hacker-news.firebaseio.com/v0/item/{story_id}.json"
+                        ) as story_response:
                             if story_response.status == 200:
                                 story_data = await story_response.json()
                                 if story_data and "title" in story_data:
@@ -111,7 +121,9 @@ class HackerNewsTool(BaseTool):
             # Format stories for context
             formatted_stories = []
             for story in stories:
-                formatted_stories.append(f"• {story['title']} (Score: {story['score']})")
+                formatted_stories.append(
+                    f"• {story['title']} (Score: {story['score']})"
+                )
 
             context = "\n".join(formatted_stories)
 
@@ -142,6 +154,7 @@ class HackerNewsTool(BaseTool):
             # This marks the trace as completed successfully in Galileo
             # The trace will show as "success" in your dashboard
             logger.conclude(output=context, duration_ns=0)
+            logger.flush()
 
             # Return JSON string for proper Galileo logging display
             galileo_output = {
@@ -159,6 +172,7 @@ class HackerNewsTool(BaseTool):
             # The trace will show as "error" in your dashboard with error details
             if logger:
                 logger.conclude(output=str(e), duration_ns=0, error=True)
+                logger.flush()
 
             raise e
 
@@ -168,7 +182,9 @@ class HackerNewsTool(BaseTool):
         # It performs the same functionality but without any observability logging
         # Fetch top story IDs
         async with aiohttp.ClientSession() as session:
-            async with session.get("https://hacker-news.firebaseio.com/v0/topstories.json") as response:
+            async with session.get(
+                "https://hacker-news.firebaseio.com/v0/topstories.json"
+            ) as response:
                 if response.status != 200:
                     raise Exception(f"Failed to fetch top stories: {response.status}")
 
@@ -178,7 +194,9 @@ class HackerNewsTool(BaseTool):
                 # Fetch individual story details
                 stories = []
                 for story_id in story_ids:
-                    async with session.get(f"https://hacker-news.firebaseio.com/v0/item/{story_id}.json") as story_response:
+                    async with session.get(
+                        f"https://hacker-news.firebaseio.com/v0/item/{story_id}.json"
+                    ) as story_response:
                         if story_response.status == 200:
                             story_data = await story_response.json()
                             if story_data and "title" in story_data:

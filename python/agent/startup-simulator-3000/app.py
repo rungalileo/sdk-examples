@@ -9,7 +9,7 @@ from flask_cors import CORS
 from agent import SimpleAgent
 from agent_framework.llm.openai_provider import OpenAIProvider
 from agent_framework.llm.models import LLMConfig
-from galileo import GalileoLogger
+from agent_framework.utils.logging import get_galileo_logger
 
 # Load environment variables
 load_dotenv()
@@ -50,32 +50,36 @@ def generate_startup():
         if not industry or not audience or not random_word:
             return jsonify({"error": "All fields are required"}), 400
 
-        # Initialize Galileo logger for this request
-        logger = GalileoLogger(
-            project=os.environ.get("GALILEO_PROJECT"),
-            log_stream=os.environ.get("GALILEO_LOG_STREAM"),
-        )
+        # Get the centralized Galileo logger instance
+        logger = get_galileo_logger()
 
-        # Start individual trace for this request
-        trace = logger.start_trace(f"Generate startup pitch - {mode} mode - {industry} targeting {audience}")
+        # Start individual trace for this request if logger is available
+        trace = None
+        if logger:
+            trace = logger.start_trace(
+                f"Generate startup pitch - {mode} mode - {industry} targeting {audience}"
+            )
 
         try:
-            # Add LLM span for request processing
-            logger.add_llm_span(
-                input=f"API request received for {mode} mode startup generation",
-                output="Request validated and processing started",
-                model="flask_api",
-                num_input_tokens=len(str(api_request)),
-                num_output_tokens=0,
-                total_tokens=len(str(api_request)),
-                duration_ns=0,
-            )
+            # Add LLM span for request processing if logger is available
+            if logger:
+                logger.add_llm_span(
+                    input=f"API request received for {mode} mode startup generation",
+                    output="Request validated and processing started",
+                    model="flask_api",
+                    num_input_tokens=len(str(api_request)),
+                    num_output_tokens=0,
+                    total_tokens=len(str(api_request)),
+                    duration_ns=0,
+                )
 
             # Run the agent asynchronously with proper event loop handling
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
             try:
-                agent_result = loop.run_until_complete(run_agent(industry, audience, random_word, mode))
+                agent_result = loop.run_until_complete(
+                    run_agent(industry, audience, random_word, mode)
+                )
             finally:
                 loop.close()
 
@@ -93,40 +97,48 @@ def generate_startup():
                 "status": "success",
                 "result_length": len(final_output),
                 "mode": mode,
-                "agent_result_preview": (str(agent_result)[:200] + "..." if len(str(agent_result)) > 200 else str(agent_result)),
+                "agent_result_preview": (
+                    str(agent_result)[:200] + "..."
+                    if len(str(agent_result)) > 200
+                    else str(agent_result)
+                ),
             }
             print(f"API Response: {json.dumps(api_response, indent=2)}")
 
-            # Add LLM span for successful completion
-            logger.add_llm_span(
-                input=f"Agent execution completed successfully",
-                output=final_output,
-                model="flask_api",
-                num_input_tokens=len(str(api_request)),
-                num_output_tokens=len(final_output),
-                total_tokens=len(str(api_request)) + len(final_output),
-                duration_ns=0,
-            )
+            # Add LLM span for successful completion if logger is available
+            if logger:
+                logger.add_llm_span(
+                    input=f"Agent execution completed successfully",
+                    output=final_output,
+                    model="flask_api",
+                    num_input_tokens=len(str(api_request)),
+                    num_output_tokens=len(final_output),
+                    total_tokens=len(str(api_request)) + len(final_output),
+                    duration_ns=0,
+                )
 
-            # Conclude the trace successfully
-            logger.conclude(output=final_output, duration_ns=0)
+                # Conclude the trace successfully and flush immediately
+                logger.conclude(output=final_output, duration_ns=0)
+                logger.flush()
 
             return jsonify({"result": final_output})
 
         except Exception as e:
-            # Add LLM span for error
-            logger.add_llm_span(
-                input=f"Agent execution failed",
-                output=str(e),
-                model="flask_api",
-                num_input_tokens=len(str(api_request)),
-                num_output_tokens=len(str(e)),
-                total_tokens=len(str(api_request)) + len(str(e)),
-                duration_ns=0,
-            )
+            # Add LLM span for error if logger is available
+            if logger:
+                logger.add_llm_span(
+                    input=f"Agent execution failed",
+                    output=str(e),
+                    model="flask_api",
+                    num_input_tokens=len(str(api_request)),
+                    num_output_tokens=len(str(e)),
+                    total_tokens=len(str(api_request)) + len(str(e)),
+                    duration_ns=0,
+                )
 
-            # Conclude the trace with error
-            logger.conclude(output=str(e), duration_ns=0)
+                # Conclude the trace with error and flush immediately
+                logger.conclude(output=str(e), duration_ns=0)
+                logger.flush()
 
             raise e
 
@@ -135,7 +147,9 @@ def generate_startup():
         return jsonify({"error": str(e)}), 500
 
 
-async def run_agent(industry: str, audience: str, random_word: str, mode: str = "silly") -> str:
+async def run_agent(
+    industry: str, audience: str, random_word: str, mode: str = "silly"
+) -> str:
     """Run the agent to generate startup pitch"""
     # Set up LLM provider (this could be updated to use the Galileo-wrapped OpenAI client if desired)
     llm_provider = OpenAIProvider(config=LLMConfig(model="gpt-4", temperature=0.7))
@@ -160,7 +174,9 @@ async def run_agent(industry: str, audience: str, random_word: str, mode: str = 
         )
 
     # Run the agent with individual parameters (Galileo logging handled by individual traces)
-    result = await agent.run(task, industry=industry, audience=audience, random_word=random_word)
+    result = await agent.run(
+        task, industry=industry, audience=audience, random_word=random_word
+    )
     return result
 
 

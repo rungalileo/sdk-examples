@@ -64,7 +64,10 @@ class SimpleAgent(Agent):
             agent_id=f"startup-agent-{mode}",
             verbosity=verbosity,
             logger=logger or ConsoleAgentLogger(f"startup-agent-{mode}"),
-            tool_selection_hooks=tool_selection_hooks or LoggingToolSelectionHooks(logger or ConsoleAgentLogger(f"startup-agent-{mode}")),
+            tool_selection_hooks=tool_selection_hooks
+            or LoggingToolSelectionHooks(
+                logger or ConsoleAgentLogger(f"startup-agent-{mode}")
+            ),
             metadata=metadata or {},
             llm_provider=llm_provider,
         )
@@ -94,7 +97,9 @@ class SimpleAgent(Agent):
         """
 
         # Text analysis tool - can analyze and process text content
-        self.tool_registry.register(metadata=TextAnalyzerTool.get_metadata(), implementation=TextAnalyzerTool)
+        self.tool_registry.register(
+            metadata=TextAnalyzerTool.get_metadata(), implementation=TextAnalyzerTool
+        )
 
         # Keyword extraction tool - finds important words/phrases in text
         self.tool_registry.register(
@@ -118,13 +123,19 @@ class SimpleAgent(Agent):
 
         # HackerNews tool - fetches trending tech stories for inspiration
         # Used in "silly" mode to get creative context
-        self.tool_registry.register(metadata=HackerNewsTool.get_metadata(), implementation=HackerNewsTool)
+        self.tool_registry.register(
+            metadata=HackerNewsTool.get_metadata(), implementation=HackerNewsTool
+        )
 
         # NewsAPI tool - fetches business news for market analysis
         # Used in "serious" mode to get professional context
-        self.tool_registry.register(metadata=NewsAPITool.get_metadata(), implementation=NewsAPITool)
+        self.tool_registry.register(
+            metadata=NewsAPITool.get_metadata(), implementation=NewsAPITool
+        )
 
-    async def _format_result(self, task: str, results: List[tuple[str, Any]], galileo_logger: GalileoLogger) -> str:
+    async def _format_result(
+        self, task: str, results: List[tuple[str, Any]], galileo_logger: GalileoLogger
+    ) -> str:
         """
         Format the final result from tool executions.
 
@@ -172,7 +183,9 @@ class SimpleAgent(Agent):
                             "full_result": result,
                             "extracted_pitch": pitch,
                         }
-                        print(f"Agent Result Data (Silly): {json.dumps(result_data, indent=2)}")
+                        print(
+                            f"Agent Result Data (Silly): {json.dumps(result_data, indent=2)}"
+                        )
 
                         # Add LLM span for formatting completion
                         galileo_logger.add_llm_span(
@@ -217,7 +230,9 @@ class SimpleAgent(Agent):
                             "full_result": result,
                             "extracted_pitch": pitch,
                         }
-                        print(f"Agent Result Data (Serious): {json.dumps(result_data, indent=2)}")
+                        print(
+                            f"Agent Result Data (Serious): {json.dumps(result_data, indent=2)}"
+                        )
 
                         # Add LLM span for formatting completion
                         galileo_logger.add_llm_span(
@@ -246,7 +261,9 @@ class SimpleAgent(Agent):
                         return str(result)
 
             # If no startup simulator results found, return a summary
-            summary = f"Generated results for {len(results)} tools: {[r[0] for r in results]}"
+            summary = (
+                f"Generated results for {len(results)} tools: {[r[0] for r in results]}"
+            )
             galileo_logger.add_llm_span(
                 input=f"No startup simulator results found",
                 output=summary,
@@ -270,7 +287,9 @@ class SimpleAgent(Agent):
             )
             raise e
 
-    async def _execute_hackernews_tool(self, limit: int = 3, galileo_logger: GalileoLogger = None) -> str:
+    async def _execute_hackernews_tool(
+        self, limit: int = 3, galileo_logger: GalileoLogger = None
+    ) -> str:
         """
         Execute the HackerNews tool to get trending stories for context.
 
@@ -298,7 +317,9 @@ class SimpleAgent(Agent):
             )
 
         try:
-            startup_tool_class = self.tool_registry.get_implementation("hackernews_tool")
+            startup_tool_class = self.tool_registry.get_implementation(
+                "hackernews_tool"
+            )
             if startup_tool_class:
                 startup_tool = startup_tool_class()
                 startup_result = await startup_tool.execute(limit=limit)
@@ -307,7 +328,11 @@ class SimpleAgent(Agent):
                 if galileo_logger:
                     galileo_logger.add_llm_span(
                         input=f"HackerNews tool execution completed",
-                        output=(startup_result[:200] + "..." if len(startup_result) > 200 else startup_result),
+                        output=(
+                            startup_result[:200] + "..."
+                            if len(startup_result) > 200
+                            else startup_result
+                        ),
                         model="hackernews_tool",
                         num_input_tokens=len(str(limit)),
                         num_output_tokens=len(startup_result),
@@ -380,17 +405,25 @@ class SimpleAgent(Agent):
             startup_tool_class = self.tool_registry.get_implementation("news_api_tool")
             if startup_tool_class:
                 startup_tool = startup_tool_class()
-                startup_result = await startup_tool.execute(category=category, limit=limit)
+                startup_result = await startup_tool.execute(
+                    category=category, limit=limit
+                )
 
                 # Add LLM span for tool completion
                 if galileo_logger:
                     galileo_logger.add_llm_span(
                         input=f"News API tool execution completed",
-                        output=(startup_result[:200] + "..." if len(startup_result) > 200 else startup_result),
+                        output=(
+                            startup_result[:200] + "..."
+                            if len(startup_result) > 200
+                            else startup_result
+                        ),
                         model="news_api_tool",
                         num_input_tokens=len(str(category)) + len(str(limit)),
                         num_output_tokens=len(startup_result),
-                        total_tokens=len(str(category)) + len(str(limit)) + len(startup_result),
+                        total_tokens=len(str(category))
+                        + len(str(limit))
+                        + len(startup_result),
                         duration_ns=0,
                     )
 
@@ -453,14 +486,22 @@ class SimpleAgent(Agent):
                 input=f"Executing startup simulator for {industry} targeting {audience} with word '{random_word}'",
                 output="Tool execution started",
                 model="startup_simulator",
-                num_input_tokens=len(industry) + len(audience) + len(random_word) + len(hn_context),
+                num_input_tokens=len(industry)
+                + len(audience)
+                + len(random_word)
+                + len(hn_context),
                 num_output_tokens=0,
-                total_tokens=len(industry) + len(audience) + len(random_word) + len(hn_context),
+                total_tokens=len(industry)
+                + len(audience)
+                + len(random_word)
+                + len(hn_context),
                 duration_ns=0,
             )
 
         try:
-            startup_tool_class = self.tool_registry.get_implementation("startup_simulator")
+            startup_tool_class = self.tool_registry.get_implementation(
+                "startup_simulator"
+            )
             if startup_tool_class:
                 startup_tool = startup_tool_class()
                 startup_result = await startup_tool.execute(
@@ -474,11 +515,22 @@ class SimpleAgent(Agent):
                 if galileo_logger:
                     galileo_logger.add_llm_span(
                         input=f"Startup simulator execution completed",
-                        output=(startup_result[:200] + "..." if len(startup_result) > 200 else startup_result),
+                        output=(
+                            startup_result[:200] + "..."
+                            if len(startup_result) > 200
+                            else startup_result
+                        ),
                         model="startup_simulator",
-                        num_input_tokens=len(industry) + len(audience) + len(random_word) + len(hn_context),
+                        num_input_tokens=len(industry)
+                        + len(audience)
+                        + len(random_word)
+                        + len(hn_context),
                         num_output_tokens=len(startup_result),
-                        total_tokens=len(industry) + len(audience) + len(random_word) + len(hn_context) + len(startup_result),
+                        total_tokens=len(industry)
+                        + len(audience)
+                        + len(random_word)
+                        + len(hn_context)
+                        + len(startup_result),
                         duration_ns=0,
                     )
 
@@ -490,9 +542,15 @@ class SimpleAgent(Agent):
                     input=f"Startup simulator tool not found",
                     output="",
                     model="startup_simulator",
-                    num_input_tokens=len(industry) + len(audience) + len(random_word) + len(hn_context),
+                    num_input_tokens=len(industry)
+                    + len(audience)
+                    + len(random_word)
+                    + len(hn_context),
                     num_output_tokens=0,
-                    total_tokens=len(industry) + len(audience) + len(random_word) + len(hn_context),
+                    total_tokens=len(industry)
+                    + len(audience)
+                    + len(random_word)
+                    + len(hn_context),
                     duration_ns=0,
                 )
             return ""
@@ -503,9 +561,16 @@ class SimpleAgent(Agent):
                     input=f"Error in startup simulator execution",
                     output=str(e),
                     model="startup_simulator",
-                    num_input_tokens=len(industry) + len(audience) + len(random_word) + len(hn_context),
+                    num_input_tokens=len(industry)
+                    + len(audience)
+                    + len(random_word)
+                    + len(hn_context),
                     num_output_tokens=len(str(e)),
-                    total_tokens=len(industry) + len(audience) + len(random_word) + len(hn_context) + len(str(e)),
+                    total_tokens=len(industry)
+                    + len(audience)
+                    + len(random_word)
+                    + len(hn_context)
+                    + len(str(e)),
                     duration_ns=0,
                 )
             raise e
@@ -541,14 +606,22 @@ class SimpleAgent(Agent):
                 input=f"Executing serious startup simulator for {industry} targeting {audience} with word '{random_word}'",
                 output="Tool execution started",
                 model="serious_startup_simulator",
-                num_input_tokens=len(industry) + len(audience) + len(random_word) + len(news_context),
+                num_input_tokens=len(industry)
+                + len(audience)
+                + len(random_word)
+                + len(news_context),
                 num_output_tokens=0,
-                total_tokens=len(industry) + len(audience) + len(random_word) + len(news_context),
+                total_tokens=len(industry)
+                + len(audience)
+                + len(random_word)
+                + len(news_context),
                 duration_ns=0,
             )
 
         try:
-            startup_tool_class = self.tool_registry.get_implementation("serious_startup_simulator")
+            startup_tool_class = self.tool_registry.get_implementation(
+                "serious_startup_simulator"
+            )
             if startup_tool_class:
                 startup_tool = startup_tool_class()
                 startup_result = await startup_tool.execute(
@@ -562,11 +635,22 @@ class SimpleAgent(Agent):
                 if galileo_logger:
                     galileo_logger.add_llm_span(
                         input=f"Serious startup simulator execution completed",
-                        output=(startup_result[:200] + "..." if len(startup_result) > 200 else startup_result),
+                        output=(
+                            startup_result[:200] + "..."
+                            if len(startup_result) > 200
+                            else startup_result
+                        ),
                         model="serious_startup_simulator",
-                        num_input_tokens=len(industry) + len(audience) + len(random_word) + len(news_context),
+                        num_input_tokens=len(industry)
+                        + len(audience)
+                        + len(random_word)
+                        + len(news_context),
                         num_output_tokens=len(startup_result),
-                        total_tokens=len(industry) + len(audience) + len(random_word) + len(news_context) + len(startup_result),
+                        total_tokens=len(industry)
+                        + len(audience)
+                        + len(random_word)
+                        + len(news_context)
+                        + len(startup_result),
                         duration_ns=0,
                     )
 
@@ -578,9 +662,15 @@ class SimpleAgent(Agent):
                     input=f"Serious startup simulator tool not found",
                     output="",
                     model="serious_startup_simulator",
-                    num_input_tokens=len(industry) + len(audience) + len(random_word) + len(news_context),
+                    num_input_tokens=len(industry)
+                    + len(audience)
+                    + len(random_word)
+                    + len(news_context),
                     num_output_tokens=0,
-                    total_tokens=len(industry) + len(audience) + len(random_word) + len(news_context),
+                    total_tokens=len(industry)
+                    + len(audience)
+                    + len(random_word)
+                    + len(news_context),
                     duration_ns=0,
                 )
             return ""
@@ -591,14 +681,23 @@ class SimpleAgent(Agent):
                     input=f"Error in serious startup simulator execution",
                     output=str(e),
                     model="serious_startup_simulator",
-                    num_input_tokens=len(industry) + len(audience) + len(random_word) + len(news_context),
+                    num_input_tokens=len(industry)
+                    + len(audience)
+                    + len(random_word)
+                    + len(news_context),
                     num_output_tokens=len(str(e)),
-                    total_tokens=len(industry) + len(audience) + len(random_word) + len(news_context) + len(str(e)),
+                    total_tokens=len(industry)
+                    + len(audience)
+                    + len(random_word)
+                    + len(news_context)
+                    + len(str(e)),
                     duration_ns=0,
                 )
             raise e
 
-    async def run(self, task: str, industry: str = "", audience: str = "", random_word: str = "") -> str:
+    async def run(
+        self, task: str, industry: str = "", audience: str = "", random_word: str = ""
+    ) -> str:
         """
         Execute the agent's task with Galileo monitoring.
 
@@ -637,26 +736,28 @@ class SimpleAgent(Agent):
         }
         print(f"Agent Workflow Start: {json.dumps(workflow_data, indent=2)}")
 
-        # Initialize Galileo logger for this agent execution
-        galileo_logger = GalileoLogger(
-            project=os.environ.get("GALILEO_PROJECT"),
-            log_stream=os.environ.get("GALILEO_LOG_STREAM"),
-        )
+        # Get the centralized Galileo logger instance
+        from agent_framework.utils.logging import get_galileo_logger
+
+        galileo_logger = get_galileo_logger()
 
         # Start the main agent trace - this is the parent trace for the entire workflow
-        trace = galileo_logger.start_trace(f"agent_workflow_{self.mode}")
+        trace = None
+        if galileo_logger:
+            trace = galileo_logger.start_trace(f"agent_workflow_{self.mode}")
 
         try:
-            # Add LLM span for workflow start
-            galileo_logger.add_llm_span(
-                input=f"Agent workflow started for task: {task}",
-                output="Workflow initialization",
-                model="agent_workflow",
-                num_input_tokens=len(task),
-                num_output_tokens=0,
-                total_tokens=len(task),
-                duration_ns=0,
-            )
+            # Add LLM span for workflow start if logger is available
+            if galileo_logger:
+                galileo_logger.add_llm_span(
+                    input=f"Agent workflow started for task: {task}",
+                    output="Workflow initialization",
+                    model="agent_workflow",
+                    num_input_tokens=len(task),
+                    num_output_tokens=0,
+                    total_tokens=len(task),
+                    duration_ns=0,
+                )
 
             # Execute tools based on mode with proper context passing
             results = []
@@ -664,7 +765,9 @@ class SimpleAgent(Agent):
             if self.mode == "serious":
                 # Step 1: Get news context first
                 print("🔍 Step 1: Fetching business news for context...")
-                news_context = await self._execute_news_api_tool(category="business", limit=5, galileo_logger=galileo_logger)
+                news_context = await self._execute_news_api_tool(
+                    category="business", limit=5, galileo_logger=galileo_logger
+                )
                 results.append(("news_api", news_context))
 
                 # Step 2: Generate serious startup pitch using the news context
@@ -681,7 +784,9 @@ class SimpleAgent(Agent):
             else:  # silly mode
                 # Step 1: Get HackerNews context first
                 print("🔍 Step 1: Fetching HackerNews stories for inspiration...")
-                hn_context = await self._execute_hackernews_tool(limit=3, galileo_logger=galileo_logger)
+                hn_context = await self._execute_hackernews_tool(
+                    limit=3, galileo_logger=galileo_logger
+                )
                 results.append(("hackernews", hn_context))
 
                 # Step 2: Generate silly startup pitch using the HN context
@@ -711,16 +816,17 @@ class SimpleAgent(Agent):
             }
             print(f"Agent Workflow Complete: {json.dumps(completion_data, indent=2)}")
 
-            # Add LLM span for workflow completion
-            galileo_logger.add_llm_span(
-                input=f"Agent workflow completed successfully",
-                output=formatted_result,
-                model="agent_workflow",
-                num_input_tokens=len(task),
-                num_output_tokens=len(formatted_result),
-                total_tokens=len(task) + len(formatted_result),
-                duration_ns=0,
-            )
+            # Add LLM span for workflow completion if logger is available
+            if galileo_logger:
+                galileo_logger.add_llm_span(
+                    input=f"Agent workflow completed successfully",
+                    output=formatted_result,
+                    model="agent_workflow",
+                    num_input_tokens=len(task),
+                    num_output_tokens=len(formatted_result),
+                    total_tokens=len(task) + len(formatted_result),
+                    duration_ns=0,
+                )
 
             # Prepare structured JSON output for Galileo workflow logging
             workflow_result = {
@@ -737,26 +843,30 @@ class SimpleAgent(Agent):
             if self.logger:
                 await self.logger.on_agent_done(formatted_result, self.message_history)
 
-            # Conclude the trace successfully
-            galileo_logger.conclude(output=formatted_result, duration_ns=0)
+            # Conclude the trace successfully and flush immediately
+            if galileo_logger:
+                galileo_logger.conclude(output=formatted_result, duration_ns=0)
+                galileo_logger.flush()
 
             # Return structured JSON string for Galileo workflow logging
             return json.dumps(workflow_result, indent=2)
 
         except Exception as e:
-            # Add LLM span for workflow error
-            galileo_logger.add_llm_span(
-                input=f"Agent workflow error",
-                output=str(e),
-                model="agent_workflow",
-                num_input_tokens=len(task),
-                num_output_tokens=len(str(e)),
-                total_tokens=len(task) + len(str(e)),
-                duration_ns=0,
-            )
+            # Add LLM span for workflow error if logger is available
+            if galileo_logger:
+                galileo_logger.add_llm_span(
+                    input=f"Agent workflow error",
+                    output=str(e),
+                    model="agent_workflow",
+                    num_input_tokens=len(task),
+                    num_output_tokens=len(str(e)),
+                    total_tokens=len(task) + len(str(e)),
+                    duration_ns=0,
+                )
 
-            # Conclude the trace with error
-            galileo_logger.conclude(output=str(e), duration_ns=0, error=True)
+                # Conclude the trace with error and flush immediately
+                galileo_logger.conclude(output=str(e), duration_ns=0, error=True)
+                galileo_logger.flush()
 
             raise e
         finally:

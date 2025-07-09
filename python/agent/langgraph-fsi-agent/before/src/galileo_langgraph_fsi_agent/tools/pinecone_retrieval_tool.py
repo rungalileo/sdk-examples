@@ -28,14 +28,18 @@ class PineconeRetrievalTool(BaseTool):
     """
 
     name: str = "pinecone_retrieval"
-    description: str = "Retrieve relevant information from the financial services knowledge base"
+    description: str = (
+        "Retrieve relevant information from the financial services knowledge base"
+    )
     args_schema: type[BaseModel] = RetrievalInput  # type: ignore
 
     def __init__(self, index_name: str):
         super().__init__()
         self._embeddings = OpenAIEmbeddings()
         self._index_name = index_name
-        self._vector_store = PineconeVectorStore(index_name=self._index_name, embedding=self._embeddings)
+        self._vector_store = PineconeVectorStore(
+            index_name=self._index_name, embedding=self._embeddings
+        )
 
     @override
     def _run(self, query: str, k: int = 3) -> str:

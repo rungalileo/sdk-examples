@@ -12,7 +12,9 @@ from langchain_core.messages import HumanMessage, AIMessage
 
 from dotenv import load_dotenv
 
-from src.galileo_langgraph_fsi_agent.agents.supervisor_agent import create_supervisor_agent
+from src.galileo_langgraph_fsi_agent.agents.supervisor_agent import (
+    create_supervisor_agent,
+)
 
 # Load environment variables from .env file
 load_dotenv()
@@ -32,7 +34,9 @@ async def on_chat_start() -> None:
     """
 
     # Send a welcome message to the user
-    await cl.Message(content="Welcome to the Brahe Bank assistant! How can I help you today?").send()
+    await cl.Message(
+        content="Welcome to the Brahe Bank assistant! How can I help you today?"
+    ).send()
 
 
 @cl.on_message
@@ -58,9 +62,14 @@ async def main(msg: cl.Message) -> None:
     runnable_config = RunnableConfig(callbacks=callbacks, **config)
 
     # Call the graph with the user's message and stream the response back to the user
-    async for response_msg in supervisor_agent.astream(input=messages, stream_mode="updates", config=runnable_config):
+    async for response_msg in supervisor_agent.astream(
+        input=messages, stream_mode="updates", config=runnable_config
+    ):
         # Check for a response from the supervisor agent with the final message
-        if supervisor_agent.name in response_msg and "messages" in response_msg[supervisor_agent.name]:
+        if (
+            supervisor_agent.name in response_msg
+            and "messages" in response_msg[supervisor_agent.name]
+        ):
             # Get the last message from the supervisor's response
             message = response_msg[supervisor_agent.name]["messages"][-1]
             # If it is an AI message, then it is the final answer

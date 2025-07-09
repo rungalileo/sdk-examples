@@ -30,7 +30,9 @@ class YouTubeTool(BaseTool):
             raise ValueError("YouTube API key not found in environment")
         self.youtube = build("youtube", "v3", developerKey=self.api_key)
 
-    async def execute(self, weather_condition: str, mood_override: Optional[str] = None) -> Dict[str, Any]:
+    async def execute(
+        self, weather_condition: str, mood_override: Optional[str] = None
+    ) -> Dict[str, Any]:
         """
         Execute the tool to find a weather-matching YouTube video.
 
@@ -68,7 +70,11 @@ class YouTubeTool(BaseTool):
                     query = f"{weather_condition} music vibes"
 
             # Execute search
-            search_response = self.youtube.search().list(q=query, part="snippet", maxResults=1, type="video").execute()
+            search_response = (
+                self.youtube.search()
+                .list(q=query, part="snippet", maxResults=1, type="video")
+                .execute()
+            )
 
             # Extract video information
             if search_response.get("items"):

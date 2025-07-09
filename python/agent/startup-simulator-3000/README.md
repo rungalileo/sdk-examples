@@ -1,24 +1,32 @@
 # 🚀 Startup Simulator 3000
 
-An 8-bit styled AI-powered startup pitch generator that creates either silly, creative pitches or professional business proposals. Built with a custom agentic framework powered by OpenAI and monitored with Galileo observability.
+An 8-bit styled AI-powered startup pitch generator that creates either silly, creative
+pitches or professional business proposals. Built with a custom agentic framework
+powered by OpenAI and monitored with Galileo observability.
 
-This is a **complete, self-contained version** that you can copy to any directory and run immediately!
+This is a **complete, self-contained version** that you can copy to any directory and
+run immediately!
 
 ![Powered by Galileo](static/images/05-25-Galileo-Logo-Primary-Horizontal-Light.png)
 
 ## ✨ Features
 
 ### 🎭 Dual Modes
-- **Silly Mode**: Generates absurd, creative startup pitches inspired by HackerNews trends
-- **Serious Mode**: Creates professional, corporate business proposals with market analysis from NewsAPI
+
+- **Silly Mode**: Generates absurd, creative startup pitches inspired by HackerNews
+  trends
+- **Serious Mode**: Creates professional, corporate business proposals with market
+  analysis from NewsAPI
 
 ### 🎮 8-bit Web Interface
+
 - Retro pixel art styling with vibrant color scheme
 - Animated backgrounds and glowing text effects
 - Responsive design for desktop and mobile
 - Interactive mode selection and form validation
 
 ### 🤖 Custom Agent Framework
+
 - Multi-tool agent architecture built from scratch
 - Dynamic tool selection based on execution mode
 - Comprehensive input validation and error handling
@@ -26,6 +34,7 @@ This is a **complete, self-contained version** that you can copy to any director
 - Custom tool registry and execution system
 
 ### 📊 Galileo Observability
+
 - Complete workflow and tool execution logging
 - Structured JSON output for debugging and analysis
 - LLM call tracking with token usage and performance metrics
@@ -34,15 +43,20 @@ This is a **complete, self-contained version** that you can copy to any director
 ## 🚀 Quick Start Guide
 
 ### Step 1: Prerequisites
+
 Make sure you have:
-- **Python 3.8+** installed on your system
+
+- **Python 3.9+** installed on your system
 - **Git** (optional, for cloning)
 - **A code editor** (VS Code, PyCharm, etc.)
 
 ### Step 2: Copy This Folder
-Simply copy this entire `startup-sim-3000-standalone` folder to wherever you want to run it!
+
+Simply copy this entire `startup-sim-3000-standalone` folder to wherever you want to
+run it!
 
 ### Step 3: Set Up Python Environment
+
 ```bash
 # Navigate to the folder
 cd startup-sim-3000-standalone
@@ -61,23 +75,21 @@ pip install -r requirements.txt
 ```
 
 ### Step 4: Configure API Keys
-```bash
-# Copy the example environment file
-cp .env.example .env
 
-# Edit the .env file with your API keys
-# On macOS/Linux:
-nano .env
-# On Windows:
-notepad .env
-```
+From within your code editor of choice, copy the `.example.env` file to `.env` and
+fill in the values. Don't forget to add the `.env` file to your `.gitignore` file.
 
 **Required API Keys:**
-- **OpenAI API Key**: Get one at [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
-- **NewsAPI Key**: Get one at [https://newsapi.org/register](https://newsapi.org/register) (for serious mode)
-- **Galileo API Key**: Get one at [https://console.galileo.ai/](https://console.galileo.ai/) (for observability)
+
+- **OpenAI API Key**: Get one at
+  [https://platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+- **NewsAPI Key**: Get one at
+  [https://newsapi.org/register](https://newsapi.org/register) (for serious mode)
+- **Galileo API Key**: Get one at
+  [https://console.galileo.ai/](https://console.galileo.ai/) (for observability)
 
 Your `.env` file should look like this:
+
 ```env
 # Required API Keys
 OPENAI_API_KEY=sk-your-openai-key-here
@@ -85,7 +97,7 @@ NEWS_API_KEY=your-newsapi-key-here
 
 # Galileo Observability (recommended)
 GALILEO_API_KEY=your-galileo-api-key-here
-GALILEO_PROJECT=startup-simulator-v1.2
+GALILEO_PROJECT=galileo-project-name-here
 GALILEO_LOG_STREAM=my_stream
 
 # Optional Configuration
@@ -97,12 +109,14 @@ ENABLE_LOGGING=true
 ```
 
 ### Step 5: Run the Application
+
 ```bash
 # Start the web server
 python app.py
 ```
 
 ### Step 6: Open Your Browser
+
 Navigate to: **http://localhost:2021**
 
 You should see the Startup Sim 3000 web interface! 🎉
@@ -110,15 +124,20 @@ You should see the Startup Sim 3000 web interface! 🎉
 ## 🎯 How to Use
 
 ### Web Interface
+
 1. **Choose Mode**: Select either "🎭 SILLY MODE" or "💼 SERIOUS MODE"
 2. **Fill in Details**:
-   - **Industry**: What industry your startup is in (e.g., "fintech", "healthcare", "education")
-   - **Target Audience**: Who you're targeting (e.g., "millennials", "small businesses", "developers")
-   - **Random Word**: A word to include in your pitch (e.g., "blockchain", "AI", "sustainability")
+   - **Industry**: What industry your startup is in (e.g., "fintech", "healthcare",
+     "education")
+   - **Target Audience**: Who you're targeting (e.g., "millennials", "small
+     businesses", "developers")
+   - **Random Word**: A word to include in your pitch (e.g., "blockchain", "AI",
+     "sustainability")
 3. **Generate**: Click the "Generate Startup Pitch" button
 4. **Enjoy**: Read your creative or professional startup pitch!
 
 ### Command Line (Alternative)
+
 ```bash
 # Run the CLI version
 python run_startup_sim.py
@@ -165,6 +184,7 @@ startup-sim-3000-standalone/
 ### Common Issues
 
 **1. "Module not found" errors**
+
 ```bash
 # Make sure you're in the virtual environment
 # Your prompt should show (venv)
@@ -172,6 +192,7 @@ source venv/bin/activate  # or venv\Scripts\activate on Windows
 ```
 
 **2. "OPENAI_API_KEY not set" error**
+
 ```bash
 # Check your .env file exists and has the correct key
 cat .env
@@ -179,6 +200,7 @@ cat .env
 ```
 
 **3. Port 2021 already in use**
+
 ```bash
 # Change the port in app.py or kill the existing process
 # In app.py, change: app.run(debug=True, host='0.0.0.0', port=2021)
@@ -186,6 +208,7 @@ cat .env
 ```
 
 **4. Galileo logging not working**
+
 - This is optional! The app will work without Galileo
 - If you want Galileo, make sure your API key and project are set correctly
 
@@ -199,20 +222,32 @@ cat .env
 ## 🎓 Learning Resources
 
 ### For Beginners
-- **Python Basics**: [Python.org Tutorial](https://docs.python.org/3/tutorial/)
-- **Flask Web Framework**: [Flask Documentation](https://flask.palletsprojects.com/)
-- **Async Programming**: [Python AsyncIO Tutorial](https://docs.python.org/3/library/asyncio.html)
+
+- **Python Basics**:
+  [Python.org Tutorial](https://docs.python.org/3/tutorial/)
+- **Flask Web Framework**:
+  [Flask Documentation](https://flask.palletsprojects.com/)
+- **Async Programming**:
+  [Python AsyncIO Tutorial](https://docs.python.org/3/library/asyncio.html)
 
 ### For AI/ML Developers
-- **OpenAI API**: [OpenAI Documentation](https://platform.openai.com/docs)
-- **Custom Agent Development**: Study the `agent_framework/` directory to understand agent architecture
-- **Galileo Observability**: [Galileo Documentation](https://docs.galileo.ai/)
+
+- **OpenAI API**:
+  [OpenAI Documentation](https://platform.openai.com/docs)
+- **Custom Agent Development**: Study the `agent_framework/` directory to understand
+  agent architecture
+- **Galileo Observability**:
+  [Galileo Documentation](https://docs.galileo.ai/)
 
 ### For Web Developers
-- **HTML/CSS/JavaScript**: [MDN Web Docs](https://developer.mozilla.org/)
-- **Responsive Design**: [CSS Grid and Flexbox](https://css-tricks.com/snippets/css/complete-guide-grid/)
+
+- **HTML/CSS/JavaScript**:
+  [MDN Web Docs](https://developer.mozilla.org/)
+- **Responsive Design**:
+  [CSS Grid and Flexbox](https://css-tricks.com/snippets/css/complete-guide-grid/)
 
 ### For Agent Framework Development
+
 - **Custom Tool Development**: Study the tools in the `tools/` directory
 - **Agent Architecture**: Examine `agent_framework/agent.py` for the base Agent class
 - **Observability Patterns**: Learn from the Galileo integration in each tool
@@ -226,10 +261,6 @@ This is a standalone version, but if you want to contribute to the main project:
 3. Make your changes
 4. Submit a pull request
 
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
 ## 🙏 Acknowledgments
 
 - **OpenAI** for providing the GPT models
@@ -242,13 +273,14 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## 📞 Support
 
 If you run into issues:
+
 1. Check the troubleshooting section above
 2. Look at the terminal logs for error messages
 3. Verify your API keys are correct
-4. Make sure you're using Python 3.8+
+4. Make sure you're using Python 3.9+
 
 ---
 
 **Happy Startup Pitching! 🚀**
 
-*Built with ❤️ for the AI community* 
+*Built with ❤️ and silliness for those exploring the world of AI*  
