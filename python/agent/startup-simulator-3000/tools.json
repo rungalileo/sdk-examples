@@ -1,0 +1,145 @@
+[
+  {
+    "type": "function",
+    "function": {
+      "name": "startup_simulator",
+      "description": "Generates a creative and silly startup pitch based on industry, audience, and a random word. Uses HackerNews context for inspiration.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "industry": {
+            "type": "string",
+            "description": "The industry for the startup (e.g., 'tech', 'healthcare', 'food')"
+          },
+          "audience": {
+            "type": "string", 
+            "description": "The target audience for the startup (e.g., 'millennials', 'small businesses', 'parents')"
+          },
+          "random_word": {
+            "type": "string",
+            "description": "A random word that must be included naturally in the pitch"
+          },
+          "hn_context": {
+            "type": "string",
+            "description": "Recent HackerNews stories for creative inspiration (optional)"
+          }
+        },
+        "required": ["industry", "audience", "random_word"]
+      }
+    }
+  },
+  {
+    "type": "function", 
+    "function": {
+      "name": "serious_startup_simulator",
+      "description": "Generates a professional, business-focused startup plan based on industry, audience, and market trends. Uses business news for market analysis.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "industry": {
+            "type": "string",
+            "description": "The industry for the startup (e.g., 'fintech', 'healthcare', 'e-commerce')"
+          },
+          "audience": {
+            "type": "string",
+            "description": "The target audience for the startup (e.g., 'enterprise', 'SMBs', 'consumers')"
+          },
+          "random_word": {
+            "type": "string", 
+            "description": "A concept or word to incorporate naturally into the business plan"
+          },
+          "news_context": {
+            "type": "string",
+            "description": "Recent business news for market analysis and trends (optional)"
+          }
+        },
+        "required": ["industry", "audience", "random_word"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "hackernews_tool",
+      "description": "Fetches trending stories from HackerNews for creative inspiration and context.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Number of stories to fetch (default: 3)",
+            "default": 3
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "news_api_tool", 
+      "description": "Fetches business news articles for market analysis and professional context.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "News category to fetch (e.g., 'business', 'technology')",
+            "default": "business"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Number of articles to fetch (default: 5)",
+            "default": 5
+          }
+        },
+        "required": []
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "text_analyzer",
+      "description": "Analyzes text content for sentiment, key themes, and insights.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The text content to analyze"
+          },
+          "analysis_type": {
+            "type": "string",
+            "description": "Type of analysis to perform (sentiment, themes, summary)",
+            "default": "sentiment"
+          }
+        },
+        "required": ["text"]
+      }
+    }
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "keyword_extractor",
+      "description": "Extracts key terms and phrases from text content.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "text": {
+            "type": "string",
+            "description": "The text content to extract keywords from"
+          },
+          "max_keywords": {
+            "type": "integer",
+            "description": "Maximum number of keywords to extract",
+            "default": 10
+          }
+        },
+        "required": ["text"]
+      }
+    }
+  }
+] 

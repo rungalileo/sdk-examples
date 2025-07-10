@@ -15,7 +15,9 @@ from dotenv import load_dotenv
 from galileo import galileo_context
 from galileo.handlers.langchain import GalileoAsyncCallback
 
-from src.galileo_langgraph_fsi_agent.agents.supervisor_agent import create_supervisor_agent
+from src.galileo_langgraph_fsi_agent.agents.supervisor_agent import (
+    create_supervisor_agent,
+)
 
 # Load environment variables from .env file
 load_dotenv()

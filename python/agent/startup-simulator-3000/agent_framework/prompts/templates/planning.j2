@@ -1,0 +1,16 @@
+Available Tools:
+{% for tool in tools %}
+Tool: {{ tool.name }}
+Description: {{ tool.description }}
+Tags: {{ tool.tags | join(", ") }}
+Input Schema: {{ tool.input_schema | tojson }}
+Output Schema: {{ tool.output_schema | tojson }}
+{% if tool.examples %}
+Examples:
+{% for example in tool.examples %}
+  Input: {{ example.input | tojson }}
+  Output: {{ example.output | tojson }}
+{% endfor %}
+{% endif %}
+
+{% endfor %} 

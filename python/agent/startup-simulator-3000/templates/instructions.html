@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instructions - Startum Sim 3000</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="game-container">
+        <h1>Instructions</h1>
+        <h2>What is Startup Sim 3000?</h2>
+        <p>Startup Sim 3000 is an AI-powered startup pitch generator that creates either silly, creative pitches or professional business proposals. It is built with an agentic framework powered by OpenAI and monitored with Galileo observability.</p>
+
+        <h2>How the Agent Works</h2>
+        <p>The agent uses a multi-tool architecture to generate startup pitches. It dynamically selects tools based on the execution mode (silly or serious) and fetches context from external APIs to enhance the pitch generation process.</p>
+
+        <h2>Tools Used</h2>
+        <ul>
+            <li><strong>HackerNews Tool</strong>: Fetches trending stories from HackerNews to inspire silly pitches.</li>
+            <li><strong>NewsAPI Tool</strong>: Retrieves recent news articles to provide market analysis for serious pitches.</li>
+            <li><strong>Startup Simulator</strong>: Generates creative and absurd startup pitches.</li>
+            <li><strong>Serious Startup Simulator</strong>: Creates professional business proposals with market analysis.</li>
+        </ul>
+
+        <h2>APIs Used</h2>
+        <ul>
+            <li><strong>OpenAI API</strong>: Powers the language model for generating pitches.</li>
+            <li><strong>NewsAPI</strong>: Provides real-time business news data for market analysis.</li>
+            <li><strong>HackerNews API</strong>: Offers insights into the startup ecosystem.</li>
+            <li><strong>Galileo</strong>: Monitors and logs the execution of the agent and tools.</li>
+        </ul>
+
+        <a href="/" class="back-button">Back to Home</a>
+    </div>
+</body>
+</html> 
