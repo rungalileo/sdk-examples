@@ -128,7 +128,7 @@ def send_chat_to_anthropic() -> str:
 @log(name="Chat with LLM")
 def chat_with_llm(prompt: str) -> str:
     """
-    Function to chat with the LLM using the OpenAI client.
+    Function to chat with the LLM.
     It sends a prompt to the LLM and returns the response.
 
     This is decorated with @log to automatically log the function call
