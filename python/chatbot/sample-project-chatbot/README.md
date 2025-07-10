@@ -5,7 +5,7 @@ This folder contains aa set of basic chatbot examples that are functionally iden
 | LLM.            | Project                                  | Notes |
 | :-------------- | :--------------------------------------- | :---- |
 | OpenAI/Ollama.  | [./openai-ollama](./openai-ollama/)      | This works with any OpenAI SDK compatible LLM, including Ollama running locally |
-| Azure Inference | [./azure-inference/](./azure-inference/) | This works with models deployed to Azure AI foundry via the Azure Inference API |
+| Azure Inference | [./azure-inference](./azure-inference/)  | This works with models deployed to Azure AI foundry via the Azure Inference API |
 | Anthropic       | [./anthropic](./anthropic/)              |  |
 
 Navigate to the different folders for instructions on how to set them up and run the projects.
