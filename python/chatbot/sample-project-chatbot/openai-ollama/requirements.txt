@@ -1,5 +1,3 @@
-anthropic
-azure-ai-inference
 galileo[openai]
 python-dotenv
 pytest

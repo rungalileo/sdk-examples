@@ -6,6 +6,7 @@ You will need to configure your environment variables to run this test in your .
 See the details in the README.md file for how to set up your environment variables.
 """
 
+import json
 import os
 import time
 
@@ -32,7 +33,9 @@ def setup_module():
     # Verify required environment variables are set
     # You will also need to set up the environment variables for your OpenAI API connection.
     if not os.getenv("GALILEO_PROJECT") or not os.getenv("GALILEO_API_KEY"):
-        raise ValueError("GALILEO_PROJECT and GALILEO_API_KEY environment variables are required")
+        raise ValueError(
+            "GALILEO_PROJECT and GALILEO_API_KEY environment variables are required"
+        )
 
     # Check to see if we already have the dataset, if not we can create it.
     dataset = get_dataset(
@@ -44,30 +47,13 @@ def setup_module():
     # answerable by the model. This will help us test the correctness and instruction adherence
     # of the model when running the experiment.
     if dataset is None:
+        # Load dataset content from JSON file
+        with open("../dataset.json", "r", encoding="utf-8") as f:
+            dataset_content = json.load(f)
+
         dataset = create_dataset(
             name="simple-chatbot-unit-test-dataset",
-            content=[
-                {
-                    "input": "Which continent is Spain in?",
-                    "output": "Europe",
-                },
-                {
-                    "input": "Which continent is Japan in?",
-                    "output": "Asia",
-                },
-                {
-                    "input": "Describe the running of the hippopotamus festival in Spain.",
-                    "output": "I don't know",
-                },
-                {
-                    "input": "What is the estimated population of Querulous Quails in Florin.",
-                    "output": "I don't know",
-                },
-                {
-                    "input": "Describe the famous Pudding Lane BBQ party",
-                    "output": "I don't know",
-                },
-            ],
+            content=dataset_content,
         )
 
 

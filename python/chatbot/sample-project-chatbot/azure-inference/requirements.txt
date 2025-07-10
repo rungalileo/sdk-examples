@@ -1,0 +1,4 @@
+azure-ai-inference
+galileo
+python-dotenv
+pytest
