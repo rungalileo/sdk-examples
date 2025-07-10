@@ -120,7 +120,13 @@ def test_retrieval(index_name: str, query: str):
         print(f"\n{i}. {doc.page_content[:200]}...")
 
 
-bank_documents = [{"index_name": "credit-card-information", "path": "source-docs/credit-cards", "test_query": "credit card"}]
+bank_documents = [
+    {
+        "index_name": "credit-card-information",
+        "path": "source-docs/credit-cards",
+        "test_query": "credit card",
+    }
+]
 
 
 async def main():

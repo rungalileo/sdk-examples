@@ -1,0 +1,35 @@
+{
+    // Python formatting settings
+    "python.formatting.provider": "black",
+    "python.formatting.blackArgs": ["--line-length", "160"],
+    
+    // Enable format on save for Python files
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    
+    // General editor settings for better Python development
+    "editor.rulers": [160],
+    "editor.wordWrap": "bounded",
+    "editor.wordWrapColumn": 160,
+    
+    // Python-specific settings
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    
+    // File associations
+    "files.associations": {
+        "*.py": "python"
+    },
+    
+    // Exclude certain directories from formatting
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/venv": true,
+        "**/.venv": true,
+        "**/env": true,
+        "**/.env": true
+    }
+} 
