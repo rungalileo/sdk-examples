@@ -91,9 +91,7 @@ def send_chat_to_openai() -> str:
     # Send the prompt to the LLM and get a streaming response
     # This uses the Galileo OpenAI client which is configured to log the request and response
     # to Galileo automatically in an LLM span, along with token and other information.
-    response = client.chat.completions.create(
-        model=MODEL_NAME, messages=chat_history, stream=True
-    )
+    response = client.chat.completions.create(model=MODEL_NAME, messages=chat_history, stream=True)
 
     # Stream the response to the console
     # Also capture the full response to add to the chat history and return

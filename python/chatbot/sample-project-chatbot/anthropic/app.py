@@ -94,9 +94,7 @@ def send_chat_to_anthropic() -> str:
         if chat["role"] == "system":
             system_prompt = chat["content"]
         else:
-            chat_history_anthropic.append(
-                {"role": chat["role"], "content": chat["content"]}
-            )
+            chat_history_anthropic.append({"role": chat["role"], "content": chat["content"]})
 
     # Send the chat history to the Anthropic API and get the response
     response = client.messages.create(

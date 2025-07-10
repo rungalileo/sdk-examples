@@ -33,9 +33,7 @@ def setup_module():
     # Verify required environment variables are set
     # You will also need to set up the environment variables for your OpenAI API connection.
     if not os.getenv("GALILEO_PROJECT") or not os.getenv("GALILEO_API_KEY"):
-        raise ValueError(
-            "GALILEO_PROJECT and GALILEO_API_KEY environment variables are required"
-        )
+        raise ValueError("GALILEO_PROJECT and GALILEO_API_KEY environment variables are required")
 
     # Check to see if we already have the dataset, if not we can create it.
     dataset = get_dataset(
