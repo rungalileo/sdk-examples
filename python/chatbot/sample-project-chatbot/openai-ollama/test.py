@@ -13,7 +13,7 @@ import time
 from dotenv import load_dotenv
 
 from galileo import GalileoScorers
-from galileo.datasets import create_dataset, get_dataset, delete_dataset
+from galileo.datasets import create_dataset, get_dataset
 from galileo.experiments import get_experiment, run_experiment
 
 from app import chat_with_llm
@@ -39,10 +39,6 @@ def setup_module():
     dataset = get_dataset(
         name="simple-chatbot-unit-test-dataset",
     )
-
-    if dataset is not None:
-        delete_dataset(id=dataset.id)
-        dataset = None
 
     # If we don't have the dataset, create it with some canned data. Some of these questions
     # are designed to be factual, while others are designed to be nonsensical or not
