@@ -9,6 +9,7 @@ The Brahe Bank Celestial Rewards Credit Card is designed for stargazers, space e
 - **Interest Rate**:  
   - 26.9% APR on purchases  
   - 26.9% APR on cash advances
+  - 0.0% APR on balance transfers for 12 months
 
 - **Annual Fee**:  
   - $99 charged annually on the account anniversary
@@ -29,7 +30,7 @@ The Brahe Bank Celestial Rewards Credit Card is designed for stargazers, space e
 
 - Age 18+  
 - U.S. resident with valid Social Security number  
-- Satisfactory credit history
+- Satisfactory credit history, with a credit score over 600
 
 ## Important Disclosures
 

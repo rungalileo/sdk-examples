@@ -1,28 +1,29 @@
 """
-Builds a graph using all the nodes and edges defined in the application.
+A credit score agent for the Brahe Bank application.
 """
 
 from langchain_openai import ChatOpenAI
 from langgraph.graph.graph import CompiledGraph
 from langgraph.prebuilt import create_react_agent
 
-from ..tools.pinecone_retrieval_tool import PineconeRetrievalTool
+from ..tools.credit_score_tool import CreditScoreTool
+
 
 # Create the tools
-credit_card_information_retrieval_tool = PineconeRetrievalTool("credit-card-information")
+credit_score_tool = CreditScoreTool()
 
 
-def create_credit_card_information_agent() -> CompiledGraph:
+def create_credit_score_agent() -> CompiledGraph:
     """
-    Create an agent that can help with inquires about the available credit card options from the Brahe Bank.
+    Create an agent that can help with inquires about your credit score.
 
     returns: A compiled graph for this agent.
     """
 
     # Create an agent
     agent = create_react_agent(
-        model=ChatOpenAI(model="gpt-4.1-mini", name="Credit Card Agent"),
-        tools=[credit_card_information_retrieval_tool],
+        model=ChatOpenAI(model="gpt-4.1-mini", name="Credit Score Agent"),
+        tools=[credit_score_tool],
         prompt=(
             # """
             # You are an agent providing help on the credit card options at Brahe Bank.
@@ -33,17 +34,14 @@ def create_credit_card_information_agent() -> CompiledGraph:
             # If you do not know the answer to a question, you can say that you do not know.
             # """
             """
-            You are an expert on Brahe Bank credit card products. Provide clear, accurate,
-            and concise information. Only answer with known facts from provided documentation,
-            and information about the requestor such as their credit score.
-            If unsure, state "I don't know."
+            You are an expert on credit score. Provide the user with accurate and concise information about credit scores from the credit_score_tool.
             """
         ),
-        name="credit-card-agent"
+        name="credit-score-agent"
     )
 
     # Uncomment the following lines to print the compiled graph to the console in Mermaid format
-    # print("Compiled Credit Card Agent Graph:")
+    # print("Compiled Credit Score Agent Graph:")
     # print(agent.get_graph().draw_mermaid())
 
     # Return the compiled graph
