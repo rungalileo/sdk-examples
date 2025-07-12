@@ -7,6 +7,22 @@ This repository contains example implementations and reference code for using th
 
 ## 📋 Table of Contents
 
+### Sample projects
+
+When you first sign up for Galileo, you will get 2 sample projects created, a simple chatbot, and a multi-agent banking chatbot. The code for these projects is in this repo.
+
+You can read more about these in our [Get started with sample projects documentation](https://v2docs.galileo.ai/getting-started/sample-projects/sample-projects).
+
+- **Python**
+  - [Simple chatbot using OpenAI/Ollama](/python/chatbot/sample-project-chatbot/openai-ollama/) - Simple chatbot using the OpenAI SDK to interact with OpenAI or Ollama
+  - [Simple chatbot using Anthropic](/python/chatbot/sample-project-chatbot/anthropic/) - Simple chatbot using the Anthropic SDK
+  - [Simple chatbot using Azure AI Inference](/python/chatbot/sample-project-chatbot/azure-inference/) - Simple chatbot using the Azure AI Inference SDK to interact with models deployed to Azure AI Foundry
+
+- **TypeScript**
+  - [Simple chatbot using OpenAI/Ollama](/typescript/chatbot/sample-project-chatbot/openai-ollama/) - Simple chatbot using the OpenAI SDK to interact with OpenAI or Ollama
+  - [Simple chatbot using Anthropic](/typescript/chatbot/sample-project-chatbot/anthropic/) - Simple chatbot using the Anthropic SDK
+  - [Simple chatbot using Azure AI Inference](/typescript/chatbot/sample-project-chatbot/azure-inference/) - Simple chatbot using the Azure AI Inference SDK to interact with models deployed to Azure AI Foundry
+
 ### 🤖 Agent Examples
 
 - **[Python Agents](/python/agent/)**

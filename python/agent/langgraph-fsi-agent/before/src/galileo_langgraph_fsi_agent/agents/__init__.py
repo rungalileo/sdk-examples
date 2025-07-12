@@ -1,6 +1,7 @@
 """Agents package for the Galileo LangGraph FSI Agent."""
 
 from .credit_card_information_agent import create_credit_card_information_agent
+from .credit_score_agent import create_credit_score_agent
 from .supervisor_agent import create_supervisor_agent
 
-__all__ = ["create_credit_card_information_agent", "create_supervisor_agent"]
+__all__ = ["create_credit_card_information_agent", "create_credit_score_agent", "create_supervisor_agent"]

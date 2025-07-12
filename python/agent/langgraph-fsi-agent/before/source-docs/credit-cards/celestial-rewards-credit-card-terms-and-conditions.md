@@ -4,6 +4,7 @@
 
 - **Purchase APR**: 26.9% (variable)  
 - **Cash Advance APR**: 26.9% (variable)  
+- **Balance Transfer APR**: 0.0% (for 12 months)
 - **Minimum Interest Charge**: $1.50  
 - **Grace Period**: 21 days on purchases
 

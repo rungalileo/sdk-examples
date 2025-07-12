@@ -42,6 +42,11 @@ async def on_chat_start() -> None:
 
 
 def create_galileo_session():
+    """
+    Create a new Galileo session for tracking user interactions.
+
+    This session is then stored in the Chainlit user session for later use.
+    """
     try:
         # Start Galileo session with unique session name
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
