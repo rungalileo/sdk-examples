@@ -804,20 +804,20 @@ tqdm = ["tqdm"]
 
 [[package]]
 name = "galileo"
-version = "1.3.0"
+version = "1.8.0"
 description = "Client library for the Galileo platform."
 optional = false
 python-versions = "<3.14,>=3.9"
 groups = ["main"]
 files = [
-    {file = "galileo-1.3.0-py3-none-any.whl", hash = "sha256:d79fcdc6eea7fffb8dcd74c20b532ff9b206dbee1cd7bf6066fed2348a2b401b"},
-    {file = "galileo-1.3.0.tar.gz", hash = "sha256:0ef2a7ddc26b4f6219b3dcba16c4cbe9c26612d51a7a0abc1e5e1eb064bb0fdd"},
+    {file = "galileo-1.8.0-py3-none-any.whl", hash = "sha256:c5f7fff940e41ece2f10f1f622360bb399df63497b65a05282009d79f2f8f31f"},
+    {file = "galileo-1.8.0.tar.gz", hash = "sha256:cf30c783604a52cde48fdf373b126db7b1cad7d9b0a72f2cec51d7202e01f332"},
 ]
 
 [package.dependencies]
 attrs = ">=22.2.0"
-galileo-core = ">=3.44.0,<3.45.0"
-pydantic = ">=2.11.5,<3.0.0"
+galileo-core = ">=3.55.0,<3.56.0"
+pydantic = ">=2.11.7,<3.0.0"
 pyjwt = ">=2.8.0,<3.0.0"
 python-dateutil = ">=2.8.0,<3.0.0"
 wrapt = ">=1.14,<2.0"
@@ -829,14 +829,14 @@ openai = ["openai", "openai-agents", "packaging (>=24.2,<25.0)"]
 
 [[package]]
 name = "galileo-core"
-version = "3.44.0"
+version = "3.55.0"
 description = "Shared schemas and configuration for Galileo's Python packages."
 optional = false
 python-versions = ">=3.8.1"
 groups = ["main"]
 files = [
-    {file = "galileo_core-3.44.0-py3-none-any.whl", hash = "sha256:8dbcae1196e1185df0519ea56f743652fe425c2a92bfb3efda0be278c25a3c8b"},
-    {file = "galileo_core-3.44.0.tar.gz", hash = "sha256:bb8a302173dc5d48387457002fbd2a29800161cf356c553f509866e59619fbce"},
+    {file = "galileo_core-3.55.0-py3-none-any.whl", hash = "sha256:b6934756dcc4fad6be929d3ac374c89324fbc0a2f50281c1f400fcfb1d567324"},
+    {file = "galileo_core-3.55.0.tar.gz", hash = "sha256:a2a88896c959df97d9ba3abe4bae8018f3e3a65ef41580ad5117d0606fbd05d9"},
 ]
 
 [package.dependencies]
@@ -5242,4 +5242,4 @@ cffi = ["cffi (>=1.11)"]
 [metadata]
 lock-version = "2.1"
 python-versions = "<3.14,>=3.11"
-content-hash = "17b9dba0b0cab1dddd1e159445360efd875bce2fbee096a785cb6808f67792bb"
+content-hash = "27649e3fa26348a6ba2799d91691d629a9fd0d09be06b4908db82e7a63aff38f"
