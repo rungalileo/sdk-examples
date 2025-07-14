@@ -32,6 +32,7 @@ You can read more about these in our [Get started with sample projects documenta
   - [Weather Vibes Agent](/python/agent/weather-vibes-agent/) - Multi-function agent for weather, recommendations, and YouTube videos
 - **[TypeScript Agents](/typescript/agent/)**
   - [Minimal Agent](/typescript/agent/) - Basic TypeScript agent implementation
+  - [LangGraph FSI Agent](/typescript/agent/langgraph-fsi-agent/) - Financial services agent
 
 ### 💬 Chatbot Examples
 

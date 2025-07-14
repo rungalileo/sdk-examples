@@ -1,0 +1,35 @@
+{
+    "name": "basic-chatbot-galileo-ts",
+    "version": "1.0.0",
+    "description": "A TypeScript chatbot with Galileo logging",
+    "main": "dist/app.js",
+    "type": "module",
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "scripts": {
+        "start": "tsx app.ts",
+        "test": "jest",
+        "test:watch": "jest --watch",
+        "upload-docs": "tsx scripts/upload-docs.ts"
+    },
+    "dependencies": {
+        "@langchain/community": "^0.3.48",
+        "@langchain/core": "^0.3.62",
+        "@langchain/langgraph": "^0.3.7",
+        "@langchain/langgraph-supervisor": "^0.0.15",
+        "@langchain/openai": "^0.5.18",
+        "@langchain/pinecone": "^0.2.0",
+        "@pinecone-database/pinecone": "^5.1.2",
+        "dotenv": "^17.2.0",
+        "galileo": "^1.21.0"
+    },
+    "devDependencies": {
+        "@types/jest": "^30.0.0",
+        "@types/node": "^24.0.12",
+        "jest": "^29.7.0",
+        "ts-jest": "^29.4.0",
+        "tsx": "^4.20.3",
+        "typescript": "^5.8.3"
+    }
+}
