@@ -37,7 +37,7 @@ def create_credit_score_agent() -> CompiledGraph:
             You are an expert on credit score. Provide the user with accurate and concise information about credit scores from the credit_score_tool.
             """
         ),
-        name="credit-score-agent"
+        name="credit-score-agent",
     )
 
     # Uncomment the following lines to print the compiled graph to the console in Mermaid format

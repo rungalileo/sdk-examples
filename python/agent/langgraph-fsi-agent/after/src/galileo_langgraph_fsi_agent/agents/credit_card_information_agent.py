@@ -39,7 +39,7 @@ def create_credit_card_information_agent() -> CompiledGraph:
             If unsure, state "I don't know."
             """
         ),
-        name="credit-card-agent"
+        name="credit-card-agent",
     )
 
     # Uncomment the following lines to print the compiled graph to the console in Mermaid format

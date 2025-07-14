@@ -28,6 +28,7 @@ from src.galileo_langgraph_fsi_agent.agents.supervisor_agent import (
 
 DATASET_NAME = "langgraph-fsi-unit-test-dataset"
 
+
 def setup_module():
     """
     Setup function that runs once when this test module is executed.
@@ -67,8 +68,10 @@ def setup_module():
             content=dataset_content,
         )
 
+
 # Create the supervisor agent
 supervisor_agent = create_supervisor_agent()
+
 
 def send_message_to_supervisor_agent(message: str):
     """
@@ -110,12 +113,7 @@ def test_run_experiment_with_dataset():
         experiment_name="langgraph-fsi-experiment",
         dataset_name=DATASET_NAME,
         function=send_message_to_supervisor_agent,
-        metrics=[
-            GalileoScorers.action_advancement,
-            GalileoScorers.action_completion,
-            GalileoScorers.tool_error_rate,
-            GalileoScorers.tool_selection_quality
-        ],
+        metrics=[GalileoScorers.action_advancement, GalileoScorers.action_completion, GalileoScorers.tool_error_rate, GalileoScorers.tool_selection_quality],
         project=os.getenv("GALILEO_PROJECT"),
     )
 
@@ -127,11 +125,11 @@ def test_run_experiment_with_dataset():
         experiment_name=experiment_response["experiment"].name,
     )
     while (
-        experiment.aggregate_metrics is None # type: ignore
-        or "average_agentic_session_success" not in experiment.aggregate_metrics #type: ignore
-        or "average_agentic_workflow_success" not in experiment.aggregate_metrics #type: ignore
-        or "average_tool_selection_quality" not in experiment.aggregate_metrics #type: ignore
-        or "count_tool_error_rate" not in experiment.aggregate_metrics #type: ignore
+        experiment.aggregate_metrics is None  # type: ignore
+        or "average_agentic_session_success" not in experiment.aggregate_metrics  # type: ignore
+        or "average_agentic_workflow_success" not in experiment.aggregate_metrics  # type: ignore
+        or "average_tool_selection_quality" not in experiment.aggregate_metrics  # type: ignore
+        or "count_tool_error_rate" not in experiment.aggregate_metrics  # type: ignore
     ):
         # If we don't have the metrics calculated, Sleep for 5 seconds before polling again
         time.sleep(5)
@@ -144,7 +142,7 @@ def test_run_experiment_with_dataset():
 
     # # Assert the experiment has the expected metric values - each should be 1.0
     # # However, the default system prompt can lead to hallucinations, so this test may fail.
-    assert experiment.aggregate_metrics["average_agentic_session_success"] == 1 # type: ignore
-    assert experiment.aggregate_metrics["average_agentic_workflow_success"] == 1 # type: ignore
-    assert experiment.aggregate_metrics["average_tool_selection_quality"] == 1 # type: ignore
-    assert experiment.aggregate_metrics["count_tool_error_rate"] == 0 # type: ignore
+    assert experiment.aggregate_metrics["average_agentic_session_success"] == 1  # type: ignore
+    assert experiment.aggregate_metrics["average_agentic_workflow_success"] == 1  # type: ignore
+    assert experiment.aggregate_metrics["average_tool_selection_quality"] == 1  # type: ignore
+    assert experiment.aggregate_metrics["count_tool_error_rate"] == 0  # type: ignore

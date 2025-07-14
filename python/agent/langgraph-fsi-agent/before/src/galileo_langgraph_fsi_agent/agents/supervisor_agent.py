@@ -12,6 +12,7 @@ from .credit_card_information_agent import create_credit_card_information_agent
 credit_card_information_agent = create_credit_card_information_agent()
 credit_score_agent = create_credit_score_agent()
 
+
 def create_supervisor_agent():
     """
     Create a supervisor agent that manages all the agents in the Brahe Bank application.

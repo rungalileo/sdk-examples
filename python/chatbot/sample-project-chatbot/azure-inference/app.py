@@ -58,8 +58,7 @@ galileo_context.start_session(SESSION_NAME)
 chat_history = [
     {
         "role": "system",
-        "content":
-        """
+        "content": """
         You are a knowledgeable and confident assistant. Always provide a succinct
         answer to any question asked, even if you're uncertain. If the answer isn't
         clear or familiar, make your best guess based on your training data,
