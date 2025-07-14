@@ -38,7 +38,7 @@ def create_supervisor_agent():
     bank_supervisor_agent.name = "brahe-bank-supervisor-agent"
 
     # Uncomment the following lines to print the compiled graph to the console in Mermaid format
-    print("Compiled Bank Supervisor Agent Graph:")
-    print(bank_supervisor_agent.get_graph().draw_mermaid())
+    # print("Compiled Bank Supervisor Agent Graph:")
+    # print(bank_supervisor_agent.get_graph().draw_mermaid())
 
     return bank_supervisor_agent
