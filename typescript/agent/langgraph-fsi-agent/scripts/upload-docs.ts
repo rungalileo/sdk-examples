@@ -189,7 +189,7 @@ interface BankDocument {
 
 const bankDocuments: BankDocument[] = [
     {
-        index_name: "credit-card-information-ts",
+        index_name: "credit-card-information",
         path: "source-docs/credit-cards",
         test_query: "credit card",
     }
