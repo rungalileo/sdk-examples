@@ -2,6 +2,7 @@
 Builds a graph using all the nodes and edges defined in the application.
 """
 
+import os
 from langchain_openai import ChatOpenAI
 from langgraph.graph.graph import CompiledGraph
 from langgraph.prebuilt import create_react_agent
@@ -21,7 +22,7 @@ def create_credit_card_information_agent() -> CompiledGraph:
 
     # Create an agent
     agent = create_react_agent(
-        model=ChatOpenAI(model="gpt-4.1-mini", name="Credit Card Agent"),
+        model=ChatOpenAI(model=os.environ["MODEL_NAME"], name="Credit Card Agent"),
         tools=[credit_card_information_retrieval_tool],
         prompt=(
             # """

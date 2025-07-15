@@ -1,6 +1,7 @@
 
 import { ChatOpenAI } from "@langchain/openai";
 import { createCreditCardInformationAgent } from "./creditCardInformationAgent";
+import { createCreditScoreAgent } from "./creditScoreAgent";
 import { createSupervisor } from "@langchain/langgraph-supervisor";
 
 // Supervisor Agent for Brahe Bank Application
@@ -8,14 +9,15 @@ import { createSupervisor } from "@langchain/langgraph-supervisor";
 
 // Define the agents that the supervisor will manage
 const creditCardInformationAgent = createCreditCardInformationAgent();
+const creditScoreAgent = createCreditScoreAgent(); // Assuming a similar agent for credit scores
 
 export function createSupervisorAgent() {
     /**
      * Create a supervisor agent that manages all the agents in the Brahe Bank application.
      */
     const bankSupervisorAgent = createSupervisor({
-        llm: new ChatOpenAI({ model: "gpt-4.1-mini" }),
-        agents: [creditCardInformationAgent],
+        llm: new ChatOpenAI({ model: process.env.MODEL_NAME }),
+        agents: [creditCardInformationAgent, creditScoreAgent],
         prompt: `
             You are a supervisor managing the following agents:
             - a credit card information agent. Assign any tasks related to information about credit cards to this agent

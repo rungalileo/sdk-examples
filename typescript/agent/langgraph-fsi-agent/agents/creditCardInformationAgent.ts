@@ -10,7 +10,7 @@ import { creditCardInformationRetrievalTool } from "../tools/pineconeRetrievalTo
 export const createCreditCardInformationAgent = () => {    
     // Create the agent
     const agent = createReactAgent({
-        llm: new ChatOpenAI({ model: "gpt-4.1-mini" }),
+        llm: new ChatOpenAI({ model: process.env.MODEL_NAME }),
         tools: [creditCardInformationRetrievalTool],
         prompt: `
             You are an agent providing help on the credit card options at Brahe Bank.

@@ -20,4 +20,4 @@ class CreditScoreTool(BaseTool):
         """
         Always return a credit score of 550 for testing purposes.
         """
-        return "550"
+        return "Your credit score is 550"
