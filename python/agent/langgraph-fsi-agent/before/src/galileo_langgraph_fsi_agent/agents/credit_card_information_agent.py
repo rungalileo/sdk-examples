@@ -25,14 +25,6 @@ def create_credit_card_information_agent() -> CompiledGraph:
         model=ChatOpenAI(model=os.environ["MODEL_NAME"], name="Credit Card Agent"),
         tools=[credit_card_information_retrieval_tool],
         prompt=(
-            # """
-            # You are an agent providing help on the credit card options at Brahe Bank.
-            # Be helpful, but succinct, and do not make up information that you do not already know to be true.
-            # If you need to retrieve information from the knowledge base, use the tools provided.
-            # If you are asked questions about credit card options, you can use the information you have to help the user. For example, you can answer questions about which
-            # card may best align with their interests if their interests align with rewards or features of a card.
-            # If you do not know the answer to a question, you can say that you do not know.
-            # """
             """
             You are an expert on Brahe Bank credit card products. Provide clear, accurate,
             and concise information. Only answer with known facts from provided documentation,

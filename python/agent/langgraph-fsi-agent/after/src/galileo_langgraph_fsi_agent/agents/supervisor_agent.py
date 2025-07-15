@@ -22,12 +22,6 @@ def create_supervisor_agent():
         model=ChatOpenAI(model=os.environ["MODEL_NAME"], name="Supervisor"),
         agents=[credit_card_information_agent, credit_score_agent],
         prompt=(
-            # """
-            # You are a supervisor managing the following agents:
-            # - a credit card information agent. Assign any tasks related to information about credit cards to this agent
-            # Otherwise, only respond with 'I don't know' or 'I cannot answer that question'.
-            # If you need to ask the user for more information, do so in a concise manner.
-            # """
             """
             You are a supervisor managing the following agents:
             - a credit card information agent. Assign any tasks related to information about credit cards to this agent
