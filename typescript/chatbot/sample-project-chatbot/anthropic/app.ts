@@ -38,12 +38,12 @@ import { chatWithLLM } from './chat';
     // Get the Galileo logger instance
     const galileoLogger = getLogger();
 
-    // Start a new session named using the current date and time
+    // Start a new session with a UUID as the external ID
     // This way every time you run the application, it will create a new session in Galileo
     // with the entire conversation inside the same session, with each message back and forth
     // logged as different traces within that session.
-    const sessionName = `LLM Chatbot session - ${new Date().toISOString()}`;
-    await galileoLogger.startSession({ name: sessionName });
+    const sessionId = crypto.randomUUID();
+    await galileoLogger.startSession({ externalId: sessionId });
 
     // Create a readline interface to read input from the terminal
     // This allows the user to interact with the chatbot through the terminal.

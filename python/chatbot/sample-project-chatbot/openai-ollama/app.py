@@ -28,8 +28,8 @@ Set the following environment variable for your LLM:
 
 """
 
-from datetime import datetime
 import os
+import uuid
 
 from dotenv import load_dotenv
 
@@ -44,12 +44,11 @@ load_dotenv(override=True)
 # If this is not set, raise an exception
 MODEL_NAME = os.environ["MODEL_NAME"]
 
-# Start a new session named using the current date and time
+# Start a new session with a UUID as the external ID
 # This way every time you run the application, it will create a new session in Galileo
 # with the entire conversation inside the same session, with each message back and forth
 # logged as different traces within that session.
-SESSION_NAME = f"LLM Chatbot session - {datetime.now().isoformat()}"
-galileo_context.start_session(SESSION_NAME)
+galileo_context.start_session(external_id=str(uuid.uuid4()))
 
 
 # Create a collection of messages with a system prompt
