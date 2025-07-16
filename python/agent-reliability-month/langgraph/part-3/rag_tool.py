@@ -93,10 +93,13 @@ class SupplyChainRAG:
         self.vectorstore = None
         self.retrieval_chain = None
         self.index_name = "supply-chain-rag"
-        self.initialize()
+        self._initialized = False
 
     def initialize(self):
         """Initialize the RAG system with supply chain knowledge"""
+        if self._initialized:
+            return
+
         try:
             # Initialize embeddings
             self.embeddings = PineconeEmbeddings(model='multilingual-e5-large')
@@ -129,12 +132,14 @@ class SupplyChainRAG:
 
             # Set up retrieval chain
             self._setup_retrieval_chain()
+            self._initialized = True
 
             print("✅ Supply Chain RAG initialized successfully")
 
         except Exception as e:
             print(f"❌ Error initializing Supply Chain RAG: {e}")
-            raise
+            # Don't raise - allow the module to load and handle errors gracefully
+            self._initialized = False
 
     def _load_documents(self):
         """Load and process supply chain documents"""
@@ -172,8 +177,12 @@ class SupplyChainRAG:
 
     def search(self, query: str) -> str:
         """Search the supply chain knowledge base"""
+        # Lazy initialization - only initialize when first used
+        if not self._initialized:
+            self.initialize()
+
         if not self.retrieval_chain:
-            return "RAG system not initialized. Please initialize first."
+            return "RAG system not initialized. Please check your environment variables and try again."
 
         try:
             result = self.retrieval_chain.invoke({"input": query})
@@ -182,8 +191,16 @@ class SupplyChainRAG:
             return f"Error during RAG search: {str(e)}"
 
 
-# Global RAG instance
-_supply_chain_rag = SupplyChainRAG()
+# Global RAG instance - but don't initialize it yet
+_supply_chain_rag = None
+
+
+def get_rag_instance():
+    """Get or create the global RAG instance"""
+    global _supply_chain_rag
+    if _supply_chain_rag is None:
+        _supply_chain_rag = SupplyChainRAG()
+    return _supply_chain_rag
 
 
 @tool
@@ -199,4 +216,5 @@ def rag_search(query: str) -> str:
     Returns:
         Relevant information from the supply chain knowledge base
     """
-    return _supply_chain_rag.search(query)
+    rag_instance = get_rag_instance()
+    return rag_instance.search(query)

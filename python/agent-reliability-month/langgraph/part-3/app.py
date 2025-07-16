@@ -1,5 +1,6 @@
 import os
 import time
+import uuid
 
 import streamlit as st
 from dotenv import load_dotenv
@@ -143,7 +144,7 @@ def main():
     if not st.session_state.orchestrator_initialized:
         # Start Galileo session BEFORE initializing orchestrator
         try:
-            galileo_context.start_session()
+            galileo_context.start_session(external_id=str(uuid.uuid4())[:10])
             st.session_state.orchestrator = initialize_modular_orchestrator()
             st.session_state.orchestrator_initialized = True
         except Exception as e:
@@ -229,6 +230,7 @@ def main():
 if __name__ == "__main__":
     os.environ["GALILEO_PROJECT"] = "sid-multi-agent-v1"
     os.environ["GALILEO_LOG_STREAM"] = "dev-v5"
+    print(os.environ.get("GALILEO_CONSOLE_URL"))
     main()
 
     # Example queries:
