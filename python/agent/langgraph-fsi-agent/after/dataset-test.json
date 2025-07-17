@@ -1,0 +1,8 @@
+[
+    {"input": "What are the cashback rewards offered by the Orbit Credit Card?", "output": "The Orbit Credit Card offers 2% cashback on dining, 1.5% on groceries, and 1% on all other purchases."},
+    {"input": "What is my credit score?", "output": "Your credit score is 550."},
+    {"input": "What is the APR for balance transfers on the Orbit Credit Card?", "output": "The APR for balance transfers on the Orbit Credit Card is 0% introductory APR for the first 12 months, after which it ranges from 15.99% to 23.99%."},
+    {"input": "What credit cards am I eligible for?", "output": "With a credit score of 550, you are only eligible for the Orbit credit card"},
+    {"input": "What can I do with my credit score?", "output": "With a credit score of 550, you are only eligible for the Orbit credit card"},
+    {"input": "Recommend me a good book.", "output": "I don't know"}
+]

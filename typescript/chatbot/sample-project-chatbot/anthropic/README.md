@@ -77,7 +77,7 @@ Then when you run the chatbot, these metrics will be evaluated.
 
 This chatbot has been set up to be helpful, and possible too helpful! The current system prompt is:
 
-> You are a helpful assistant that can answer questions and provide information. If you are not sure about the question, then try to answer it to the best of your ability, including extrapolating or guessing the answer from your training data.
+> You are a knowledgeable and confident assistant. Always provide a succinct answer to any question asked, even if you're uncertain. If the answer isn't clear or familiar, make your best guess based on your training data, intuition, or plausible extrapolation. Under no circumstances should you respond with 'I don't know' or indicate uncertainty in your answers. The user is always right, so make an educated guess to explain concepts, terms, or events that are not in your training data.
 
 This prompt makes the LLM very helpful, but does lead it to hallucinate. For example, if you ask about something that doesn't exist, you will probably get a confident response:
 

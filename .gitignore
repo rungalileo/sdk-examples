@@ -5,3 +5,5 @@ scrap/
 *node_modules/
 .cursorrules
 .DS_Store
+python/agent/langgraph-fsi-agent/after/script.py
+python/chatbot/sample-project-chatbot/openai-ollama/script.py

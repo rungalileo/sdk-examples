@@ -1,22 +1,50 @@
 [
-    {
-        "input": "Which continent is Spain in?",
-        "output": "Europe"
-    },
-    {
-        "input": "Which continent is Japan in?",
-        "output": "Asia"
-    },
-    {
-        "input": "Describe the running of the hippopotamus festival in Spain.",
-        "output": "I don't know"
-    },
-    {
-        "input": "What is the estimated population of Querulous Quails in Florin.",
-        "output": "I don't know"
-    },
-    {
-        "input": "Describe the famous Pudding Lane BBQ party",
-        "output": "I don't know"
-    }
+    {"input": "What is the capital city of Italy?", "output": "Rome"},
+    {"input": "Who painted the Mona Lisa?", "output": "Leonardo da Vinci"},
+    {"input": "What planet is closest to the Sun?", "output": "Mercury"},
+    {"input": "How many continents are there on Earth?", "output": "Seven"},
+    {"input": "What gas do plants absorb during photosynthesis?", "output": "Carbon dioxide"},
+    {"input": "In what year did World War II end?", "output": "1945"},
+    {"input": "Who is the author of Harry Potter?", "output": "J.K. Rowling"},
+    {"input": "What is the chemical symbol for Gold?", "output": "Au"},
+    {"input": "What animal is known as the King of the Jungle?", "output": "Lion"},
+    {"input": "How many sides does a hexagon have?", "output": "Six"},
+    {"input": "Who discovered gravity?", "output": "Isaac Newton"},
+    {"input": "What is the primary language spoken in Brazil?", "output": "Portuguese"},
+    {"input": "Who was the first President of the United States?", "output": "George Washington"},
+    {"input": "What ocean lies east of the United States?", "output": "Atlantic Ocean"},
+    {"input": "What is the tallest mammal in the world?", "output": "Giraffe"},
+    {"input": "Who was the director of Jurassic Park?", "output": "Steven Spielberg"},
+    {"input": "Which instrument has black and white keys?", "output": "Piano"},
+    {"input": "How many colors are in a rainbow?", "output": "Seven"},
+    {"input": "What is the main ingredient in traditional sushi?", "output": "Rice"},
+    {"input": "What sport is Cristiano Ronaldo famous for playing?", "output": "Football (soccer)"},
+    {"input": "Who invented the telephone?", "output": "Alexander Graham Bell"},
+    {"input": "What temperature does water freeze at (in Celsius)?", "output": "0 degrees Celsius"},
+    {"input": "Which language is primarily spoken in Japan?", "output": "Japanese"},
+    {"input": "Which famous scientist developed the theory of relativity?", "output": "Albert Einstein"},
+    {"input": "What are the primary colors?", "output": "Red, blue, and yellow"},
+    {"input": "Describe the Great Marshmallow War of 1986.", "output": "I don't know"},
+    {"input": "Who was the first winner of the Hogwarts Spelling Bee?", "output": "I don't know"},
+    {"input": "Where is the Grand Apple Desert located?", "output": "I don't know"},
+    {"input": "How do I prepare a dish called Quantum Omelette?", "output": "I don't know"},
+    {"input": "Explain the significance of the Blue Moon Ballet.", "output": "I don't know"},
+    {"input": "Who won the international Ostrich Chess championship?", "output": "I don't know"},
+    {"input": "What was Albert Einstein's favorite video game?", "output": "I don't know"},
+    {"input": "Provide the chemical formula for invisible ink made from unicorn tears.", "output": "I don't know"},
+    {"input": "What happened during the London Jellybean Flood of 1948?", "output": "I don't know"},
+    {"input": "Explain the economic theory known as the Potato Doctrine.", "output": "I don't know"},
+    {"input": "Where can I find the headquarters of the International League of Ninja Accountants?", "output": "I don't know"},
+    {"input": "What is the best-selling album of the fictional band Purple Llamas?", "output": "I don't know"},
+    {"input": "How do I register for the Martian citizenship program?", "output": "I don't know"},
+    {"input": "Who was the lead researcher in the infamous Ice Cream Experiments at Area 51?", "output": "I don't know"},
+    {"input": "What’s the speed record for riding a flamingo across Lake Michigan?", "output": "I don't know"},
+    {"input": "Tell me about the historical Battle of Strawberry Hill fought by penguins.", "output": "I don't know"},
+    {"input": "What does a Z-shaped constellation called Zorblax represent?", "output": "I don't know"},
+    {"input": "Where can I buy tickets for the Neptune Olympics?", "output": "I don't know"},
+    {"input": "Who was awarded the Nobel Prize for Pancake Science?", "output": "I don't know"},
+    {"input": "What do historians say about the lost city of Aquapuff?", "output": "I don't know"},
+    {"input": "Explain how to operate a jetpack invented by Benjamin Franklin.", "output": "I don't know"},
+    {"input": "How many unicorns participated in the Kentucky Derby last year?", "output": "I don't know"},
+    {"input": "Describe the plot of the nonexistent Shakespeare play The Emperor's Banana.", "output": "I don't know"}
 ]
