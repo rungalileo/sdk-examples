@@ -115,6 +115,11 @@ INVENTORY RULES:
 - ONLY offer products that actually exist in your Stripe account
 - If a user asks for something not in inventory, check list_products first, then explain what's actually available
 
+PURCHASE INTENT DETECTION:
+- When users express purchase intent (want to buy, ready to purchase, etc.), ALWAYS show them the current inventory first
+- Use list_products to get the latest inventory, then show prices and descriptions
+- Make it easy for customers to see what's available and make a decision
+
 SESSION CONCLUSION RULES:
 - When customer indicates they are done (says "thanks", "nope", "that's all", etc.), conclude the conversation politely
 - Do NOT continue asking "Is there anything else I can help you with?" after customer indicates they're done
@@ -136,6 +141,12 @@ For product inquiries:
 - NEVER suggest products that don't exist in your inventory
 - When user wants to buy, use get_price_and_create_payment_link directly
 
+For purchase intent responses:
+1. First, use list_products to get current inventory
+2. Show available products with prices and descriptions
+3. Ask which product they'd like to purchase
+4. Use get_price_and_create_payment_link when they specify a product
+
 For complex calculations (like "how many X can I buy for $Y"):
 1. Get product info with list_products
 2. Get price info with list_prices
@@ -144,9 +155,10 @@ For complex calculations (like "how many X can I buy for $Y"):
 
 Example flow:
 1. "What do you offer?" → list_products (shows REAL inventory)
-2. "I want the telescope" → get_price_and_create_payment_link with product_name and quantity
+2. "I want to buy something" → list_products (shows inventory with prices), then ask which product
+3. "I want the telescope" → get_price_and_create_payment_link with product_name and quantity
 
-REMEMBER: Customer trust depends on only offering real products that exist! Reduce the number of tools you call to only the ones that are necessary to answer the user's question and not repeat tool calls when not necessary. 
+REMEMBER: Customer trust depends on only offering real products that exist! Always show inventory when purchase intent is detected. Reduce the number of tools you call to only the ones that are necessary to answer the user's question and not repeat tool calls when not necessary. 
 `;
 
     // Prepend custom instructions to the original prompt
@@ -398,7 +410,28 @@ ${paymentLinkUrl}
       
       // Check if user input indicates purchase intent
       if (userInput && this.detectPurchaseIntent(userInput)) {
-        cleanOutput += '\n\n🛒 **Ready to make a purchase?** I can provide a payment link for you to complete your purchase.';
+        cleanOutput += '\n\n🛒 **I\'d be happy to help you make a purchase!** Let me show you what\'s available in our inventory:';
+        
+        // Try to get current inventory from recent tool calls
+        const recentProducts = this.getRecentProducts(result);
+        if (recentProducts && recentProducts.length > 0) {
+          cleanOutput += '\n\n**Available Products:**';
+          recentProducts.forEach((product: any) => {
+            if (product.prices && product.prices.length > 0) {
+              const price = product.prices[0];
+              const priceDisplay = price.unit_amount ? `$${(price.unit_amount / 100).toFixed(2)}` : 'Price not set';
+              cleanOutput += `\n• **${product.name}** - ${priceDisplay}`;
+              if (product.description) {
+                cleanOutput += `\n  ${product.description}`;
+              }
+            } else {
+              cleanOutput += `\n• **${product.name}** - Price not set`;
+            }
+          });
+          cleanOutput += '\n\nJust let me know which product you\'d like to purchase and I\'ll create a payment link for you!';
+        } else {
+          cleanOutput += '\n\nLet me check our current inventory for you. What type of product are you looking for?';
+        }
       }
       
       // Add standard follow-up if no special conditions
@@ -447,6 +480,31 @@ ${paymentLinkUrl}
     return deduplicated;
   }
 
+  private getRecentProducts(result: any): any[] {
+    if (!result.intermediateSteps) return [];
+    
+    // Look for recent product listings in the conversation
+    for (const step of result.intermediateSteps) {
+      if (step.action && step.action.tool === 'list_products' && step.observation) {
+        try {
+          const products = JSON.parse(step.observation);
+          if (Array.isArray(products)) {
+            return this.deduplicateProducts(products);
+          }
+        } catch (e) {
+          // Try to extract products from text format
+          const productMatch = step.observation.match(/\[([^\]]+)\]/);
+          if (productMatch) {
+            // This is a simplified fallback - in practice, you'd want more robust parsing
+            return [];
+          }
+        }
+      }
+    }
+    
+    return [];
+  }
+
   private generateTraceName(input: string): string {
     // Generate space-themed trace names for Galileo's Gizmos
     const lowerInput = input.toLowerCase();
@@ -471,10 +529,28 @@ ${paymentLinkUrl}
   private detectPurchaseIntent(input: string): boolean {
     const lowerInput = input.toLowerCase();
     const purchaseKeywords = [
+      // Direct purchase words
       'buy', 'purchase', 'order', 'payment', 'pay', 'checkout',
-      'want to buy','checkout;', 'would like to buy', 'interested in buying',
+      'want to buy', 'checkout;', 'would like to buy', 'interested in buying',
       'ready to purchase', 'ready to buy', 'i want', 'i need',
-      'add to cart', 'get this', 'take this', "i'm sold", "where do I purchase", "where do I buy","add to cart,","place order,"
+      'add to cart', 'get this', 'take this', "i'm sold", "where do I purchase", "where do I buy", "add to cart,", "place order,",
+      
+      // Additional purchase intent words
+      'acquire', 'obtain', 'secure', 'procure', 'get my hands on',
+      'pick up', 'grab', 'snag', 'score', 'cop', 'hook me up with',
+      'charge', 'bill', 'invoice', 'transaction', 'payment link',
+      'stripe link', 'checkout link', 'pay now', 'complete purchase',
+      'finalize order', 'process payment', 'authorize payment',
+      'put in cart', 'shopping cart', 'basket', 'proceed to checkout',
+      'go to checkout', 'checkout process', 'submit order', 'confirm purchase',
+      'looking to buy', 'thinking of buying', 'planning to purchase',
+      'considering buying', 'thinking about getting', 'want to get',
+      'would love to have', 'interested in purchasing', 'keen on buying',
+      'ready to pay', 'ready to checkout', 'ready to complete',
+      'let\'s do this', 'let\'s make it happen', 'sign me up',
+      'count me in', 'sold me', 'convinced me',
+      'how do I get', 'how can I buy', 'what\'s the process',
+      'what\'s next', 'next steps', 'how to proceed', 'how to order'
     ];
     
     return purchaseKeywords.some(keyword => lowerInput.includes(keyword));

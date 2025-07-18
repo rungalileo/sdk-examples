@@ -1,7 +1,7 @@
 {
     "name": "stripe-agents-sdk-example",
     "version": "1.0.0",
-    "description": "A TypeScript agent using Stripe Agent Toolkit with Galileo monitoring",
+    "description": "A TypeScript Ecommerce agent using Stripe Agent Toolkit with Galileo monitoring",
     "main": "dist/index.js",
     "scripts": {
       "build": "tsc",
@@ -11,7 +11,8 @@
       "customer-service": "ts-node src/interactive.ts",
       "web": "ts-node src/server.ts",
       "web:build": "tsc && node dist/server.js",
-      "test": "jest"
+      "test": "jest",
+      "setup-products": "ts-node scripts/setup_products.ts"
     },
     "keywords": [
       "stripe",

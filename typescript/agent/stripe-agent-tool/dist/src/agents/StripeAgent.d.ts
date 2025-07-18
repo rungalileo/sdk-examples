@@ -18,6 +18,7 @@ export declare class StripeAgent {
     private extractToolsUsed;
     private logTraceToGalileo;
     private deduplicateProducts;
+    private getRecentProducts;
     private generateTraceName;
     private detectPurchaseIntent;
     private shouldPromptForFeedback;

@@ -147,8 +147,8 @@ describe('StripeAgent', () => {
                 // Optional: Check that output files were created
                 const fs = require('fs');
                 expect(fs.existsSync('dist')).toBe(true);
-                expect(fs.existsSync('dist/index.js')).toBe(true);
-                expect(fs.existsSync('dist/agents/StripeAgent.js')).toBe(true);
+                expect(fs.existsSync('dist/src/index.js')).toBe(true);
+                expect(fs.existsSync('dist/src/agents/StripeAgent.js')).toBe(true);
                 console.log('✅ TypeScript compilation successful');
                 if (stdout)
                     console.log('Build output:', stdout);

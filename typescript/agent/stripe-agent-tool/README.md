@@ -65,6 +65,56 @@ npm test
 - `npm run interactive` - Start interactive CLI mode
 - `npm run web` - Start web server mode
 - `npm run test` - Run test suite
+- `npm run setup-products` - Set up space-themed product catalog in Stripe
+
+## Product Catalog Setup
+
+This project includes a comprehensive space-themed product catalog for "Galileo's Gizmos". To set up the product catalog:
+
+1. **Ensure your Stripe API key is configured** in your `.env` file
+2. **Run the setup script**:
+   ```bash
+   npm run setup-products
+   ```
+
+This will create 20 space-themed products including:
+- **Astronomical Equipment**: Telescopes, binoculars, camera adapters
+- **Space Exploration Gear**: Training suits, VR helmets, Mars rovers
+- **Educational Items**: Mars rocks, star maps, mission patches
+- **Space Food**: Astronaut meals, energy bars, freeze-dried treats
+- **Home & Lifestyle**: Nebula projectors, space bedding, cosmic art
+
+### Product Categories
+
+**🔭 Astronomical Equipment** ($29.99 - $1,299.99)
+- Galileo's Premium Telescope
+- Stellar Binoculars Pro
+- Cosmic Camera Adapter
+- Planetary Filter Set
+
+**👨‍🚀 Space Exploration Gear** ($199.99 - $2,499.99)
+- Astronaut Training Suit
+- Zero Gravity Simulator
+- Space Helmet VR
+- Mars Rover Remote Control
+
+**📚 Educational & Collectibles** ($29.99 - $89.99)
+- Mars Rock Collection
+- Cosmic Discovery Box
+- Galileo's Star Map
+- Space Mission Patch Set
+
+**🍽️ Space Food & Nutrition** ($19.99 - $79.99)
+- Astronaut Food Pack
+- Cosmic Energy Bars
+- Zero-G Coffee Mug
+- Space Ice Cream
+
+**🏠 Home & Lifestyle** ($44.99 - $159.99)
+- Nebula Projector
+- Space-Themed Bedding Set
+- Cosmic Wall Art
+- Astronaut Alarm Clock
 
 ## Project Structure
 
