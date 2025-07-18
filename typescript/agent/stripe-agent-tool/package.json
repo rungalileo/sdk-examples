@@ -21,7 +21,9 @@
       "agent",
       "galileo",
       "typescript",
-      "ai"
+      "ai",
+      "ecommerce",
+      "evaluations"
     ],
     "author": "Erin Mikail Staples",
     "dependencies": {
