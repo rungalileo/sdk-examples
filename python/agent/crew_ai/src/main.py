@@ -11,9 +11,7 @@ setup_observability()
 
 class SearchTool(CrewAITool):
     name: str = "Search"
-    description: str = (
-        "Useful for search-based queries. Use this to find current information about markets, companies, and trends."
-    )
+    description: str = "Useful for search-based queries. Use this to find current information about markets, companies, and trends."
     search: DuckDuckGoSearchRun = Field(default_factory=DuckDuckGoSearchRun)
 
     def _run(self, query: str) -> str:
@@ -27,9 +25,7 @@ class SearchTool(CrewAITool):
 class WikipediaToolWrapper(CrewAITool):
     name: str = "Wikipedia Search"
     description: str = "Search Wikipedia for factual information"
-    langchain_tool: WikipediaQueryRun = Field(
-        default_factory=lambda: WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper(wiki_client=wikipedia))
-    )
+    langchain_tool: WikipediaQueryRun = Field(default_factory=lambda: WikipediaQueryRun(api_wrapper=WikipediaAPIWrapper(wiki_client=wikipedia)))
 
     def _run(self, query: str) -> str:
         """Execute the Wikipedia search query and return results"""
