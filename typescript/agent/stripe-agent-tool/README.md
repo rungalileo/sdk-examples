@@ -12,7 +12,7 @@ A self-contained TypeScript agent using Stripe Agent Toolkit with Galileo monito
 
 ## Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
 - Stripe account with API keys
 - OpenAI API key
@@ -21,21 +21,25 @@ A self-contained TypeScript agent using Stripe Agent Toolkit with Galileo monito
 ## Setup
 
 1. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 2. **Configure environment**:
+
    ```bash
    cp .env.example .env
    ```
-   
+
    Edit `.env` with your actual API keys:
+
    - `STRIPE_SECRET_KEY`: Your Stripe secret key
    - `OPENAI_API_KEY`: Your OpenAI API key
    - `GALILEO_API_KEY`: Your Galileo API key (optional)
 
 3. **Build the project**:
+
    ```bash
    npm run build
    ```
@@ -43,16 +47,19 @@ A self-contained TypeScript agent using Stripe Agent Toolkit with Galileo monito
 ## Usage
 
 ### Interactive CLI Mode
+
 ```bash
 npm run interactive
 ```
 
 ### Web Server Mode
+
 ```bash
 npm run web
 ```
 
 ### Run Tests
+
 ```bash
 npm test
 ```
@@ -66,6 +73,8 @@ npm test
 - `npm run web` - Start web server mode
 - `npm run test` - Run test suite
 - `npm run setup-products` - Set up space-themed product catalog in Stripe
+- `npm run debug-prices` - Debug Stripe price creation and retrieval
+- `npm run test-agent` - Test agent price reading capabilities
 
 ## Product Catalog Setup
 
@@ -73,11 +82,13 @@ This project includes a comprehensive space-themed product catalog for "Galileo'
 
 1. **Ensure your Stripe API key is configured** in your `.env` file
 2. **Run the setup script**:
+
    ```bash
    npm run setup-products
    ```
 
 This will create 20 space-themed products including:
+
 - **Astronomical Equipment**: Telescopes, binoculars, camera adapters
 - **Space Exploration Gear**: Training suits, VR helmets, Mars rovers
 - **Educational Items**: Mars rocks, star maps, mission patches
@@ -87,30 +98,35 @@ This will create 20 space-themed products including:
 ### Product Categories
 
 **🔭 Astronomical Equipment** ($29.99 - $1,299.99)
+
 - Galileo's Premium Telescope
 - Stellar Binoculars Pro
 - Cosmic Camera Adapter
 - Planetary Filter Set
 
 **👨‍🚀 Space Exploration Gear** ($199.99 - $2,499.99)
+
 - Astronaut Training Suit
 - Zero Gravity Simulator
 - Space Helmet VR
 - Mars Rover Remote Control
 
 **📚 Educational & Collectibles** ($29.99 - $89.99)
+
 - Mars Rock Collection
 - Cosmic Discovery Box
 - Galileo's Star Map
 - Space Mission Patch Set
 
 **🍽️ Space Food & Nutrition** ($19.99 - $79.99)
+
 - Astronaut Food Pack
 - Cosmic Energy Bars
 - Zero-G Coffee Mug
 - Space Ice Cream
 
 **🏠 Home & Lifestyle** ($44.99 - $159.99)
+
 - Nebula Projector
 - Space-Themed Bedding Set
 - Cosmic Wall Art
@@ -142,4 +158,4 @@ All compiled JavaScript files are output to the `dist/` directory, making the pr
 
 ## License
 
-
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
