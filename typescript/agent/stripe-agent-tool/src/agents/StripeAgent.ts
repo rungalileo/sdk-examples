@@ -76,10 +76,6 @@ export class StripeAgent {
     });
   }
 
-
-
-
-
   private async initializeAgent(): Promise<void> {
     // Initialize Stripe client for the atomic tool
     const stripe = new Stripe(env.stripe.secretKey, {
@@ -133,6 +129,8 @@ The get_price_and_create_payment_link tool is atomic and handles:
 3. Creating the payment link with the specified quantity
 4. Returning the ready-to-share URL
 
+Make sure that you are only calling the get_price_and_create_payment_link tool to create a payment link ONCE for each time that you need a product call. 
+
 For product inquiries:
 - ALWAYS use list_products to show what's actually available
 - NEVER suggest products that don't exist in your inventory
@@ -148,7 +146,7 @@ Example flow:
 1. "What do you offer?" → list_products (shows REAL inventory)
 2. "I want the telescope" → get_price_and_create_payment_link with product_name and quantity
 
-REMEMBER: Customer trust depends on only offering real products that exist!
+REMEMBER: Customer trust depends on only offering real products that exist! Reduce the number of tools you call to only the ones that are necessary to answer the user's question and not repeat tool calls when not necessary. 
 `;
 
     // Prepend custom instructions to the original prompt
@@ -167,7 +165,7 @@ REMEMBER: Customer trust depends on only offering real products that exist!
       agent,
       tools,
       verbose: true,
-      maxIterations: 4, // Lowered to prevent runaway loops
+      maxIterations: 6, // Lowered to prevent runaway loops
       returnIntermediateSteps: true, // This helps with error handling
     });
   }
@@ -371,7 +369,7 @@ REMEMBER: Customer trust depends on only offering real products that exist!
         this.concludeGalileoSession();
       }
       
-      return "🌟 Thank you for choosing Galileo's Gizmos! We're glad we could help you today.\n\n🚀 Your session is now complete!";
+      return "🌟 Thank you for choosing Galileo's Gizmos! We're glad we could help you today.\n\n🚀 Catch you around the galaxy!";
     }
     
     // If we found a payment link, enhance the response
@@ -400,7 +398,7 @@ ${paymentLinkUrl}
       
       // Check if user input indicates purchase intent
       if (userInput && this.detectPurchaseIntent(userInput)) {
-        cleanOutput += '\n\n🛒 **Ready to make a purchase?** I can help you create a payment link! Let me first check what products are actually available in our inventory and then I can create a payment link for you.';
+        cleanOutput += '\n\n🛒 **Ready to make a purchase?** I can provide a payment link for you to complete your purchase.';
       }
       
       // Add standard follow-up if no special conditions
@@ -474,9 +472,9 @@ ${paymentLinkUrl}
     const lowerInput = input.toLowerCase();
     const purchaseKeywords = [
       'buy', 'purchase', 'order', 'payment', 'pay', 'checkout',
-      'want to buy', 'would like to buy', 'interested in buying',
+      'want to buy','checkout;', 'would like to buy', 'interested in buying',
       'ready to purchase', 'ready to buy', 'i want', 'i need',
-      'add to cart', 'get this', 'take this'
+      'add to cart', 'get this', 'take this', "i'm sold", "where do I purchase", "where do I buy","add to cart,","place order,"
     ];
     
     return purchaseKeywords.some(keyword => lowerInput.includes(keyword));
@@ -489,20 +487,15 @@ ${paymentLinkUrl}
     const strongClosingPatterns = [
       'thank you', 'thanks', 'that\'s all', 'that\'s it', 'all set',
       'i\'m done', 'i\'m all set', 'goodbye', 'bye', 'see you later',
-      'talk to you later', 'have a good day', 'have a great day'
+      'talk to you later', 'have a good day', 'have a great day', 'i\'m good', 'i\'m good to go', 'i\'m good to go!', 'no thanks', 'no thank you', 'no thank you!', 'nope', 'thank you', 'thank you!'
     ];
     
     // Simple closing words that need to be at the end or standalone
     const simpleClosingWords = ['done', 'finished', 'perfect', 'great', 'awesome'];
     
-    // ONLY these specific dismissive responses should trigger feedback
-    const dismissiveResponses = ['nope', 'nope!', 'no', 'nah'];
-    
     // Check for strong closing patterns anywhere in the input
     const hasStrongClosing = strongClosingPatterns.some(pattern => lowerInput.includes(pattern));
     
-    // Check for dismissive responses (exact matches ONLY)
-    const isDismissive = dismissiveResponses.some(response => lowerInput === response);
     
     // Check for simple closing words only if they're at the end or standalone
     const hasSimpleClosingAtEnd = simpleClosingWords.some(word => {
@@ -514,7 +507,7 @@ ${paymentLinkUrl}
     // Do NOT trigger feedback for longer negative responses
     const isLongNegativeResponse = lowerInput.length > 20 && (lowerInput.includes('cannot') || lowerInput.includes('help me'));
     
-      return (hasStrongClosing || isDismissive || hasSimpleClosingAtEnd) && !isLongNegativeResponse;
+      return (hasStrongClosing || hasSimpleClosingAtEnd) && !isLongNegativeResponse;
   }
 
   /**
