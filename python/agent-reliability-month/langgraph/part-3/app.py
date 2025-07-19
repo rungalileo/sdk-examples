@@ -229,8 +229,7 @@ def main():
 
 if __name__ == "__main__":
     os.environ["GALILEO_PROJECT"] = "sid-multi-agent-v1"
-    os.environ["GALILEO_LOG_STREAM"] = "dev-v5"
-    print(os.environ.get("GALILEO_CONSOLE_URL"))
+    os.environ["GALILEO_LOG_STREAM"] = "dev-v6"
     main()
 
     # Example queries:
