@@ -40,6 +40,7 @@ This cookbook will guide you through building, understanding, and monitoring the
 **Steps:**
 
 1. **Clone the repository:**
+
    ```bash
    git clone https://github.com/[organization]/sdk-examples.git
    cd sdk-examples/python/agent/weather-vibes-agent
@@ -67,12 +68,19 @@ This cookbook will guide you through building, understanding, and monitoring the
    ```
 
 4. **Create a .env file** in the project root:
+
    ```
+    # Galileo Environment Variables
+    GALILEO_API_KEY=your-galileo-api-key             # Your Galileo API key.
+    GALILEO_PROJECT=your-galileo-project-name        # Your Galileo project name.
+    GALILEO_LOG_STREAM=weather_vibes_agent
+    
+    # Please provide the console url below if you are using a custom deployment, and not using app.galileo.ai
+    # GALILEO_CONSOLE_URL=your-galileo-console-url   # Optional if you are using a hosted version of Galileo
+
    OPENAI_API_KEY=your_openai_key_here
    WeatherAPI_KEY=your_weatherapi_key_here
    YOUTUBE_API_KEY=your_youtube_key_here
-   GALILEO_API_KEY=your_galileo_key_here
-   GALILEO_LOG_STREAM=weather_vibes_agent
    ```
 
 ## Understanding the Agent Architecture

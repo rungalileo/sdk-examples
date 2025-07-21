@@ -91,11 +91,16 @@ To run the examples, you'll need to:
 
 2. Set up your environment variables in a `.env` file:
    ```
+    # Galileo Environment Variables
+    GALILEO_API_KEY=your-galileo-api-key             # Your Galileo API key.
+    GALILEO_PROJECT=your-galileo-project-name        # Your Galileo project name.
+    GALILEO_LOG_STREAM=your-galileo-log-stream       # The name of the log stream you want to use for logging.
+    
+    # Please provide the console url below if you are using a custom deployment, and not using app.galileo.ai
+    # GALILEO_CONSOLE_URL=your-galileo-console-url   # Optional if you are using a hosted version of Galileo
+
    OPENAI_API_KEY=your_openai_api_key
    OPENAI_ORGANIZATION=your_openai_organization  # Optional
-   GALILEO_API_KEY=your_galileo_api_key
-   GALILEO_PROJECT=your_project_name  # Optional
-   GALILEO_LOG_STREAM=your_log_stream  # Optional
    ```
 
 3. Run the examples:

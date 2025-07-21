@@ -16,11 +16,20 @@ This document explains how to use Galileo for evaluating and monitoring the Weat
 pip install -r requirements-galileo.txt
 ```
 
-### 2. Configure Galileo API Key
-Create or edit your `.env` file and add your Galileo API key:
+### 2. Configure Galileo details
+
+Create or edit your `.env` file and add your Galileo details:
+
 ```
-GALILEO_API_KEY=your_galileo_api_key_here
+# Galileo Environment Variables
+GALILEO_API_KEY=your-galileo-api-key             # Your Galileo API key.
+GALILEO_PROJECT=your-galileo-project-name        # Your Galileo project name.
+GALILEO_LOG_STREAM=your-galileo-log-stream       # The name of the log stream you want to use for logging.
+
+# Please provide the console url below if you are using a custom deployment, and not using app.galileo.ai
+# GALILEO_CONSOLE_URL=your-galileo-console-url   # Optional if you are using a hosted version of Galileo
 ```
+
 You can get your API key from the Galileo dashboard.
 
 ## Running the Galileo-Instrumented Agent

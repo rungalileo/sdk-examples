@@ -36,23 +36,39 @@ def setup_module():
         raise ValueError("GALILEO_PROJECT and GALILEO_API_KEY environment variables are required")
 
     # Check to see if we already have the dataset, if not we can create it.
-    dataset = get_dataset(
-        name="simple-chatbot-unit-test-dataset",
-    )
+    try:
+        dataset = get_dataset(
+            name="simple-chatbot-unit-test-dataset",
+        )
+        print(f"Found existing dataset: {dataset.name if dataset else 'None'}")
+    except ValueError:
+        # Dataset doesn't exist, so we'll create it
+        dataset = None
+        print("Dataset not found, will create a new one")
 
     # If we don't have the dataset, create it with some canned data. Some of these questions
     # are designed to be factual, while others are designed to be nonsensical or not
     # answerable by the model. This will help us test the correctness and instruction adherence
     # of the model when running the experiment.
     if dataset is None:
-        # Load dataset content from JSON file
-        with open("../dataset.json", "r", encoding="utf-8") as f:
-            dataset_content = json.load(f)
+        try:
+            # Load dataset content from JSON file
+            print(f"Current working directory: {os.getcwd()}")
+            print(f"Checking if ../dataset.json exists: {os.path.exists('../dataset.json')}")
+            
+            with open("../dataset.json", "r", encoding="utf-8") as f:
+                dataset_content = json.load(f)
+            
+            print(f"Successfully loaded dataset with {len(dataset_content)} items")
 
-        dataset = create_dataset(
-            name="simple-chatbot-unit-test-dataset",
-            content=dataset_content,
-        )
+            dataset = create_dataset(
+                name="simple-chatbot-unit-test-dataset",
+                content=dataset_content,
+            )
+            print(f"Successfully created dataset: {dataset.name if dataset else 'None'}")
+        except Exception as e:
+            print(f"Failed to create dataset: {e}")
+            raise
 
 
 def test_run_experiment_with_dataset():
@@ -67,12 +83,33 @@ def test_run_experiment_with_dataset():
     To make this test pass, you will need to modify the system prompt in the `app.py` file. There is
     a comment in the `app.py` file that shows a better system prompt, which should allow this test to pass.
     """
+    # Verify the dataset exists before running the experiment
+    try:
+        dataset = get_dataset(name="simple-chatbot-unit-test-dataset")
+        if not dataset:
+            raise ValueError("Dataset 'simple-chatbot-unit-test-dataset' not found")
+        print(f"Using dataset: {dataset.name}")
+    except ValueError as e:
+        print(f"Dataset error: {e}")
+        # If dataset doesn't exist, create it here as a fallback
+        try:
+            import json
+            with open("../dataset.json", "r", encoding="utf-8") as f:
+                dataset_content = json.load(f)
+            dataset = create_dataset(
+                name="simple-chatbot-unit-test-dataset",
+                content=dataset_content,
+            )
+            print(f"Created fallback dataset: {dataset.name}")
+        except Exception as create_error:
+            raise ValueError(f"Could not create dataset: {create_error}") from e
+
     # Run the experiment using the canned dataset
     experiment_response = run_experiment(
         # This name is reused, so each experiment run will get a generated name
         # with the run date and time
         experiment_name="simple-chatbot-experiment",
-        dataset_name="simple-chatbot-unit-test-dataset",
+        dataset=dataset,  # Use the dataset object instead of dataset_name
         function=chat_with_llm,
         metrics=[
             GalileoScorers.correctness,

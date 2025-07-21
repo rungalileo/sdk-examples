@@ -99,12 +99,19 @@ By completing this tutorial, you will:
 
 3. **Configure Your API Keys**:
    Create a `.env` file in the project root:
+
    ```
+    # Galileo Environment Variables
+    GALILEO_API_KEY=your-galileo-api-key             # Your Galileo API key.
+    GALILEO_PROJECT=your-galileo-project-name        # Your Galileo project name.
+    GALILEO_LOG_STREAM=weather_vibes_agent
+    
+    # Please provide the console url below if you are using a custom deployment, and not using app.galileo.ai
+    # GALILEO_CONSOLE_URL=your-galileo-console-url   # Optional if you are using a hosted version of Galileo
+    
    OPENAI_API_KEY=your_openai_key
    WEATHERAPI_KEY=your_weatherapi_key
    YOUTUBE_API_KEY=your_youtube_key
-   GALILEO_API_KEY=your_galileo_key
-   GALILEO_LOG_STREAM=weather_vibes_agent
    ```
 
 4. **Follow the Tutorial Sections**:

@@ -14,10 +14,13 @@ On your cluster or [https://app.galileo.ai](https://app.galileo.ai) create an ac
 
 Make sure to set your Galileo logging env variables
 ```bash
-GALILEO_API_KEY="..."
-GALILEO_PROJECT="elastic-chat-rag-app"
-GALILEO_LOG_STREAM="my_log_stream" 
-# Optional: GALILEO_CONSOLE_URL=https://console...
+# Galileo Environment Variables
+GALILEO_API_KEY=your-galileo-api-key             # Your Galileo API key.
+GALILEO_PROJECT=your-galileo-project-name        # Your Galileo project name.
+GALILEO_LOG_STREAM=your-galileo-log-stream       # The name of the log stream you want to use for logging.
+
+# Please provide the console url below if you are using a custom deployment, and not using app.galileo.ai
+# GALILEO_CONSOLE_URL=your-galileo-console-url   # Optional if you are using a hosted version of Galileo
 ```
 
 
