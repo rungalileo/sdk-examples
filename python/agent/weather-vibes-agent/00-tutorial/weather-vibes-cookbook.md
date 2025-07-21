@@ -75,7 +75,7 @@ This cookbook will guide you through building, understanding, and monitoring the
     GALILEO_PROJECT=your-galileo-project-name        # Your Galileo project name.
     GALILEO_LOG_STREAM=weather_vibes_agent
     
-    # Please provide the console url below if you are using a custom deployment, and not using app.galileo.ai
+    # Provide the console url below if you are using a custom deployment, and not using app.galileo.ai
     # GALILEO_CONSOLE_URL=your-galileo-console-url   # Optional if you are using a hosted version of Galileo
 
    OPENAI_API_KEY=your_openai_key_here
