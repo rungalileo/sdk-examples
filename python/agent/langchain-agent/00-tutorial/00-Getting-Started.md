@@ -42,8 +42,8 @@ GALILEO_LOG_STREAM=your-galileo-log-stream       # The name of the log stream yo
 OPENAI_API_KEY=your-openai-api-key
 ```
 
-- Replace `your-openai-api-key`, `your-galileo-project-name`, `your-galileo-log-stream`, and `your-galileo-api-key` with your actual values.
-- If you are using a custom deployment of Galileo, set GALILEO_CONSOLE_URL to the URL of your Galileo deployment.
+- Replace `your-openai-api-key`, `your-galileo-project-name`, and `your-galileo-log-stream` with your actual values.
+- If you are using a custom deployment of Galileo, set `GALILEO_CONSOLE_URL` to the URL of your Galileo deployment.
 - This keeps your credentials secure and out of your code.
 
 ---
