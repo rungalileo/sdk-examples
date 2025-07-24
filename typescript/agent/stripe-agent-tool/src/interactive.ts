@@ -161,6 +161,11 @@ class GalileoGizmosCustomerService {
     console.log('🚀 Initializing Galileo\'s Gizmos Customer Service...');
     console.log(`📊 Connecting to Galileo monitoring...`);
     
+    // Initialize the agent
+    console.log('🤖 Initializing AI agent...');
+    await this.agent.init();
+    console.log('✅ Agent initialized successfully!');
+    
     // Start Galileo session
     await this.startSession();
     
