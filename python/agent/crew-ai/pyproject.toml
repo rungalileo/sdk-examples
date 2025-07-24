@@ -9,7 +9,6 @@ dependencies = [
     "crewai>=0.5.0",
     "crewai-tools>=0.55.0",
     "ddgs>=9.2.3",
-    "duckduckgo-search>=8.1.1",
     "langchain-community>=0.3.21",
     "openinference-instrumentation-crewai>=0.1.11",
     "openinference-instrumentation-langchain>=0.1.46",

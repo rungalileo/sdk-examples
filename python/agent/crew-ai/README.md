@@ -1,6 +1,6 @@
 # Crew AI Example Project
 
-This is an example project demonstrating how to use Galileo with Crew AI. It includes a simple setup for integrating Crew AI functionalities into a Python application.
+This is an example project demonstrating how to use Galileo with Crew AI. It includes a simple setup for integrating Crew AI functionality into a Python application.
 Its main purpose is to showcase how to set up a project with open-inference and send traces to Galileo for observability.
 
 ## Getting Started
@@ -8,7 +8,7 @@ Its main purpose is to showcase how to set up a project with open-inference and 
 To get started with this project, you'll need to have Python 3.9 or later installed. You can then install the required dependencies using Poetry:
 
 ```sync
-uv install
+uv sync
 ```
 
 ## Usage
