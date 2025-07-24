@@ -23,8 +23,8 @@ uv run src/main.py
 
 The project structure is as follows:
 
-```
-crew_ai/
+```folder
+crew-ai/
 ├── src/          # Main application files
 │   ├── __init__.py
 │   ├── main.py

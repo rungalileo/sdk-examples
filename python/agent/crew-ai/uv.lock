@@ -551,9 +551,9 @@ dependencies = [
     { name = "crewai" },
     { name = "crewai-tools" },
     { name = "ddgs" },
+    { name = "duckduckgo-search" },
     { name = "langchain-community" },
     { name = "openinference-instrumentation-crewai" },
-    { name = "openinference-instrumentation-langchain" },
     { name = "openinference-instrumentation-litellm" },
     { name = "opentelemetry-api" },
     { name = "opentelemetry-exporter-otlp" },
@@ -568,9 +568,9 @@ requires-dist = [
     { name = "crewai", specifier = ">=0.5.0" },
     { name = "crewai-tools", specifier = ">=0.55.0" },
     { name = "ddgs", specifier = ">=9.2.3" },
+    { name = "duckduckgo-search", specifier = ">=8.1.1" },
     { name = "langchain-community", specifier = ">=0.3.21" },
     { name = "openinference-instrumentation-crewai", specifier = ">=0.1.11" },
-    { name = "openinference-instrumentation-langchain", specifier = ">=0.1.46" },
     { name = "openinference-instrumentation-litellm", specifier = ">=0.1.24" },
     { name = "opentelemetry-api", specifier = ">=1.35.0" },
     { name = "opentelemetry-exporter-otlp", specifier = ">=1.35.0" },
@@ -767,6 +767,20 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/08/12/9c22a58c0b1e29271051222d8906257616da84135af9ed167c9e28f85cb3/docstring_parser-0.16.tar.gz", hash = "sha256:538beabd0af1e2db0146b6bd3caa526c35a34d61af9fd2887f3a8a27a739aa6e", size = 26565, upload-time = "2024-03-15T10:39:44.419Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d5/7c/e9fcff7623954d86bdc17782036cbf715ecab1bec4847c008557affe1ca8/docstring_parser-0.16-py3-none-any.whl", hash = "sha256:bf0a1387354d3691d102edef7ec124f219ef639982d096e26e3b60aeffa90637", size = 36533, upload-time = "2024-03-15T10:39:41.527Z" },
+]
+
+[[package]]
+name = "duckduckgo-search"
+version = "8.1.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "click" },
+    { name = "lxml" },
+    { name = "primp" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/10/ef/07791a05751e6cc9de1dd49fb12730259ee109b18e6d097e25e6c32d5617/duckduckgo_search-8.1.1.tar.gz", hash = "sha256:9da91c9eb26a17e016ea1da26235d40404b46b0565ea86d75a9f78cc9441f935", size = 22868, upload-time = "2025-07-06T15:30:59.73Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/db/72/c027b3b488b1010cf71670032fcf7e681d44b81829d484bb04e31a949a8d/duckduckgo_search-8.1.1-py3-none-any.whl", hash = "sha256:f48adbb06626ee05918f7e0cef3a45639e9939805c4fc179e68c48a12f1b5062", size = 18932, upload-time = "2025-07-06T15:30:58.339Z" },
 ]
 
 [[package]]
@@ -2363,23 +2377,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/7e/30/95276c074a257d8c6a92e7f92637eaf78c1f89fb6281e82f76c17c3d27d3/openinference_instrumentation_crewai-0.1.11.tar.gz", hash = "sha256:61234cce6aead3debd18a2b0eab6b8fb70776a268e14ae71f1f570d707e861aa", size = 10323, upload-time = "2025-07-16T21:17:37.841Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/a3/7c/7a2ae73f88ea6ab1a6a6242a83aa3070859aafb3a9e5746250b0f6c4f275/openinference_instrumentation_crewai-0.1.11-py3-none-any.whl", hash = "sha256:096975809acc2326c409b5d3fb12cc264f1012f9d207b1b820b172e1b83a147a", size = 11845, upload-time = "2025-07-16T21:17:36.768Z" },
-]
-
-[[package]]
-name = "openinference-instrumentation-langchain"
-version = "0.1.46"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "openinference-instrumentation" },
-    { name = "openinference-semantic-conventions" },
-    { name = "opentelemetry-api" },
-    { name = "opentelemetry-instrumentation" },
-    { name = "opentelemetry-semantic-conventions" },
-    { name = "wrapt" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/25/d9/2936c480d6f6ccbd2f045ef8a0838a663e17f1513bbf535267c0d28cfffa/openinference_instrumentation_langchain-0.1.46.tar.gz", hash = "sha256:0d3d41723bc985b3804cf916d25890f1ba5245e8e51aba7b4730556d4332de5a", size = 53166, upload-time = "2025-07-03T16:37:56.021Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/d4/47/46b4b25febbc362b4f4d9406d66ce42421c2e0dcc4ee403d1c1771c0306e/openinference_instrumentation_langchain-0.1.46-py3-none-any.whl", hash = "sha256:e6ee9b6b26e44467bcec846a6b31ee0f0df686a7c887fc7c7f5ad2be64122033", size = 19605, upload-time = "2025-07-03T16:37:54.549Z" },
 ]
 
 [[package]]

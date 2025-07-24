@@ -1,7 +1,6 @@
 import os
 
 from openinference.instrumentation.crewai import CrewAIInstrumentor
-from openinference.instrumentation.langchain import LangChainInstrumentor
 from openinference.instrumentation.litellm import LiteLLMInstrumentor
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk import trace as trace_sdk
@@ -29,4 +28,3 @@ def setup_observability():
     tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter()))
     LiteLLMInstrumentor().instrument(tracer_provider=tracer_provider)
     CrewAIInstrumentor().instrument(tracer_provider=tracer_provider)
-    LangChainInstrumentor().instrument(tracer_provider=tracer_provider)
