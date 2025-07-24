@@ -117,7 +117,8 @@ INVENTORY RULES:
 
 PURCHASE INTENT DETECTION:
 - When users express purchase intent (want to buy, ready to purchase, etc.), ALWAYS show them the current inventory first
-- Use list_products to get the latest inventory, then show prices and descriptions
+- Use list_products to get the latest inventory, then use list_prices to get price information for each product
+- Show products with their actual prices and descriptions
 - Make it easy for customers to see what's available and make a decision
 
 SESSION CONCLUSION RULES:
@@ -143,9 +144,10 @@ For product inquiries:
 
 For purchase intent responses:
 1. First, use list_products to get current inventory
-2. Show available products with prices and descriptions
-3. Ask which product they'd like to purchase
-4. Use get_price_and_create_payment_link when they specify a product
+2. Then use list_prices to get price information for all products
+3. Show available products with their actual prices and descriptions
+4. Ask which product they'd like to purchase
+5. Use get_price_and_create_payment_link when they specify a product
 
 For complex calculations (like "how many X can I buy for $Y"):
 1. Get product info with list_products
@@ -489,7 +491,13 @@ ${paymentLinkUrl}
         try {
           const products = JSON.parse(step.observation);
           if (Array.isArray(products)) {
-            return this.deduplicateProducts(products);
+            // Get the deduplicated products
+            const deduplicatedProducts = this.deduplicateProducts(products);
+            
+            // Try to find price information for these products
+            const productsWithPrices = this.enrichProductsWithPrices(deduplicatedProducts, result.intermediateSteps);
+            
+            return productsWithPrices;
           }
         } catch (e) {
           // Try to extract products from text format
@@ -503,6 +511,38 @@ ${paymentLinkUrl}
     }
     
     return [];
+  }
+
+  private enrichProductsWithPrices(products: any[], intermediateSteps: any[]): any[] {
+    // Look for price information in the intermediate steps
+    const priceData: { [productId: string]: any[] } = {};
+    
+    for (const step of intermediateSteps) {
+      if (step.action && step.action.tool === 'list_prices' && step.observation) {
+        try {
+          const prices = JSON.parse(step.observation);
+          if (Array.isArray(prices)) {
+            // Group prices by product ID
+            for (const price of prices) {
+              if (price.product && !priceData[price.product]) {
+                priceData[price.product] = [];
+              }
+              if (price.product) {
+                priceData[price.product].push(price);
+              }
+            }
+          }
+        } catch (e) {
+          // Ignore parsing errors
+        }
+      }
+    }
+    
+    // Enrich products with their prices
+    return products.map(product => ({
+      ...product,
+      prices: priceData[product.id] || []
+    }));
   }
 
   private generateTraceName(input: string): string {
