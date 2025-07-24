@@ -32,11 +32,15 @@ A self-contained TypeScript agent using Stripe Agent Toolkit with Galileo monito
    cp .env.example .env
    ```
 
-   Edit `.env` with your actual API keys:
+   Edit `.env` with the keys for your project
 
-   - `STRIPE_SECRET_KEY`: Your Stripe secret key
-   - `OPENAI_API_KEY`: Your OpenAI API key
-   - `GALILEO_API_KEY`: Your Galileo API key (optional)
+   - `STRIPE_SECRET_KEY`: Your Stripe secret key (create a free developer account at https://dashboard.stripe.com/register)
+   - `OPENAI_API_KEY`: Your OpenAI API key (create a developer account at https://platform.openai.com/signup)
+   - `GALILEO_API_KEY`: Your Galileo API key (create a free developer account at https://galileo.ai/signup)
+   - `GALILEO_PROJECT`: Your Galileo project name (create a free developer account at https://galileo.ai/signup)
+   - `GALILEO_LOG_STREAM`: Your Galileo log stream name
+   - `GALILEO_CONSOLE_URL`: Your Galileo console URL (optional)
+   - 
 
 3. **Build the project**:
 
