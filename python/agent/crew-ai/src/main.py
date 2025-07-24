@@ -10,8 +10,12 @@ setup_observability()
 
 
 class SearchTool(CrewAITool):
+    """A CrewAI tool that wraps the DuckDuckGo search functionality."""
+
     name: str = "Duck Duck Go Search"
-    description: str = "Useful for search-based queries. Use this to find current information about markets, companies, and trends."
+    description: str = (
+        "Useful for search-based queries. Use this to find current information about markets, companies, and trends."
+    )
     search: DuckDuckGoSearchRun = Field(default_factory=DuckDuckGoSearchRun)
 
     def _run(self, query: str) -> str:
@@ -23,6 +27,8 @@ class SearchTool(CrewAITool):
 
 
 class WikipediaToolWrapper(CrewAITool):
+    """A CrewAI tool that wraps the Wikipedia search functionality."""
+
     name: str = "Wikipedia Search"
     description: str = "Search Wikipedia for factual information"
     wikipedia_tool: WikipediaQueryRun = Field(
@@ -43,6 +49,10 @@ class WikipediaToolWrapper(CrewAITool):
 crewai_search_tool = SearchTool()
 crewai_wikipedia_tool = WikipediaToolWrapper()
 
+# Define your agents with specific roles and goals
+# You can customize the role, goal, backstory, verbosity, and delegation options.
+# You can also pass an optional llm attribute specifying what model you want to use.
+# It's also possible to configure your crew from an yaml file (see https://docs.crewai.com/en/guides/crews/first-crew for an exam).
 researcher = Agent(
     role="Senior Research Analyst",
     goal="Uncover cutting-edge developments in AI and data science",
