@@ -166,7 +166,7 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
     this.agentExecutor = new AgentExecutor({
       agent,
       tools,
-      verbose: true,
+      verbose: env.app.agentVerbose,
       maxIterations: 6, // Lowered to prevent runaway loops
       returnIntermediateSteps: true, // This helps with error handling
     });
@@ -208,16 +208,18 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
       // Check for circular tool usage after execution
       this.detectCircularToolUsage(result.intermediateSteps);
       
-      // Debug intermediate steps (commented out to reduce terminal noise)
-      // if (result.intermediateSteps && result.intermediateSteps.length > 0) {
-      //   console.log('🔍 INTERMEDIATE STEPS DEBUGGING:');
-      //   result.intermediateSteps.forEach((step: any, index: number) => {
-      //     console.log(`\n--- Step ${index + 1} ---`);
-      //     console.log('Action:', step.action);
-      //     console.log('Observation:', step.observation);
-      //     console.trace(`🚨 Step ${index + 1} stack trace:`);
-      //   });
-      // }
+      // Debug intermediate steps - only when agent verbose mode is enabled
+      if (env.app.agentVerbose) {
+        if (result.intermediateSteps && result.intermediateSteps.length > 0) {
+          console.log('🔍 INTERMEDIATE STEPS DEBUGGING:');
+          result.intermediateSteps.forEach((step: any, index: number) => {
+            console.log(`\n--- Step ${index + 1} ---`);
+            console.log('Action:', step.action);
+            console.log('Observation:', step.observation);
+            console.trace(`🚨 Step ${index + 1} stack trace:`);
+          });
+        }
+      }
 
       // Clean up and format the response
       const cleanOutput = this.cleanAndFormatResponse(result.output, result, userMessage);

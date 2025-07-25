@@ -50,12 +50,14 @@ app.post('/api/chat', async (req, res) => {
         // Process the message
         const response = await agent.processMessage(message);
         
-                // Log to console for debugging (commented out to reduce terminal noise)
-        // console.log(`[${new Date().toISOString()}] User: ${message}`);
-        // console.log(`[${new Date().toISOString()}] Gizmo: ${response.message}`);
-        // if (response.data?.toolsUsed && response.data.toolsUsed.length > 0) {
-        //   console.log(`[${new Date().toISOString()}] Tools: ${response.data.toolsUsed.join(', ')}`);
-        // }
+        // Log to console for debugging - only when agent verbose mode is enabled
+        if (env.app.agentVerbose) {
+            console.log(`[${new Date().toISOString()}] User: ${message}`);
+            console.log(`[${new Date().toISOString()}] Gizmo: ${response.message}`);
+            if (response.data?.toolsUsed && response.data.toolsUsed.length > 0) {
+                console.log(`[${new Date().toISOString()}] Tools: ${response.data.toolsUsed.join(', ')}`);
+            }
+        }
 
         res.json({
             ...response,

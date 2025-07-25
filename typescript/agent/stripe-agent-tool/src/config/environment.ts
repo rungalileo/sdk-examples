@@ -19,6 +19,9 @@ export interface EnvironmentConfig {
     name: string;
     description: string;
   };
+  app: {
+    agentVerbose: boolean;
+  };
 }
 
 function validateEnvironment(): EnvironmentConfig {
@@ -53,6 +56,9 @@ function validateEnvironment(): EnvironmentConfig {
     agent: {
       name: process.env.AGENT_NAME!,
       description: process.env.AGENT_DESCRIPTION!,
+    },
+    app: {
+      agentVerbose: process.env.AGENT_VERBOSE === 'false',
     },
   };
 }
