@@ -116,8 +116,8 @@ export class StripeAgent {
 CRITICAL: ALWAYS USE STRIPE TOOLS FOR ACCURATE PRICE INFORMATION
 
 MANDATORY TOOL USAGE RULES:
-1. **ALWAYS call list_products first** when asked about products, inventory, or what's available
-2. **ALWAYS call list_prices immediately after list_products** to get accurate pricing information
+1. **ALWAYS call list_products with limit: 10** when asked about products, inventory, or what's available
+2. **ALWAYS call list_prices with limit: 10** to get accurate pricing information
 3. **NEVER make up or guess prices** - only use prices from Stripe API calls
 4. **NEVER suggest products without checking inventory first**
 
@@ -128,21 +128,27 @@ PRICE ACCURACY REQUIREMENTS:
 - If a product has no prices, show "Price not set" or "Contact for pricing"
 
 INVENTORY VERIFICATION:
-- Use list_products to verify what actually exists in Stripe
+- Use list_products with limit: 10 to get a manageable list of products
 - Only offer products that are returned by the list_products API
 - If a user asks for something not in inventory, explain what's actually available
 
 PURCHASE WORKFLOW:
-1. **User asks about products** → Call list_products → Call list_prices → Show products with accurate prices
+1. **User asks about products** → Call list_products (limit: 10) → Call list_prices (limit: 10) → Show products with accurate prices
 2. **User wants to buy** → Use get_price_and_create_payment_link (atomic tool)
-3. **User asks for pricing** → Call list_products → Call list_prices → Show accurate pricing
+3. **User asks for pricing** → Call list_products (limit: 10) → Call list_prices (limit: 10) → Show accurate pricing
+
+RESPONSE FORMATTING:
+- Keep responses concise and focused
+- Show only the most relevant products (limit to 10)
+- Format product listings clearly with prices
+- If user asks for "all products", explain you're showing a selection and they can ask for specific items
 
 EXAMPLE RESPONSES:
-- "What do you have?" → list_products + list_prices → "Here are our products with accurate prices: [products with real prices from API]"
+- "What do you have?" → list_products (limit: 10) + list_prices (limit: 10) → "Here are some of our products: [formatted list with real prices]"
 - "How much is the telescope?" → list_products + list_prices → "The telescope costs $X.XX (based on current Stripe pricing)"
 - "I want to buy the telescope" → get_price_and_create_payment_link → "Here's your payment link: [URL]"
 
-CRITICAL: Never skip the list_prices call when showing product information. Every price must be verified through the Stripe API.
+CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid overwhelming responses. Never skip the list_prices call when showing product information.
 `;
 
     // Prepend custom instructions to the original prompt
@@ -397,8 +403,8 @@ ${paymentLinkUrl}
         // Try to get current inventory from recent tool calls
         const recentProducts = this.getRecentProducts(result);
         if (recentProducts && recentProducts.length > 0) {
-          cleanOutput += '\n\n**Available Products (with accurate Stripe pricing):**';
-          recentProducts.forEach((product: any) => {
+          cleanOutput += '\n\n**Available Products (showing first 10):**';
+          recentProducts.slice(0, 10).forEach((product: any) => {
             if (product.prices && product.prices.length > 0) {
               const price = product.prices[0];
               const priceDisplay = price.unit_amount ? `$${(price.unit_amount / 100).toFixed(2)}` : 'Price not set';
@@ -410,6 +416,9 @@ ${paymentLinkUrl}
               cleanOutput += `\n• **${product.name}** - Price not set (no active prices in Stripe)`;
             }
           });
+          if (recentProducts.length > 10) {
+            cleanOutput += `\n\n*... and ${recentProducts.length - 10} more products available. Ask for specific items!*`;
+          }
           cleanOutput += '\n\nJust let me know which product you\'d like to purchase and I\'ll create a payment link for you!';
         } else {
           cleanOutput += '\n\nLet me check our current inventory for you. What type of product are you looking for?';
