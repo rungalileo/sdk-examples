@@ -132,11 +132,74 @@ class GalileoGizmosChat {
         // For now, we'll use HTTP requests
         // In a real deployment, you might want WebSocket for real-time updates
         console.log('🚀 Galileo\'s Gizmos Chat Interface Initialized');
+        
+        // Hook end-of-session events for web runtime
+        this.setupSessionCleanupHooks();
+    }
+
+    setupSessionCleanupHooks() {
+        // Web: attach beforeunload event to flush buffered traces
+        window.addEventListener('beforeunload', async (event) => {
+            if (this.sessionId) {
+                try {
+                    // Send synchronous request to flush buffered traces
+                    const response = await fetch('/api/session/flush', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ sessionId: this.sessionId }),
+                        keepalive: true // Ensures request completes even if page is closing
+                    });
+                    console.log('📊 Session flushed on page unload');
+                } catch (error) {
+                    console.error('Failed to flush session on unload:', error);
+                }
+            }
+        });
+
+        // Also handle page visibility changes (mobile/tab switching)
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden' && this.sessionId) {
+                this.flushSession();
+            }
+        });
+    }
+
+    async flushSession() {
+        if (this.sessionId) {
+            try {
+                await fetch('/api/session/flush', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ sessionId: this.sessionId }),
+                    keepalive: true
+                });
+                console.log('📊 Session flushed');
+            } catch (error) {
+                console.error('Failed to flush session:', error);
+            }
+        }
     }
 
     async sendMessage() {
         const message = this.messageInput.value.trim();
         if (!message || this.isProcessing) return;
+        
+        // Handle developer commands
+        if (message === '!end') {
+            this.addMessage('system', '📊 Developer command: Forcing buffered trace flush...');
+            try {
+                await this.flushSession();
+                this.addMessage('system', '✅ Buffered traces flushed successfully');
+            } catch (error) {
+                this.addMessage('system', `❌ Error flushing buffered traces: ${error.message}`, null, true);
+            }
+            this.messageInput.value = '';
+            return;
+        }
         
         this.addMessage('user', message);
         this.messageInput.value = '';

@@ -57,11 +57,18 @@ app.post('/api/chat', async (req, res) => {
             if (response.data?.toolsUsed && response.data.toolsUsed.length > 0) {
                 console.log(`[${new Date().toISOString()}] Tools: ${response.data.toolsUsed.join(', ')}`);
             }
+            if (agent.isConversationEnded()) {
+                console.log(`[${new Date().toISOString()}] Conversation ended for session: ${currentSessionId}`);
+            }
         }
+
+        // Get conversation status for the client
+        const sessionStatus = agent.getSessionStatus();
 
         res.json({
             ...response,
-            sessionId: currentSessionId
+            sessionId: currentSessionId,
+            conversationEnded: sessionStatus.conversationEnded
         });
     } catch (error) {
         console.error('Chat API error:', error);
@@ -127,6 +134,36 @@ app.delete('/api/conversation/:sessionId', async (req, res) => {
     }
 });
 
+// Restart conversation (clear ended state)
+app.post('/api/conversation/:sessionId/restart', async (req, res) => {
+    try {
+        const { sessionId } = req.params;
+        const agent = activeSessions.get(sessionId);
+        
+        if (!agent) {
+            return res.status(404).json({
+                success: false,
+                message: 'Session not found'
+            });
+        }
+        
+        agent.restartConversation();
+        const sessionStatus = agent.getSessionStatus();
+        
+        res.json({
+            success: true,
+            message: 'Conversation restarted',
+            sessionStatus
+        });
+    } catch (error) {
+        console.error('Restart conversation API error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to restart conversation'
+        });
+    }
+});
+
 // Health check endpoint
 app.get('/api/health', (req, res) => {
     res.json({
@@ -135,6 +172,53 @@ app.get('/api/health', (req, res) => {
         service: 'Galileo Gizmos Space Commerce Assistant',
         version: '1.0.0'
     });
+});
+
+// Session flush endpoint for end-of-session cleanup
+app.post('/api/session/flush', async (req, res) => {
+    try {
+        const { sessionId } = req.body;
+        
+        if (!sessionId) {
+            return res.status(400).json({
+                success: false,
+                message: 'Session ID required'
+            });
+        }
+        
+        const agent = activeSessions.get(sessionId);
+        
+        if (!agent) {
+            return res.status(404).json({
+                success: false,
+                message: 'Session not found'
+            });
+        }
+        
+        // Flush buffered traces and conclude session
+        await agent.logConversationToGalileo();
+        await agent.concludeGalileoSession();
+        
+        // Remove from active sessions
+        activeSessions.delete(sessionId);
+        
+        res.json({
+            success: true,
+            message: 'Session flushed and concluded successfully'
+        });
+        
+        if (env.app.agentVerbose) {
+            console.log(`[${new Date().toISOString()}] Session ${sessionId} flushed and concluded`);
+        }
+        
+    } catch (error) {
+        console.error('Session flush error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Failed to flush session',
+            error: error instanceof Error ? error.message : 'Unknown error'
+        });
+    }
 });
 
 // Get agent capabilities
@@ -170,19 +254,29 @@ app.get('/', (req, res) => {
 });
 
 // Handle session cleanup on shutdown
-process.on('SIGINT', async () => {
-        // Conclude all active sessions
+async function gracefulShutdown(signal: string) {
+    console.log(`\n🛑 ${signal} received. Gracefully shutting down...`);
+    
+    // Conclude all active sessions
     for (const [webSessionId, agent] of activeSessions) {
-      try {
-        // Log final conversation
-        await agent.logConversationToGalileo();
-        await agent.concludeGalileoSession();
-      } catch (error) {
-        console.error(`❌ Error concluding session ${webSessionId}:`, error);
-      }
+        try {
+            // Log final conversation and flush buffered traces
+            await agent.logConversationToGalileo();
+            await agent.concludeGalileoSession();
+            if (env.app.agentVerbose) {
+                console.log(`📊 Session ${webSessionId} concluded`);
+            }
+        } catch (error) {
+            console.error(`❌ Error concluding session ${webSessionId}:`, error);
+        }
     }
+    
+    console.log('✅ All sessions concluded. Goodbye!');
     process.exit(0);
-});
+}
+
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 
 // Start the server
 app.listen(PORT, () => {

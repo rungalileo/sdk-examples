@@ -3,12 +3,25 @@ import { AgentMetrics, AgentMessage } from '../types';
 import { GalileoLogger } from 'galileo';
 
 /**
+ * Represents a buffered trace waiting to be flushed
+ */
+interface BufferedTrace {
+  metrics: AgentMetrics;
+  userInput: string;
+  agentOutput: string;
+  traceName?: string;
+  metadata?: Record<string, unknown>;
+  intermediateSteps?: Array<{ action?: { tool?: string; toolInput?: unknown; tool_input?: unknown }; observation?: unknown }>;
+}
+
+/**
  * Galileo logging utility following the proper pattern from documentation
  */
 export class GalileoAgentLogger {
   private logger: GalileoLogger;
   private sessionId?: string;
   private currentTraceActive = false;
+  private pendingTraces: BufferedTrace[] = [];
 
   constructor() {
     this.logger = new GalileoLogger({
@@ -32,9 +45,23 @@ export class GalileoAgentLogger {
   }
 
   /**
-   * Log a single agent execution following the proper Galileo pattern
+   * Queue a trace for future flushing
    */
-  async logAgentExecution(
+  queue(
+    metrics: AgentMetrics,
+    userInput: string,
+    agentOutput: string,
+    traceName?: string,
+    metadata?: Record<string, unknown>,
+    intermediateSteps?: Array<{ action?: { tool?: string; toolInput?: unknown; tool_input?: unknown }; observation?: unknown }>
+  ) {
+    this.pendingTraces.push({ metrics, userInput, agentOutput, traceName, metadata, intermediateSteps });
+  }
+
+  /**
+   * (Deprecated) Log a single agent execution following the proper Galileo pattern
+   */
+  private async logAgentExecution(
     metrics: AgentMetrics,
     userInput: string,
     agentOutput: string,
@@ -242,12 +269,16 @@ export class GalileoAgentLogger {
   /**
    * Flush all traces to ensure they're sent to Galileo
    */
-  async flushAllTraces(): Promise<void> {
+  async flushBuffered(): Promise<void> {
     try {
+      for (const trace of this.pendingTraces) {
+        await this.logAgentExecution(trace.metrics, trace.userInput, trace.agentOutput, trace.traceName, trace.metadata, trace.intermediateSteps);
+      }
       await this.logger.flush();
-      console.log('📊 Traces flushed');
+      console.log('📊 Buffered traces flushed');
+      this.pendingTraces = [];
     } catch (error) {
-      console.error('Failed to flush traces:', error);
+      console.error('Failed to flush buffered traces:', error);
     }
   }
 
@@ -256,8 +287,8 @@ export class GalileoAgentLogger {
    */
   async concludeSession(): Promise<void> {
     try {
-      // Flush any remaining traces
-      await this.logger.flush();
+      // Flush any buffered traces first
+      await this.flushBuffered();
       
       this.sessionId = undefined;
       this.currentTraceActive = false;

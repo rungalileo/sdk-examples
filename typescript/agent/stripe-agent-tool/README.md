@@ -6,6 +6,9 @@ A self-contained TypeScript agent using Stripe Agent Toolkit with Galileo monito
 
 - **Stripe Integration**: Complete payment processing capabilities
 - **AI Agent**: Powered by OpenAI GPT-4o-mini for intelligent customer interactions
+- **Loop Prevention**: Advanced circular tool usage detection prevents infinite loops
+- **Conversation Memory**: 5-minute product/price caching reduces redundant API calls
+- **Buffered Logging**: Galileo traces are buffered and flushed efficiently
 - **Galileo Monitoring**: Comprehensive logging and analytics
 - **Interactive Modes**: CLI and web server options
 - **Self-contained**: All dependencies and assets included
@@ -16,7 +19,7 @@ A self-contained TypeScript agent using Stripe Agent Toolkit with Galileo monito
 - npm or yarn
 - Stripe account with API keys
 - OpenAI API key
-- Galileo account (optional, for monitoring)
+- Galileo account 
 
 ## Setup
 
@@ -39,8 +42,9 @@ A self-contained TypeScript agent using Stripe Agent Toolkit with Galileo monito
    - `GALILEO_API_KEY`: Your Galileo API key (create a free developer account at https://galileo.ai/signup)
    - `GALILEO_PROJECT`: Your Galileo project name (create a free developer account at https://galileo.ai/signup)
    - `GALILEO_LOG_STREAM`: Your Galileo log stream name
-   - `GALILEO_CONSOLE_URL`: Your Galileo console URL (optional)
-   - 
+   # Provide the console url below if you are using a custom deployment, and not using app.galileo.ai
+   # GALILEO_CONSOLE_URL=your-galileo-console-url   # Optional if you are using a hosted version of Galileo
+  
 
 3. **Build the project**:
 
@@ -66,6 +70,67 @@ npm run web
 
 ```bash
 npm test
+```
+
+## Agent Improvements
+
+### Loop Prevention
+
+The agent now includes advanced circular tool usage detection that:
+- Monitors the last 4 tool calls for repeated patterns
+- Detects when tools are being called in loops (e.g., A → B → A → B)
+- Gracefully handles circular calls with appropriate error messages
+- Prevents runaway loops that could exhaust API quotas
+
+### Conversation Memory
+
+Improved memory system with:
+- **5-minute caching** of product and price data
+- **Conversation history** maintained across interactions
+- **Context awareness** using the last 6 messages for better responses
+- **Reduced API calls** through intelligent caching
+
+### Buffered Logging
+
+Galileo logging improvements:
+- **Buffered traces** are queued and flushed efficiently
+- **Developer override** command `!end` to force flush during testing
+- **Session management** with proper cleanup and error handling
+- **Performance optimized** logging reduces response times
+
+### Developer Commands
+
+When using interactive mode, these special commands are available:
+
+- `help` - Show available commands and examples
+- `quit` or `exit` - Exit the application gracefully
+- `clear` - Clear the terminal screen
+- `!end` - **Developer command**: Force flush all buffered Galileo traces
+
+### API Signature Changes
+
+**AgentExecutor Configuration:**
+```typescript
+// Previous configuration
+maxIterations: 6
+
+// Updated configuration
+maxIterations: 8  // Increased to handle complex interactions
+earlyStoppingMethod: 'generate'  // Stop when agent decides it's complete
+```
+
+**New Caching Methods:**
+```typescript
+// Cache management
+private isCacheValid(): boolean
+private updateCache(products: any[]): void
+private clearCache(): void
+
+// Memory properties
+private cachedProducts: any[] = []
+private cachedPrices: any[] = []
+private cacheTimestamp: number = 0
+private readonly CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
 ```
 
 ## Scripts
@@ -159,7 +224,3 @@ stripe-agents-sdk-example/
 ## Built Output
 
 All compiled JavaScript files are output to the `dist/` directory, making the project ready for deployment.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

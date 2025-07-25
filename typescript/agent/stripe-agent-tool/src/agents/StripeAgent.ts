@@ -32,6 +32,11 @@ export class StripeAgent {
   private galileoLogger: GalileoAgentLogger;
   private sessionId: string | null = null;
   private sessionActive: boolean = false;
+  private conversationEnded: boolean = false;
+  private cachedProducts: any[] = [];
+  private cachedPrices: any[] = [];
+  private cacheTimestamp: number = 0;
+  private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
   constructor() {
     this.galileoLogger = new GalileoAgentLogger();
@@ -167,8 +172,9 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
       agent,
       tools,
       verbose: env.app.agentVerbose,
-      maxIterations: 6, // Lowered to prevent runaway loops
+      maxIterations: 8, // Increased to handle more interactions
       returnIntermediateSteps: true, // This helps with error handling
+      earlyStoppingMethod: 'generate', // Stop when agent decides it's complete
     });
   }
 
@@ -222,7 +228,7 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
       }
 
       // Clean up and format the response
-      const cleanOutput = this.cleanAndFormatResponse(result.output, result, userMessage);
+      const cleanOutput = await this.cleanAndFormatResponse(result.output, result, userMessage);
 
       // Add assistant response to conversation history
       this.conversationHistory.push({
@@ -233,8 +239,8 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
 
       const executionTime = Date.now() - startTime;
       
-      // Log to Galileo as a trace in the ongoing session
-      await this.logTraceToGalileo({
+      // Queue trace for later flushing
+      this.queueTraceToGalileo({
         executionTime,
         success: true,
         toolsUsed: this.extractToolsUsed(result),
@@ -257,7 +263,7 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
       if (error instanceof CircularToolError) {
         console.error('🔄 CircularToolError caught:', error.message);
         
-        await this.logTraceToGalileo({
+        this.queueTraceToGalileo({
           executionTime,
           success: false,
           toolsUsed: [],
@@ -275,8 +281,8 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
         };
       }
       
-      // Log error trace to Galileo
-      await this.logTraceToGalileo({
+      // Queue error trace to Galileo
+      this.queueTraceToGalileo({
         executionTime,
         success: false,
         toolsUsed: [],
@@ -304,7 +310,7 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
       .join('\n');
   }
 
-  private cleanAndFormatResponse(output: string, result: any, userInput?: string): string {
+  private async cleanAndFormatResponse(output: string, result: any, userInput?: string): Promise<string> {
     let paymentLinkUrl: string | null = null;
     let usedAtomicTool = false;
     
@@ -360,12 +366,13 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
     // Clean up the output and format properly
     let cleanOutput = output.trim();
     
-    // Check if user indicates they're done - conclude session naturally
+    // Check if user indicates they're done - but only set conversationEnded flag
     if (userInput && this.shouldPromptForFeedback(userInput)) {
+      this.conversationEnded = true;
       
       // Log neutral satisfaction and conclude session
       this.galileoLogger.logSatisfaction(true);
-      this.galileoLogger.flushAllTraces();
+      await this.galileoLogger.flushBuffered();
       
       if (this.sessionActive) {
         this.concludeGalileoSession();
@@ -427,10 +434,15 @@ ${paymentLinkUrl}
         }
       }
       
-      // Add standard follow-up if no special conditions
-      if (!cleanOutput.includes('?') && !cleanOutput.toLowerCase().includes('help')) {
+      // Add standard follow-up if no special conditions and conversation hasn't ended
+      if (!cleanOutput.includes('?') && !cleanOutput.toLowerCase().includes('help') && !this.conversationEnded) {
         cleanOutput += '\n\nIs there anything else I can help you with?';
       }
+    }
+
+    // Only add "This is the final response." if conversation has explicitly ended
+    if (this.conversationEnded) {
+      cleanOutput += '\n\nThis is the final response.';
     }
 
     return cleanOutput;
@@ -448,11 +460,11 @@ ${paymentLinkUrl}
     return toolsUsed;
   }
 
-  private async logTraceToGalileo(metrics: AgentMetrics, input?: string, output?: string): Promise<void> {
+  private queueTraceToGalileo(metrics: AgentMetrics, input?: string, output?: string): void {
     if (input && output) {
       // Generate a descriptive trace name based on the input
       const traceName = this.generateTraceName(input);
-      await this.galileoLogger.logAgentExecution(metrics, input, output, traceName);
+      this.galileoLogger.queue(metrics, input, output, traceName);
     }
   }
 
@@ -474,6 +486,11 @@ ${paymentLinkUrl}
   }
 
   private getRecentProducts(result: any): any[] {
+    // First check if we have cached products that are still fresh
+    if (this.isCacheValid() && this.cachedProducts.length > 0) {
+      return this.cachedProducts;
+    }
+    
     if (!result.intermediateSteps) return [];
     
     // Look for recent product listings in the conversation
@@ -487,6 +504,9 @@ ${paymentLinkUrl}
             
             // Try to find price information for these products
             const productsWithPrices = this.enrichProductsWithPrices(deduplicatedProducts, result.intermediateSteps);
+            
+            // Cache the enriched products
+            this.updateCache(productsWithPrices);
             
             return productsWithPrices;
           }
@@ -502,6 +522,21 @@ ${paymentLinkUrl}
     }
     
     return [];
+  }
+
+  private isCacheValid(): boolean {
+    return Date.now() - this.cacheTimestamp < this.CACHE_DURATION;
+  }
+
+  private updateCache(products: any[]): void {
+    this.cachedProducts = products;
+    this.cacheTimestamp = Date.now();
+  }
+
+  private clearCache(): void {
+    this.cachedProducts = [];
+    this.cachedPrices = [];
+    this.cacheTimestamp = 0;
   }
 
   private enrichProductsWithPrices(products: any[], intermediateSteps: any[]): any[] {
@@ -670,6 +705,7 @@ ${paymentLinkUrl}
 
   clearConversationHistory(): void {
     this.conversationHistory = [];
+    this.conversationEnded = false; // Reset conversation state
   }
 
   async startGalileoSession(sessionName: string): Promise<string> {
@@ -691,10 +727,26 @@ ${paymentLinkUrl}
   }
 
   // Add method to get session status
-  getSessionStatus(): { active: boolean; sessionId: string | null } {
+  getSessionStatus(): { active: boolean; sessionId: string | null; conversationEnded: boolean } {
     return {
       active: this.sessionActive,
       sessionId: this.sessionId,
+      conversationEnded: this.conversationEnded,
     };
+  }
+
+  // Add method to explicitly end conversation
+  endConversation(): void {
+    this.conversationEnded = true;
+  }
+
+  // Add method to check if conversation has ended
+  isConversationEnded(): boolean {
+    return this.conversationEnded;
+  }
+
+  // Add method to restart conversation
+  restartConversation(): void {
+    this.conversationEnded = false;
   }
 }

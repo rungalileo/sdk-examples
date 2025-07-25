@@ -9,11 +9,17 @@ import { GalileoAgentLogger } from './utils/GalileoLogger';
 import { env } from './config/environment';
 
 async function main() {
+  let agent: StripeAgent | null = null;
+  let galileoLogger: GalileoAgentLogger | null = null;
+  
   try {
     // Initialize the agent
-    const agent = new StripeAgent();
+    agent = new StripeAgent();
     await agent.init(); // Ensure agent is fully initialized
-    const galileoLogger = new GalileoAgentLogger();
+    galileoLogger = new GalileoAgentLogger();
+    
+    // Start a Galileo session
+    await agent.startGalileoSession('Galileo Gizmos CLI Example Session');
 
     // Example interactions
     const examples = [
@@ -52,9 +58,22 @@ async function main() {
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
-    // Optionally, you can log conversation history to Galileo or generate reports here if needed.
+    // Conclude session and flush buffered traces
+    await agent.logConversationToGalileo();
+    await agent.concludeGalileoSession();
+    console.log('📊 Session concluded and all traces flushed');
+    
   } catch (error) {
     console.error('💥 Unexpected error in main:', error);
+  } finally {
+    // Ensure cleanup happens even if there's an error
+    if (agent) {
+      try {
+        await agent.concludeGalileoSession();
+      } catch (error) {
+        console.error('Error during cleanup:', error);
+      }
+    }
   }
 }
 

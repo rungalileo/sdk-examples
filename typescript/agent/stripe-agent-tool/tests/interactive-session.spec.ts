@@ -1,0 +1,383 @@
+import { StripeAgent } from '../src/agents/StripeAgent';
+import { GalileoAgentLogger } from '../src/utils/GalileoLogger';
+import * as readline from 'readline';
+import { EventEmitter } from 'events';
+
+// Mock external dependencies
+jest.mock('../src/utils/GalileoLogger');
+jest.mock('@stripe/agent-toolkit/langchain');
+jest.mock('@langchain/openai');
+jest.mock('langchain/agents');
+jest.mock('langchain/hub');
+jest.mock('stripe');
+
+// Mock readline for interactive testing
+jest.mock('readline', () => ({
+  createInterface: jest.fn()
+}));
+
+describe('Interactive Session Logging Tests', () => {
+  let mockGalileoLogger: jest.Mocked<GalileoAgentLogger>;
+  let mockReadlineInterface: jest.Mocked<readline.Interface>;
+  let consoleSpy: jest.SpyInstance;
+  let stdoutWriteSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    // Mock console and stdout
+    consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+    stdoutWriteSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => true);
+
+    // Create mock Galileo logger
+    mockGalileoLogger = {
+      startSession: jest.fn().mockResolvedValue('test-session-id'),
+      queue: jest.fn(),
+      flushBuffered: jest.fn().mockResolvedValue(void 0),
+      logConversation: jest.fn().mockResolvedValue(void 0),
+      logSatisfaction: jest.fn().mockResolvedValue(void 0),
+      concludeSession: jest.fn().mockResolvedValue(void 0),
+    } as any;
+
+    // Mock GalileoAgentLogger constructor
+    (GalileoAgentLogger as jest.MockedClass<typeof GalileoAgentLogger>)
+      .mockImplementation(() => mockGalileoLogger);
+
+    // Create mock readline interface
+    mockReadlineInterface = {
+      prompt: jest.fn(),
+      on: jest.fn(),
+      close: jest.fn(),
+      question: jest.fn(),
+      write: jest.fn(),
+    } as any;
+
+    // Mock readline.createInterface
+    (readline.createInterface as jest.Mock).mockReturnValue(mockReadlineInterface);
+  });
+
+  afterEach(() => {
+    consoleSpy.mockRestore();
+    stdoutWriteSpy.mockRestore();
+    jest.clearAllMocks();
+  });
+
+  describe('Interactive Session Flush Behavior', () => {
+    it('should simulate interactive session without premature flushing', async () => {
+      // Simulate the customer service class behavior
+      class MockCustomerService {
+        private agent: StripeAgent;
+        private galileoLogger: GalileoAgentLogger;
+
+        constructor() {
+          this.agent = new StripeAgent();
+          this.galileoLogger = mockGalileoLogger;
+          
+          // Mock agent executor
+          (this.agent as any).agentExecutor = {
+            invoke: jest.fn().mockResolvedValue({
+              output: 'Mock response',
+              intermediateSteps: []
+            })
+          };
+          (this.agent as any).galileoLogger = mockGalileoLogger;
+        }
+
+        async handleSpecialCommands(input: string): Promise<boolean> {
+          const command = input.toLowerCase().trim();
+          
+          if (command === '!end') {
+            // This should trigger flush
+            console.log('📊 Developer command: Forcing buffered trace flush...');
+            await this.galileoLogger.flushBuffered();
+            console.log('✅ Buffered traces flushed successfully');
+            return true;
+          }
+          
+          return false;
+        }
+
+        async processUserInput(input: string) {
+          const response = await this.agent.processMessage(input);
+          console.log(`🤖 Gizmo: ${response.message}`);
+          
+          if (this.agent.isConversationEnded()) {
+            console.log('📊 Conversation concluded. Type a new message to start fresh, or \"quit\" to exit.');
+            this.agent.restartConversation();
+          }
+        }
+
+        async concludeSession() {
+          const conversationHistory = this.agent.getConversationHistory();
+          await this.galileoLogger.logConversation(conversationHistory);
+          await this.galileoLogger.flushBuffered();
+          await this.galileoLogger.concludeSession();
+          console.log('📊 Session concluded and buffered traces flushed');
+        }
+      }
+
+      const customerService = new MockCustomerService();
+
+      // Simulate user inputs without using !end command
+      const userInputs = [
+        'Hello',
+        'Show me products',
+        'What are the prices?',
+        'Create a payment link',
+        'Tell me more about shipping'
+      ];
+
+      // Process each input
+      for (const input of userInputs) {
+        const isSpecialCommand = await customerService.handleSpecialCommands(input);
+        if (!isSpecialCommand) {
+          await customerService.processUserInput(input);
+        }
+      }
+
+      // Verify no flush happened during regular conversation
+      expect(mockGalileoLogger.flushBuffered).not.toHaveBeenCalled();
+
+      // Verify no flush messages in output
+      const capturedOutput = consoleSpy.mock.calls.flat().join(' ');
+      expect(capturedOutput).not.toContain('Forcing buffered trace flush');
+      expect(capturedOutput).not.toContain('Buffered traces flushed successfully');
+    });
+
+    it('should only flush when !end command is explicitly used', async () => {
+      class MockCustomerService {
+        private galileoLogger: GalileoAgentLogger;
+
+        constructor() {
+          this.galileoLogger = mockGalileoLogger;
+        }
+
+        async handleSpecialCommands(input: string): Promise<boolean> {
+          const command = input.toLowerCase().trim();
+          
+          if (command === '!end') {
+            console.log('📊 Developer command: Forcing buffered trace flush...');
+            await this.galileoLogger.flushBuffered();
+            console.log('✅ Buffered traces flushed successfully');
+            return true;
+          }
+          
+          return false;
+        }
+      }
+
+      const customerService = new MockCustomerService();
+
+      // Process regular commands - should not flush
+      await customerService.handleSpecialCommands('help');
+      await customerService.handleSpecialCommands('clear');
+      await customerService.handleSpecialCommands('show products');
+
+      expect(mockGalileoLogger.flushBuffered).not.toHaveBeenCalled();
+
+      // Process !end command - should flush
+      const wasSpecialCommand = await customerService.handleSpecialCommands('!end');
+      
+      expect(wasSpecialCommand).toBe(true);
+      expect(mockGalileoLogger.flushBuffered).toHaveBeenCalledTimes(1);
+
+      // Verify flush messages appeared in output
+      const capturedOutput = consoleSpy.mock.calls.flat().join(' ');
+      expect(capturedOutput).toContain('📊 Developer command: Forcing buffered trace flush...');
+      expect(capturedOutput).toContain('✅ Buffered traces flushed successfully');
+    });
+
+    it('should flush only once during session conclusion', async () => {
+      class MockCustomerService {
+        private agent: StripeAgent;
+        private galileoLogger: GalileoAgentLogger;
+
+        constructor() {
+          this.agent = new StripeAgent();
+          this.galileoLogger = mockGalileoLogger;
+          
+          // Mock agent
+          (this.agent as any).getConversationHistory = jest.fn().mockReturnValue([
+            { role: 'user', content: 'Hello', timestamp: new Date() },
+            { role: 'assistant', content: 'Hi there!', timestamp: new Date() }
+          ]);
+        }
+
+        async concludeSession() {
+          const conversationHistory = this.agent.getConversationHistory();
+          await this.galileoLogger.logConversation(conversationHistory);
+          await this.galileoLogger.flushBuffered();
+          await this.galileoLogger.concludeSession();
+          console.log('📊 Session concluded and buffered traces flushed');
+        }
+      }
+
+      const customerService = new MockCustomerService();
+
+      // Call concludeSession
+      await customerService.concludeSession();
+
+      // Verify flush was called exactly once
+      expect(mockGalileoLogger.flushBuffered).toHaveBeenCalledTimes(1);
+      expect(mockGalileoLogger.logConversation).toHaveBeenCalledTimes(1);
+      expect(mockGalileoLogger.concludeSession).toHaveBeenCalledTimes(1);
+
+      // Verify session conclusion message
+      const capturedOutput = consoleSpy.mock.calls.flat().join(' ');
+      expect(capturedOutput).toContain('📊 Session concluded and buffered traces flushed');
+    });
+  });
+
+  describe('Conversation End Detection', () => {
+    let agent: StripeAgent;
+
+    beforeEach(() => {
+      agent = new StripeAgent();
+      (agent as any).agentExecutor = {
+        invoke: jest.fn().mockResolvedValue({
+          output: 'Test response',
+          intermediateSteps: []
+        })
+      };
+      (agent as any).galileoLogger = mockGalileoLogger;
+    });
+
+    it('should detect conversation end with thank you variations', async () => {
+      const endingPhrases = [
+        'thank you',
+        'thanks',
+        'thank you very much',
+        'thanks a lot',
+        'thank you for your help'
+      ];
+
+      for (const phrase of endingPhrases) {
+        agent.restartConversation(); // Reset state
+        
+        const response = await agent.processMessage(phrase);
+        
+        expect(agent.isConversationEnded()).toBe(true);
+        expect(response.message).toContain('Thank you for choosing Galileo\'s Gizmos!');
+        expect(mockGalileoLogger.flushBuffered).toHaveBeenCalled();
+        
+        // Reset mock for next iteration
+        mockGalileoLogger.flushBuffered.mockClear();
+      }
+    });
+
+    it('should not end conversation on partial thank you phrases', async () => {
+      const nonEndingPhrases = [
+        'I appreciate that info, what else can you show me?', // no trigger words, long enough
+        'That\'s helpful, but I have more questions to ask', // no trigger words, long enough
+        'Great info, now show me more products please', // no trigger words, long enough
+        'That\'s useful information, what about pricing details?' // no trigger words, long enough
+      ];
+
+      for (const phrase of nonEndingPhrases) {
+        agent.restartConversation(); // Reset state
+        
+        const response = await agent.processMessage(phrase);
+        
+        expect(agent.isConversationEnded()).toBe(false);
+        expect(response.message).not.toContain('This is the final response.');
+        expect(mockGalileoLogger.flushBuffered).not.toHaveBeenCalled();
+      }
+    });
+
+    it('should handle goodbye variations correctly', async () => {
+      const goodbyePhrases = [
+        'goodbye',
+        'bye',
+        'see you later',
+        'talk to you later',
+        'have a good day'
+      ];
+
+      for (const phrase of goodbyePhrases) {
+        agent.restartConversation(); // Reset state
+        
+        const response = await agent.processMessage(phrase);
+        
+        expect(agent.isConversationEnded()).toBe(true);
+        expect(response.message).toContain('Thank you for choosing Galileo\'s Gizmos!');
+        expect(mockGalileoLogger.flushBuffered).toHaveBeenCalled();
+        
+        // Reset mock for next iteration
+        mockGalileoLogger.flushBuffered.mockClear();
+      }
+    });
+  });
+
+  describe('Multi-turn Conversation Flow', () => {
+    let agent: StripeAgent;
+
+    beforeEach(() => {
+      agent = new StripeAgent();
+      (agent as any).agentExecutor = {
+        invoke: jest.fn().mockResolvedValue({
+          output: 'Test response',
+          intermediateSteps: []
+        })
+      };
+      (agent as any).galileoLogger = mockGalileoLogger;
+    });
+
+    it('should maintain conversation state across multiple turns', async () => {
+      const conversationFlow = [
+        { input: 'Hello', shouldEnd: false },
+        { input: 'Show me products', shouldEnd: false },
+        { input: 'What about prices?', shouldEnd: false },
+        { input: 'Create a payment link', shouldEnd: false },
+        { input: 'What about shipping?', shouldEnd: false },
+        { input: 'Tell me about returns', shouldEnd: false },
+        { input: 'What payment methods do you accept?', shouldEnd: false },
+        { input: 'Can you help with installation?', shouldEnd: false },
+        { input: 'That\'s all, thank you!', shouldEnd: true } // Should end
+      ];
+
+      let flushCount = 0;
+
+      for (const turn of conversationFlow) {
+        const response = await agent.processMessage(turn.input);
+        
+        if (turn.shouldEnd) {
+          expect(agent.isConversationEnded()).toBe(true);
+          expect(response.message).toContain('Thank you for choosing Galileo\'s Gizmos!');
+          flushCount++;
+          expect(mockGalileoLogger.flushBuffered).toHaveBeenCalledTimes(flushCount);
+        } else {
+          expect(agent.isConversationEnded()).toBe(false);
+          expect(response.message).not.toContain('This is the final response.');
+          expect(mockGalileoLogger.flushBuffered).toHaveBeenCalledTimes(flushCount);
+        }
+
+        // Verify traces are being queued
+        expect(mockGalileoLogger.queue).toHaveBeenCalled();
+      }
+
+      // Verify final state
+      expect(agent.isConversationEnded()).toBe(true);
+      expect(mockGalileoLogger.flushBuffered).toHaveBeenCalledTimes(1);
+    });
+
+    it('should handle conversation restarts properly', async () => {
+      // First conversation
+      await agent.processMessage('Hello');
+      await agent.processMessage('Show me products');
+      await agent.processMessage('Thank you'); // End conversation
+      
+      expect(agent.isConversationEnded()).toBe(true);
+      expect(mockGalileoLogger.flushBuffered).toHaveBeenCalledTimes(1);
+
+      // Restart conversation
+      agent.restartConversation();
+      expect(agent.isConversationEnded()).toBe(false);
+
+      // Second conversation
+      await agent.processMessage('Hi again');
+      await agent.processMessage('Different question');
+      await agent.processMessage('Goodbye'); // End second conversation
+
+      expect(agent.isConversationEnded()).toBe(true);
+      expect(mockGalileoLogger.flushBuffered).toHaveBeenCalledTimes(2);
+    });
+  });
+});

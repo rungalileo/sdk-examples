@@ -34,10 +34,21 @@ class GalileoGizmosCustomerService {
 
   private displayHelp() {
     console.log('\n💡 Examples:');
-    console.log('   • "Show me all our space products"');
+    console.log('   • "What do you have for sale?" - Browse our cosmic catalog');
+    console.log('   • "I want to buy Space Ice Cream" - Purchase with payment link');
+    console.log('   • "How much is the telescope?" - Get current pricing');
     console.log('   • "Create a payment link for the Astronaut Training Kit at $299"');
     console.log('   • "Add customer Jane Spacewalker with email jane@cosmos.com"');
-    console.log('   • "help" - Show this menu | "quit" - Exit | "clear" - Clear history');
+    console.log('\n🔧 Commands:');
+    console.log('   • "help" - Show this menu');
+    console.log('   • "quit" - Exit gracefully');
+    console.log('   • "clear" - Clear screen');
+    console.log('   • "!end" - Developer command: Force flush buffered traces');
+    console.log('\n🚀 Agent Features:');
+    console.log('   • Loop Prevention - Prevents infinite tool calls');
+    console.log('   • Memory Cache - 5-minute product/price caching');
+    console.log('   • Context Awareness - Remembers recent conversation');
+    console.log('   • Buffered Logging - Efficient Galileo trace collection');
   }
 
   private async handleSpecialCommands(input: string): Promise<boolean> {
@@ -56,6 +67,17 @@ class GalileoGizmosCustomerService {
       
       case 'clear':
         console.clear();
+        return true;
+      
+      case '!end':
+        // Developer command to force a flush during testing
+        console.log('📊 Developer command: Forcing buffered trace flush...');
+        try {
+          await this.galileoLogger.flushBuffered();
+          console.log('✅ Buffered traces flushed successfully');
+        } catch (error) {
+          console.error('❌ Error flushing buffered traces:', error);
+        }
         return true;
       
       case '':
@@ -79,9 +101,11 @@ class GalileoGizmosCustomerService {
       try {
         const conversationHistory = this.agent.getConversationHistory();
         await this.galileoLogger.logConversation(conversationHistory);
+        await this.galileoLogger.flushBuffered();
         await this.galileoLogger.concludeSession();
+        console.log('📊 Session concluded and buffered traces flushed');
       } catch (error) {
-        // Silent fail
+        console.error('Error concluding session:', error);
       }
     }
   }
@@ -92,6 +116,13 @@ class GalileoGizmosCustomerService {
       
       if (response.success) {
         console.log(`🤖 Gizmo: ${response.message}`);
+        
+        // Check if conversation has ended and handle gracefully
+        if (this.agent.isConversationEnded()) {
+          console.log('\n📊 Conversation concluded. Type a new message to start fresh, or "quit" to exit.');
+          // Reset the conversation state for potential new interaction
+          this.agent.restartConversation();
+        }
       } else {
         console.log(`❌ Error: ${response.message}`);
       }
