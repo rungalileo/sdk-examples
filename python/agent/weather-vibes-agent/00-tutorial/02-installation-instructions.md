@@ -96,11 +96,17 @@ You'll need four API keys to make the Weather Vibes Agent work:
 Create a `.env` file in the project root directory with your API keys:
 
 ```
+# Galileo Environment Variables
+GALILEO_API_KEY=your-galileo-api-key             # Your Galileo API key.
+GALILEO_PROJECT=your-galileo-project-name        # Your Galileo project name.
+GALILEO_LOG_STREAM=weather_vibes_agent
+
+# Provide the console url below if you are using a custom deployment, and not using app.galileo.ai
+# GALILEO_CONSOLE_URL=your-galileo-console-url   # Optional if you are using a hosted version of Galileo
+
 OPENAI_API_KEY=your_openai_key_here
 WEATHERAPI_KEY=your_weatherapi_key_here
 YOUTUBE_API_KEY=your_youtube_key_here
-GALILEO_API_KEY=your_galileo_key_here
-GALILEO_LOG_STREAM=weather_vibes_agent
 ```
 
 Replace `your_*_key_here` with your actual API keys.
