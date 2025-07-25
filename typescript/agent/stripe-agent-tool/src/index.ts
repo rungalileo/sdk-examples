@@ -1,10 +1,14 @@
+// Reduce LangChain logging verbosity
+process.env.LANGCHAIN_TRACING_V2 = 'false';
+process.env.LANGCHAIN_LOGGING = 'error';
+process.env.LANGCHAIN_VERBOSE = 'false';
+process.env.LANGCHAIN_CALLBACKS = 'false';
+
 import { StripeAgent } from './agents/StripeAgent';
 import { GalileoAgentLogger } from './utils/GalileoLogger';
 import { env } from './config/environment';
 
 async function main() {
-  console.log('🚀 Stripe Agent Demo');
-
   try {
     // Initialize the agent
     const agent = new StripeAgent();
@@ -31,28 +35,18 @@ async function main() {
       }
     ];
 
-    console.log('🤖 Running example interactions...\n');
-
     for (let i = 0; i < examples.length; i++) {
       const example = examples[i];
-      console.log(`\n📝 ${example.description}`);
-      console.log(`💬 ${example.message}`);
       try {
         const response = await agent.processMessage(example.message);
         
         if (response.success) {
-          console.log(`🤖 ${response.message}`);
-          if (response.data) {
-            console.log(`⏱️  Time: ${response.data.executionTime}ms | 🔧 Tools: ${response.data.toolsUsed.join(', ') || 'None'}`);
-          }
+          console.log(`✅ ${example.description}: Success`);
         } else {
-          console.log(`❌ Agent Error: ${response.message}`);
-          if (response.error) {
-            console.log(`🐛 ${response.error}`);
-          }
+          console.log(`❌ ${example.description}: ${response.message}`);
         }
       } catch (error) {
-        console.error(`💥 Unexpected error:`, error);
+        console.error(`💥 ${example.description}: Unexpected error:`, error);
       }
       // Add a small delay between examples
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -66,12 +60,10 @@ async function main() {
 
 // Handle graceful shutdown
 process.on('SIGINT', () => {
-  console.log('\n👋 Shutting down gracefully...');
   process.exit(0);
 });
 
 process.on('SIGTERM', () => {
-  console.log('\n👋 Received SIGTERM, shutting down...');
   process.exit(0);
 });
 

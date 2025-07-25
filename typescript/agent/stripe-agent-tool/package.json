@@ -12,9 +12,10 @@
       "web": "ts-node src/server.ts",
       "web:build": "ts-node src/server.ts",
       "test": "jest",
-      "setup-products": "ts-node scripts/setup_products.ts",
-      "debug-prices": "ts-node scripts/debug_prices.ts",
-      "test-agent": "ts-node scripts/test_agent_prices.ts"
+          "setup-products": "ts-node scripts/setup_products.ts",
+    "debug-prices": "ts-node scripts/debug_prices.ts",
+    "test-agent": "ts-node scripts/test_agent_prices.ts",
+    "test-minimal": "ts-node scripts/test_minimal.ts"
     },
     "keywords": [
       "stripe",

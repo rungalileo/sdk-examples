@@ -23,13 +23,11 @@ export class GalileoAgentLogger {
   async startSession(sessionName?: string): Promise<string> {
     // Prevent creating multiple sessions
     if (this.sessionId) {
-      console.log(`⚠️  Session already exists: ${this.sessionId}, reusing it`);
       return this.sessionId;
     }
     
     const sessionPrefix = sessionName ? sessionName.replace(/\s+/g, '-').toLowerCase() : 'stripe-agent-session';
     this.sessionId = `${sessionPrefix}-${Date.now()}-${Math.random().toString(36).substring(2)}`;
-    console.log(`📊 Generated session ID: ${this.sessionId} (${sessionName || 'Default Session'})`);
     return this.sessionId;
   }
 
@@ -171,10 +169,8 @@ export class GalileoAgentLogger {
       const userMessages = messages.filter(msg => msg.role === 'user');
       const assistantMessages = messages.filter(msg => msg.role === 'assistant');
 
-      console.log(`📊 Session completed with ${messages.length} total messages:`);
-      console.log(`🌟 All ${messages.length} interactions have been logged as detailed tool spans to Galileo!`);
-      console.log(`🚀 Session includes: ${userMessages.length} customer inquiries + ${assistantMessages.length} support responses`);
-      console.log(`🛸 Full conversation transcript and analytics now available in Galileo dashboard!`);
+      // Galileo logs kept for monitoring purposes
+      console.log(`📊 ${messages.length} messages logged to Galileo`);
 
     } catch (error) {
       console.error('Failed to log conversation summary:', error);
@@ -216,8 +212,6 @@ export class GalileoAgentLogger {
    */
   async logSatisfaction(satisfaction: boolean): Promise<void> {
     try {
-      console.log(`📊 Logging satisfaction in session: ${this.sessionId}`);
-      
       if (this.currentTraceActive) {
         // Add satisfaction as metadata to the current trace
         await this.logger.addLlmSpan({
@@ -236,11 +230,10 @@ export class GalileoAgentLogger {
             sessionId: this.sessionId || 'no-session'
           }
         });
-      } else {
-        console.log(`⚠️  No active trace for satisfaction logging in session: ${this.sessionId}`);
       }
       
-      console.log(`📊 User satisfaction logged: ${satisfaction ? '👍' : '👎'} (Session: ${this.sessionId})`);
+      // Galileo logs kept for monitoring purposes
+      console.log(`📊 Satisfaction logged: ${satisfaction ? '👍' : '👎'}`);
     } catch (error) {
       console.error('Failed to log satisfaction:', error);
     }
@@ -251,9 +244,8 @@ export class GalileoAgentLogger {
    */
   async flushAllTraces(): Promise<void> {
     try {
-      console.log('📊 Flushing all traces to Galileo...');
       await this.logger.flush();
-      console.log('✅ All traces flushed successfully');
+      console.log('📊 Traces flushed');
     } catch (error) {
       console.error('Failed to flush traces:', error);
     }
@@ -264,14 +256,12 @@ export class GalileoAgentLogger {
    */
   async concludeSession(): Promise<void> {
     try {
-      console.log('📊 Concluding session and flushing any remaining traces...');
-      
       // Flush any remaining traces
       await this.logger.flush();
       
       this.sessionId = undefined;
       this.currentTraceActive = false;
-      console.log('✅ Session concluded successfully');
+      console.log('📊 Session concluded');
     } catch (error) {
       console.error('Failed to conclude session:', error);
     }

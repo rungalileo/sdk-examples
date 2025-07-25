@@ -1,6 +1,12 @@
 import express from 'express';
 import path from 'path';
 import cors from 'cors';
+// Reduce LangChain logging verbosity
+process.env.LANGCHAIN_TRACING_V2 = 'false';
+process.env.LANGCHAIN_LOGGING = 'error';
+process.env.LANGCHAIN_VERBOSE = 'false';
+process.env.LANGCHAIN_CALLBACKS = 'false';
+
 import { StripeAgent } from './agents/StripeAgent';
 import { env } from './config/environment';
 
@@ -44,12 +50,12 @@ app.post('/api/chat', async (req, res) => {
         // Process the message
         const response = await agent.processMessage(message);
         
-        // Log to console for debugging
-        console.log(`[${new Date().toISOString()}] User: ${message}`);
-        console.log(`[${new Date().toISOString()}] Gizmo: ${response.message}`);
-        if (response.data?.toolsUsed && response.data.toolsUsed.length > 0) {
-            console.log(`[${new Date().toISOString()}] Tools: ${response.data.toolsUsed.join(', ')}`);
-        }
+                // Log to console for debugging (commented out to reduce terminal noise)
+        // console.log(`[${new Date().toISOString()}] User: ${message}`);
+        // console.log(`[${new Date().toISOString()}] Gizmo: ${response.message}`);
+        // if (response.data?.toolsUsed && response.data.toolsUsed.length > 0) {
+        //   console.log(`[${new Date().toISOString()}] Tools: ${response.data.toolsUsed.join(', ')}`);
+        // }
 
         res.json({
             ...response,
@@ -163,32 +169,22 @@ app.get('/', (req, res) => {
 
 // Handle session cleanup on shutdown
 process.on('SIGINT', async () => {
-    console.log('\n🚀 Shutting down Galileo Gizmos server...');
-    
-    // Conclude all active sessions
+        // Conclude all active sessions
     for (const [webSessionId, agent] of activeSessions) {
-        try {
-            // Log final conversation
-            await agent.logConversationToGalileo();
-            await agent.concludeGalileoSession();
-            console.log(`✅ Session ${webSessionId} concluded successfully`);
-        } catch (error) {
-            console.error(`❌ Error concluding session ${webSessionId}:`, error);
-        }
+      try {
+        // Log final conversation
+        await agent.logConversationToGalileo();
+        await agent.concludeGalileoSession();
+      } catch (error) {
+        console.error(`❌ Error concluding session ${webSessionId}:`, error);
+      }
     }
-    
-    console.log('🌟 Galileo Gizmos server shutdown complete');
     process.exit(0);
 });
 
 // Start the server
 app.listen(PORT, () => {
-    console.log('🚀 Galileo\'s Gizmos Space Commerce HQ is online!');
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-    console.log(`🌟 Server running on http://localhost:${PORT}`);
-    console.log(`📊 Galileo Project: ${env.galileo.projectName}`);
-    console.log(`🛸 Ready to process interstellar commerce requests!`);
-    console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
 
 // Export for testing

@@ -1,3 +1,9 @@
+// Reduce LangChain logging verbosity
+process.env.LANGCHAIN_TRACING_V2 = 'false';
+process.env.LANGCHAIN_LOGGING = 'error';
+process.env.LANGCHAIN_VERBOSE = 'false';
+process.env.LANGCHAIN_CALLBACKS = 'false';
+
 import { StripeAgentToolkit } from '@stripe/agent-toolkit/langchain';
 import { ChatOpenAI } from '@langchain/openai';
 import { AgentExecutor, createStructuredChatAgent } from 'langchain/agents';
@@ -107,60 +113,36 @@ export class StripeAgent {
     
     // Add custom instructions for better tool usage
     const customInstructions = `
-CRITICAL: ONLY OFFER REAL PRODUCTS FROM STRIPE INVENTORY
+CRITICAL: ALWAYS USE STRIPE TOOLS FOR ACCURATE PRICE INFORMATION
 
-INVENTORY RULES:
-- ALWAYS use list_products to check actual inventory before suggesting products
-- NEVER suggest fictional, made-up, or non-existent products
-- ONLY offer products that actually exist in your Stripe account
-- If a user asks for something not in inventory, check list_products first, then explain what's actually available
+MANDATORY TOOL USAGE RULES:
+1. **ALWAYS call list_products first** when asked about products, inventory, or what's available
+2. **ALWAYS call list_prices immediately after list_products** to get accurate pricing information
+3. **NEVER make up or guess prices** - only use prices from Stripe API calls
+4. **NEVER suggest products without checking inventory first**
 
-PURCHASE INTENT DETECTION:
-- When users express purchase intent (want to buy, ready to purchase, etc.), ALWAYS show them the current inventory first
-- Use list_products to get the latest inventory, then use list_prices to get price information for each product
-- Show products with their actual prices and descriptions
-- Make it easy for customers to see what's available and make a decision
+PRICE ACCURACY REQUIREMENTS:
+- Every product price shown must come from a list_prices API call
+- Convert Stripe unit_amount (cents) to dollars by dividing by 100
+- Format prices as "$XX.XX" (e.g., unit_amount: 4499 becomes "$44.99")
+- If a product has no prices, show "Price not set" or "Contact for pricing"
 
-SESSION CONCLUSION RULES:
-- When customer indicates they are done (says "thanks", "nope", "that's all", etc.), conclude the conversation politely
-- Do NOT continue asking "Is there anything else I can help you with?" after customer indicates they're done
-- Session should end naturally when customer signals completion
+INVENTORY VERIFICATION:
+- Use list_products to verify what actually exists in Stripe
+- Only offer products that are returned by the list_products API
+- If a user asks for something not in inventory, explain what's actually available
 
-STRIPE WORKFLOW FOR PAYMENT LINKS:
-When user is ready to purchase, call 'get_price_and_create_payment_link' instead of manually chaining list_products + list_prices + create_payment_link.
+PURCHASE WORKFLOW:
+1. **User asks about products** → Call list_products → Call list_prices → Show products with accurate prices
+2. **User wants to buy** → Use get_price_and_create_payment_link (atomic tool)
+3. **User asks for pricing** → Call list_products → Call list_prices → Show accurate pricing
 
-The get_price_and_create_payment_link tool is atomic and handles:
-1. Finding the product by name
-2. Getting the active price for that product
-3. Creating the payment link with the specified quantity
-4. Returning the ready-to-share URL
+EXAMPLE RESPONSES:
+- "What do you have?" → list_products + list_prices → "Here are our products with accurate prices: [products with real prices from API]"
+- "How much is the telescope?" → list_products + list_prices → "The telescope costs $X.XX (based on current Stripe pricing)"
+- "I want to buy the telescope" → get_price_and_create_payment_link → "Here's your payment link: [URL]"
 
-Make sure that you are only calling the get_price_and_create_payment_link tool to create a payment link ONCE for each time that you need a product call. 
-
-For product inquiries:
-- ALWAYS use list_products to show what's actually available
-- NEVER suggest products that don't exist in your inventory
-- When user wants to buy, use get_price_and_create_payment_link directly
-
-For purchase intent responses:
-1. First, use list_products to get current inventory
-2. Then use list_prices to get price information for all products
-3. Show available products with their actual prices and descriptions
-4. Ask which product they'd like to purchase
-5. Use get_price_and_create_payment_link when they specify a product
-
-For complex calculations (like "how many X can I buy for $Y"):
-1. Get product info with list_products
-2. Get price info with list_prices
-3. Calculate quantity (divide budget by unit price)
-4. Use get_price_and_create_payment_link with calculated quantity
-
-Example flow:
-1. "What do you offer?" → list_products (shows REAL inventory)
-2. "I want to buy something" → list_products (shows inventory with prices), then ask which product
-3. "I want the telescope" → get_price_and_create_payment_link with product_name and quantity
-
-REMEMBER: Customer trust depends on only offering real products that exist! Always show inventory when purchase intent is detected. Reduce the number of tools you call to only the ones that are necessary to answer the user's question and not repeat tool calls when not necessary. 
+CRITICAL: Never skip the list_prices call when showing product information. Every price must be verified through the Stripe API.
 `;
 
     // Prepend custom instructions to the original prompt
@@ -198,7 +180,6 @@ REMEMBER: Customer trust depends on only offering real products that exist! Alwa
       }
       
       // Ensure session consistency throughout the conversation
-      console.log(`📝 Processing message in session: ${this.sessionId}`);
 
       // Add user message to conversation history
       this.conversationHistory.push({
@@ -221,16 +202,16 @@ REMEMBER: Customer trust depends on only offering real products that exist! Alwa
       // Check for circular tool usage after execution
       this.detectCircularToolUsage(result.intermediateSteps);
       
-      // Add temporary console.trace after every intermediate step for debugging
-      if (result.intermediateSteps && result.intermediateSteps.length > 0) {
-        console.log('🔍 INTERMEDIATE STEPS DEBUGGING:');
-        result.intermediateSteps.forEach((step: any, index: number) => {
-          console.log(`\n--- Step ${index + 1} ---`);
-          console.log('Action:', step.action);
-          console.log('Observation:', step.observation);
-          console.trace(`🚨 Step ${index + 1} stack trace:`);
-        });
-      }
+      // Debug intermediate steps (commented out to reduce terminal noise)
+      // if (result.intermediateSteps && result.intermediateSteps.length > 0) {
+      //   console.log('🔍 INTERMEDIATE STEPS DEBUGGING:');
+      //   result.intermediateSteps.forEach((step: any, index: number) => {
+      //     console.log(`\n--- Step ${index + 1} ---`);
+      //     console.log('Action:', step.action);
+      //     console.log('Observation:', step.observation);
+      //     console.trace(`🚨 Step ${index + 1} stack trace:`);
+      //   });
+      // }
 
       // Clean up and format the response
       const cleanOutput = this.cleanAndFormatResponse(result.output, result, userMessage);
@@ -373,7 +354,6 @@ REMEMBER: Customer trust depends on only offering real products that exist! Alwa
     
     // Check if user indicates they're done - conclude session naturally
     if (userInput && this.shouldPromptForFeedback(userInput)) {
-      console.log("🏁 User indicated they're done - concluding session naturally");
       
       // Log neutral satisfaction and conclude session
       this.galileoLogger.logSatisfaction(true);
@@ -417,7 +397,7 @@ ${paymentLinkUrl}
         // Try to get current inventory from recent tool calls
         const recentProducts = this.getRecentProducts(result);
         if (recentProducts && recentProducts.length > 0) {
-          cleanOutput += '\n\n**Available Products:**';
+          cleanOutput += '\n\n**Available Products (with accurate Stripe pricing):**';
           recentProducts.forEach((product: any) => {
             if (product.prices && product.prices.length > 0) {
               const price = product.prices[0];
@@ -427,7 +407,7 @@ ${paymentLinkUrl}
                 cleanOutput += `\n  ${product.description}`;
               }
             } else {
-              cleanOutput += `\n• **${product.name}** - Price not set`;
+              cleanOutput += `\n• **${product.name}** - Price not set (no active prices in Stripe)`;
             }
           });
           cleanOutput += '\n\nJust let me know which product you\'d like to purchase and I\'ll create a payment link for you!';
@@ -684,7 +664,6 @@ ${paymentLinkUrl}
   async startGalileoSession(sessionName: string): Promise<string> {
     const sessionId = await this.galileoLogger.startSession(sessionName);
     this.sessionActive = true;
-    console.log(`🚀 Started Galileo session: ${sessionId}`);
     return sessionId;
   }
 
@@ -694,11 +673,9 @@ ${paymentLinkUrl}
 
   async concludeGalileoSession(): Promise<void> {
     if (this.sessionActive) {
-      console.log(`🏁 Concluding Galileo session: ${this.sessionId}`);
       await this.galileoLogger.concludeSession();
       this.sessionActive = false;
       this.sessionId = null;
-      console.log('✅ Galileo session concluded successfully');
     }
   }
 

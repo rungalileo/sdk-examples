@@ -2,7 +2,7 @@ import Stripe from 'stripe';
 import { env } from '../src/config/environment';
 
 const stripe = new Stripe(env.stripe.secretKey, {
-  apiVersion: '2025-06-30.basil',
+  apiVersion: '2025-02-24.acacia',
 });
 
 const spaceProducts = [
@@ -138,7 +138,7 @@ const spaceProducts = [
 ];
 
 async function setupProducts() {
-  console.log('🚀 Setting up Galileo\'s Gizmos product catalog...\n');
+  console.log('🚀 Setting up Galileo\'s Gizmos product catalog...');
   
   for (const productData of spaceProducts) {
     try {
@@ -161,19 +161,13 @@ async function setupProducts() {
       });
       
       console.log(`✅ Created: ${productData.name} - $${(productData.price / 100).toFixed(2)}`);
-      console.log(`   Product ID: ${product.id}`);
-      console.log(`   Price ID: ${price.id}\n`);
       
     } catch (error) {
       console.error(`❌ Failed to create ${productData.name}:`, error);
     }
   }
   
-  console.log('🎉 Product setup complete! Your Galileo\'s Gizmos catalog is ready.');
-  console.log('💡 You can now test the agent with commands like:');
-  console.log('   • "Show me all our space products"');
-  console.log('   • "I want to buy a telescope"');
-  console.log('   • "Create a payment link for the Mars Rock Collection"');
+  console.log('🎉 Product setup complete!');
 }
 
 // Run the setup

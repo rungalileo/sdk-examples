@@ -178,12 +178,9 @@ describe('StripeAgent', () => {
         expect(fs.existsSync('dist/src/index.js')).toBe(true);
         expect(fs.existsSync('dist/src/agents/StripeAgent.js')).toBe(true);
         
-        console.log('✅ TypeScript compilation successful');
-        if (stdout) console.log('Build output:', stdout);
+        // Build completed successfully
       } catch (error: any) {
         console.error('❌ TypeScript compilation failed:', error.message);
-        if (error.stdout) console.log('stdout:', error.stdout);
-        if (error.stderr) console.error('stderr:', error.stderr);
         throw error;
       }
     }, 60000); // 60 second timeout for build
