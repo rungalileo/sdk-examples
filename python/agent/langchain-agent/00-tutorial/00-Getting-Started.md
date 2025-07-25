@@ -32,11 +32,18 @@ pip install -r requirements.txt
 Copy the existing `.env.example` file, and rename it to `.env` in your project directory. 
 
 ```
+GALILEO_API_KEY=your-galileo-api-key             # Your Galileo API key.
+GALILEO_PROJECT=your-galileo-project-name        # Your Galileo project name.
+GALILEO_LOG_STREAM=your-galileo-log-stream       # The name of the log stream you want to use for logging.
+
+# Provide the console url below if you are using a custom deployment, and not using app.galileo.ai
+# GALILEO_CONSOLE_URL=your-galileo-console-url
+
 OPENAI_API_KEY=your-openai-api-key
-GALILEO_API_KEY=your-galileo-api-key
 ```
 
-- Replace `your-openai-api-key` and `your-galileo-api-key` with your actual keys.
+- Replace `your-openai-api-key`, `your-galileo-project-name`, and `your-galileo-log-stream` with your actual values.
+- If you are using a custom deployment of Galileo, set `GALILEO_CONSOLE_URL` to the URL of your Galileo deployment.
 - This keeps your credentials secure and out of your code.
 
 ---
