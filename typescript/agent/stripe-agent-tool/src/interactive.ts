@@ -76,10 +76,10 @@ class GalileoGizmosCustomerService {
   private async startSession() {
     try {
       this.sessionId = `session-${Date.now()}`;
-      // The session will be started automatically when the first message is processed
-      console.log('🚀 Session ready - Galileo logging will start with first message');
+      // Session will be started automatically when the first message is processed
+      console.log('🚀 Session ready - Galileo tracing will be activated on first message');
     } catch (error) {
-      console.error('Error starting session:', error);
+      console.error('Error preparing session:', error);
     }
   }
 
@@ -88,7 +88,7 @@ class GalileoGizmosCustomerService {
       try {
         // End the conversation and flush traces
         await this.agent.endConversation();
-        console.log('📊 Session concluded and buffered traces flushed');
+        console.log('📊 Session concluded and traces flushed to Galileo');
       } catch (error) {
         console.error('Error concluding session:', error);
       }

@@ -1,23 +1,22 @@
 import { StripeAgent } from '../src/agents/StripeAgent';
-import { GalileoAgentLogger } from '../src/utils/GalileoLogger';
-import * as readline from 'readline';
-import { EventEmitter } from 'events';
+import { GalileoCallbackHandler } from '../src/callbacks/handlers/GalileoCallbackHandler';
 
-// Mock external dependencies
-jest.mock('../src/utils/GalileoLogger');
-jest.mock('@stripe/agent-toolkit/langchain');
-jest.mock('@langchain/openai');
-jest.mock('langchain/agents');
-jest.mock('langchain/hub');
-jest.mock('stripe');
-
-// Mock readline for interactive testing
-jest.mock('readline', () => ({
-  createInterface: jest.fn()
+// Mock the galileo package
+jest.mock('galileo', () => ({
+  init: jest.fn().mockResolvedValue(void 0),
+  GalileoCallback: jest.fn().mockImplementation(() => ({
+    handleLLMStart: jest.fn(),
+    handleLLMEnd: jest.fn(),
+    handleToolStart: jest.fn(),
+    handleToolEnd: jest.fn(),
+    handleAgentStart: jest.fn(),
+    handleAgentEnd: jest.fn(),
+  })),
+  flush: jest.fn().mockResolvedValue(void 0),
 }));
 
 describe('Interactive Session Logging Tests', () => {
-  let mockGalileoLogger: jest.Mocked<GalileoAgentLogger>;
+  let mockGalileoCallbackHandler: jest.Mocked<GalileoCallbackHandler>;
   let mockReadlineInterface: jest.Mocked<readline.Interface>;
   let consoleSpy: jest.SpyInstance;
   let stdoutWriteSpy: jest.SpyInstance;
@@ -27,19 +26,25 @@ describe('Interactive Session Logging Tests', () => {
     consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     stdoutWriteSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => true);
 
-    // Create mock Galileo logger
-    mockGalileoLogger = {
+    // Create mock Galileo callback handler
+    mockGalileoCallbackHandler = {
       startSession: jest.fn().mockResolvedValue('test-session-id'),
-      queue: jest.fn(),
-      flushBuffered: jest.fn().mockResolvedValue(void 0),
-      logConversation: jest.fn().mockResolvedValue(void 0),
-      logSatisfaction: jest.fn().mockResolvedValue(void 0),
-      concludeSession: jest.fn().mockResolvedValue(void 0),
+      endSession: jest.fn().mockResolvedValue(void 0),
+      updateSessionWithMessage: jest.fn(),
+      updateSessionMetrics: jest.fn(),
+      logAgentStart: jest.fn(),
+      logAgentEnd: jest.fn(),
+      logToolStart: jest.fn(),
+      logToolEnd: jest.fn(),
+      logLLMStart: jest.fn(),
+      logLLMEnd: jest.fn(),
+      logError: jest.fn(),
+      getGalileoCallback: jest.fn().mockReturnValue({}),
+      flush: jest.fn().mockResolvedValue(void 0),
     } as any;
 
-    // Mock GalileoAgentLogger constructor
-    (GalileoAgentLogger as jest.MockedClass<typeof GalileoAgentLogger>)
-      .mockImplementation(() => mockGalileoLogger);
+    (GalileoCallbackHandler as jest.MockedClass<typeof GalileoCallbackHandler>)
+      .mockImplementation(() => mockGalileoCallbackHandler);
 
     // Create mock readline interface
     mockReadlineInterface = {

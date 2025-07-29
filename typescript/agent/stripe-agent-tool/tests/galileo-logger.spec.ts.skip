@@ -1,31 +1,35 @@
-import { GalileoAgentLogger } from '../src/utils/GalileoLogger';
+import { GalileoCallbackHandler } from '../src/callbacks/handlers/GalileoCallbackHandler';
 import { AgentMetrics } from '../src/types';
 
 // Mock the galileo package
 jest.mock('galileo', () => ({
-  GalileoLogger: jest.fn().mockImplementation(() => ({
-    startTrace: jest.fn(),
-    addLlmSpan: jest.fn(),
-    addToolSpan: jest.fn(),
-    conclude: jest.fn(),
-    flush: jest.fn().mockResolvedValue(void 0),
-  }))
+  init: jest.fn().mockResolvedValue(void 0),
+  GalileoCallback: jest.fn().mockImplementation(() => ({
+    handleLLMStart: jest.fn(),
+    handleLLMEnd: jest.fn(),
+    handleToolStart: jest.fn(),
+    handleToolEnd: jest.fn(),
+    handleAgentStart: jest.fn(),
+    handleAgentEnd: jest.fn(),
+  })),
+  flush: jest.fn().mockResolvedValue(void 0),
 }));
 
-describe('GalileoLogger Flush Behavior Tests', () => {
-  let galileoLogger: GalileoAgentLogger;
+describe('GalileoCallbackHandler Session Management Tests', () => {
+  let galileoHandler: GalileoCallbackHandler;
   let consoleSpy: jest.SpyInstance;
-  let mockGalileoLoggerInstance: any;
+  let mockFlush: jest.MockedFunction<any>;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     // Mock console.log to capture output
     consoleSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
     
-    // Create a new instance of GalileoAgentLogger
-    galileoLogger = new GalileoAgentLogger();
+    // Create a new instance of GalileoCallbackHandler
+    galileoHandler = new GalileoCallbackHandler();
     
-    // Access the mocked internal logger
-    mockGalileoLoggerInstance = (galileoLogger as any).logger;
+    // Access the mocked flush function
+    const { flush } = require('galileo');
+    mockFlush = flush;
   });
 
   afterEach(() => {
@@ -33,51 +37,35 @@ describe('GalileoLogger Flush Behavior Tests', () => {
     jest.clearAllMocks();
   });
 
-  describe('Queue and Flush Behavior', () => {
-    it('should queue traces without immediately flushing', () => {
-      const mockMetrics: AgentMetrics = {
-        executionTime: 1000,
-        success: true,
-        toolsUsed: ['list_products', 'list_prices']
-      };
-
-      // Queue multiple traces
-      galileoLogger.queue(mockMetrics, 'Show me products', 'Here are the products...');
-      galileoLogger.queue(mockMetrics, 'What are prices?', 'Here are the prices...');
-      galileoLogger.queue(mockMetrics, 'Create payment link', 'Payment link created...');
-
-      // Verify internal flush method hasn't been called yet
-      expect(mockGalileoLoggerInstance.flush).not.toHaveBeenCalled();
+  describe('Session and Callback Behavior', () => {
+    it('should start session without immediately flushing', async () => {
+      // Start a session
+      await galileoHandler.startSession('test-session-1');
       
-      // Verify no flush messages in console
+      // Verify flush hasn't been called yet
+      expect(mockFlush).not.toHaveBeenCalled();
+      
+      // Verify session started message
       const capturedOutput = consoleSpy.mock.calls.flat().join(' ');
-      expect(capturedOutput).not.toContain('📊 Buffered traces flushed');
+      expect(capturedOutput).toContain('Session started: test-session-1');
     });
 
-    it('should flush all queued traces when flushBuffered is called', async () => {
-      const mockMetrics: AgentMetrics = {
-        executionTime: 1500,
-        success: true,
-        toolsUsed: ['create_payment_link']
-      };
+    it('should flush traces when flush is called', async () => {
+      // Start a session and simulate some activity
+      await galileoHandler.startSession('test-session-2');
+      
+      galileoHandler.logAgentStart('run-1', { input: 'test input' });
+      galileoHandler.logAgentEnd('run-1', { output: 'test output' });
+      
+      // Call flush
+      await galileoHandler.flush();
 
-      // Queue some traces
-      galileoLogger.queue(mockMetrics, 'User input 1', 'Agent response 1');
-      galileoLogger.queue(mockMetrics, 'User input 2', 'Agent response 2');
-      galileoLogger.queue(mockMetrics, 'User input 3', 'Agent response 3');
-
-      // Verify no flush has happened yet
-      expect(mockGalileoLoggerInstance.flush).not.toHaveBeenCalled();
-
-      // Call flushBuffered
-      await galileoLogger.flushBuffered();
-
-      // Verify flush was called (once for each trace + final flush)
-      expect(mockGalileoLoggerInstance.flush).toHaveBeenCalled();
+      // Verify flush was called
+      expect(mockFlush).toHaveBeenCalled();
       
       // Verify flush message appeared in console
       const capturedOutput = consoleSpy.mock.calls.flat().join(' ');
-      expect(capturedOutput).toContain('📊 Buffered traces flushed');
+      expect(capturedOutput).toContain('All traces successfully sent to Galileo');
     });
 
     it('should handle empty queue gracefully', async () => {
