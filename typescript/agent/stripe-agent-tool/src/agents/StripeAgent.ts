@@ -356,11 +356,6 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
       // This helps the agent understand follow-up questions and maintain context
       const conversationContext = this.buildConversationContext();
 
-      // 📊 LOG AGENT START TO GALILEO  
-      // This marks the beginning of the agent's processing in Galileo
-      const runId = `run-${Date.now()}`;
-      this.galileoCallbackHandler.logAgentStart(runId, { input: userMessage });
-
       // 🤖 CORE AGENT PROCESSING - This is where the magic happens!
       // The agent will:
       // 1. Analyze the user's request using the LLM (GPT-4)
@@ -368,7 +363,9 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
       // 3. Execute those tools with the Stripe API
       // 4. Generate a natural language response
       // 
-      // The 'callbacks' parameter ensures Galileo tracks every step of this process
+      // The 'callbacks' parameter ensures Galileo tracks every step of this process automatically
+      console.log('🤖 Starting agent processing with Galileo tracing...');
+      
       const result = await this.agentExecutor.invoke({
         input: userMessage,        // The user's request
         chat_history: conversationContext,  // Previous conversation for context
@@ -376,6 +373,8 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
         timeout: 20000,            // 20 second timeout to prevent hanging
         callbacks: [this.galileoCallbackHandler.getGalileoCallback()],  // Galileo tracking
       });
+      
+      console.log('✅ Agent processing completed');
       
       // 🔍 ERROR DETECTION: Check for circular tool usage
       // Sometimes agents can get stuck in loops - this detects and prevents that
@@ -401,10 +400,6 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
       // This handles special cases like payment links and purchase flows
       const cleanOutput = await this.cleanAndFormatResponse(result.output, result, userMessage);
 
-      // 📊 LOG AGENT END TO GALILEO
-      // Mark the successful completion of agent processing
-      this.galileoCallbackHandler.logAgentEnd(runId, { output: cleanOutput });
-
       // 📊 LOG ASSISTANT RESPONSE TO GALILEO
       // Track the final response that gets sent to the user
       this.galileoCallbackHandler.updateSessionWithMessage({
@@ -424,7 +419,7 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
       // ⏱️ PERFORMANCE TRACKING
       const executionTime = Date.now() - startTime;
       
-      // 📊 UPDATE GALILEO METRICS
+      // 📊 UPDATE SESSION METRICS
       // Log performance metrics for this successful interaction
       this.galileoCallbackHandler.updateSessionMetrics(executionTime, true);
 
@@ -441,13 +436,11 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
       };
     } catch (error) {
       // ❌ ERROR HANDLING
-      // If anything goes wrong, we handle it gracefully and still log to Galileo
+      // If anything goes wrong, we handle it gracefully
       const executionTime = Date.now() - startTime;
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       
-      // 📊 LOG ERROR TO GALILEO
-      // Track errors so you can debug issues in your agent
-      this.galileoCallbackHandler.logError(`error-${Date.now()}`, error instanceof Error ? error : new Error(errorMessage));
+      console.error('❌ Agent processing error:', errorMessage);
       
       // 📊 UPDATE ERROR METRICS
       // Record that this interaction failed
