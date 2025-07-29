@@ -30,6 +30,7 @@ You can read more about these in our [Get started with sample projects documenta
   - [LangGraph FSI Agent](/python/agent/langgraph-fsi-agent/) - Financial services agent with before/after implementations
   - [Minimal Agent Example](/python/agent/minimal-agent-example/) - Simple agent with basic tool usage
   - [Weather Vibes Agent](/python/agent/weather-vibes-agent/) - Multi-function agent for weather, recommendations, and YouTube videos
+  - [CrewAI Agent](/python/agent/crew-ai/) - Agent that uses CrewAI for task management and tool usage
 - **[TypeScript Agents](/typescript/agent/)**
   - [Minimal Agent](/typescript/agent/) - Basic TypeScript agent implementation
   - [LangGraph FSI Agent](/typescript/agent/langgraph-fsi-agent/) - Financial services agent
