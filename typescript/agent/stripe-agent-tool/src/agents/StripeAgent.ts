@@ -1,8 +1,33 @@
-// Reduce LangChain logging verbosity
-process.env.LANGCHAIN_TRACING_V2 = 'false';
-process.env.LANGCHAIN_LOGGING = 'error';
-process.env.LANGCHAIN_VERBOSE = 'false';
-process.env.LANGCHAIN_CALLBACKS = 'false';
+/**
+ * STRIPE AGENT WITH GALILEO TRACING
+ * 
+ * This is a complete example of building an AI agent that can interact with Stripe (payment processing)
+ * while using Galileo for observability and tracing. Here's what this agent does:
+ * 
+ * 🤖 AGENT CAPABILITIES:
+ * - Lists Stripe products and prices
+ * - Creates payment links for customers
+ * - Manages customer data
+ * - Handles conversations with memory
+ * 
+ * 📊 GALILEO INTEGRATION:
+ * - Tracks all agent conversations and tool usage
+ * - Provides debugging and performance metrics
+ * - Logs errors and execution times
+ * - Enables session-based tracing
+ * 
+ * 🛠️ TECHNICAL STACK:
+ * - LangChain: AI agent framework
+ * - OpenAI GPT-4: Language model
+ * - Stripe: Payment processing
+ * - Galileo: AI observability platform
+ */
+
+// Enable LangChain callbacks for Galileo integration
+// These environment variables tell LangChain to send tracing data to Galileo
+process.env.LANGCHAIN_LOGGING = 'info';     // Log informational messages
+process.env.LANGCHAIN_VERBOSE = 'false';    // Don't show verbose debug output
+process.env.LANGCHAIN_CALLBACKS = 'true';   // Enable callback handlers (like Galileo)
 
 import { StripeAgentToolkit } from '@stripe/agent-toolkit/langchain';
 import { ChatOpenAI } from '@langchain/openai';
@@ -13,7 +38,7 @@ import { DynamicTool } from '@langchain/core/tools';
 import { z } from 'zod';
 import Stripe from 'stripe';
 import { env } from '../config/environment';
-import { GalileoAgentLogger } from '../utils/GalileoLogger';
+import { GalileoCallbackHandler } from '../callbacks/handlers/GalileoCallbackHandler';
 import { CircularToolError } from '../errors/CircularToolError';
 import { 
   AgentMessage, 
@@ -24,66 +49,131 @@ import {
   AgentMetrics 
 } from '../types';
 
+/**
+ * STRIPE AGENT CLASS
+ * 
+ * This class represents a complete AI agent that can:
+ * 1. Process natural language requests about Stripe operations
+ * 2. Use Stripe tools to interact with the Stripe API
+ * 3. Track all interactions through Galileo for observability
+ * 4. Maintain conversation memory and context
+ * 
+ * For first-time agent builders, here's what each component does:
+ */
 export class StripeAgent {
-  private stripeToolkit!: StripeAgentToolkit;
-  private llm!: ChatOpenAI;
-  private agentExecutor!: AgentExecutor;
-  private conversationHistory: AgentMessage[] = [];
-  private galileoLogger: GalileoAgentLogger;
-  private sessionId: string | null = null;
-  private sessionActive: boolean = false;
-  private conversationEnded: boolean = false;
-  private cachedProducts: any[] = [];
-  private cachedPrices: any[] = [];
-  private cacheTimestamp: number = 0;
-  private readonly CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
+  // 🔧 CORE AGENT COMPONENTS
+  private stripeToolkit!: StripeAgentToolkit;    // Provides Stripe API tools (list products, create payments, etc.)
+  private llm!: ChatOpenAI;                      // The AI language model (GPT-4) that powers conversations
+  private agentExecutor!: AgentExecutor;         // LangChain's agent executor that coordinates tool usage
+  
+  // 💬 CONVERSATION MANAGEMENT
+  private conversationHistory: AgentMessage[] = [];  // Stores all messages in the current session
+  private sessionId: string | null = null;            // Unique identifier for the current conversation
+  private sessionActive: boolean = false;             // Whether we're currently tracking a session
+  private conversationEnded: boolean = false;         // Flag to indicate if user has ended the conversation
+  
+  // 📊 GALILEO OBSERVABILITY
+  private galileoCallbackHandler: GalileoCallbackHandler;  // Handles all Galileo tracking and logging
+  
+  // ⚡ PERFORMANCE OPTIMIZATION (CACHING)
+  private cachedProducts: any[] = [];                      // Cache Stripe products to avoid repeated API calls
+  private cachedPrices: any[] = [];                        // Cache pricing data
+  private cacheTimestamp: number = 0;                      // When the cache was last updated
+  private readonly CACHE_DURATION = 5 * 60 * 1000;        // Cache expires after 5 minutes
 
+  /**
+   * CONSTRUCTOR - Sets up the agent's core components
+   * 
+   * For Galileo users: The callback handler is initialized here and will automatically
+   * start tracking your agent's behavior once you begin processing messages.
+   */
   constructor() {
-    this.galileoLogger = new GalileoAgentLogger();
+    this.galileoCallbackHandler = new GalileoCallbackHandler();
     this.initializeStripeToolkit();
     this.initializeLLM();
   }
 
+  /**
+   * INITIALIZATION - Must be called before using the agent
+   * 
+   * This is separate from the constructor because agent initialization
+   * involves async operations (loading prompts from LangChain Hub).
+   */
   async init() {
     await this.initializeAgent();
   }
 
+  /**
+   * 🔧 STRIPE TOOLKIT INITIALIZATION
+   * 
+   * This creates a toolkit that provides pre-built tools for interacting with Stripe.
+   * Each tool corresponds to a Stripe API operation that the agent can use.
+   * 
+   * For first-time builders: Think of tools as "superpowers" your agent can use.
+   * Instead of the agent having to write code to call Stripe APIs, these tools
+   * handle all the API complexity and just need simple parameters.
+   * 
+   * Available tools this creates:
+   * - list_products: Get products from your Stripe catalog
+   * - create_product: Add new products to Stripe
+   * - list_prices: Get pricing for products
+   * - create_price: Set up new pricing
+   * - create_payment_link: Generate checkout links
+   * - create_customer: Add customers to Stripe
+   * - list_customers: View customer data
+   * - create_invoice: Generate invoices
+   * - update_invoice: Modify existing invoices
+   */
   private initializeStripeToolkit(): void {
     this.stripeToolkit = new StripeAgentToolkit({
-      secretKey: env.stripe.secretKey,
+      secretKey: env.stripe.secretKey,  // Your Stripe secret key from environment variables
       configuration: {
-        actions: {
+        actions: {  // Enable specific Stripe operations for security
           paymentLinks: {
-            create: true,
+            create: true,  // Allow creating payment links (checkout URLs)
           },
           customers: {
-            create: true,
-            read: true,
+            create: true,  // Allow creating new customers
+            read: true,    // Allow reading customer data
           },
           products: {
-            create: true,
-            read: true,
+            create: true,  // Allow adding new products
+            read: true,    // Allow listing/viewing products
           },
           prices: {
-            create: true,
-            read: true,
+            create: true,  // Allow setting up pricing
+            read: true,    // Allow viewing price information
           },
           invoices: {
-            create: true,
-            update: true,
+            create: true,  // Allow generating invoices
+            update: true,  // Allow modifying invoices
           }, 
         },
       },
     });
   }
 
+  /**
+   * 🤖 LANGUAGE MODEL INITIALIZATION
+   * 
+   * This sets up the AI "brain" that will understand user requests and decide
+   * which tools to use. We're using OpenAI's GPT-4o-mini model.
+   * 
+   * Key settings explained:
+   * - temperature: How "creative" the AI is (0.1 = very focused, 1.0 = very creative)
+   * - maxRetries: How many times to retry if the API call fails
+   * - timeout: Maximum time to wait for a response
+   * 
+   * For Galileo users: All LLM calls will be automatically tracked, including
+   * token usage, latency, and the reasoning process.
+   */
   private initializeLLM(): void {
     this.llm = new ChatOpenAI({
-      openAIApiKey: env.openai.apiKey,
-      modelName: 'gpt-4o-mini',
-      temperature: 0.1,
-      maxRetries: 3,
-      timeout: 30000, // 30 second timeout
+      openAIApiKey: env.openai.apiKey,  // Your OpenAI API key
+      modelName: 'gpt-4o-mini',         // The specific model to use
+      temperature: 0.1,                 // Low temperature for consistent, focused responses
+      maxRetries: 3,                    // Retry failed API calls up to 3 times
+      timeout: 30000,                   // 30 second timeout for API calls
     });
   }
 
@@ -96,17 +186,49 @@ export class StripeAgent {
     // Create atomic helper tool for getting price and creating payment link
     const getPriceAndCreateLink = new DynamicTool({
       name: 'get_price_and_create_payment_link',
-      description: 'Provide product name and quantity; returns ready-to-share Stripe payment link URL',
+      description: 'Create payment link for specific product. Input format: {"product_name": "exact product name", "quantity": 1}. Use this ONLY when user explicitly wants to purchase a specific product.',
       func: async (input: string) => {
-        const params = JSON.parse(input);
-        const { product_name, quantity } = params;
-        const products = await stripe.products.list({limit: 100});
-        const product = products.data.find(p => p.name.toLowerCase() === product_name.toLowerCase());
-        if (!product) throw new Error('Product not found');
-        const prices = await stripe.prices.list({product: product.id, active: true});
-        if (!prices.data.length) throw new Error('No active price');
-        const link = await stripe.paymentLinks.create({line_items:[{price: prices.data[0].id, quantity}]});
-        return link.url;
+        try {
+          const params = JSON.parse(input);
+          const { product_name, quantity = 1 } = params;
+          
+          if (!product_name) {
+            return 'Error: Product name is required. Please specify which product the customer wants to purchase.';
+          }
+          
+          // Search for products with fuzzy matching
+          const products = await stripe.products.list({limit: 100});
+          let product = products.data.find(p => p.name.toLowerCase() === product_name.toLowerCase());
+          
+          // If exact match not found, try partial matching
+          if (!product) {
+            product = products.data.find(p => 
+              p.name.toLowerCase().includes(product_name.toLowerCase()) ||
+              product_name.toLowerCase().includes(p.name.toLowerCase())
+            );
+          }
+          
+          if (!product) {
+            const availableProducts = products.data.slice(0, 5).map(p => p.name).join(', ');
+            return `Product "${product_name}" not found in inventory. Available products include: ${availableProducts}. Please check the product name and try again.`;
+          }
+          
+          const prices = await stripe.prices.list({product: product.id, active: true});
+          if (!prices.data.length) {
+            return `Product "${product.name}" found but has no active pricing. Please contact support or try a different product.`;
+          }
+          
+          const link = await stripe.paymentLinks.create({
+            line_items: [{price: prices.data[0].id, quantity: Math.max(1, quantity)}]
+          });
+          
+          return link.url;
+        } catch (error) {
+          if (error instanceof SyntaxError) {
+            return 'Error: Invalid input format. Please use {"product_name": "product name", "quantity": 1}';
+          }
+          return `Error creating payment link: ${error instanceof Error ? error.message : 'Unknown error'}`;
+        }
       },
     });
     
@@ -174,101 +296,167 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
       verbose: env.app.agentVerbose,
       maxIterations: 8, // Increased to handle more interactions
       returnIntermediateSteps: true, // This helps with error handling
-      earlyStoppingMethod: 'generate', // Stop when agent decides it's complete
+      earlyStoppingMethod: 'force', // Stop when agent decides it's complete
     });
   }
 
+  /**
+   * 💬 PROCESS MESSAGE - The Heart of the Agent
+   * 
+   * This is the main method that handles all user interactions. Here's what happens:
+   * 
+   * 1. 📊 Galileo Session Management - Start tracking if not already active
+   * 2. 📝 Memory Management - Add message to conversation history
+   * 3. 🤖 AI Processing - Let the agent decide what to do and which tools to use
+   * 4. 🔍 Result Processing - Clean up and format the response
+   * 5. 📊 Logging - Track everything in Galileo for observability
+   * 
+   * For first-time builders: This method orchestrates the entire agent workflow.
+   * The agent will automatically choose which Stripe tools to use based on the user's request.
+   * 
+   * For Galileo users: Every step is automatically logged, giving you complete visibility
+   * into how your agent makes decisions and performs.
+   */
   async processMessage(userMessage: string): Promise<AgentResponse> {
+    // ✅ SAFETY CHECK: Make sure the agent is properly initialized
     if (!this.agentExecutor) {
       throw new Error('Agent is not initialized. Did you forget to call await agent.init()?');
     }
-    const startTime = Date.now();
+    const startTime = Date.now();  // Start timing for performance metrics
     
     try {
-      // Start Galileo session if not already active
+      // 📊 GALILEO SESSION MANAGEMENT
+      // Start a new session if this is the first message in a conversation
+      // This creates a "session" in Galileo that groups related interactions together
       if (!this.sessionActive) {
-        this.sessionId = await this.startGalileoSession("Galileo's Gizmos Customer Session");
+        this.sessionId = `session-${Date.now()}`;
+        await this.galileoCallbackHandler.startSession(this.sessionId);
         this.sessionActive = true;
       }
       
-      // Ensure session consistency throughout the conversation
+      // 📊 LOG USER MESSAGE TO GALILEO
+      // This tracks the user's input so you can see exactly what triggered each agent response
+      this.galileoCallbackHandler.updateSessionWithMessage({
+        role: 'user',
+        content: userMessage,
+        timestamp: new Date(),
+      });
 
-      // Add user message to conversation history
+      // 📝 CONVERSATION MEMORY
+      // Add the user's message to our internal conversation history
+      // This helps the agent remember what was discussed earlier
       this.conversationHistory.push({
         role: 'user',
         content: userMessage,
         timestamp: new Date(),
       });
 
-      // Build conversation context for better memory
+      // 🧠 BUILD CONVERSATION CONTEXT
+      // Create a summary of recent conversation history to give the agent context
+      // This helps the agent understand follow-up questions and maintain context
       const conversationContext = this.buildConversationContext();
 
-      // Process the message with the agent including conversation history
+      // 📊 LOG AGENT START TO GALILEO  
+      // This marks the beginning of the agent's processing in Galileo
+      const runId = `run-${Date.now()}`;
+      this.galileoCallbackHandler.logAgentStart(runId, { input: userMessage });
+
+      // 🤖 CORE AGENT PROCESSING - This is where the magic happens!
+      // The agent will:
+      // 1. Analyze the user's request using the LLM (GPT-4)
+      // 2. Decide which tools to use (list_products, create_payment_link, etc.)
+      // 3. Execute those tools with the Stripe API
+      // 4. Generate a natural language response
+      // 
+      // The 'callbacks' parameter ensures Galileo tracks every step of this process
       const result = await this.agentExecutor.invoke({
-        input: userMessage,
-        chat_history: conversationContext,
+        input: userMessage,        // The user's request
+        chat_history: conversationContext,  // Previous conversation for context
       }, {
-        timeout: 20000, // 20 seconds timeout
+        timeout: 20000,            // 20 second timeout to prevent hanging
+        callbacks: [this.galileoCallbackHandler.getGalileoCallback()],  // Galileo tracking
       });
       
-      // Check for circular tool usage after execution
+      // 🔍 ERROR DETECTION: Check for circular tool usage
+      // Sometimes agents can get stuck in loops - this detects and prevents that
       this.detectCircularToolUsage(result.intermediateSteps);
       
-      // Debug intermediate steps - only when agent verbose mode is enabled
+      // 📊 DEBUG MODE: Show detailed step-by-step execution (optional)
+      // When verbose mode is enabled, this shows exactly what the agent did internally
+      // Useful for debugging and understanding agent behavior
       if (env.app.agentVerbose) {
         if (result.intermediateSteps && result.intermediateSteps.length > 0) {
           console.log('🔍 INTERMEDIATE STEPS DEBUGGING:');
           result.intermediateSteps.forEach((step: any, index: number) => {
             console.log(`\n--- Step ${index + 1} ---`);
-            console.log('Action:', step.action);
-            console.log('Observation:', step.observation);
+            console.log('Action:', step.action);          // What tool was called
+            console.log('Observation:', step.observation); // What the tool returned
             console.trace(`🚨 Step ${index + 1} stack trace:`);
           });
         }
       }
 
-      // Clean up and format the response
+      // ✨ RESPONSE FORMATTING
+      // Clean up the raw agent output and format it nicely for users
+      // This handles special cases like payment links and purchase flows
       const cleanOutput = await this.cleanAndFormatResponse(result.output, result, userMessage);
 
-      // Add assistant response to conversation history
+      // 📊 LOG AGENT END TO GALILEO
+      // Mark the successful completion of agent processing
+      this.galileoCallbackHandler.logAgentEnd(runId, { output: cleanOutput });
+
+      // 📊 LOG ASSISTANT RESPONSE TO GALILEO
+      // Track the final response that gets sent to the user
+      this.galileoCallbackHandler.updateSessionWithMessage({
+        role: 'assistant',
+        content: cleanOutput,
+        timestamp: new Date(),
+      });
+
+      // 📝 ADD RESPONSE TO CONVERSATION MEMORY
+      // Store the assistant's response for future context
       this.conversationHistory.push({
         role: 'assistant',
         content: cleanOutput,
         timestamp: new Date(),
       });
 
+      // ⏱️ PERFORMANCE TRACKING
       const executionTime = Date.now() - startTime;
       
-      // Queue trace for later flushing
-      this.queueTraceToGalileo({
-        executionTime,
-        success: true,
-        toolsUsed: this.extractToolsUsed(result),
-      }, userMessage, cleanOutput);
+      // 📊 UPDATE GALILEO METRICS
+      // Log performance metrics for this successful interaction
+      this.galileoCallbackHandler.updateSessionMetrics(executionTime, true);
 
+      // ✅ RETURN SUCCESS RESPONSE
+      // Send back the formatted response with metadata
       return {
         success: true,
         message: cleanOutput,
         data: {
-          executionTime,
-          toolsUsed: this.extractToolsUsed(result),
-          sessionId: this.sessionId,
+          executionTime,                           // How long processing took
+          toolsUsed: this.extractToolsUsed(result), // Which Stripe tools were used
+          sessionId: this.sessionId,               // Session identifier for tracking
         },
       };
     } catch (error) {
+      // ❌ ERROR HANDLING
+      // If anything goes wrong, we handle it gracefully and still log to Galileo
       const executionTime = Date.now() - startTime;
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       
-      // Handle circular tool error with a graceful message
+      // 📊 LOG ERROR TO GALILEO
+      // Track errors so you can debug issues in your agent
+      this.galileoCallbackHandler.logError(`error-${Date.now()}`, error instanceof Error ? error : new Error(errorMessage));
+      
+      // 📊 UPDATE ERROR METRICS
+      // Record that this interaction failed
+      this.galileoCallbackHandler.updateSessionMetrics(executionTime, false);
+      
+      // 🔄 SPECIAL HANDLING: Circular Tool Errors
+      // If the agent got stuck in a loop, provide a helpful message
       if (error instanceof CircularToolError) {
         console.error('🔄 CircularToolError caught:', error.message);
-        
-        this.queueTraceToGalileo({
-          executionTime,
-          success: false,
-          toolsUsed: [],
-          errorType: 'CircularToolError',
-        }, userMessage, error.message);
         
         return {
           success: false,
@@ -276,19 +464,13 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
           error: error.message,
           data: {
             sessionId: this.sessionId,
-            toolPattern: error.toolPattern,
+            toolPattern: error.toolPattern,  // Which tools were looping
           },
         };
       }
-      
-      // Queue error trace to Galileo
-      this.queueTraceToGalileo({
-        executionTime,
-        success: false,
-        toolsUsed: [],
-        errorType: error instanceof Error ? error.constructor.name : 'UnknownError',
-      }, userMessage, errorMessage);
 
+      // ❌ GENERIC ERROR RESPONSE
+      // For any other errors, provide a friendly fallback message
       return {
         success: false,
         message: 'I encountered an error while processing your request. Please try again.',
@@ -370,12 +552,9 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
     if (userInput && this.shouldPromptForFeedback(userInput)) {
       this.conversationEnded = true;
       
-      // Log neutral satisfaction and conclude session
-      this.galileoLogger.logSatisfaction(true);
-      await this.galileoLogger.flushBuffered();
-      
       if (this.sessionActive) {
-        this.concludeGalileoSession();
+        this.sessionActive = false;
+        this.sessionId = null;
       }
       
       return "🌟 Thank you for choosing Galileo's Gizmos! We're glad we could help you today.\n\n🚀 Catch you around the galaxy!";
@@ -460,13 +639,6 @@ ${paymentLinkUrl}
     return toolsUsed;
   }
 
-  private queueTraceToGalileo(metrics: AgentMetrics, input?: string, output?: string): void {
-    if (input && output) {
-      // Generate a descriptive trace name based on the input
-      const traceName = this.generateTraceName(input);
-      this.galileoLogger.queue(metrics, input, output, traceName);
-    }
-  }
 
   private deduplicateProducts(products: any[]): any[] {
     const seen = new Set<string>();
@@ -571,26 +743,6 @@ ${paymentLinkUrl}
     }));
   }
 
-  private generateTraceName(input: string): string {
-    // Generate space-themed trace names for Galileo's Gizmos
-    const lowerInput = input.toLowerCase();
-    
-    if (lowerInput.includes('payment link')) {
-      return "🚀 Galileo's Gizmos - Launch Payment Portal";
-    } else if (lowerInput.includes('customer') && lowerInput.includes('create')) {
-      return "👨‍🚀 Galileo's Gizmos - Register Space Explorer";
-    } else if (lowerInput.includes('products') && (lowerInput.includes('list') || lowerInput.includes('show'))) {
-      return "🌌 Galileo's Gizmos - Browse Cosmic Catalog";
-    } else if (lowerInput.includes('subscription') && lowerInput.includes('create')) {
-      return "📦 Galileo's Gizmos - Setup Stellar Subscription";
-    } else if (lowerInput.includes('create') && lowerInput.includes('product')) {
-      return "⭐ Galileo's Gizmos - Add New Space Gadget";
-    } else if (lowerInput.includes('create') && lowerInput.includes('price')) {
-      return "💫 Galileo's Gizmos - Set Cosmic Pricing";
-    } else {
-      return "🛸 Galileo's Gizmos - Customer Support";
-    }
-  }
 
   private detectPurchaseIntent(input: string): boolean {
     const lowerInput = input.toLowerCase();
@@ -600,8 +752,6 @@ ${paymentLinkUrl}
       'want to buy', 'checkout;', 'would like to buy', 'interested in buying',
       'ready to purchase', 'ready to buy', 'i want', 'i need',
       'add to cart', 'get this', 'take this', "i'm sold", "where do I purchase", "where do I buy", "add to cart,", "place order,",
-      
-      // Additional purchase intent words
       'acquire', 'obtain', 'secure', 'procure', 'get my hands on',
       'pick up', 'grab', 'snag', 'score', 'cop', 'hook me up with',
       'charge', 'bill', 'invoice', 'transaction', 'payment link',
@@ -708,23 +858,6 @@ ${paymentLinkUrl}
     this.conversationEnded = false; // Reset conversation state
   }
 
-  async startGalileoSession(sessionName: string): Promise<string> {
-    const sessionId = await this.galileoLogger.startSession(sessionName);
-    this.sessionActive = true;
-    return sessionId;
-  }
-
-  async logConversationToGalileo(): Promise<void> {
-    await this.galileoLogger.logConversation(this.conversationHistory);
-  }
-
-  async concludeGalileoSession(): Promise<void> {
-    if (this.sessionActive) {
-      await this.galileoLogger.concludeSession();
-      this.sessionActive = false;
-      this.sessionId = null;
-    }
-  }
 
   // Add method to get session status
   getSessionStatus(): { active: boolean; sessionId: string | null; conversationEnded: boolean } {
@@ -736,8 +869,14 @@ ${paymentLinkUrl}
   }
 
   // Add method to explicitly end conversation
-  endConversation(): void {
+  async endConversation(): Promise<void> {
     this.conversationEnded = true;
+    
+    // End the Galileo session if active
+    if (this.sessionActive && this.galileoCallbackHandler) {
+      await this.galileoCallbackHandler.endSession();
+      this.sessionActive = false;
+    }
   }
 
   // Add method to check if conversation has ended

@@ -1,11 +1,10 @@
 import express from 'express';
 import path from 'path';
 import cors from 'cors';
-// Reduce LangChain logging verbosity
-process.env.LANGCHAIN_TRACING_V2 = 'false';
-process.env.LANGCHAIN_LOGGING = 'error';
+// Enable LangChain callbacks for Galileo integration
+process.env.LANGCHAIN_LOGGING = 'info';
 process.env.LANGCHAIN_VERBOSE = 'false';
-process.env.LANGCHAIN_CALLBACKS = 'false';
+process.env.LANGCHAIN_CALLBACKS = 'true';
 
 import { StripeAgent } from './agents/StripeAgent';
 import { env } from './config/environment';
@@ -41,7 +40,6 @@ app.post('/api/chat', async (req, res) => {
             currentSessionId = `web-session-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
             agent = new StripeAgent();
             await agent.init();
-            await agent.startGalileoSession('Galileo Gizmos Web Chat Session');
             activeSessions.set(currentSessionId, agent);
         } else {
             agent = activeSessions.get(currentSessionId)!;
@@ -196,8 +194,6 @@ app.post('/api/session/flush', async (req, res) => {
         }
         
         // Flush buffered traces and conclude session
-        await agent.logConversationToGalileo();
-        await agent.concludeGalileoSession();
         
         // Remove from active sessions
         activeSessions.delete(sessionId);
@@ -260,9 +256,6 @@ async function gracefulShutdown(signal: string) {
     // Conclude all active sessions
     for (const [webSessionId, agent] of activeSessions) {
         try {
-            // Log final conversation and flush buffered traces
-            await agent.logConversationToGalileo();
-            await agent.concludeGalileoSession();
             if (env.app.agentVerbose) {
                 console.log(`📊 Session ${webSessionId} concluded`);
             }

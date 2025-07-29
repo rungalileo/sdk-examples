@@ -1,25 +1,20 @@
-// Reduce LangChain logging verbosity
-process.env.LANGCHAIN_TRACING_V2 = 'false';
-process.env.LANGCHAIN_LOGGING = 'error';
+// Enable LangChain callbacks for Galileo integration
+process.env.LANGCHAIN_LOGGING = 'info';
 process.env.LANGCHAIN_VERBOSE = 'false';
-process.env.LANGCHAIN_CALLBACKS = 'false';
+process.env.LANGCHAIN_CALLBACKS = 'true';
 
 import { StripeAgent } from './agents/StripeAgent';
-import { GalileoAgentLogger } from './utils/GalileoLogger';
 import { env } from './config/environment';
 
 async function main() {
   let agent: StripeAgent | null = null;
-  let galileoLogger: GalileoAgentLogger | null = null;
   
   try {
     // Initialize the agent
     agent = new StripeAgent();
     await agent.init(); // Ensure agent is fully initialized
-    galileoLogger = new GalileoAgentLogger();
     
-    // Start a Galileo session
-    await agent.startGalileoSession('Galileo Gizmos CLI Example Session');
+    console.log('🚀 Galileo Gizmos CLI Example - Galileo logging enabled');
 
     // Example interactions
     const examples = [
@@ -58,9 +53,8 @@ async function main() {
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
-    // Conclude session and flush buffered traces
-    await agent.logConversationToGalileo();
-    await agent.concludeGalileoSession();
+    // End the conversation and flush traces
+    await agent.endConversation();
     console.log('📊 Session concluded and all traces flushed');
     
   } catch (error) {
@@ -69,7 +63,7 @@ async function main() {
     // Ensure cleanup happens even if there's an error
     if (agent) {
       try {
-        await agent.concludeGalileoSession();
+        await agent.endConversation();
       } catch (error) {
         console.error('Error during cleanup:', error);
       }

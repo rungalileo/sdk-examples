@@ -1,23 +1,19 @@
-// Reduce LangChain logging verbosity
-process.env.LANGCHAIN_TRACING_V2 = 'false';
-process.env.LANGCHAIN_LOGGING = 'error';
+// Enable LangChain callbacks for Galileo integration
+process.env.LANGCHAIN_LOGGING = 'info';
 process.env.LANGCHAIN_VERBOSE = 'false';
-process.env.LANGCHAIN_CALLBACKS = 'false';
+process.env.LANGCHAIN_CALLBACKS = 'true';
 
 import { StripeAgent } from './agents/StripeAgent';
-import { GalileoAgentLogger } from './utils/GalileoLogger';
 import { env } from './config/environment';
 import * as readline from 'readline';
 
 class GalileoGizmosCustomerService {
   private agent: StripeAgent;
-  private galileoLogger: GalileoAgentLogger;
   private rl: readline.Interface;
   private sessionId: string | null = null;
 
   constructor() {
     this.agent = new StripeAgent();
-    this.galileoLogger = new GalileoAgentLogger();
     this.rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
@@ -43,7 +39,6 @@ class GalileoGizmosCustomerService {
     console.log('   • "help" - Show this menu');
     console.log('   • "quit" - Exit gracefully');
     console.log('   • "clear" - Clear screen');
-    console.log('   • "!end" - Developer command: Force flush buffered traces');
     console.log('\n🚀 Agent Features:');
     console.log('   • Loop Prevention - Prevents infinite tool calls');
     console.log('   • Memory Cache - 5-minute product/price caching');
@@ -69,16 +64,6 @@ class GalileoGizmosCustomerService {
         console.clear();
         return true;
       
-      case '!end':
-        // Developer command to force a flush during testing
-        console.log('📊 Developer command: Forcing buffered trace flush...');
-        try {
-          await this.galileoLogger.flushBuffered();
-          console.log('✅ Buffered traces flushed successfully');
-        } catch (error) {
-          console.error('❌ Error flushing buffered traces:', error);
-        }
-        return true;
       
       case '':
         return true; // Just ignore empty input
@@ -90,19 +75,19 @@ class GalileoGizmosCustomerService {
 
   private async startSession() {
     try {
-      this.sessionId = await this.galileoLogger.startSession('Galileo Gizmos Customer Service Session');
+      this.sessionId = `session-${Date.now()}`;
+      // The session will be started automatically when the first message is processed
+      console.log('🚀 Session ready - Galileo logging will start with first message');
     } catch (error) {
-      // Silent fail - continue without Galileo session
+      console.error('Error starting session:', error);
     }
   }
 
   private async concludeSession() {
     if (this.sessionId) {
       try {
-        const conversationHistory = this.agent.getConversationHistory();
-        await this.galileoLogger.logConversation(conversationHistory);
-        await this.galileoLogger.flushBuffered();
-        await this.galileoLogger.concludeSession();
+        // End the conversation and flush traces
+        await this.agent.endConversation();
         console.log('📊 Session concluded and buffered traces flushed');
       } catch (error) {
         console.error('Error concluding session:', error);
