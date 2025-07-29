@@ -9,9 +9,22 @@ A self-contained TypeScript agent using Stripe Agent Toolkit with Galileo monito
 - **Loop Prevention**: Advanced circular tool usage detection prevents infinite loops
 - **Conversation Memory**: 5-minute product/price caching reduces redundant API calls
 - **Buffered Logging**: Galileo traces are buffered and flushed efficiently
-- **Galileo Monitoring**: Comprehensive logging and analytics
+- **Galileo Agent Reliability**: Comprehensive logging and analytics
+  - Recommended metrics to use in Galileo to track agent reliability:
+    - [Tool Error](https://v2docs.galileo.ai/concepts/metrics/agentic/tool-error): detects errors or failures during the execution of Tools.
+    - [Tool Selection Quality](https://v2docs.galileo.ai/concepts/metrics/agentic/tool-selection-quality#tool-selection-quality): determines whether the agent selected the correct tool and for each tool the correct arguments.
+    - [Context Adherence](https://v2docs.galileo.ai/concepts/metrics/response-quality/context-adherence): a measurement of closed-domain hallucinations: cases where your model said things that were not provided in the context.
+    - [See all metrics here](https://v2docs.galileo.ai/concepts/metrics/overview)
 - **Interactive Modes**: CLI and web server options
 - **Self-contained**: All dependencies and assets included
+
+## How to use
+
+1. Clone the repository
+2. Install dependencies
+3. Configure environment
+4. Build the project
+5. Run the project
 
 ## Prerequisites
 
