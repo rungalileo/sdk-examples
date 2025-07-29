@@ -1,7 +1,7 @@
 import { SessionContext, RunContext } from '../types';
 
 // Import Galileo functions using require to work around TypeScript module resolution
-const { getLogger, GalileoCallback } = require('galileo');
+const { init, getLogger, GalileoCallback } = require('galileo');
 
 /**
  * Galileo Callback Handler for Stripe Agent
@@ -13,21 +13,31 @@ export class GalileoCallbackHandler {
   private sessionContext: SessionContext | null = null;
   private currentRunContext: RunContext | null = null;
   private sessionStartTime: Date | null = null;
-  private galileoLogger: any;
   private galileoCallback: any;
   private galileoEnabled: boolean = true;
+  private isInitialized: boolean = false;
 
   constructor() {
-    // Initialize Galileo logger and callback with error handling
+    // Initialize Galileo with proper setup
+    this.initializeGalileo();
+  }
+
+  private async initializeGalileo(): Promise<void> {
     try {
-      this.galileoLogger = getLogger();
-      this.galileoCallback = new GalileoCallback(this.galileoLogger, true, false);
-      console.log('🔧 Galileo Callback Handler initialized with proper LangChain integration');
+      // Initialize Galileo with environment variables
+      await init();
+      
+      // Create the LangChain callback handler
+      this.galileoCallback = new GalileoCallback();
+      this.galileoEnabled = true;
+      this.isInitialized = true;
+      
+      console.log('🔧 Galileo initialized successfully with LangChain integration');
     } catch (error: any) {
       console.warn('⚠️  Galileo initialization failed, running in local-only mode:', error.message);
       this.galileoEnabled = false;
-      this.galileoLogger = null;
       this.galileoCallback = null;
+      this.isInitialized = false;
     }
   }
 
@@ -35,6 +45,11 @@ export class GalileoCallbackHandler {
    * Start a new session for tracking agent interactions
    */
   async startSession(sessionId: string, userId?: string): Promise<void> {
+    // Wait for initialization if not complete
+    if (!this.isInitialized && this.galileoEnabled) {
+      await this.initializeGalileo();
+    }
+
     this.sessionContext = {
       sessionId,
       startTime: new Date(),
@@ -55,19 +70,11 @@ export class GalileoCallbackHandler {
     };
 
     this.sessionStartTime = new Date();
-    
-    // Start a Galileo session if enabled
-    if (this.galileoEnabled && this.galileoLogger) {
-      try {
-        const sessionName = `Stripe Agent Session - ${sessionId}`;
-        await this.galileoLogger.startSession({ name: sessionName });
-        console.log(`🚀 Galileo session started: ${sessionName}`);
-      } catch (error: any) {
-        console.warn('⚠️  Failed to start Galileo session:', error.message);
-      }
-    }
-    
     console.log(`🚀 Session started: ${sessionId}`);
+    
+    if (this.galileoEnabled) {
+      console.log('🔧 Galileo callback ready for LangChain integration');
+    }
   }
 
   /**
@@ -82,9 +89,11 @@ export class GalileoCallbackHandler {
     this.sessionContext.lastActivity = new Date();
     
     // Flush any remaining traces if Galileo is enabled
-    if (this.galileoEnabled && this.galileoLogger) {
+    if (this.galileoEnabled && this.galileoCallback) {
       try {
-        await this.galileoLogger.flush();
+        const { flush } = require('galileo');
+        await flush();
+        console.log('📊 Galileo traces flushed');
       } catch (error: any) {
         console.warn('⚠️  Failed to flush Galileo traces:', error.message);
       }
@@ -258,23 +267,30 @@ export class GalileoCallbackHandler {
 
   /**
    * Get the Galileo callback for LangChain integration
-   * This now returns the actual Galileo callback for proper integration
+   * This returns the actual Galileo callback for proper integration
    * Falls back to a mock callback if Galileo is disabled
    */
   getGalileoCallback(): any {
     if (this.galileoEnabled && this.galileoCallback) {
+      console.log('🔧 Returning active Galileo callback for LangChain');
       return this.galileoCallback;
     } else {
+      console.log('⚠️  Returning mock callback - Galileo is disabled');
       // Return a mock callback when Galileo is disabled
       return {
         name: 'galileo_callback_mock',
         handleLLMStart: () => {},
         handleLLMEnd: () => {},
+        handleLLMError: () => {},
         handleToolStart: () => {},
         handleToolEnd: () => {},
+        handleToolError: () => {},
         handleAgentStart: () => {},
         handleAgentEnd: () => {},
-        handleError: () => {},
+        handleChainStart: () => {},
+        handleChainEnd: () => {},
+        handleChainError: () => {},
+        handleText: () => {},
       };
     }
   }
@@ -291,9 +307,11 @@ export class GalileoCallbackHandler {
    */
   async flush(): Promise<void> {
     console.log('📊 Flushing traces...');
-    if (this.galileoEnabled && this.galileoLogger) {
+    if (this.galileoEnabled) {
       try {
-        await this.galileoLogger.flush();
+        const { flush } = require('galileo');
+        await flush();
+        console.log('✅ Galileo traces flushed successfully');
       } catch (error: any) {
         console.warn('⚠️  Failed to flush Galileo traces:', error.message);
       }
