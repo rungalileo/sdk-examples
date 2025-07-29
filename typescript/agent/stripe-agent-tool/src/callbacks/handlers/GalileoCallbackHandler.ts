@@ -8,6 +8,28 @@ const { init, flush, GalileoCallback } = require('galileo');
  * It removes all manual session and trace management in favor of relying
  * on the automated tracing provided by LangChain and Galileo.
  */
+
+// Global suppression for Galileo's noisy debug messages
+const originalConsoleDebug = console.debug;
+console.debug = (message?: any, ...optionalParams: any[]) => {
+  // Convert message to string for checking, handling various input types
+  const messageStr = typeof message === 'string' ? message : String(message);
+  
+  // Suppress various noisy Galileo debug messages
+  if (
+    messageStr.includes('No node exists for run_id') ||
+    messageStr.includes('node exists for run_id') ||  // Catch partial matches too
+    messageStr.includes('Galileo debug:') ||
+    messageStr.includes('LangChain tracing') ||
+    messageStr.includes('run_id') && messageStr.includes('not found') ||
+    messageStr.includes('Missing node') ||
+    messageStr.includes('Node registry')
+  ) {
+    return; // Suppress these noisy messages
+  }
+  originalConsoleDebug(message, ...optionalParams);
+};
+
 export class GalileoCallbackHandler {
   private galileoCallback: any;
   private galileoEnabled: boolean = false;
@@ -59,8 +81,8 @@ export class GalileoCallbackHandler {
    */
   public getCallback(): any {
     if (this.galileoEnabled && this.galileoCallback) {
-      // Wrap the callback to suppress the noisy "No node exists for run_id" messages
-      return this.createQuietGalileoCallback(this.galileoCallback);
+      // Return the callback directly since we have global suppression in place
+      return this.galileoCallback;
     }
 
     // Return a mock callback if Galileo is not enabled
@@ -83,42 +105,6 @@ export class GalileoCallbackHandler {
     }
   }
 
-  /**
-   * Wraps the Galileo callback in a proxy to suppress specific, noisy
-   * console messages that are not critical for debugging.
-   */
-  private createQuietGalileoCallback(originalCallback: any): any {
-    const suppressDebugDuring = (fn: Function) => {
-      return (...args: any[]) => {
-        const originalDebug = console.debug;
-        
-        // Suppress "No node exists for run_id" which can be noisy
-        console.debug = (message?: any, ...optionalParams: any[]) => {
-          if (typeof message === 'string' && message.includes('No node exists for run_id')) {
-            return;
-          }
-          originalDebug(message, ...optionalParams);
-        };
-
-        try {
-          return fn.apply(originalCallback, args);
-        } finally {
-          console.debug = originalDebug;
-        }
-      };
-    };
-
-    // Return a proxy that wraps all handler methods
-    return new Proxy(originalCallback, {
-      get(target, prop) {
-        const value = target[prop];
-        if (typeof value === 'function') {
-          return suppressDebugDuring(value);
-        }
-        return value;
-      },
-    });
-  }
 
   /**
    * Creates a mock callback object with the same interface as the real
