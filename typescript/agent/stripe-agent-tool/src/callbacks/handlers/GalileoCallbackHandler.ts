@@ -164,29 +164,8 @@ export class GalileoCallbackHandler {
       }
     };
 
-    // Start a new trace for this conversation step in Galileo
-    if (this.galileoEnabled && this.galileoLogger) {
-      try {
-        const traceName = this.generateTraceName(input?.input || 'Agent Processing');
-        const cleanInput = this.formatInputForGalileo(input?.input || input);
-        
-        this.galileoLogger.startTrace({ 
-          name: traceName, 
-          input: cleanInput,
-          metadata: {
-            runId,
-            sessionId: this.sessionContext?.sessionId,
-            operationType: 'agent_workflow',
-            timestamp: new Date().toISOString()
-          }
-        });
-        console.log(`🔍 Galileo trace started: ${traceName}`);
-      } catch (error: any) {
-        console.warn('⚠️  Failed to start Galileo trace:', error.message);
-      }
-    }
-
     console.log(`🤖 Agent started processing: ${runId}`);
+    // Note: Tracing is now handled automatically by the LangChain GalileoCallback
   }
 
   /**
@@ -197,27 +176,8 @@ export class GalileoCallbackHandler {
       const executionTime = Date.now() - this.currentRunContext.startTime.getTime();
       this.updateSessionMetrics(executionTime, true);
       
-      // Conclude the current trace in Galileo
-      if (this.galileoEnabled && this.galileoLogger) {
-        try {
-          const cleanOutput = this.formatOutputForGalileo(output?.output || output);
-          this.galileoLogger.conclude({ 
-            output: cleanOutput,
-            durationNs: executionTime * 1000000, // Convert ms to nanoseconds
-            metadata: {
-              runId,
-              sessionId: this.sessionContext?.sessionId,
-              success: true,
-              executionTimeMs: executionTime
-            }
-          });
-          console.log(`🔍 Galileo trace concluded: ${runId}`);
-        } catch (error: any) {
-          console.warn('⚠️  Failed to conclude Galileo trace:', error.message);
-        }
-      }
-      
       console.log(`✅ Agent completed: ${runId} (${executionTime}ms)`);
+      // Note: Trace conclusion is now handled automatically by the LangChain GalileoCallback
     }
   }
 
