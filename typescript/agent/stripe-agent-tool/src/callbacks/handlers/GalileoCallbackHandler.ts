@@ -9,26 +9,6 @@ const { init, flush, GalileoCallback } = require('galileo');
  * on the automated tracing provided by LangChain and Galileo.
  */
 
-// Global suppression for Galileo's noisy debug messages
-const originalConsoleDebug = console.debug;
-console.debug = (message?: any, ...optionalParams: any[]) => {
-  // Convert message to string for checking, handling various input types
-  const messageStr = typeof message === 'string' ? message : String(message);
-  
-  // Suppress various noisy Galileo debug messages
-  if (
-    messageStr.includes('No node exists for run_id') ||
-    messageStr.includes('node exists for run_id') ||  // Catch partial matches too
-    messageStr.includes('Galileo debug:') ||
-    messageStr.includes('LangChain tracing') ||
-    messageStr.includes('run_id') && messageStr.includes('not found') ||
-    messageStr.includes('Missing node') ||
-    messageStr.includes('Node registry')
-  ) {
-    return; // Suppress these noisy messages
-  }
-  originalConsoleDebug(message, ...optionalParams);
-};
 
 export class GalileoCallbackHandler {
   private galileoCallback: any;
@@ -81,8 +61,47 @@ export class GalileoCallbackHandler {
    */
   public getCallback(): any {
     if (this.galileoEnabled && this.galileoCallback) {
-      // Return the callback directly since we have global suppression in place
-      return this.galileoCallback;
+      const realCallback = this.galileoCallback;
+      const logWrapper = (methodName: string, originalMethod: Function) => {
+        // Ensure the original method exists before wrapping
+        if (typeof originalMethod !== 'function') {
+          return () => {}; // Return a no-op if the method doesn't exist
+        }
+        return (...args: any[]) => {
+          // Attempt to find the run_id from common argument structures
+          const runId = args[1]?.id || args[0]?.id || 'unknown';
+          console.log(`[Tracer DEBUG] ==> ${methodName}`, { runId });
+          try {
+            const result = originalMethod.apply(realCallback, args);
+            if (result && typeof result.then === 'function') {
+              return result.finally(() => {
+                console.log(`[Tracer DEBUG] <== ${methodName}`, { runId });
+              });
+            }
+            return result;
+          } finally {
+             // This will run for sync methods, for async it runs before promise resolves.
+             // The .finally() on the promise is better for async.
+          }
+        };
+      };
+
+      // Wrap all potential callback methods with our logger
+      return {
+        name: 'galileo_logging_wrapper',
+        handleLLMStart: logWrapper('handleLLMStart', realCallback.handleLLMStart),
+        handleLLMEnd: logWrapper('handleLLMEnd', realCallback.handleLLMEnd),
+        handleLLMError: logWrapper('handleLLMError', realCallback.handleLLMError),
+        handleToolStart: logWrapper('handleToolStart', realCallback.handleToolStart),
+        handleToolEnd: logWrapper('handleToolEnd', realCallback.handleToolEnd),
+        handleToolError: logWrapper('handleToolError', realCallback.handleToolError),
+        handleAgentStart: logWrapper('handleAgentStart', realCallback.handleAgentStart),
+        handleAgentEnd: logWrapper('handleAgentEnd', realCallback.handleAgentEnd),
+        handleChainStart: logWrapper('handleChainStart', realCallback.handleChainStart),
+        handleChainEnd: logWrapper('handleChainEnd', realCallback.handleChainEnd),
+        handleChainError: logWrapper('handleChainError', realCallback.handleChainError),
+        handleText: logWrapper('handleText', realCallback.handleText),
+      };
     }
 
     // Return a mock callback if Galileo is not enabled
