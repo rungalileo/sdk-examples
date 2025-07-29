@@ -168,13 +168,16 @@ export class GalileoCallbackHandler {
     if (this.galileoEnabled && this.galileoLogger) {
       try {
         const traceName = this.generateTraceName(input?.input || 'Agent Processing');
+        const cleanInput = this.formatInputForGalileo(input?.input || input);
+        
         this.galileoLogger.startTrace({ 
           name: traceName, 
-          input: input?.input || input,
+          input: cleanInput,
           metadata: {
             runId,
             sessionId: this.sessionContext?.sessionId,
-            operationType: 'agent_workflow'
+            operationType: 'agent_workflow',
+            timestamp: new Date().toISOString()
           }
         });
         console.log(`🔍 Galileo trace started: ${traceName}`);
@@ -197,13 +200,15 @@ export class GalileoCallbackHandler {
       // Conclude the current trace in Galileo
       if (this.galileoEnabled && this.galileoLogger) {
         try {
+          const cleanOutput = this.formatOutputForGalileo(output?.output || output);
           this.galileoLogger.conclude({ 
-            output: output?.output || output,
+            output: cleanOutput,
             durationNs: executionTime * 1000000, // Convert ms to nanoseconds
             metadata: {
               runId,
               sessionId: this.sessionContext?.sessionId,
-              success: true
+              success: true,
+              executionTimeMs: executionTime
             }
           });
           console.log(`🔍 Galileo trace concluded: ${runId}`);
@@ -340,6 +345,114 @@ export class GalileoCallbackHandler {
    */
   isGalileoEnabled(): boolean {
     return this.galileoEnabled;
+  }
+
+  /**
+   * Format input for Galileo to be more readable and concise
+   */
+  private formatInputForGalileo(input: any): string {
+    if (typeof input === 'string') {
+      // Truncate very long inputs and clean up
+      return input.length > 200 ? input.substring(0, 200) + '...' : input;
+    }
+    
+    if (typeof input === 'object' && input !== null) {
+      try {
+        // Format objects more cleanly, removing verbose metadata
+        const cleanObject: any = {};
+        
+        if (input.input) {
+          cleanObject.input = typeof input.input === 'string' && input.input.length > 200 
+            ? input.input.substring(0, 200) + '...'
+            : input.input;
+        }
+        
+        if (input.chat_history && Array.isArray(input.chat_history)) {
+          cleanObject.context_messages = input.chat_history.length;
+        }
+        
+        // Include other relevant fields but keep them concise
+        Object.keys(input).forEach(key => {
+          if (!['input', 'chat_history'].includes(key) && input[key] !== undefined) {
+            if (typeof input[key] === 'string' && input[key].length > 100) {
+              cleanObject[key] = input[key].substring(0, 100) + '...';
+            } else if (typeof input[key] !== 'object') {
+              cleanObject[key] = input[key];
+            }
+          }
+        });
+        
+        return JSON.stringify(cleanObject, null, 2);
+      } catch (error) {
+        return String(input);
+      }
+    }
+    
+    return String(input);
+  }
+
+  /**
+   * Format output for Galileo to be more readable and concise
+   */
+  private formatOutputForGalileo(output: any): string {
+    if (typeof output === 'string') {
+      // Clean up very long outputs and remove excessive JSON nesting
+      if (output.length > 500) {
+        // Try to extract the key information
+        const paymentLinkMatch = output.match(/https:\/\/buy\.stripe\.com\/[^\s"]+/);
+        if (paymentLinkMatch) {
+          return `Payment link created: ${paymentLinkMatch[0]}`;
+        }
+        return output.substring(0, 500) + '...';
+      }
+      return output;
+    }
+    
+    if (typeof output === 'object' && output !== null) {
+      try {
+        // If it's a complex object, extract the essential information
+        const summary: any = {};
+        
+        // Check for common output patterns
+        if (output.text || output.content) {
+          const text = output.text || output.content;
+          summary.response = typeof text === 'string' && text.length > 300 
+            ? text.substring(0, 300) + '...'
+            : text;
+        }
+        
+        if (output.url) {
+          summary.payment_link = output.url;
+        }
+        
+        if (output.success !== undefined) {
+          summary.success = output.success;
+        }
+        
+        if (output.data && typeof output.data === 'object') {
+          if (output.data.executionTime) {
+            summary.execution_time_ms = output.data.executionTime;
+          }
+          if (output.data.toolsUsed) {
+            summary.tools_used = Array.isArray(output.data.toolsUsed) 
+              ? output.data.toolsUsed 
+              : Object.keys(output.data.toolsUsed);
+          }
+        }
+        
+        // If we have no meaningful summary, just show a truncated version
+        if (Object.keys(summary).length === 0) {
+          const outputStr = JSON.stringify(output);
+          return outputStr.length > 300 ? outputStr.substring(0, 300) + '...' : outputStr;
+        }
+        
+        return JSON.stringify(summary, null, 2);
+      } catch (error) {
+        return String(output);
+      }
+    }
+    
+    return String(output);
   }
 
   /**

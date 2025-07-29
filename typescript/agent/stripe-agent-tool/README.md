@@ -116,7 +116,7 @@ maxIterations: 6
 
 // Updated configuration
 maxIterations: 8  // Increased to handle complex interactions
-earlyStoppingMethod: 'generate'  // Stop when agent decides it's complete
+earlyStoppingMethod: 'force'     // Stop when agent decides it's complete
 ```
 
 **New Caching Methods:**
