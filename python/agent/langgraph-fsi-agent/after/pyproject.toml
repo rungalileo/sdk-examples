@@ -6,7 +6,7 @@ license = "MIT"
 requires-python = "<3.14,>=3.11"
 dependencies = [
   "chainlit~=2.5.5",
-  "galileo (>=1.8.0,<2.0.0)",
+  "galileo (>=1.12.0,<2.0.0)",
   "grandalf>=0.8",
   "langchain-community>=0.3.24",
   "langchain-pinecone>=0.2.6",

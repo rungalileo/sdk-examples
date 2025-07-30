@@ -522,24 +522,25 @@ wheels = [
 
 [[package]]
 name = "galileo"
-version = "1.8.0"
+version = "1.12.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "attrs" },
+    { name = "backoff" },
     { name = "galileo-core" },
     { name = "pydantic" },
     { name = "pyjwt" },
     { name = "python-dateutil" },
     { name = "wrapt" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/df/71/fa52d492e069293c41ae324fd20d4540415f167952b90578f8dcfa734b21/galileo-1.8.0.tar.gz", hash = "sha256:cf30c783604a52cde48fdf373b126db7b1cad7d9b0a72f2cec51d7202e01f332", size = 311220, upload_time = "2025-07-10T19:21:39.288Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/19/95/4e6a3e12aafdb90e1c5da6c516e438a17d14d29f89b8c3ddb1a9c6134d83/galileo-1.12.0.tar.gz", hash = "sha256:fb085c14e41c7e27b48403c696920a80fe4cab7ce4702fd50dfadda605c1ca4a", size = 341382, upload_time = "2025-07-30T17:23:22.06Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/72/8b/6fc9192248c88af8e8921c56d195e85e11d0f348456b1b3b4ace30ddced7/galileo-1.8.0-py3-none-any.whl", hash = "sha256:c5f7fff940e41ece2f10f1f622360bb399df63497b65a05282009d79f2f8f31f", size = 867012, upload_time = "2025-07-10T19:21:36.309Z" },
+    { url = "https://files.pythonhosted.org/packages/1b/3f/26353ce32c2d0f1445cd16ef32f5895bfbe484c1f51dfe3d865c3f1c64c5/galileo-1.12.0-py3-none-any.whl", hash = "sha256:f79cd398b5d71ddb1674e3047bb9d82357e16f2e59979162c9d85293412b302d", size = 929107, upload_time = "2025-07-30T17:23:20.082Z" },
 ]
 
 [[package]]
 name = "galileo-core"
-version = "3.55.0"
+version = "3.59.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
@@ -549,9 +550,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "uvloop", marker = "sys_platform != 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c3/c9/d56e0488f7dcf25345e744a407201ae69e2df6e777a4e411c0d05a4e92a1/galileo_core-3.55.0.tar.gz", hash = "sha256:a2a88896c959df97d9ba3abe4bae8018f3e3a65ef41580ad5117d0606fbd05d9", size = 56383, upload_time = "2025-07-07T06:42:33.917Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/97/94/883b8b650de2c7042913bf51f4744ad79e7e2fe1630c15247ba4e08493f3/galileo_core-3.59.1.tar.gz", hash = "sha256:687475a4e29638cc627c425b09cf7bdcb94cf7279bfd7a27acf45825f24a9569", size = 57805, upload_time = "2025-07-24T21:27:44.525Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b3/42/4b7313b72e1c1a9a42e1efccaa7d66a7c082c4682d0fed63d4a7bdfd7569/galileo_core-3.55.0-py3-none-any.whl", hash = "sha256:b6934756dcc4fad6be929d3ac374c89324fbc0a2f50281c1f400fcfb1d567324", size = 95239, upload_time = "2025-07-07T06:42:32.207Z" },
+    { url = "https://files.pythonhosted.org/packages/5e/11/08020a2485e133e6b506f71a9b0ae284c8c439556c9b5b692b3b7f1d9957/galileo_core-3.59.1-py3-none-any.whl", hash = "sha256:803a750059954c20a8b8ca550d2c5943e8feb4ccb3169d1bad11189e3f3eba37", size = 97179, upload_time = "2025-07-24T21:27:42.925Z" },
 ]
 
 [[package]]
@@ -580,7 +581,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "chainlit", specifier = "~=2.5.5" },
-    { name = "galileo", specifier = ">=1.8.0,<2.0.0" },
+    { name = "galileo", specifier = ">=1.12.0,<2.0.0" },
     { name = "grandalf", specifier = ">=0.8" },
     { name = "langchain", extras = ["openai"], specifier = "~=0.3.18" },
     { name = "langchain-community", specifier = ">=0.3.24" },
