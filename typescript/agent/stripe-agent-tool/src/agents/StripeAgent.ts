@@ -308,28 +308,14 @@ export class StripeAgent {
    * involves async operations (loading prompts from LangChain Hub).
    */
   async init() {
-    // Galileo initialization with enhanced logging configuration
+    // Galileo initialization 
     try {
       await init();
       
-      // Initialize Galileo callback with standard configuration
-      this.galileoCallback = new GalileoCallback({
-        verbose: true,
-        logInputs: true,
-        logOutputs: true,
-        logErrors: true,
-        metadata: {
-          agent: 'StripeAgent',
-          version: '1.0.0',
-          environment: process.env.NODE_ENV || 'development',
-          projectName: env.galileo.projectName,
-          logStream: env.galileo.logStream
-        }
-      });
+      // Initialize Galileo callback 
+      this.galileoCallback = new GalileoCallback();
       
       this.galileoEnabled = true;
-      
-
       
     } catch (error: any) {
       console.warn(`⚠️ Galileo initialization failed: ${error.message}`);
