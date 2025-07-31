@@ -140,7 +140,6 @@ export class StripeAgent {
   
   // 📊 GALILEO AGENT RELIABILITY
   private galileoCallback: any;
-  private galileoEnabled: boolean = false;
   
   // ⚡ PERFORMANCE OPTIMIZATION (CACHING)
   private cachedProducts: any[] = [];                      // Cache Stripe products to avoid repeated API calls
@@ -286,7 +285,7 @@ export class StripeAgent {
     };
 
           // Flush Galileo traces if enabled
-      if (this.galileoEnabled) {
+      if (this.galileoCallback) {
         try {
           await flush();
         } catch (error: any) {
@@ -308,24 +307,21 @@ export class StripeAgent {
    * involves async operations (loading prompts from LangChain Hub).
    */
   async init() {
-    // Galileo initialization 
-    try {
-      await init();
-      
-      // Initialize Galileo callback 
-      this.galileoCallback = new GalileoCallback();
-      
-      this.galileoEnabled = true;
-      
-    } catch (error: any) {
-      console.warn(`⚠️ Galileo initialization failed: ${error.message}`);
-      console.warn('Stripe agent will run in local-only mode without tracing.');
-      this.galileoEnabled = false;
-      this.galileoCallback = null;
-    }
+  // Galileo initialization with simplified configuration
+  try {
+    await init();
     
-    await this.initializeAgent();
+    // Initialize Galileo callback with minimal configuration
+    this.galileoCallback = new GalileoCallback();
+    
+  } catch (error: any) {
+    console.warn(`⚠️ Galileo initialization failed: ${error.message}`);
+    console.warn('Stripe agent will run without tracing.');
+    this.galileoCallback = null;
   }
+  
+  await this.initializeAgent();
+}
 
   /**
    * 🔧 STRIPE TOOLKIT INITIALIZATION
@@ -666,7 +662,7 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
 
       
       // Direct Galileo callback usage
-      const callbacks = this.galileoEnabled ? [this.galileoCallback] : [];
+    const callbacks = this.galileoCallback ? [this.galileoCallback] : [];
       
       const result = await this.agentExecutor.invoke({
         input: userMessage,
@@ -1173,7 +1169,7 @@ ${paymentLinkUrl}
     this.conversationEnded = true;
     
           // End the session and flush any remaining traces
-      if (this.sessionContext && this.galileoEnabled) {
+      if (this.sessionContext && this.galileoCallback) {
         try {
           this.sessionContext = await this.endSession(this.sessionContext);
           // console.log(`📊 Session ${this.sessionContext?.sessionId} ended and traces flushed`);
