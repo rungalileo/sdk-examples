@@ -51,6 +51,51 @@ import {
 // Direct Galileo imports
 const { init, flush, GalileoCallback } = require('galileo');
 
+// Session context interface for integrated session management
+interface SessionContext {
+  /** Unique identifier for the conversation session */
+  sessionId: string;
+  
+  /** When the session was started */
+  startTime: Date;
+  
+  /** Complete conversation history for this session */
+  conversationHistory: AgentMessage[];
+  
+  /** Current user identifier (if available) */
+  userId?: string;
+  
+  /** Session metadata for custom tracking */
+  metadata?: Record<string, any>;
+  
+  /** Whether the session is currently active */
+  isActive: boolean;
+  
+  /** Last activity timestamp */
+  lastActivity: Date;
+  
+  /** Total number of messages in this session */
+  messageCount: number;
+  
+  /** Total cost accumulated for this session */
+  totalCost?: number;
+  
+  /** Tools used during this session */
+  toolsUsed: Set<string>;
+  
+  /** Session performance metrics */
+  metrics: {
+    /** Total execution time for all operations */
+    totalExecutionTime: number;
+    /** Number of successful operations */
+    successfulOperations: number;
+    /** Number of failed operations */
+    failedOperations: number;
+    /** Average response time */
+    averageResponseTime?: number;
+  };
+}
+
 // Store original console methods to suppress Galileo debug messages
 const originalConsole = {
   debug: console.debug,
@@ -97,10 +142,8 @@ export class StripeAgent {
   private llm!: ChatOpenAI;                      // The AI language model (GPT-4) that powers conversations
   private agentExecutor!: AgentExecutor;         // LangChain's agent executor that coordinates tool usage
   
-  // 💬 CONVERSATION MANAGEMENT
-  private conversationHistory: AgentMessage[] = [];  // Stores all messages in the current session
-  private sessionId: string | null = null;            // Unique identifier for the current conversation
-  private sessionActive: boolean = false;             // Whether we're currently tracking a session
+  // 💬 ENHANCED SESSION MANAGEMENT
+  private sessionContext: SessionContext | null = null;  // Integrated session context
   private conversationEnded: boolean = false;         // Flag to indicate if user has ended the conversation
   
   // 📊 GALILEO AGENT RELIABILITY
@@ -124,6 +167,157 @@ export class StripeAgent {
     suppressGalileoDebugMessages();
     this.initializeStripeToolkit();
     this.initializeLLM();
+  }
+
+  /**
+   * 🎯 SESSION MANAGEMENT METHODS
+   * 
+   * These methods provide integrated session handling that works directly
+   * with the existing Galileo handlers, eliminating the need for separate
+   * callback infrastructure.
+   */
+
+  /**
+   * Create a new session context with integrated Galileo tracking
+   */
+  private createSessionContext(sessionId: string, userId?: string): SessionContext {
+    const context: SessionContext = {
+      sessionId,
+      startTime: new Date(),
+      conversationHistory: [],
+      userId,
+      metadata: {},
+      isActive: true,
+      lastActivity: new Date(),
+      messageCount: 0,
+      totalCost: 0,
+      toolsUsed: new Set<string>(),
+      metrics: {
+        totalExecutionTime: 0,
+        successfulOperations: 0,
+        failedOperations: 0,
+        averageResponseTime: 0,
+      },
+    };
+
+    // Log session start with Galileo if enabled
+    if (this.galileoEnabled) {
+      console.log(`🚀 Session ${sessionId} started with Galileo tracking`);
+    }
+
+    return context;
+  }
+
+  /**
+   * Update session context with new message and track with Galileo
+   */
+  private updateSessionWithMessage(context: SessionContext, message: AgentMessage): SessionContext {
+    const updatedContext: SessionContext = {
+      ...context,
+      conversationHistory: [...context.conversationHistory, message],
+      messageCount: context.messageCount + 1,
+      lastActivity: new Date(),
+    };
+
+    // Track message with Galileo if enabled
+    if (this.galileoEnabled) {
+      console.log(`📝 Message ${updatedContext.messageCount} added to session ${context.sessionId}`);
+    }
+
+    return updatedContext;
+  }
+
+  /**
+   * Add tool usage to session and track with Galileo
+   */
+  private addToolToSession(context: SessionContext, toolName: string): SessionContext {
+    const updatedContext: SessionContext = {
+      ...context,
+      toolsUsed: new Set([...context.toolsUsed, toolName]),
+      lastActivity: new Date(),
+    };
+
+    // Track tool usage with Galileo if enabled
+    if (this.galileoEnabled) {
+      console.log(`🛠️ Tool "${toolName}" used in session ${context.sessionId}`);
+    }
+
+    return updatedContext;
+  }
+
+  /**
+   * Update session metrics and track performance with Galileo
+   */
+  private updateSessionMetrics(
+    context: SessionContext,
+    executionTime: number,
+    success: boolean,
+    cost?: number
+  ): SessionContext {
+    const newMetrics = {
+      ...context.metrics,
+      totalExecutionTime: context.metrics.totalExecutionTime + executionTime,
+    };
+
+    if (success) {
+      newMetrics.successfulOperations = context.metrics.successfulOperations + 1;
+    } else {
+      newMetrics.failedOperations = context.metrics.failedOperations + 1;
+    }
+
+    const totalOperations = newMetrics.successfulOperations + newMetrics.failedOperations;
+    if (totalOperations > 0) {
+      newMetrics.averageResponseTime = newMetrics.totalExecutionTime / totalOperations;
+    }
+
+    const updatedContext: SessionContext = {
+      ...context,
+      metrics: newMetrics,
+      totalCost: cost ? (context.totalCost || 0) + cost : context.totalCost,
+      lastActivity: new Date(),
+    };
+
+    // Track metrics with Galileo if enabled
+    if (this.galileoEnabled) {
+      console.log(`📊 Session ${context.sessionId} metrics updated:`, {
+        totalOperations,
+        successRate: `${((newMetrics.successfulOperations / totalOperations) * 100).toFixed(1)}%`,
+        averageResponseTime: `${newMetrics.averageResponseTime?.toFixed(2)}ms`,
+        totalCost: updatedContext.totalCost,
+      });
+    }
+
+    return updatedContext;
+  }
+
+  /**
+   * End session and flush Galileo traces
+   */
+  private async endSession(context: SessionContext): Promise<SessionContext> {
+    const endedContext: SessionContext = {
+      ...context,
+      isActive: false,
+      lastActivity: new Date(),
+    };
+
+    // Flush Galileo traces if enabled
+    if (this.galileoEnabled) {
+      try {
+        await flush();
+        console.log(`✅ Session ${context.sessionId} ended and traces flushed to Galileo`);
+      } catch (error: any) {
+        console.warn(`⚠️ Failed to flush Galileo traces for session ${context.sessionId}: ${error.message}`);
+      }
+    }
+
+    return endedContext;
+  }
+
+  /**
+   * Get current session context for external access
+   */
+  public getSessionContext(): SessionContext | null {
+    return this.sessionContext;
   }
 
   /**
@@ -372,19 +566,19 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
     
     try {
       // Start a session if this is the first message
-      if (!this.sessionActive) {
-        this.sessionId = `session-${Date.now()}`;
-        this.sessionActive = true;
-        console.log(`🚀 Started new session: ${this.sessionId}`);
+      if (!this.sessionContext || !this.sessionContext.isActive) {
+        const sessionId = `session-${Date.now()}`;
+        this.sessionContext = this.createSessionContext(sessionId);
       }
       
       // 📝 CONVERSATION MEMORY
       // Add the user's message to our internal conversation history
-      this.conversationHistory.push({
+      const userMessageToAdd: AgentMessage = {
         role: 'user',
         content: userMessage,
         timestamp: new Date(),
-      });
+      };
+      this.sessionContext = this.updateSessionWithMessage(this.sessionContext, userMessageToAdd);
 
       // 🧠 BUILD CONVERSATION CONTEXT
       // Create a summary of recent conversation history to give the agent context
@@ -410,6 +604,12 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
       // 🔍 ERROR DETECTION: Check for circular tool usage
       this.detectCircularToolUsage(result.intermediateSteps);
       
+      // 🛠️ TRACK TOOL USAGE IN SESSION
+      const toolsUsed = this.extractToolsUsed(result);
+      for (const toolName of toolsUsed) {
+        this.sessionContext = this.addToolToSession(this.sessionContext, toolName);
+      }
+      
       // 📊 DEBUG MODE: Show detailed step-by-step execution (optional)
       if (env.app.agentVerbose) {
         if (result.intermediateSteps && result.intermediateSteps.length > 0) {
@@ -429,14 +629,23 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
       const cleanOutput = await this.cleanAndFormatResponse(outputString, result, userMessage);
 
       // 📝 ADD RESPONSE TO CONVERSATION MEMORY
-      this.conversationHistory.push({
+      const assistantMessageToAdd: AgentMessage = {
         role: 'assistant',
         content: cleanOutput,
         timestamp: new Date(),
-      });
+      };
+      this.sessionContext = this.updateSessionWithMessage(this.sessionContext, assistantMessageToAdd);
 
       // ⏱️ PERFORMANCE TRACKING
       const executionTime = Date.now() - startTime;
+      
+      // 📊 UPDATE SESSION METRICS
+      this.sessionContext = this.updateSessionMetrics(
+        this.sessionContext,
+        executionTime,
+        true, // success
+        undefined // cost - could be calculated based on token usage
+      );
 
       // ✅ RETURN SUCCESS RESPONSE
       return {
@@ -445,7 +654,7 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
         data: {
           executionTime,
           toolsUsed: this.extractToolsUsed(result),
-          sessionId: this.sessionId,
+          sessionId: this.sessionContext?.sessionId,
         },
       };
     } catch (error) {
@@ -454,6 +663,16 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       
       console.error('❌ Agent processing error:', errorMessage);
+      
+      // 📊 UPDATE SESSION METRICS FOR FAILED OPERATION
+      if (this.sessionContext) {
+        this.sessionContext = this.updateSessionMetrics(
+          this.sessionContext,
+          executionTime,
+          false, // failed
+          undefined // cost
+        );
+      }
       
       // 🔄 SPECIAL HANDLING: Circular Tool Errors
       if (error instanceof CircularToolError) {
@@ -464,7 +683,7 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
           message: 'I seem to be stuck in a loop trying to process your request. Let me try a different approach. Could you please rephrase your question or try asking for something else?',
           error: error.message,
           data: {
-            sessionId: this.sessionId,
+            sessionId: this.sessionContext?.sessionId,
             toolPattern: error.toolPattern,
           },
         };
@@ -476,17 +695,17 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
         message: 'I encountered an error while processing your request. Please try again.',
         error: errorMessage,
         data: {
-          sessionId: this.sessionId,
+          sessionId: this.sessionContext?.sessionId,
         },
       };
     }
   }
 
   private buildConversationContext(): string {
-    if (this.conversationHistory.length === 0) return '';
+    if (!this.sessionContext || this.sessionContext.conversationHistory.length === 0) return '';
     
     // Build context from recent conversation history (last 6 messages)
-    const recentHistory = this.conversationHistory.slice(-6);
+    const recentHistory = this.sessionContext.conversationHistory.slice(-6);
     return recentHistory
       .map(msg => `${msg.role === 'user' ? 'Human' : 'Assistant'}: ${msg.content}`)
       .join('\n');
@@ -552,9 +771,8 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
     if (userInput && this.shouldPromptForFeedback(userInput)) {
       this.conversationEnded = true;
       
-      if (this.sessionActive) {
-        this.sessionActive = false;
-        this.sessionId = null;
+      if (this.sessionContext) {
+        this.sessionContext = await this.endSession(this.sessionContext);
       }
       
       return "🌟 Thank you for choosing Galileo's Gizmos! We're glad we could help you today.\n\n🚀 Catch you around the galaxy!";
@@ -850,21 +1068,42 @@ ${paymentLinkUrl}
   }
 
   getConversationHistory(): AgentMessage[] {
-    return [...this.conversationHistory];
+    return [...this.sessionContext?.conversationHistory || []];
   }
 
   clearConversationHistory(): void {
-    this.conversationHistory = [];
+    this.sessionContext = null;
     this.conversationEnded = false; // Reset conversation state
   }
 
 
   // Add method to get session status
-  getSessionStatus(): { active: boolean; sessionId: string | null; conversationEnded: boolean } {
+  getSessionStatus(): { 
+    active: boolean; 
+    sessionId: string | null; 
+    conversationEnded: boolean;
+    messageCount: number;
+    totalCost: number;
+    toolsUsed: string[];
+  } {
+    if (!this.sessionContext) {
+      return {
+        active: false,
+        sessionId: null,
+        conversationEnded: this.conversationEnded,
+        messageCount: 0,
+        totalCost: 0,
+        toolsUsed: [],
+      };
+    }
+
     return {
-      active: this.sessionActive,
-      sessionId: this.sessionId,
+      active: this.sessionContext.isActive,
+      sessionId: this.sessionContext.sessionId,
       conversationEnded: this.conversationEnded,
+      messageCount: this.sessionContext.messageCount,
+      totalCost: this.sessionContext.totalCost || 0,
+      toolsUsed: Array.from(this.sessionContext.toolsUsed),
     };
   }
 
@@ -872,13 +1111,11 @@ ${paymentLinkUrl}
   async endConversation(): Promise<void> {
     this.conversationEnded = true;
     
-    // Flush any remaining traces and end the session.
-    if (this.sessionActive && this.galileoEnabled) {
+    // End the session and flush any remaining traces
+    if (this.sessionContext && this.galileoEnabled) {
       try {
-        await flush();
-        console.log('✅ All traces successfully flushed to Galileo.');
-        this.sessionActive = false;
-        console.log(`📊 Session ${this.sessionId} ended and traces flushed`);
+        this.sessionContext = await this.endSession(this.sessionContext);
+        console.log(`📊 Session ${this.sessionContext?.sessionId} ended and traces flushed`);
       } catch (error: any) {
         console.warn(`⚠️ Failed to flush Galileo traces: ${error.message}`);
       }
@@ -893,5 +1130,12 @@ ${paymentLinkUrl}
   // Add method to restart conversation
   restartConversation(): void {
     this.conversationEnded = false;
+    
+    // Create a new session context for the restarted conversation
+    if (this.sessionContext) {
+      const newSessionId = `session-${Date.now()}`;
+      this.sessionContext = this.createSessionContext(newSessionId);
+      console.log(`🔄 Conversation restarted with new session: ${newSessionId}`);
+    }
   }
 }
