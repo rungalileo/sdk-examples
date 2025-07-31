@@ -18,6 +18,26 @@ A self-contained TypeScript agent using Stripe Agent Toolkit with Galileo monito
 - **Interactive Modes**: CLI and web server options
 - **Self-contained**: All dependencies and assets included
 
+## Project Structure
+
+```
+stripe-agents-sdk-example/
+├── src/
+│   ├── agents/           # Agent implementation
+│   ├── config/           # Configuration files
+│   ├── errors/           # Custom error classes
+│   ├── types/            # TypeScript type definitions
+│   ├── utils/            # Utility functions
+│   ├── index.ts          # Main entry point
+│   ├── interactive.ts    # Interactive CLI mode
+│   └── server.ts         # Web server mode
+├── tests/                # Test files
+├── public/               # Static assets
+├── dist/                 # Compiled JavaScript output
+├── package.json          # Dependencies and scripts
+└── tsconfig.json         # TypeScript configuration
+```
+
 ## How to use
 
 1. Clone the repository
@@ -50,6 +70,7 @@ A self-contained TypeScript agent using Stripe Agent Toolkit with Galileo monito
 
    Edit `.env` with the keys for your project
 
+```
    - `STRIPE_SECRET_KEY`: Your Stripe secret key (create a free developer account at https://dashboard.stripe.com/register)
    - `OPENAI_API_KEY`: Your OpenAI API key (create a developer account at https://platform.openai.com/signup)
    - `GALILEO_API_KEY`: Your Galileo API key (create a free developer account at https://galileo.ai/signup)
@@ -57,7 +78,7 @@ A self-contained TypeScript agent using Stripe Agent Toolkit with Galileo monito
    - `GALILEO_LOG_STREAM`: Your Galileo log stream name
    # Provide the console url below if you are using a custom deployment, and not using app.galileo.ai
    # GALILEO_CONSOLE_URL=your-galileo-console-url   # Optional if you are using a hosted version of Galileo
-  
+  ```
 
 3. **Build the project**:
 
@@ -65,100 +86,7 @@ A self-contained TypeScript agent using Stripe Agent Toolkit with Galileo monito
    npm run build
    ```
 
-## Usage
-
-### Interactive CLI Mode
-
-```bash
-npm run interactive
-```
-
-### Web Server Mode
-
-```bash
-npm run web
-```
-
-### Run Tests
-
-```bash
-npm test
-```
-
-## Agent Improvements
-
-### Loop Prevention
-
-The agent now includes advanced circular tool usage detection that:
-- Monitors the last 4 tool calls for repeated patterns
-- Detects when tools are being called in loops (e.g., A → B → A → B)
-- Gracefully handles circular calls with appropriate error messages
-- Prevents runaway loops that could exhaust API quotas
-
-### Conversation Memory
-
-Improved memory system with:
-- **5-minute caching** of product and price data
-- **Conversation history** maintained across interactions
-- **Context awareness** using the last 6 messages for better responses
-- **Reduced API calls** through intelligent caching
-
-### Buffered Logging
-
-Galileo logging improvements:
-- **Buffered traces** are queued and flushed efficiently
-- **Developer override** command `!end` to force flush during testing
-- **Session management** with proper cleanup and error handling
-- **Performance optimized** logging reduces response times
-
-### Developer Commands
-
-When using interactive mode, these special commands are available:
-
-- `help` - Show available commands and examples
-- `quit` or `exit` - Exit the application gracefully
-- `clear` - Clear the terminal screen
-- `!end` - **Developer command**: Force flush all buffered Galileo traces
-
-### API Signature Changes
-
-**AgentExecutor Configuration:**
-```typescript
-// Previous configuration
-maxIterations: 6
-
-// Updated configuration
-maxIterations: 8  // Increased to handle complex interactions
-earlyStoppingMethod: 'force'     // Stop when agent decides it's complete
-```
-
-**New Caching Methods:**
-```typescript
-// Cache management
-private isCacheValid(): boolean
-private updateCache(products: any[]): void
-private clearCache(): void
-
-// Memory properties
-private cachedProducts: any[] = []
-private cachedPrices: any[] = []
-private cacheTimestamp: number = 0
-private readonly CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
-```
-
-## Scripts
-
-- `npm run build` - Compile TypeScript to JavaScript
-- `npm run start` - Run the compiled application
-- `npm run dev` - Run in development mode with ts-node
-- `npm run interactive` - Start interactive CLI mode
-- `npm run web` - Start web server mode
-- `npm run test` - Run test suite
-- `npm run setup-products` - Set up space-themed product catalog in Stripe
-- `npm run debug-prices` - Debug Stripe price creation and retrieval
-- `npm run test-agent` - Test agent price reading capabilities
-
-## Product Catalog Setup
+ ## Product Catalog Setup
 
 This project includes a comprehensive space-themed product catalog for "Galileo's Gizmos". To set up the product catalog:
 
@@ -214,26 +142,99 @@ This will create 20 space-themed products including:
 - Cosmic Wall Art
 - Astronaut Alarm Clock
 
-## Project Structure
 
-```
-stripe-agents-sdk-example/
-├── src/
-│   ├── agents/           # Agent implementation
-│   ├── config/           # Configuration files
-│   ├── errors/           # Custom error classes
-│   ├── types/            # TypeScript type definitions
-│   ├── utils/            # Utility functions
-│   ├── index.ts          # Main entry point
-│   ├── interactive.ts    # Interactive CLI mode
-│   └── server.ts         # Web server mode
-├── tests/                # Test files
-├── public/               # Static assets
-├── dist/                 # Compiled JavaScript output
-├── package.json          # Dependencies and scripts
-└── tsconfig.json         # TypeScript configuration
+## Usage
+
+### Interactive CLI Mode
+
+```bash
+npm run interactive
 ```
 
-## Built Output
+### Web Server Mode
+
+```bash
+npm run web
+```
+
+### Run Tests
+
+```bash
+npm test
+```
+
+## Agent Improvements
+
+### Loop Prevention
+
+The agent now includes advanced circular tool usage detection that:
+- Monitors the last four tool calls for repeated patterns
+- Detects when tools are being called in loops (e.g., A → B → A → B)
+- Gracefully handles circular calls with appropriate error messages
+- Prevents runaway loops that could exhaust API quotas
+
+### Conversation Memory
+
+Improved memory system with:
+- **five-minute caching** of product and price data
+- **Conversation history** maintained across interactions
+- **Context awareness** using the last 6 messages for better responses
+- **Reduced API calls** through intelligent caching
+
+### Buffered Logging
+
+Galileo logging improvements:
+- **Buffered traces** are queued and flushed efficiently
+- **Developer override** command `!end` to force flush during testing
+- **Session management** with proper cleanup and error handling
+- **Performance optimized** logging reduces response times
+
+### Developer Commands
+
+When using interactive mode, these special commands are available:
+
+- `help` - Show available commands and examples
+- `quit` or `exit` - Exit the application gracefully
+- `clear` - Clear the terminal screen
+- `!end` - **Developer command**: Force flush all buffered Galileo traces
+
+### API Signature Changes
+
+**AgentExecutor Configuration:**
+```typescript
+
+// Updated configuration
+maxIterations: 8  // Increased to handle complex interactions
+earlyStoppingMethod: 'force'     // Stop when agent decides it's complete
+```
+
+**New Caching Methods:**
+```typescript
+// Cache management
+private isCacheValid(): boolean
+private updateCache(products: any[]): void
+private clearCache(): void
+
+// Memory properties
+private cachedProducts: any[] = []
+private cachedPrices: any[] = []
+private cacheTimestamp: number = 0
+private readonly CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
+```
+
+## Scripts
+
+- `npm run build` - Compile TypeScript to JavaScript
+- `npm run start/dev` - Runs automated testing examples — no interactive mode/user input.
+  - walks through demo script of: Payment link creation, customer creation, product listing, and subscription creation.
+- `npm run interactive` - Start interactive CLI mode
+- `npm run web` - Start web server mode
+- `npm run test` - Run test suite
+- `npm run setup-products` - Set up space-themed product catalog in Stripe
+- `npm run debug-prices` - Debug Stripe price creation and retrieval
+- `npm run test-agent` - Test agent price reading capabilities
+
+
+## BuildOutput
 
 All compiled JavaScript files are output to the `dist/` directory, making the project ready for deployment.

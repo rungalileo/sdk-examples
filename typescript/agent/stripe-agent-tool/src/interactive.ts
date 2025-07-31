@@ -39,11 +39,13 @@ class GalileoGizmosCustomerService {
     console.log('   • "help" - Show this menu');
     console.log('   • "quit" - Exit gracefully');
     console.log('   • "clear" - Clear screen');
+    console.log('   • "!end" - **Developer command**: Force flush all buffered Galileo traces');
     console.log('\n🚀 Agent Features:');
     console.log('   • Loop Prevention - Prevents infinite tool calls');
     console.log('   • Memory Cache - 5-minute product/price caching');
     console.log('   • Context Awareness - Remembers recent conversation');
     console.log('   • Buffered Logging - Efficient Galileo trace collection');
+    console.log('   • Auto-Flush - Traces are automatically flushed after each interaction');
   }
 
   private async handleSpecialCommands(input: string): Promise<boolean> {
@@ -64,6 +66,16 @@ class GalileoGizmosCustomerService {
         console.clear();
         return true;
       
+      case '!end':
+        // Developer command: Force flush all buffered Galileo traces
+        try {
+          await this.agent.endConversation();
+          this.agent.restartConversation();
+          console.log('📊 Manual flush completed - traces sent to Galileo');
+        } catch (error) {
+          console.error('Error during manual flush:', error);
+        }
+        return true;
       
       case '':
         return true; // Just ignore empty input
@@ -86,9 +98,9 @@ class GalileoGizmosCustomerService {
   private async concludeSession() {
     if (this.sessionId) {
       try {
-        // End the conversation and flush traces
+        // Final flush of any remaining traces
         await this.agent.endConversation();
-        console.log('📊 Session concluded and traces flushed to Galileo');
+        console.log('📊 Session concluded and final traces flushed to Galileo');
       } catch (error) {
         console.error('Error concluding session:', error);
       }
@@ -113,6 +125,17 @@ class GalileoGizmosCustomerService {
       }
     } catch (error) {
       console.log(`💥 Unexpected error: ${error}`);
+    } finally {
+      // Manually flush Galileo traces after each user interaction
+      // This prevents flush messages from appearing in the middle of conversation flow
+      try {
+        await this.agent.endConversation();
+        // Restart conversation immediately to maintain session continuity
+        this.agent.restartConversation();
+      } catch (flushError) {
+        // Silently handle flush errors to avoid disrupting user experience
+        console.debug('Flush error (non-critical):', flushError);
+      }
     }
   }
 

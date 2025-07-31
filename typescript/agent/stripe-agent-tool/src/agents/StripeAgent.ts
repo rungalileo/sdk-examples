@@ -38,7 +38,6 @@ import { DynamicTool } from '@langchain/core/tools';
 import { z } from 'zod';
 import Stripe from 'stripe';
 import { env } from '../config/environment';
-import { GalileoCallbackHandler } from '../callbacks/handlers/GalileoCallbackHandler';
 import { CircularToolError } from '../errors/CircularToolError';
 import { 
   AgentMessage, 
@@ -48,6 +47,38 @@ import {
   CustomerRequest,
   AgentMetrics 
 } from '../types';
+
+// Direct Galileo imports
+const { init, flush, GalileoCallback } = require('galileo');
+
+// Store original console methods to suppress Galileo debug messages
+const originalConsole = {
+  debug: console.debug,
+  log: console.log,
+  warn: console.warn,
+  error: console.error
+};
+
+// Suppress duplicate debug messages
+function suppressGalileoDebugMessages() {
+  console.debug = (...args: any[]) => {
+    const message = args.join(' ');
+    if (message.includes('No node exists for run_id') || 
+        message.includes('galileo') || 
+        message.includes('tracer')) {
+      return; // Suppress these specific messages
+    }
+    originalConsole.debug(...args);
+  };
+}
+
+// console methods
+function restoreConsole() {
+  console.debug = originalConsole.debug;
+  console.log = originalConsole.log;
+  console.warn = originalConsole.warn;
+  console.error = originalConsole.error;
+}
 
 /**
  * STRIPE AGENT CLASS
@@ -72,8 +103,9 @@ export class StripeAgent {
   private sessionActive: boolean = false;             // Whether we're currently tracking a session
   private conversationEnded: boolean = false;         // Flag to indicate if user has ended the conversation
   
-  // 📊 GALILEO OBSERVABILITY
-  private galileoCallbackHandler: GalileoCallbackHandler;  // Simplified Galileo callback handler
+  // 📊 GALILEO AGENT RELIABILITY
+  private galileoCallback: any;
+  private galileoEnabled: boolean = false;
   
   // ⚡ PERFORMANCE OPTIMIZATION (CACHING)
   private cachedProducts: any[] = [];                      // Cache Stripe products to avoid repeated API calls
@@ -84,11 +116,12 @@ export class StripeAgent {
   /**
    * CONSTRUCTOR - Sets up the agent's core components
    * 
-   * For Galileo users: The callback handler is initialized here and will automatically
-   * start tracking your agent's behavior once you begin processing messages.
+   * For Galileo users: Direct Galileo integration will be initialized in init()
+   * and will automatically start tracking your agent's behavior once you begin processing messages.
    */
   constructor() {
-    this.galileoCallbackHandler = new GalileoCallbackHandler();
+    // Apply extra debug message suppression globally
+    suppressGalileoDebugMessages();
     this.initializeStripeToolkit();
     this.initializeLLM();
   }
@@ -100,7 +133,19 @@ export class StripeAgent {
    * involves async operations (loading prompts from LangChain Hub).
    */
   async init() {
-    await this.galileoCallbackHandler.init();
+    // Galileo initialization
+    try {
+      await init();
+      this.galileoCallback = new GalileoCallback();
+      this.galileoEnabled = true;
+      console.log('✅ Galileo initialized successfully.');
+    } catch (error: any) {
+      console.warn(`⚠️ Galileo initialization failed: ${error.message}`);
+      console.warn('Stripe agent will run in local-only mode without tracing.');
+      this.galileoEnabled = false;
+      this.galileoCallback = null;
+    }
+    
     await this.initializeAgent();
   }
 
@@ -170,7 +215,7 @@ export class StripeAgent {
    */
   private initializeLLM(): void {
     this.llm = new ChatOpenAI({
-      openAIApiKey: env.openai.apiKey,  // Your OpenAI API key
+      openAIApiKey: env.openai.apiKey,  // Your OpenAI API key from .env file
       modelName: 'gpt-4o-mini',         // The specific model to use
       temperature: 0.1,                 // Low temperature for consistent, focused responses
       maxRetries: 3,                    // Retry failed API calls up to 3 times
@@ -346,15 +391,18 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
       const conversationContext = this.buildConversationContext();
 
       // 🤖 CORE AGENT PROCESSING - This is where the magic happens!
-      // The simplified callback handler now manages all Galileo tracing automatically
+      // Direct Galileo integration manages all tracing automatically
       console.log('🤖 Processing message with Galileo tracing...');
+      
+      // Direct Galileo callback usage
+      const callbacks = this.galileoEnabled ? [this.galileoCallback] : [];
       
       const result = await this.agentExecutor.invoke({
         input: userMessage,
         chat_history: conversationContext,
       }, {
         timeout: 20000,
-        callbacks: [this.galileoCallbackHandler.getCallback()],
+        callbacks,
       });
       
       console.log('✅ Message processing completed');
@@ -376,7 +424,9 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
       }
 
       // ✨ RESPONSE FORMATTING
-      const cleanOutput = await this.cleanAndFormatResponse(result.output, result, userMessage);
+      // Ensure output is a string before processing
+      const outputString = typeof result.output === 'string' ? result.output : String(result.output || '');
+      const cleanOutput = await this.cleanAndFormatResponse(outputString, result, userMessage);
 
       // 📝 ADD RESPONSE TO CONVERSATION MEMORY
       this.conversationHistory.push({
@@ -822,11 +872,16 @@ ${paymentLinkUrl}
   async endConversation(): Promise<void> {
     this.conversationEnded = true;
     
-    // Flush any remaining traces and end the session
-    if (this.sessionActive && this.galileoCallbackHandler) {
-      await this.galileoCallbackHandler.flush();
-      this.sessionActive = false;
-      console.log(`📊 Session ${this.sessionId} ended and traces flushed`);
+    // Flush any remaining traces and end the session.
+    if (this.sessionActive && this.galileoEnabled) {
+      try {
+        await flush();
+        console.log('✅ All traces successfully flushed to Galileo.');
+        this.sessionActive = false;
+        console.log(`📊 Session ${this.sessionId} ended and traces flushed`);
+      } catch (error: any) {
+        console.warn(`⚠️ Failed to flush Galileo traces: ${error.message}`);
+      }
     }
   }
 
