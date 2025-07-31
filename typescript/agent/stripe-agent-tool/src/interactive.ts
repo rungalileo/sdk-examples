@@ -3,6 +3,35 @@ process.env.LANGCHAIN_LOGGING = 'info';
 process.env.LANGCHAIN_VERBOSE = 'false';
 process.env.LANGCHAIN_CALLBACKS = 'true';
 
+// Immediately suppress Galileo flush messages in interactive mode
+const originalConsoleLog = console.log;
+const originalConsoleError = console.error;
+console.log = (...args: any[]) => {
+  const message = args.join(' ');
+  if (message.includes('Flushing') ||
+      message.includes('Traces ingested') ||
+      message.includes('Successfully flushed') ||
+      message.includes('Setting root node') ||
+      message.includes('Session') && message.includes('started with Galileo') ||
+      message.includes('Session') && message.includes('ended and traces flushed') ||
+      message.includes('Message') && message.includes('added to session') ||
+      message.includes('Tool') && message.includes('used in session')) {
+    return; // Completely suppress these specific messages
+  }
+  originalConsoleLog(...args);
+};
+console.error = (...args: any[]) => {
+  const message = args.join(' ');
+  if (message.includes('No node exists for run_id') ||
+      message.includes('Flushing') ||
+      message.includes('Traces ingested') ||
+      message.includes('Successfully flushed') ||
+      message.includes('Setting root node')) {
+    return; // Completely suppress these specific messages
+  }
+  originalConsoleError(...args);
+};
+
 import { StripeAgent } from './agents/StripeAgent';
 import { env } from './config/environment';
 import * as readline from 'readline';
@@ -39,7 +68,7 @@ class GalileoGizmosCustomerService {
     console.log('   • "help" - Show this menu');
     console.log('   • "quit" - Exit gracefully');
     console.log('   • "clear" - Clear screen');
-    console.log('   • "!end" - **Developer command**: Force flush all buffered Galileo traces');
+    console.log('   • "!end" - **Developer command**: Force flush Galileo traces');
     console.log('\n🚀 Agent Features:');
     console.log('   • Loop Prevention - Prevents infinite tool calls');
     console.log('   • Memory Cache - 5-minute product/price caching');
@@ -89,7 +118,7 @@ class GalileoGizmosCustomerService {
     try {
       this.sessionId = `session-${Date.now()}`;
       // Session will be started automatically when the first message is processed
-      console.log('🚀 Session ready - Galileo tracing will be activated on first message');
+      // console.log('🚀 Session ready - Galileo tracing will be activated on first message');
     } catch (error) {
       console.error('Error preparing session:', error);
     }
@@ -100,7 +129,7 @@ class GalileoGizmosCustomerService {
       try {
         // Final flush of any remaining traces
         await this.agent.endConversation();
-        console.log('📊 Session concluded and final traces flushed to Galileo');
+        // console.log('📊 Session concluded and final traces flushed to Galileo');
       } catch (error) {
         console.error('Error concluding session:', error);
       }
@@ -126,16 +155,9 @@ class GalileoGizmosCustomerService {
     } catch (error) {
       console.log(`💥 Unexpected error: ${error}`);
     } finally {
-      // Manually flush Galileo traces after each user interaction
-      // This prevents flush messages from appearing in the middle of conversation flow
-      try {
-        await this.agent.endConversation();
-        // Restart conversation immediately to maintain session continuity
-        this.agent.restartConversation();
-      } catch (flushError) {
-        // Silently handle flush errors to avoid disrupting user experience
-        console.debug('Flush error (non-critical):', flushError);
-      }
+      // Galileo traces are automatically flushed by the agent
+      // No need to manually end/restart conversation after every input
+      // This prevents the flush messages from appearing
     }
   }
 
