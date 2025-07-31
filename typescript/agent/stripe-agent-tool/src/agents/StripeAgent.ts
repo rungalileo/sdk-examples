@@ -414,33 +414,12 @@ export class StripeAgent {
 
   /**
    * Helper method to validate and format JSON input for tools
+   * This method is now deprecated as we handle input validation directly in the tool
    */
   private validateAndFormatJsonInput(input: string): string {
-    try {
-      // First, try to parse as-is
-      JSON.parse(input);
-      return input;
-    } catch (error) {
-      // If that fails, try to clean the input
-      let cleanedInput = input.trim();
-      
-      // Remove outer quotes if they exist
-      if (cleanedInput.startsWith('"') && cleanedInput.endsWith('"')) {
-        cleanedInput = cleanedInput.slice(1, -1);
-      }
-      if (cleanedInput.startsWith("'") && cleanedInput.endsWith("'")) {
-        cleanedInput = cleanedInput.slice(1, -1);
-      }
-      
-      // Try to parse the cleaned input
-      try {
-        JSON.parse(cleanedInput);
-        return cleanedInput;
-      } catch (secondError) {
-        // If still fails, throw the original error
-        throw error;
-      }
-    }
+    // This method is kept for backward compatibility but the actual validation
+    // is now handled directly in the get_price_and_create_payment_link tool
+    return input;
   }
 
   /**
@@ -561,62 +540,129 @@ export class StripeAgent {
     // Create atomic helper tool for getting price and creating payment link
     const getPriceAndCreateLink = new DynamicTool({
       name: 'get_price_and_create_payment_link',
-      description: 'Create payment link for specific product. Input format: {"product_name": "exact product name", "quantity": 1}. Use this ONLY when user explicitly wants to purchase a specific product.',
+      description: 'Create payment link for specific product. Input should be a JSON string with format: {"product_name": "exact product name", "quantity": 1}. Use this ONLY when user explicitly wants to purchase a specific product. Example: {"product_name": "Galileo Telescope", "quantity": 2}',
       func: async (input: string) => {
         try {
           // Log the input for debugging
           console.log(`🔍 get_price_and_create_payment_link received input: "${input}"`);
           
-          // Use the helper method to validate and format the input
-          const cleanedInput = this.validateAndFormatJsonInput(input);
-          console.log(`🔍 Cleaned input: "${cleanedInput}"`);
+          // Handle different input formats that the LLM might send
+          let cleanedInput = input.trim();
           
-          const params = JSON.parse(cleanedInput);
-          const { product_name, quantity = 1 } = params;
-          
-          if (!product_name) {
-            return 'Error: Product name is required. Please specify which product the customer wants to purchase.';
+          // Case 1: Input is already a valid JSON string
+          try {
+            const parsed = JSON.parse(cleanedInput);
+            if (parsed.product_name) {
+              console.log(`🔍 Successfully parsed JSON input:`, parsed);
+              const { product_name, quantity = 1 } = parsed;
+              
+              if (!product_name) {
+                return 'Error: Product name is required. Please specify which product the customer wants to purchase.';
+              }
+              
+              console.log(`🔍 Looking for product: "${product_name}" with quantity: ${quantity}`);
+              
+              // Search for products with fuzzy matching
+              const products = await stripe.products.list({limit: 100});
+              let product = products.data.find(p => p.name.toLowerCase() === product_name.toLowerCase());
+              
+              // If exact match not found, try partial matching
+              if (!product) {
+                product = products.data.find(p => 
+                  p.name.toLowerCase().includes(product_name.toLowerCase()) ||
+                  product_name.toLowerCase().includes(p.name.toLowerCase())
+                );
+              }
+              
+              if (!product) {
+                const availableProducts = products.data.slice(0, 5).map(p => p.name).join(', ');
+                return `Product "${product_name}" not found in inventory. Available products include: ${availableProducts}. Please check the product name and try again.`;
+              }
+              
+              console.log(`🔍 Found product: "${product.name}"`);
+              
+              const prices = await stripe.prices.list({product: product.id, active: true});
+              if (!prices.data.length) {
+                return `Product "${product.name}" found but has no active pricing. Please contact support or try a different product.`;
+              }
+              
+              console.log(`🔍 Found ${prices.data.length} active prices for product`);
+              
+              const link = await stripe.paymentLinks.create({
+                line_items: [{price: prices.data[0].id, quantity: Math.max(1, quantity)}]
+              });
+              
+              console.log(`🔍 Created payment link: ${link.url}`);
+              return link.url;
+            }
+          } catch (parseError) {
+            console.log(`🔍 Failed to parse as JSON, trying alternative formats...`);
           }
           
-          console.log(`🔍 Looking for product: "${product_name}" with quantity: ${quantity}`);
-          
-          // Search for products with fuzzy matching
-          const products = await stripe.products.list({limit: 100});
-          let product = products.data.find(p => p.name.toLowerCase() === product_name.toLowerCase());
-          
-          // If exact match not found, try partial matching
-          if (!product) {
-            product = products.data.find(p => 
-              p.name.toLowerCase().includes(product_name.toLowerCase()) ||
-              product_name.toLowerCase().includes(p.name.toLowerCase())
-            );
+          // Case 2: Input might be wrapped in extra quotes or have formatting issues
+          // Remove outer quotes if they exist
+          if (cleanedInput.startsWith('"') && cleanedInput.endsWith('"')) {
+            cleanedInput = cleanedInput.slice(1, -1);
+          }
+          if (cleanedInput.startsWith("'") && cleanedInput.endsWith("'")) {
+            cleanedInput = cleanedInput.slice(1, -1);
           }
           
-          if (!product) {
-            const availableProducts = products.data.slice(0, 5).map(p => p.name).join(', ');
-            return `Product "${product_name}" not found in inventory. Available products include: ${availableProducts}. Please check the product name and try again.`;
+          // Try parsing again after quote removal
+          try {
+            const parsed = JSON.parse(cleanedInput);
+            if (parsed.product_name) {
+              console.log(`🔍 Successfully parsed JSON after quote removal:`, parsed);
+              const { product_name, quantity = 1 } = parsed;
+              
+              if (!product_name) {
+                return 'Error: Product name is required. Please specify which product the customer wants to purchase.';
+              }
+              
+              console.log(`🔍 Looking for product: "${product_name}" with quantity: ${quantity}`);
+              
+              // Search for products with fuzzy matching
+              const products = await stripe.products.list({limit: 100});
+              let product = products.data.find(p => p.name.toLowerCase() === product_name.toLowerCase());
+              
+              // If exact match not found, try partial matching
+              if (!product) {
+                product = products.data.find(p => 
+                  p.name.toLowerCase().includes(product_name.toLowerCase()) ||
+                  product_name.toLowerCase().includes(p.name.toLowerCase())
+                );
+              }
+              
+              if (!product) {
+                const availableProducts = products.data.slice(0, 5).map(p => p.name).join(', ');
+                return `Product "${product_name}" not found in inventory. Available products include: ${availableProducts}. Please check the product name and try again.`;
+              }
+              
+              console.log(`🔍 Found product: "${product.name}"`);
+              
+              const prices = await stripe.prices.list({product: product.id, active: true});
+              if (!prices.data.length) {
+                return `Product "${product.name}" found but has no active pricing. Please contact support or try a different product.`;
+              }
+              
+              console.log(`🔍 Found ${prices.data.length} active prices for product`);
+              
+              const link = await stripe.paymentLinks.create({
+                line_items: [{price: prices.data[0].id, quantity: Math.max(1, quantity)}]
+              });
+              
+              console.log(`🔍 Created payment link: ${link.url}`);
+              return link.url;
+            }
+          } catch (secondParseError) {
+            console.log(`🔍 Failed to parse after quote removal, input format is invalid`);
           }
           
-          console.log(`🔍 Found product: "${product.name}"`);
+          // Case 3: Input is completely malformed - provide clear error message
+          return `Error: Invalid input format. Received: "${input}". Please use the exact JSON format: {"product_name": "exact product name", "quantity": 1}. Example: {"product_name": "Galileo Telescope", "quantity": 2}`;
           
-          const prices = await stripe.prices.list({product: product.id, active: true});
-          if (!prices.data.length) {
-            return `Product "${product.name}" found but has no active pricing. Please contact support or try a different product.`;
-          }
-          
-          console.log(`🔍 Found ${prices.data.length} active prices for product`);
-          
-          const link = await stripe.paymentLinks.create({
-            line_items: [{price: prices.data[0].id, quantity: Math.max(1, quantity)}]
-          });
-          
-          console.log(`🔍 Created payment link: ${link.url}`);
-          return link.url;
         } catch (error) {
           console.error(`❌ Error in get_price_and_create_payment_link:`, error);
-          if (error instanceof SyntaxError) {
-            return `Error: Invalid input format. Received: "${input}". Please use {"product_name": "product name", "quantity": 1}`;
-          }
           return `Error creating payment link: ${error instanceof Error ? error.message : 'Unknown error'}`;
         }
       },
@@ -660,6 +706,7 @@ CRITICAL JSON FORMATTING FOR get_price_and_create_payment_link:
 - NEVER add extra formatting or text
 - Use the EXACT product name from list_products results
 - Default quantity to 1 if not specified
+- The tool expects a JSON string, not a JSON object
 
 EXAMPLE CORRECT USAGE:
 - Input: {"product_name": "Space Ice Cream", "quantity": 1}
@@ -669,6 +716,9 @@ EXAMPLE INCORRECT USAGE:
 - Input: '{"product_name": "telescope", "quantity": 1}' (extra quotes)
 - Input: "I want to buy the telescope" (not JSON)
 - Input: product_name: telescope, quantity: 1 (not JSON)
+- Input: {"input": {"product_name": "telescope", "quantity": 1}} (nested JSON)
+
+IMPORTANT: The tool receives the JSON as a string parameter, so pass it directly as: {"product_name": "product name", "quantity": 1}
 
 RESPONSE FORMATTING:
 - Keep responses concise and focused
@@ -680,6 +730,10 @@ EXAMPLE RESPONSES:
 - "What do you have?" → list_products (limit: 10) + list_prices (limit: 10) → "Here are some of our products: [formatted list with real prices]"
 - "How much is the telescope?" → list_products + list_prices → "The telescope costs $X.XX (based on current Stripe pricing)"
 - "I want to buy the telescope" → get_price_and_create_payment_link with {"product_name": "Galileo Telescope", "quantity": 1} → "Here's your payment link: [URL]"
+
+CRITICAL TOOL CALL FORMAT:
+When calling get_price_and_create_payment_link, use this exact format:
+{"product_name": "exact product name from list_products", "quantity": 1}
 
 CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid overwhelming responses. Never skip the list_prices call when showing product information.
 `;
