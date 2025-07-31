@@ -662,7 +662,7 @@ CRITICAL JSON FORMATTING FOR get_price_and_create_payment_link:
 - Default quantity to 1 if not specified
 
 EXAMPLE CORRECT USAGE:
-- Input: {"product_name": "TypeScript Mastery", "quantity": 1}
+- Input: {"product_name": "Astronaut Ice Cream", "quantity": 1}
 - Input: {"product_name": "Galileo Telescope", "quantity": 2}
 
 EXAMPLE INCORRECT USAGE:
