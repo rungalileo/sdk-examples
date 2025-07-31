@@ -194,6 +194,7 @@ app.post('/api/session/flush', async (req, res) => {
         }
         
         // Flush buffered traces and conclude session
+        await agent.endConversation();
         
         // Remove from active sessions
         activeSessions.delete(sessionId);
@@ -256,6 +257,7 @@ async function gracefulShutdown(signal: string) {
     // Conclude all active sessions
     for (const [webSessionId, agent] of activeSessions) {
         try {
+            await agent.endConversation();
             if (env.app.agentVerbose) {
                 console.log(`📊 Session ${webSessionId} concluded`);
             }

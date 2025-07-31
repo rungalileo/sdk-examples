@@ -29,9 +29,12 @@ process.env.LANGCHAIN_LOGGING = 'info';     // Log informational messages
 process.env.LANGCHAIN_VERBOSE = 'false';    // Don't show verbose debug output
 process.env.LANGCHAIN_CALLBACKS = 'true';   // Enable callback handlers (like Galileo)
 
-// Immediately suppress the specific Galileo error that appears in terminal output
+// Suppress Galileo SDK internal messages to reduce console noise
+// These messages come from the Galileo SDK when it flushes traces to the server
 const originalConsoleError = console.error;
 const originalConsoleLog = console.log;
+const originalConsoleDebug = console.debug;
+
 console.error = (...args: any[]) => {
   const message = args.join(' ');
   if (message.includes('No node exists for run_id') ||
@@ -40,10 +43,11 @@ console.error = (...args: any[]) => {
       message.includes('Successfully flushed') ||
       message.includes('Setting root node') ||
       message.includes('No traces to flush')) {
-    return; // Completely suppress these specific messages
+    return; // Suppress Galileo SDK internal messages
   }
   originalConsoleError(...args);
 };
+
 console.log = (...args: any[]) => {
   const message = args.join(' ');
   if (message.includes('Flushing') ||
@@ -51,9 +55,16 @@ console.log = (...args: any[]) => {
       message.includes('Successfully flushed') ||
       message.includes('Setting root node') ||
       message.includes('No traces to flush')) {
-    return; // Completely suppress these specific messages
+    return; // Suppress Galileo SDK internal messages
   }
   originalConsoleLog(...args);
+};
+
+// Override console.debug to only print when VERBOSE is enabled
+console.debug = (...args: any[]) => {
+  if (process.env.VERBOSE) {
+    originalConsoleDebug(...args);
+  }
 };
 
 import { StripeAgentToolkit } from '@stripe/agent-toolkit/langchain';
@@ -275,7 +286,11 @@ export class StripeAgent {
   }
 
   /**
-   * End session and flush Galileo traces
+   * End session and flush Galileo traces only at the very end
+   * 
+   * Note: The flush messages you see come from the Galileo SDK itself when it
+   * sends traces to the Galileo server. These are suppressed in console output
+   * to reduce noise, but the flushing still occurs.
    */
   private async endSession(context: SessionContext): Promise<SessionContext> {
     const endedContext: SessionContext = {
@@ -284,14 +299,15 @@ export class StripeAgent {
       lastActivity: new Date(),
     };
 
-          // Flush Galileo traces if enabled
-      if (this.galileoCallback) {
-        try {
-          await flush();
-        } catch (error: any) {
-          console.warn(`⚠️ Failed to flush Galileo traces for session ${context.sessionId}: ${error.message}`);
-        }
+    // Only flush Galileo traces if enabled - this happens at the very end
+    if (this.galileoCallback) {
+      try {
+        await flush();
+        console.log(`📊 Flushed Galileo traces for session ${context.sessionId}`);
+      } catch (error: any) {
+        console.warn(`⚠️ Failed to flush Galileo traces for session ${context.sessionId}: ${error.message}`);
       }
+    }
 
     return endedContext;
   }
@@ -307,12 +323,17 @@ export class StripeAgent {
    * involves async operations (loading prompts from LangChain Hub).
    */
   async init() {
-  // Galileo initialization with simplified configuration
+  // Galileo initialization with enhanced configuration
   try {
     await init();
     
-    // Initialize Galileo callback with minimal configuration
-    this.galileoCallback = new GalileoCallback();
+    // Initialize Galileo callback with enhanced tool tracking
+    // Parameters: (logger, enableToolTracking, enableDetailedLogging)
+    this.galileoCallback = new GalileoCallback(
+      undefined, // Use default logger
+      true,      // Enable tool tracking
+      true      // Disable detailed logging to reduce noise
+    );
     
   } catch (error: any) {
     console.warn(`⚠️ Galileo initialization failed: ${error.message}`);
@@ -677,10 +698,16 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
       // 🔍 ERROR DETECTION: Check for circular tool usage
       this.detectCircularToolUsage(result.intermediateSteps);
       
-      // 🛠️ TRACK TOOL USAGE IN SESSION
+      // 🛠️ TRACK TOOL USAGE IN SESSION 
       const toolsUsed = this.extractToolsUsed(result);
       for (const toolName of toolsUsed) {
         this.sessionContext = this.addToolToSession(this.sessionContext, toolName);
+        
+        // Log enhanced tool information for Galileo
+        const toolInfo = this.getToolInfo(toolName);
+        if (env.app.agentVerbose) {
+          console.log(`🔧 Tool used: ${toolInfo.name} (${toolInfo.category}) - ${toolInfo.description}`);
+        }
       }
       
       // 📊 DEBUG MODE: Show detailed step-by-step execution (optional)
@@ -925,6 +952,71 @@ ${paymentLinkUrl}
       }
     }
     return toolsUsed;
+  }
+
+  /**
+   * Get enhanced tool information for Galileo logging
+   * This provides better tool tracking and naming for observability
+   */
+  private getToolInfo(toolName: string): { name: string; category: string; description: string } {
+    const toolInfo: { [key: string]: { name: string; category: string; description: string } } = {
+      'list_products': {
+        name: 'list_products',
+        category: 'stripe_products',
+        description: 'List Stripe products from catalog'
+      },
+      'list_prices': {
+        name: 'list_prices',
+        category: 'stripe_pricing',
+        description: 'Get pricing information for products'
+      },
+      'create_payment_link': {
+        name: 'create_payment_link',
+        category: 'stripe_payments',
+        description: 'Create Stripe payment links for checkout'
+      },
+      'get_price_and_create_payment_link': {
+        name: 'get_price_and_create_payment_link',
+        category: 'stripe_payments',
+        description: 'Get product price and create payment link in one step'
+      },
+      'create_customer': {
+        name: 'create_customer',
+        category: 'stripe_customers',
+        description: 'Create new customer in Stripe'
+      },
+      'list_customers': {
+        name: 'list_customers',
+        category: 'stripe_customers',
+        description: 'List existing customers'
+      },
+      'create_product': {
+        name: 'create_product',
+        category: 'stripe_products',
+        description: 'Create new product in Stripe'
+      },
+      'create_price': {
+        name: 'create_price',
+        category: 'stripe_pricing',
+        description: 'Create new price for product'
+      },
+      'create_invoice': {
+        name: 'create_invoice',
+        category: 'stripe_billing',
+        description: 'Create invoice for customer'
+      },
+      'update_invoice': {
+        name: 'update_invoice',
+        category: 'stripe_billing',
+        description: 'Update existing invoice'
+      }
+    };
+
+    return toolInfo[toolName] || {
+      name: toolName,
+      category: 'unknown',
+      description: 'Unknown tool'
+    };
   }
 
 
