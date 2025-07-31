@@ -70,15 +70,26 @@ stripe-agents-sdk-example/
 
    Edit `.env` with the keys for your project
 
-```
-   - `STRIPE_SECRET_KEY`: Your Stripe secret key (create a free developer account at https://dashboard.stripe.com/register)
-   - `OPENAI_API_KEY`: Your OpenAI API key (create a developer account at https://platform.openai.com/signup)
-   - `GALILEO_API_KEY`: Your Galileo API key (create a free developer account at https://galileo.ai/signup)
-   - `GALILEO_PROJECT`: Your Galileo project name (create a free developer account at https://galileo.ai/signup)
-   - `GALILEO_LOG_STREAM`: Your Galileo log stream name
-   # Provide the console url below if you are using a custom deployment, and not using app.galileo.ai
-   # GALILEO_CONSOLE_URL=your-galileo-console-url   # Optional if you are using a hosted version of Galileo
-  ```
+   ```bash
+   # Stripe Configuration
+   STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key_here
+
+   # OpenAI Configuration
+   OPENAI_API_KEY=your_openai_api_key_here
+
+   # Galileo Configuration
+   GALILEO_API_KEY=your_galileo_api_key_here           #Your Galileo API Key
+   GALILEO_PROJECT=stripe-agent-demo                  #Your Galileo Project Name
+   GALILEO_LOG_STREAM=production                      #Your Galileo Log Stream Name    
+   # OPTIONAL
+   # Provide the console URL below if you are using a custom deployment, and not using app.galileo.ai
+   # This is most common with enterprise, or on prem deployments where you may have your own custom cluster
+   # GALILEO_CONSOLE_URL=https://console.galileo.ai
+
+   # Agent Configuration
+   AGENT_NAME=StripePaymentAgent
+   AGENT_DESCRIPTION=An AI agent that helps with Stripe payment operations
+   ```
 
 3. **Build the project**:
 
@@ -225,14 +236,12 @@ private readonly CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
 ## Scripts
 
 - `npm run build` - Compile TypeScript to JavaScript
-- `npm run start/dev` - Runs automated testing examples — no interactive mode/user input.
+- `npm run dev` - Runs automated testing examples — no interactive mode/user input.
   - walks through demo script of: Payment link creation, customer creation, product listing, and subscription creation.
 - `npm run interactive` - Start interactive CLI mode
 - `npm run web` - Start web server mode
 - `npm run test` - Run test suite
 - `npm run setup-products` - Set up space-themed product catalog in Stripe
-- `npm run debug-prices` - Debug Stripe price creation and retrieval
-- `npm run test-agent` - Test agent price reading capabilities
 
 
 ## BuildOutput
