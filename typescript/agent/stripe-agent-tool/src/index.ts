@@ -16,23 +16,23 @@ async function main() {
     
     console.log('🚀 Galileo Gizmos CLI Example - Galileo logging enabled');
 
-    // Example interactions
+    // Example interactions 
     const examples = [
       {
-        description: "Create a payment link for a digital product",
-        message: "Create a payment link for a digital course called 'TypeScript Mastery' priced at $99 USD"
+        description: "List existing products",
+        message: "Show me all the products in my Stripe account"
+      },
+      {
+        description: "Get product pricing",
+        message: "What are the prices for Galileo's Premium Telescope?"
       },
       {
         description: "Create a customer record",
         message: "Create a new customer with email john.doe@example.com and name John Doe"
       },
       {
-        description: "List existing products",
-        message: "Show me all the products in my Stripe account"
-      },
-      {
-        description: "Create a subscription product",
-        message: "Create a monthly subscription product called 'Premium Plan' for $29.99 USD"
+        description: "Check inventory",
+        message: "What space exploration gear do you have available?"
       }
     ];
 

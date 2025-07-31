@@ -2,7 +2,7 @@ import Stripe from 'stripe';
 import { env } from '../src/config/environment';
 
 const stripe = new Stripe(env.stripe.secretKey, {
-  apiVersion: '2025-02-24.acacia',
+  apiVersion: '2025-06-30.basil',
 });
 
 const spaceProducts = [

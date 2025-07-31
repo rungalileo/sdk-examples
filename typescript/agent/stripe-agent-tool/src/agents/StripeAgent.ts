@@ -29,6 +29,16 @@ process.env.LANGCHAIN_LOGGING = 'info';     // Log informational messages
 process.env.LANGCHAIN_VERBOSE = 'false';    // Don't show verbose debug output
 process.env.LANGCHAIN_CALLBACKS = 'true';   // Enable callback handlers (like Galileo)
 
+// Immediately suppress the specific Galileo error that appears in terminal output
+const originalConsoleError = console.error;
+console.error = (...args: any[]) => {
+  const message = args.join(' ');
+  if (message.includes('No node exists for run_id')) {
+    return; // Completely suppress this specific error
+  }
+  originalConsoleError(...args);
+};
+
 import { StripeAgentToolkit } from '@stripe/agent-toolkit/langchain';
 import { ChatOpenAI } from '@langchain/openai';
 import { AgentExecutor, createStructuredChatAgent } from 'langchain/agents';
@@ -104,8 +114,9 @@ const originalConsole = {
   error: console.error
 };
 
-// Suppress duplicate debug messages
+// Suppress debug messages and errors
 function suppressGalileoDebugMessages() {
+  // Override console.debug
   console.debug = (...args: any[]) => {
     const message = args.join(' ');
     if (message.includes('No node exists for run_id') || 
@@ -115,7 +126,43 @@ function suppressGalileoDebugMessages() {
     }
     originalConsole.debug(...args);
   };
+
+  // Override console.log to catch Galileo messages that might come through as logs
+  console.log = (...args: any[]) => {
+    const message = args.join(' ');
+    if (message.includes('No node exists for run_id') || 
+        message.includes('galileo') || 
+        message.includes('tracer')) {
+      return; // Suppress these specific messages
+    }
+    originalConsole.log(...args);
+  };
+
+  // Override console.error to catch Galileo errors
+  console.error = (...args: any[]) => {
+    const message = args.join(' ');
+    if (message.includes('No node exists for run_id') || 
+        message.includes('galileo') || 
+        message.includes('tracer')) {
+      return; // Suppress these specific messages
+    }
+    originalConsole.error(...args);
+  };
+
+  // Override console.warn to catch Galileo warnings
+  console.warn = (...args: any[]) => {
+    const message = args.join(' ');
+    if (message.includes('No node exists for run_id') || 
+        message.includes('galileo') || 
+        message.includes('tracer')) {
+      return; // Suppress these specific messages
+    }
+    originalConsole.warn(...args);
+  };
 }
+
+// Apply suppression immediately when module is loaded to catch early Galileo messages
+suppressGalileoDebugMessages();
 
 // console methods
 function restoreConsole() {
@@ -163,8 +210,22 @@ export class StripeAgent {
    * and will automatically start tracking your agent's behavior once you begin processing messages.
    */
   constructor() {
-    // Apply extra debug message suppression globally
+    // Apply comprehensive debug message suppression globally
     suppressGalileoDebugMessages();
+    
+    // Also suppress process-level unhandled rejections that might contain Galileo errors
+    process.on('unhandledRejection', (reason, promise) => {
+      const reasonString = String(reason);
+      if (reasonString.includes('No node exists for run_id') || 
+          reasonString.includes('galileo') || 
+          reasonString.includes('tracer')) {
+        // Silently ignore Galileo-related unhandled rejections
+        return;
+      }
+      // For other unhandled rejections, log them normally
+      console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+    });
+    
     this.initializeStripeToolkit();
     this.initializeLLM();
   }
@@ -321,6 +382,37 @@ export class StripeAgent {
   }
 
   /**
+   * Helper method to validate and format JSON input for tools
+   */
+  private validateAndFormatJsonInput(input: string): string {
+    try {
+      // First, try to parse as-is
+      JSON.parse(input);
+      return input;
+    } catch (error) {
+      // If that fails, try to clean the input
+      let cleanedInput = input.trim();
+      
+      // Remove outer quotes if they exist
+      if (cleanedInput.startsWith('"') && cleanedInput.endsWith('"')) {
+        cleanedInput = cleanedInput.slice(1, -1);
+      }
+      if (cleanedInput.startsWith("'") && cleanedInput.endsWith("'")) {
+        cleanedInput = cleanedInput.slice(1, -1);
+      }
+      
+      // Try to parse the cleaned input
+      try {
+        JSON.parse(cleanedInput);
+        return cleanedInput;
+      } catch (secondError) {
+        // If still fails, throw the original error
+        throw error;
+      }
+    }
+  }
+
+  /**
    * INITIALIZATION - Must be called before using the agent
    * 
    * This is separate from the constructor because agent initialization
@@ -333,6 +425,18 @@ export class StripeAgent {
       this.galileoCallback = new GalileoCallback();
       this.galileoEnabled = true;
       console.log('✅ Galileo initialized successfully.');
+      
+      // The existing suppressGalileoDebugMessages() should handle this, but let's add extra protection
+      // for the specific "No node exists for run_id" error that might slip through
+      const originalError = console.error;
+      console.error = (...args: any[]) => {
+        const message = args.join(' ');
+        if (message.includes('No node exists for run_id')) {
+          return; // Completely suppress this specific error
+        }
+        originalError(...args);
+      };
+      
     } catch (error: any) {
       console.warn(`⚠️ Galileo initialization failed: ${error.message}`);
       console.warn('Stripe agent will run in local-only mode without tracing.');
@@ -429,12 +533,21 @@ export class StripeAgent {
       description: 'Create payment link for specific product. Input format: {"product_name": "exact product name", "quantity": 1}. Use this ONLY when user explicitly wants to purchase a specific product.',
       func: async (input: string) => {
         try {
-          const params = JSON.parse(input);
+          // Log the input for debugging
+          console.log(`🔍 get_price_and_create_payment_link received input: "${input}"`);
+          
+          // Use the helper method to validate and format the input
+          const cleanedInput = this.validateAndFormatJsonInput(input);
+          console.log(`🔍 Cleaned input: "${cleanedInput}"`);
+          
+          const params = JSON.parse(cleanedInput);
           const { product_name, quantity = 1 } = params;
           
           if (!product_name) {
             return 'Error: Product name is required. Please specify which product the customer wants to purchase.';
           }
+          
+          console.log(`🔍 Looking for product: "${product_name}" with quantity: ${quantity}`);
           
           // Search for products with fuzzy matching
           const products = await stripe.products.list({limit: 100});
@@ -453,19 +566,25 @@ export class StripeAgent {
             return `Product "${product_name}" not found in inventory. Available products include: ${availableProducts}. Please check the product name and try again.`;
           }
           
+          console.log(`🔍 Found product: "${product.name}"`);
+          
           const prices = await stripe.prices.list({product: product.id, active: true});
           if (!prices.data.length) {
             return `Product "${product.name}" found but has no active pricing. Please contact support or try a different product.`;
           }
           
+          console.log(`🔍 Found ${prices.data.length} active prices for product`);
+          
           const link = await stripe.paymentLinks.create({
             line_items: [{price: prices.data[0].id, quantity: Math.max(1, quantity)}]
           });
           
+          console.log(`🔍 Created payment link: ${link.url}`);
           return link.url;
         } catch (error) {
+          console.error(`❌ Error in get_price_and_create_payment_link:`, error);
           if (error instanceof SyntaxError) {
-            return 'Error: Invalid input format. Please use {"product_name": "product name", "quantity": 1}';
+            return `Error: Invalid input format. Received: "${input}". Please use {"product_name": "product name", "quantity": 1}`;
           }
           return `Error creating payment link: ${error instanceof Error ? error.message : 'Unknown error'}`;
         }
@@ -501,8 +620,24 @@ INVENTORY VERIFICATION:
 
 PURCHASE WORKFLOW:
 1. **User asks about products** → Call list_products (limit: 10) → Call list_prices (limit: 10) → Show products with accurate prices
-2. **User wants to buy** → Use get_price_and_create_payment_link (atomic tool)
+2. **User wants to buy** → Use get_price_and_create_payment_link with EXACT JSON format
 3. **User asks for pricing** → Call list_products (limit: 10) → Call list_prices (limit: 10) → Show accurate pricing
+
+CRITICAL JSON FORMATTING FOR get_price_and_create_payment_link:
+- ALWAYS use EXACT JSON format: {"product_name": "exact product name", "quantity": 1}
+- NEVER use quotes around the entire JSON string
+- NEVER add extra formatting or text
+- Use the EXACT product name from list_products results
+- Default quantity to 1 if not specified
+
+EXAMPLE CORRECT USAGE:
+- Input: {"product_name": "TypeScript Mastery", "quantity": 1}
+- Input: {"product_name": "Galileo Telescope", "quantity": 2}
+
+EXAMPLE INCORRECT USAGE:
+- Input: '{"product_name": "telescope", "quantity": 1}' (extra quotes)
+- Input: "I want to buy the telescope" (not JSON)
+- Input: product_name: telescope, quantity: 1 (not JSON)
 
 RESPONSE FORMATTING:
 - Keep responses concise and focused
@@ -513,7 +648,7 @@ RESPONSE FORMATTING:
 EXAMPLE RESPONSES:
 - "What do you have?" → list_products (limit: 10) + list_prices (limit: 10) → "Here are some of our products: [formatted list with real prices]"
 - "How much is the telescope?" → list_products + list_prices → "The telescope costs $X.XX (based on current Stripe pricing)"
-- "I want to buy the telescope" → get_price_and_create_payment_link → "Here's your payment link: [URL]"
+- "I want to buy the telescope" → get_price_and_create_payment_link with {"product_name": "Galileo Telescope", "quantity": 1} → "Here's your payment link: [URL]"
 
 CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid overwhelming responses. Never skip the list_prices call when showing product information.
 `;

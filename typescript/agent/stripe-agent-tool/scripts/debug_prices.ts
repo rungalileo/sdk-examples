@@ -2,7 +2,7 @@ import Stripe from 'stripe';
 import { env } from '../src/config/environment';
 
 const stripe = new Stripe(env.stripe.secretKey, {
-  apiVersion: '2025-02-24.acacia',
+  apiVersion: '2025-06-30.basil',
 });
 
 async function debugPrices() {
@@ -57,8 +57,20 @@ async function debugPrices() {
       
       console.log(`✅ Created test product with price: $${(testPrice.unit_amount! / 100).toFixed(2)}`);
       
-      // Clean up - delete the test product
-      await stripe.products.del(testProduct.id);
+      // Clean up - delete the test product and its prices
+      try {
+        // First deactivate the price
+        await stripe.prices.update(testPrice.id, { active: false });
+        console.log('  - Deactivated test price');
+        
+        // Then delete the product
+        await stripe.products.del(testProduct.id);
+        console.log('  ✅ Deleted test product');
+        
+      } catch (cleanupError) {
+        console.error('⚠️ Failed to clean up test product:', cleanupError);
+        console.log('  💡 Run "npm run cleanup-test-products" to clean up manually');
+      }
       
     } catch (testError) {
       console.error('❌ Test failed:', testError);
