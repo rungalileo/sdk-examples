@@ -1,8 +1,8 @@
 /**
- * STRIPE AGENT WITH GALILEO TRACING
+ * STRIPE AGENT WITH GALILEO AGENT RELIABILITY TOOLS
  * 
  * This is a complete example of building an AI agent that can interact with Stripe (payment processing)
- * while using Galileo for observability and tracing. Here's what this agent does:
+ * while using Galileo for Agent Reliability. Here's what this agent does:
  * 
  * 🤖 AGENT CAPABILITIES:
  * - Lists Stripe products and prices
@@ -57,20 +57,14 @@ console.log = (...args: any[]) => {
 import { StripeAgentToolkit } from '@stripe/agent-toolkit/langchain';
 import { ChatOpenAI } from '@langchain/openai';
 import { AgentExecutor, createStructuredChatAgent } from 'langchain/agents';
-import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { pull } from 'langchain/hub';
 import { DynamicTool } from '@langchain/core/tools';
-import { z } from 'zod';
 import Stripe from 'stripe';
 import { env } from '../config/environment';
 import { CircularToolError } from '../errors/CircularToolError';
 import { 
   AgentMessage, 
-  AgentResponse, 
-  PaymentRequest, 
-  PaymentLinkRequest, 
-  CustomerRequest,
-  AgentMetrics 
+  AgentResponse
 } from '../types';
 
 // Direct Galileo imports
@@ -121,88 +115,6 @@ interface SessionContext {
   };
 }
 
-// Store original console methods to suppress Galileo debug messages
-const originalConsole = {
-  debug: console.debug,
-  log: console.log,
-  warn: console.warn,
-  error: console.error
-};
-
-// Suppress debug messages and errors
-function suppressGalileoDebugMessages() {
-  // Override console.debug
-  console.debug = (...args: any[]) => {
-    const message = args.join(' ');
-    if (message.includes('No node exists for run_id') || 
-        message.includes('galileo') || 
-        message.includes('tracer') ||
-        message.includes('Flushing') ||
-        message.includes('Traces ingested') ||
-        message.includes('Successfully flushed') ||
-        message.includes('Setting root node')) {
-      return; // Suppress these specific messages
-    }
-    originalConsole.debug(...args);
-  };
-
-  // Override console.log to catch Galileo messages that might come through as logs
-  console.log = (...args: any[]) => {
-    const message = args.join(' ');
-    if (message.includes('No node exists for run_id') || 
-        message.includes('galileo') || 
-        message.includes('tracer') ||
-        message.includes('Flushing') ||
-        message.includes('Traces ingested') ||
-        message.includes('Successfully flushed') ||
-        message.includes('Setting root node')) {
-      return; // Suppress these specific messages
-    }
-    originalConsole.log(...args);
-  };
-
-  // Override console.error to catch Galileo errors
-  console.error = (...args: any[]) => {
-    const message = args.join(' ');
-    if (message.includes('No node exists for run_id') || 
-        message.includes('galileo') || 
-        message.includes('tracer') ||
-        message.includes('Flushing') ||
-        message.includes('Traces ingested') ||
-        message.includes('Successfully flushed') ||
-        message.includes('Setting root node')) {
-      return; // Suppress these specific messages
-    }
-    originalConsole.error(...args);
-  };
-
-  // Override console.warn to catch Galileo warnings
-  console.warn = (...args: any[]) => {
-    const message = args.join(' ');
-    if (message.includes('No node exists for run_id') || 
-        message.includes('galileo') || 
-        message.includes('tracer') ||
-        message.includes('Flushing') ||
-        message.includes('Traces ingested') ||
-        message.includes('Successfully flushed') ||
-        message.includes('Setting root node')) {
-      return; // Suppress these specific messages
-    }
-    originalConsole.warn(...args);
-  };
-}
-
-// Apply suppression immediately when module is loaded to catch early Galileo messages
-suppressGalileoDebugMessages();
-
-// console methods
-function restoreConsole() {
-  console.debug = originalConsole.debug;
-  console.log = originalConsole.log;
-  console.warn = originalConsole.warn;
-  console.error = originalConsole.error;
-}
-
 /**
  * STRIPE AGENT CLASS
  * 
@@ -230,7 +142,6 @@ export class StripeAgent {
   
   // ⚡ PERFORMANCE OPTIMIZATION (CACHING)
   private cachedProducts: any[] = [];                      // Cache Stripe products to avoid repeated API calls
-  private cachedPrices: any[] = [];                        // Cache pricing data
   private cacheTimestamp: number = 0;                      // When the cache was last updated
   private readonly CACHE_DURATION = 5 * 60 * 1000;        // Cache expires after 5 minutes
 
@@ -241,9 +152,6 @@ export class StripeAgent {
    * and will automatically start tracking your agent's behavior once you begin processing messages.
    */
   constructor() {
-    // Apply comprehensive debug message suppression globally
-    suppressGalileoDebugMessages();
-    
     // Also suppress process-level unhandled rejections that might contain Galileo errors
     process.on('unhandledRejection', (reason, promise) => {
       const reasonString = String(reason);
@@ -292,10 +200,7 @@ export class StripeAgent {
       },
     };
 
-    // Log session start with Galileo if enabled (suppressed for cleaner output)
-    if (this.galileoEnabled) {
-      // console.log(`🚀 Session ${sessionId} started with Galileo tracking`);
-    }
+
 
     return context;
   }
@@ -311,10 +216,7 @@ export class StripeAgent {
       lastActivity: new Date(),
     };
 
-    // Track message with Galileo if enabled (suppressed for cleaner output)
-    if (this.galileoEnabled) {
-      // console.log(`📝 Message ${updatedContext.messageCount} added to session ${context.sessionId}`);
-    }
+
 
     return updatedContext;
   }
@@ -329,10 +231,7 @@ export class StripeAgent {
       lastActivity: new Date(),
     };
 
-    // Track tool usage with Galileo if enabled (suppressed for cleaner output)
-    if (this.galileoEnabled) {
-    console.log(`🛠️ Tool "${toolName}" used in session ${context.sessionId}`);
-    }
+
 
     return updatedContext;
   }
@@ -369,15 +268,7 @@ export class StripeAgent {
       lastActivity: new Date(),
     };
 
-    // Track metrics with Galileo if enabled (suppressed for cleaner output)
-    if (this.galileoEnabled) {
-      // console.log(`📊 Session ${context.sessionId} metrics updated:`, {
-      //   totalOperations,
-      //   successRate: `${((newMetrics.successfulOperations / totalOperations) * 100).toFixed(1)}%`,
-      //   averageResponseTime: `${newMetrics.averageResponseTime?.toFixed(2)}ms`,
-      //   totalCost: updatedContext.totalCost,
-      // });
-    }
+
 
     return updatedContext;
   }
@@ -392,11 +283,10 @@ export class StripeAgent {
       lastActivity: new Date(),
     };
 
-          // Flush Galileo traces if enabled (suppressed for cleaner output)
+          // Flush Galileo traces if enabled
       if (this.galileoEnabled) {
         try {
           await flush();
-          // console.log(`✅ Session ${context.sessionId} ended and traces flushed to Galileo`);
         } catch (error: any) {
           console.warn(`⚠️ Failed to flush Galileo traces for session ${context.sessionId}: ${error.message}`);
         }
@@ -405,22 +295,9 @@ export class StripeAgent {
     return endedContext;
   }
 
-  /**
-   * Get current session context for external access
-   */
-  public getSessionContext(): SessionContext | null {
-    return this.sessionContext;
-  }
 
-  /**
-   * Helper method to validate and format JSON input for tools
-   * This method is now deprecated as we handle input validation directly in the tool
-   */
-  private validateAndFormatJsonInput(input: string): string {
-    // This method is kept for backward compatibility but the actual validation
-    // is now handled directly in the get_price_and_create_payment_link tool
-    return input;
-  }
+
+
 
   /**
    * INITIALIZATION - Must be called before using the agent
@@ -429,23 +306,28 @@ export class StripeAgent {
    * involves async operations (loading prompts from LangChain Hub).
    */
   async init() {
-    // Galileo initialization
+    // Galileo initialization with enhanced logging configuration
     try {
       await init();
-      this.galileoCallback = new GalileoCallback();
-      this.galileoEnabled = true;
-      // console.log('✅ Galileo initialized successfully.');
       
-      // The existing suppressGalileoDebugMessages() should handle this, but let's add extra protection
-      // for the specific "No node exists for run_id" error that might slip through
-      const originalError = console.error;
-      console.error = (...args: any[]) => {
-        const message = args.join(' ');
-        if (message.includes('No node exists for run_id')) {
-          return; // Completely suppress this specific error
+      // Initialize Galileo callback with standard configuration
+      this.galileoCallback = new GalileoCallback({
+        verbose: true,
+        logInputs: true,
+        logOutputs: true,
+        logErrors: true,
+        metadata: {
+          agent: 'StripeAgent',
+          version: '1.0.0',
+          environment: process.env.NODE_ENV || 'development',
+          projectName: env.galileo.projectName,
+          logStream: env.galileo.logStream
         }
-        originalError(...args);
-      };
+      });
+      
+      this.galileoEnabled = true;
+      
+
       
     } catch (error: any) {
       console.warn(`⚠️ Galileo initialization failed: ${error.message}`);
@@ -784,6 +666,8 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
     }
     const startTime = Date.now();
     
+
+    
     try {
       // Start a session if this is the first message
       if (!this.sessionContext || !this.sessionContext.isActive) {
@@ -805,8 +689,7 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
       const conversationContext = this.buildConversationContext();
 
       // 🤖 CORE AGENT PROCESSING - This is where the magic happens!
-      // Direct Galileo integration manages all tracing automatically
-      // console.log('🤖 Processing message with Galileo tracing...');
+
       
       // Direct Galileo callback usage
       const callbacks = this.galileoEnabled ? [this.galileoCallback] : [];
@@ -819,7 +702,7 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
         callbacks,
       });
       
-      // console.log('✅ Message processing completed');
+
       
       // 🔍 ERROR DETECTION: Check for circular tool usage
       this.detectCircularToolUsage(result.intermediateSteps);
@@ -882,6 +765,8 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
       const executionTime = Date.now() - startTime;
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       
+
+      
       console.error('❌ Agent processing error:', errorMessage);
       
       // 📊 UPDATE SESSION METRICS FOR FAILED OPERATION
@@ -896,6 +781,8 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
       
       // 🔄 SPECIAL HANDLING: Circular Tool Errors
       if (error instanceof CircularToolError) {
+
+        
         console.error('🔄 CircularToolError caught:', error.message);
         
         return {
@@ -1024,11 +911,11 @@ ${paymentLinkUrl}
       
       // Check if user input indicates purchase intent
       if (userInput && this.detectPurchaseIntent(userInput)) {
-        cleanOutput += '\n\n🛒 **I\'d be happy to help you make a purchase!** Let me show you what\'s available in our inventory:';
-        
         // Try to get current inventory from recent tool calls
         const recentProducts = this.getRecentProducts(result);
         if (recentProducts && recentProducts.length > 0) {
+          // If we have products, show them in a helpful way
+          cleanOutput += '\n\n🛒 **Here are some products you might be interested in:**';
           cleanOutput += '\n\n**Available Products (showing first 10):**';
           recentProducts.slice(0, 10).forEach((product: any) => {
             if (product.prices && product.prices.length > 0) {
@@ -1047,7 +934,8 @@ ${paymentLinkUrl}
           }
           cleanOutput += '\n\nJust let me know which product you\'d like to purchase and I\'ll create a payment link for you!';
         } else {
-          cleanOutput += '\n\nLet me check our current inventory for you. What type of product are you looking for?';
+          // If no products found, provide a helpful response
+          cleanOutput += '\n\n🛒 **I\'d be happy to help you make a purchase!** Let me check our current inventory for you. What type of product are you looking for?';
         }
       }
       
@@ -1143,11 +1031,7 @@ ${paymentLinkUrl}
     this.cacheTimestamp = Date.now();
   }
 
-  private clearCache(): void {
-    this.cachedProducts = [];
-    this.cachedPrices = [];
-    this.cacheTimestamp = 0;
-  }
+
 
   private enrichProductsWithPrices(products: any[], intermediateSteps: any[]): any[] {
     // Look for price information in the intermediate steps
@@ -1276,16 +1160,7 @@ ${paymentLinkUrl}
     }
   }
 
-  // Convenience methods for common operations
-  async createPaymentLink(request: PaymentLinkRequest): Promise<AgentResponse> {
-    const message = `Create a payment link for "${request.productName}" with amount ${request.amount} ${request.currency.toUpperCase()}`;
-    return this.processMessage(message);
-  }
 
-  async createCustomer(request: CustomerRequest): Promise<AgentResponse> {
-    const message = `Create a new customer with email ${request.email}${request.name ? ` and name ${request.name}` : ''}`;
-    return this.processMessage(message);
-  }
 
   getConversationHistory(): AgentMessage[] {
     return [...this.sessionContext?.conversationHistory || []];
@@ -1355,7 +1230,10 @@ ${paymentLinkUrl}
     if (this.sessionContext) {
       const newSessionId = `session-${Date.now()}`;
       this.sessionContext = this.createSessionContext(newSessionId);
-      // console.log(`🔄 Conversation restarted with new session: ${newSessionId}`);
+      
+
     }
   }
+
+
 }
