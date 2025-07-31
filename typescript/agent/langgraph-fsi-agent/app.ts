@@ -39,58 +39,66 @@ const chatHistory = [];
     // Get the Galileo logger instance
     const galileoLogger = getLogger();
 
-    // Start a new session named using the current date and time
+    // Create a unique session name with timestamp
     // This way every time you run the application, it will create a new session in Galileo
-    // with the entire conversation inside the same session, with each message back and forth
-    // logged as different traces within that session.
-    const sessionName = `LLM Chatbot session - ${new Date().toISOString()}`;
+    const sessionName = `fsi-agent-session-${Date.now()}`;
+
     await galileoLogger.startSession({ name: sessionName });
 
-    // Create a readline interface to read input from the terminal
-    // This allows the user to interact with the chatbot through the terminal.
     const rl = readline.createInterface({
         input: process.stdin,
-        output: process.stdout
+        output: process.stdout,
     });
 
-    // Create the supervisor agent
-    // This agent will manage the conversation and delegate tasks to other agents as needed.
-    const supervisorAgent = createSupervisorAgent();
+    console.log("Welcome to the Financial Services Agent!");
+    console.log("Ask me about credit scores, credit cards, or other financial services.");
+    console.log("Type 'exit' to quit.\n");
 
-    while (true) {
-        // Prompt the user for input
-        const userInput = await new Promise<string>((resolve) => {
-            rl.question("You: ", resolve);
+    // Track interactions for batched flushing
+    let interactionCount = 0;
+    const FLUSH_INTERVAL = 5; // Flush every 5 interactions
+
+    const askQuestion = () => {
+        rl.question("You: ", async (input) => {
+            if (input.toLowerCase() === "exit") {
+                console.log("Goodbye!");
+                // Final flush on exit
+                try {
+                    await galileoLogger.flush();
+                } catch (error) {
+                    // Silent error handling for flush
+                }
+                rl.close();
+                return;
+            }
+
+            try {
+                const galileoCallback = new GalileoCallback(galileoLogger, true, false);
+
+                const result = await graph.invoke({
+                    messages: [new HumanMessage(input)],
+                }, { configurable: { thread_id: "42" }, callbacks: [galileoCallback] });
+
+                const lastMessage = result.messages[result.messages.length - 1];
+                console.log("Agent:", lastMessage.content);
+
+                interactionCount++;
+                
+                // Only flush periodically instead of after every interaction
+                if (interactionCount % FLUSH_INTERVAL === 0) {
+                    try {
+                        await galileoLogger.flush();
+                    } catch (error) {
+                        // Silent error handling for flush
+                    }
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+
+            askQuestion();
         });
+    };
 
-        // Check if the user wants to exit the chatbot
-        if (userInput === null || ["", "exit", "bye", "quit"].includes(userInput.toLowerCase())) {
-            console.log("Goodbye!");
-            break;
-        }
-
-        // Add the user input to the chat history
-        chatHistory.push({ role: "user", content: userInput });
-
-        const galileoCallback = new GalileoCallback(galileoLogger, true, false);
-
-        // Invoke the supervisor agent with the chat history
-        const response = await supervisorAgent.invoke({
-            messages: chatHistory
-        }, { configurable: { thread_id: "42" }, callbacks: [galileoCallback] });
-
-        const responseContent = response.messages.slice(-1)[0].content;
-
-        // Log the response to the console
-        console.log("Assistant:", responseContent);
-
-        // Add the response to the chat history
-        chatHistory.push({ role: "assistant", content: responseContent });
-
-        // Flush the logger after each interaction
-        // This can be done automatically by the logger, but doing it explicitly to ensure
-        // the console logging looks good.
-        await galileoLogger.flush();
-    }
-    rl.close();
+    askQuestion();
 })();

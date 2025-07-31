@@ -41,42 +41,65 @@ import { chatWithLLM } from './chat';
     // Get the Galileo logger instance
     const galileoLogger = getLogger();
 
-    // Start a new session named using the current date and time
+    // Create a unique session name with timestamp
     // This way every time you run the application, it will create a new session in Galileo
-    // with the entire conversation inside the same session, with each message back and forth
-    // logged as different traces within that session.
-    const sessionName = `LLM Chatbot session - ${new Date().toISOString()}`;
+    const sessionName = `chatbot-session-${Date.now()}`;
+
     await galileoLogger.startSession({ name: sessionName });
 
-    // Create a readline interface to read input from the terminal
-    // This allows the user to interact with the chatbot through the terminal.
     const rl = readline.createInterface({
         input: process.stdin,
-        output: process.stdout
+        output: process.stdout,
     });
 
-    while (true) {
-        // Prompt the user for input
-        const userInput = await new Promise<string>((resolve) => {
-            rl.question("You: ", resolve);
+    console.log("Welcome to the Chatbot!");
+    console.log("Ask me anything. Type 'exit' to quit.\n");
+
+    // Track interactions for batched flushing
+    let interactionCount = 0;
+    const FLUSH_INTERVAL = 5; // Flush every 5 interactions
+
+    const askQuestion = () => {
+        rl.question("You: ", async (userInput) => {
+            if (userInput.toLowerCase() === "exit") {
+                console.log("Goodbye!");
+                // Final flush on exit
+                try {
+                    await galileoLogger.flush();
+                } catch (error) {
+                    // Silent error handling for flush
+                }
+                rl.close();
+                return;
+            }
+
+            try {
+                // Start a new trace for this conversation step
+                galileoLogger.startTrace({ name: "Conversation step", input: userInput });
+
+                const response = await chatWithLLM(userInput);
+                console.log("Bot:", response);
+
+                interactionCount++;
+
+                // Conclude the trace
+                galileoLogger.conclude({ output: response });
+                
+                // Only flush periodically instead of after every interaction
+                if (interactionCount % FLUSH_INTERVAL === 0) {
+                    try {
+                        await galileoLogger.flush();
+                    } catch (error) {
+                        // Silent error handling for flush
+                    }
+                }
+            } catch (error) {
+                console.error("Error:", error);
+            }
+
+            askQuestion();
         });
+    };
 
-        // Check if the user wants to exit the chatbot
-        if (userInput === null || ["", "exit", "bye", "quit"].includes(userInput.toLowerCase())) {
-            console.log("Goodbye!");
-            break;
-        }
-
-        // Start a trace for the user input
-        galileoLogger.startTrace({ name: "Conversation step", input: userInput });
-
-        // Call the chatWithLLM function to get a response from the LLM
-        const response = await chatWithLLM(userInput);
-
-        // Conclude and flush the logger after each interaction
-        // so that a new trace is started each time
-        galileoLogger.conclude({ output: response });
-        await galileoLogger.flush();
-    }
-    rl.close();
+    askQuestion();
 })();

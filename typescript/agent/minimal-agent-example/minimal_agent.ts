@@ -5,6 +5,7 @@ import { OpenAI } from 'openai';
 import { log, wrapOpenAI, init, flush } from 'galileo';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
+import readline from 'readline';
 
 // Load environment variables
 dotenv.config();
@@ -175,43 +176,61 @@ const processQuery = log(
 );
 
 async function main() {
-  console.log(chalk.bold('Minimal Number Converter & Calculator'));
-  
   // Initialize Galileo with project and log stream names
-  init({
+  await init({
     projectName,
     logStreamName
   });
-  
-  console.log(chalk.green(`✅ Project: ${projectName}`));
-  console.log(chalk.green(`✅ Log Stream: ${logStreamName}`));
-  
-  try {
-    const { query } = await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'query',
-        message: 'Enter your query:',
-        default: "What's 4 + seven?"
+
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  console.log("Welcome to the Minimal Agent!");
+  console.log("Ask me anything. Type 'exit' to quit.\n");
+
+  // Track interactions for batched flushing
+  let interactionCount = 0;
+  const FLUSH_INTERVAL = 5; // Flush every 5 interactions
+
+  const askQuestion = () => {
+    rl.question("You: ", async (userInput) => {
+      if (userInput.toLowerCase() === "exit") {
+        console.log("Goodbye!");
+        // Final flush on exit
+        try {
+          await flush();
+        } catch (error) {
+          // Silent error handling for flush
+        }
+        rl.close();
+        return;
       }
-    ]);
-    
-    if (!query || ['exit', 'quit', 'q'].includes(query.toLowerCase())) {
-      console.log('Exiting.');
-      return;
-    }
-    
-    // Process the query
-    const result = await processQuery(query);
-    
-    console.log(chalk.bold.green('\nResult:'));
-    console.log(result);
-  } catch (error) {
-    console.error('Error:', error);
-  } finally {
-    // Flush Galileo logs
-    await flush();
-  }
+
+      try {
+        const response = await processQuery(userInput);
+        console.log("Agent:", response);
+
+        interactionCount++;
+        
+        // Only flush periodically instead of after every interaction
+        if (interactionCount % FLUSH_INTERVAL === 0) {
+          try {
+            await flush();
+          } catch (error) {
+            // Silent error handling for flush
+          }
+        }
+      } catch (error) {
+        console.error("Error:", error);
+      }
+
+      askQuestion();
+    });
+  };
+
+  askQuestion();
 }
 
 // Run the main function

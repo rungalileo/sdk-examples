@@ -3,6 +3,7 @@ import { OpenAI } from 'openai';
 import { log, wrapOpenAI, init, flush } from 'galileo';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
+import readline from 'readline';
 
 // Load environment variables
 dotenv.config();
@@ -113,75 +114,87 @@ async function rag(query: string): Promise<string> {
 
 async function main() {
   console.log(chalk.bold.blue('=== Galileo RAG Terminal Demo ==='));
-  console.log('This demo uses a simulated RAG system to answer your questions.\n');
-  
+  console.log(chalk.gray('This demo shows how to integrate Galileo logging with a RAG system.\n'));
+
   // Initialize Galileo with project and log stream names
-  init({
-    projectName,
-    logStreamName
-  });
-  
-  // Check environment setup
   if (loggingEnabled) {
-    console.log(chalk.green('✅ Galileo logging is enabled'));
-    console.log(chalk.green(`✅ Project: ${projectName}`));
-    console.log(chalk.green(`✅ Log Stream: ${logStreamName}`));
+    try {
+      await init({
+        projectName,
+        logStreamName,
+      });
+      console.log(chalk.green('✅ Galileo logging is enabled'));
+      console.log(chalk.gray(`Project: ${projectName}, Stream: ${logStreamName}\n`));
+    } catch (error) {
+      console.error(chalk.red('❌ Failed to initialize Galileo:'), error);
+    }
   } else {
     console.log(chalk.yellow('⚠️ Galileo logging is disabled'));
+    console.log(chalk.gray('Set GALILEO_API_KEY to enable logging\n'));
   }
-  
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (apiKey) {
-    console.log(chalk.green('✅ OpenAI API Key is set'));
-  } else {
-    console.log(chalk.red('❌ OpenAI API Key is missing'));
-    process.exit(1);
-  }
-  
-  // Main interaction loop
-  let continueSession = true;
-  while (continueSession) {
-    try {
-      // Get user query
-      const { query } = await inquirer.prompt([
-        {
-          type: 'input',
-          name: 'query',
-          message: 'Enter your question about Galileo, RAG, or AI techniques:',
-          validate: (input: string) => input.length > 0 ? true : 'Please enter a question'
+
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+  // Track interactions for batched flushing
+  let interactionCount = 0;
+  const FLUSH_INTERVAL = 3; // Flush every 3 interactions for RAG (smaller interval due to complexity)
+
+  const askQuestion = () => {
+    rl.question(
+      chalk.cyan('\n? ') + 
+      chalk.bold('Enter your question about Galileo, RAG, or AI techniques: '), 
+      async (question) => {
+        if (question.toLowerCase().trim() === 'exit' || question.toLowerCase().trim() === 'quit') {
+          console.log(chalk.bold('\nExiting RAG Demo. Goodbye!'));
+          // Final flush on exit
+          if (loggingEnabled) {
+            try {
+              await flush();
+            } catch (error) {
+              // Silent error handling for flush
+            }
+          }
+          rl.close();
+          return;
         }
-      ]);
-      
-      if (['exit', 'quit', 'q'].includes(query.toLowerCase())) {
-        break;
+
+        if (!question.trim()) {
+          console.log(chalk.yellow('Please enter a question or type "exit" to quit.'));
+          askQuestion();
+          return;
+        }
+
+        try {
+          console.log(chalk.gray('\n🔍 Processing your question...'));
+          
+          const answer = await rag(question);
+          
+          console.log(chalk.bold.green('\n📝 Answer:'));
+          console.log(chalk.white(answer));
+          
+          interactionCount++;
+          
+          // Only flush periodically instead of after every interaction
+          if (loggingEnabled && interactionCount % FLUSH_INTERVAL === 0) {
+            try {
+              await flush();
+            } catch (error) {
+              // Silent error handling for flush
+            }
+          }
+        } catch (error) {
+          console.error(chalk.red('\n❌ Error processing question:'), error);
+        }
+
+        askQuestion();
       }
-      
-      const result = await rag(query);
-      
-      console.log(chalk.bold.green('\nAnswer:'));
-      console.log(chalk.green('-------------------------------------------'));
-      console.log(result);
-      console.log(chalk.green('-------------------------------------------'));
-      
-      // Ask if user wants to continue
-      const { continue: shouldContinue } = await inquirer.prompt([
-        {
-          type: 'confirm',
-          name: 'continue',
-          message: 'Do you want to ask another question?',
-          default: true
-        }
-      ]);
-      
-      continueSession = shouldContinue;
-    } catch (error) {
-      console.error(chalk.red(`Error: ${error instanceof Error ? error.message : String(error)}`));
-    }
-  }
-  
-  // Flush Galileo logs
-  await flush();
-  console.log(chalk.bold('\nExiting RAG Demo. Goodbye!'));
+    );
+  };
+
+  askQuestion();
 }
 
 // Run the main function
