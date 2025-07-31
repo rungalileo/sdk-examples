@@ -467,9 +467,8 @@ export class StripeAgent {
               
               const link = await stripe.paymentLinks.create({
                 line_items: [{price: prices.data[0].id, quantity: Math.max(1, quantity)}]
-              });
+                          });
               
-              console.log(`🔍 Created payment link: ${link.url}`);
               return link.url;
             }
           } catch (parseError) {
@@ -488,14 +487,11 @@ export class StripeAgent {
           try {
             const parsed = JSON.parse(cleanedInput);
             if (parsed.product_name) {
-              console.log(`🔍 Successfully parsed JSON after quote removal:`, parsed);
               const { product_name, quantity = 1 } = parsed;
               
               if (!product_name) {
                 return 'Error: Product name is required. Please specify which product the customer wants to purchase.';
               }
-              
-              console.log(`🔍 Looking for product: "${product_name}" with quantity: ${quantity}`);
               
               // Search for products with fuzzy matching
               const products = await stripe.products.list({limit: 100});
@@ -514,25 +510,23 @@ export class StripeAgent {
                 return `Product "${product_name}" not found in inventory. Available products include: ${availableProducts}. Please check the product name and try again.`;
               }
               
-              console.log(`🔍 Found product: "${product.name}"`);
-              
               const prices = await stripe.prices.list({product: product.id, active: true});
               if (!prices.data.length) {
                 return `Product "${product.name}" found but has no active pricing. Please contact support or try a different product.`;
               }
               
-              console.log(`🔍 Found ${prices.data.length} active prices for product`);
-              
               const link = await stripe.paymentLinks.create({
                 line_items: [{price: prices.data[0].id, quantity: Math.max(1, quantity)}]
               });
               
-              console.log(`🔍 Created payment link: ${link.url}`);
               return link.url;
             }
           } catch (secondParseError) {
-            console.log(`🔍 Failed to parse after quote removal, input format is invalid`);
+            // Input format is invalid
           }
+          
+          // Case 3: Input is completely malformed - provide clear error message
+          return `Error: Invalid input format. Received: "${input}". Please use the exact JSON format: {"product_name": "exact product name", "quantity": 1}. Example: {"product_name": "Galileo Telescope", "quantity": 2}`;
           
           // Case 3: Input is completely malformed - provide clear error message
           return `Error: Invalid input format. Received: "${input}". Please use the exact JSON format: {"product_name": "exact product name", "quantity": 1}. Example: {"product_name": "Galileo Telescope", "quantity": 2}`;
@@ -709,15 +703,7 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
       
       // 📊 DEBUG MODE: Show detailed step-by-step execution (optional)
       if (env.app.agentVerbose) {
-        if (result.intermediateSteps && result.intermediateSteps.length > 0) {
-          console.log('🔍 INTERMEDIATE STEPS:');
-          result.intermediateSteps.forEach((step: any, index: number) => {
-            console.log(`\n--- Step ${index + 1} ---`);
-            console.log('Tool:', step.action?.tool);
-            console.log('Input:', step.action?.toolInput);
-            console.log('Output:', step.observation);
-          });
-        }
+        // Debug information is now handled silently
       }
 
       // ✨ RESPONSE FORMATTING
