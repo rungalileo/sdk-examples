@@ -38,7 +38,8 @@ console.error = (...args: any[]) => {
       message.includes('Flushing') ||
       message.includes('Traces ingested') ||
       message.includes('Successfully flushed') ||
-      message.includes('Setting root node')) {
+      message.includes('Setting root node') ||
+      message.includes('No traces to flush')) {
     return; // Completely suppress these specific messages
   }
   originalConsoleError(...args);
@@ -48,7 +49,8 @@ console.log = (...args: any[]) => {
   if (message.includes('Flushing') ||
       message.includes('Traces ingested') ||
       message.includes('Successfully flushed') ||
-      message.includes('Setting root node')) {
+      message.includes('Setting root node') ||
+      message.includes('No traces to flush')) {
     return; // Completely suppress these specific messages
   }
   originalConsoleLog(...args);
@@ -425,8 +427,7 @@ export class StripeAgent {
       description: 'Create payment link for specific product. Input should be a JSON string with format: {"product_name": "exact product name", "quantity": 1}. Use this ONLY when user explicitly wants to purchase a specific product. Example: {"product_name": "Galileo Telescope", "quantity": 2}',
       func: async (input: string) => {
         try {
-          // Log the input for debugging
-          console.log(`🔍 get_price_and_create_payment_link received input: "${input}"`);
+    
           
           // Handle different input formats that the LLM might send
           let cleanedInput = input.trim();
@@ -435,14 +436,11 @@ export class StripeAgent {
           try {
             const parsed = JSON.parse(cleanedInput);
             if (parsed.product_name) {
-              console.log(`🔍 Successfully parsed JSON input:`, parsed);
               const { product_name, quantity = 1 } = parsed;
               
               if (!product_name) {
                 return 'Error: Product name is required. Please specify which product the customer wants to purchase.';
               }
-              
-              console.log(`🔍 Looking for product: "${product_name}" with quantity: ${quantity}`);
               
               // Search for products with fuzzy matching
               const products = await stripe.products.list({limit: 100});
@@ -461,14 +459,11 @@ export class StripeAgent {
                 return `Product "${product_name}" not found in inventory. Available products include: ${availableProducts}. Please check the product name and try again.`;
               }
               
-              console.log(`🔍 Found product: "${product.name}"`);
-              
               const prices = await stripe.prices.list({product: product.id, active: true});
               if (!prices.data.length) {
                 return `Product "${product.name}" found but has no active pricing. Please contact support or try a different product.`;
               }
               
-              console.log(`🔍 Found ${prices.data.length} active prices for product`);
               
               const link = await stripe.paymentLinks.create({
                 line_items: [{price: prices.data[0].id, quantity: Math.max(1, quantity)}]
@@ -478,7 +473,6 @@ export class StripeAgent {
               return link.url;
             }
           } catch (parseError) {
-            console.log(`🔍 Failed to parse as JSON, trying alternative formats...`);
           }
           
           // Case 2: Input might be wrapped in extra quotes or have formatting issues
