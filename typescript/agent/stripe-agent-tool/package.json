@@ -5,11 +5,9 @@
     "main": "src/index.ts",
     "scripts": {
         "build": "tsc",
-        "start": "ts-node src/index.ts",
-        "dev": "ts-node src/index.ts",
-        "interactive": "ts-node src/interactive.ts",
-        "web": "ts-node src/server.ts",
-        "web:build": "ts-node src/server.ts",
+        "dev": "ts-node src/index.ts", // run the agent without interactivity to confirm setup
+        "interactive": "ts-node src/interactive.ts", // CLI-interface
+        "web": "ts-node src/server.ts", // web version
         "test": "jest",
         "setup-products": "ts-node scripts/setup_products.ts",
     },
