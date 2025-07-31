@@ -31,12 +31,27 @@ process.env.LANGCHAIN_CALLBACKS = 'true';   // Enable callback handlers (like Ga
 
 // Immediately suppress the specific Galileo error that appears in terminal output
 const originalConsoleError = console.error;
+const originalConsoleLog = console.log;
 console.error = (...args: any[]) => {
   const message = args.join(' ');
-  if (message.includes('No node exists for run_id')) {
-    return; // Completely suppress this specific error
+  if (message.includes('No node exists for run_id') ||
+      message.includes('Flushing') ||
+      message.includes('Traces ingested') ||
+      message.includes('Successfully flushed') ||
+      message.includes('Setting root node')) {
+    return; // Completely suppress these specific messages
   }
   originalConsoleError(...args);
+};
+console.log = (...args: any[]) => {
+  const message = args.join(' ');
+  if (message.includes('Flushing') ||
+      message.includes('Traces ingested') ||
+      message.includes('Successfully flushed') ||
+      message.includes('Setting root node')) {
+    return; // Completely suppress these specific messages
+  }
+  originalConsoleLog(...args);
 };
 
 import { StripeAgentToolkit } from '@stripe/agent-toolkit/langchain';
@@ -121,7 +136,11 @@ function suppressGalileoDebugMessages() {
     const message = args.join(' ');
     if (message.includes('No node exists for run_id') || 
         message.includes('galileo') || 
-        message.includes('tracer')) {
+        message.includes('tracer') ||
+        message.includes('Flushing') ||
+        message.includes('Traces ingested') ||
+        message.includes('Successfully flushed') ||
+        message.includes('Setting root node')) {
       return; // Suppress these specific messages
     }
     originalConsole.debug(...args);
@@ -132,7 +151,11 @@ function suppressGalileoDebugMessages() {
     const message = args.join(' ');
     if (message.includes('No node exists for run_id') || 
         message.includes('galileo') || 
-        message.includes('tracer')) {
+        message.includes('tracer') ||
+        message.includes('Flushing') ||
+        message.includes('Traces ingested') ||
+        message.includes('Successfully flushed') ||
+        message.includes('Setting root node')) {
       return; // Suppress these specific messages
     }
     originalConsole.log(...args);
@@ -143,7 +166,11 @@ function suppressGalileoDebugMessages() {
     const message = args.join(' ');
     if (message.includes('No node exists for run_id') || 
         message.includes('galileo') || 
-        message.includes('tracer')) {
+        message.includes('tracer') ||
+        message.includes('Flushing') ||
+        message.includes('Traces ingested') ||
+        message.includes('Successfully flushed') ||
+        message.includes('Setting root node')) {
       return; // Suppress these specific messages
     }
     originalConsole.error(...args);
@@ -154,7 +181,11 @@ function suppressGalileoDebugMessages() {
     const message = args.join(' ');
     if (message.includes('No node exists for run_id') || 
         message.includes('galileo') || 
-        message.includes('tracer')) {
+        message.includes('tracer') ||
+        message.includes('Flushing') ||
+        message.includes('Traces ingested') ||
+        message.includes('Successfully flushed') ||
+        message.includes('Setting root node')) {
       return; // Suppress these specific messages
     }
     originalConsole.warn(...args);
@@ -261,9 +292,9 @@ export class StripeAgent {
       },
     };
 
-    // Log session start with Galileo if enabled
+    // Log session start with Galileo if enabled (suppressed for cleaner output)
     if (this.galileoEnabled) {
-      console.log(`🚀 Session ${sessionId} started with Galileo tracking`);
+      // console.log(`🚀 Session ${sessionId} started with Galileo tracking`);
     }
 
     return context;
@@ -280,9 +311,9 @@ export class StripeAgent {
       lastActivity: new Date(),
     };
 
-    // Track message with Galileo if enabled
+    // Track message with Galileo if enabled (suppressed for cleaner output)
     if (this.galileoEnabled) {
-      console.log(`📝 Message ${updatedContext.messageCount} added to session ${context.sessionId}`);
+      // console.log(`📝 Message ${updatedContext.messageCount} added to session ${context.sessionId}`);
     }
 
     return updatedContext;
@@ -298,9 +329,9 @@ export class StripeAgent {
       lastActivity: new Date(),
     };
 
-    // Track tool usage with Galileo if enabled
+    // Track tool usage with Galileo if enabled (suppressed for cleaner output)
     if (this.galileoEnabled) {
-      console.log(`🛠️ Tool "${toolName}" used in session ${context.sessionId}`);
+    console.log(`🛠️ Tool "${toolName}" used in session ${context.sessionId}`);
     }
 
     return updatedContext;
@@ -338,14 +369,14 @@ export class StripeAgent {
       lastActivity: new Date(),
     };
 
-    // Track metrics with Galileo if enabled
+    // Track metrics with Galileo if enabled (suppressed for cleaner output)
     if (this.galileoEnabled) {
-      console.log(`📊 Session ${context.sessionId} metrics updated:`, {
-        totalOperations,
-        successRate: `${((newMetrics.successfulOperations / totalOperations) * 100).toFixed(1)}%`,
-        averageResponseTime: `${newMetrics.averageResponseTime?.toFixed(2)}ms`,
-        totalCost: updatedContext.totalCost,
-      });
+      // console.log(`📊 Session ${context.sessionId} metrics updated:`, {
+      //   totalOperations,
+      //   successRate: `${((newMetrics.successfulOperations / totalOperations) * 100).toFixed(1)}%`,
+      //   averageResponseTime: `${newMetrics.averageResponseTime?.toFixed(2)}ms`,
+      //   totalCost: updatedContext.totalCost,
+      // });
     }
 
     return updatedContext;
@@ -361,15 +392,15 @@ export class StripeAgent {
       lastActivity: new Date(),
     };
 
-    // Flush Galileo traces if enabled
-    if (this.galileoEnabled) {
-      try {
-        await flush();
-        console.log(`✅ Session ${context.sessionId} ended and traces flushed to Galileo`);
-      } catch (error: any) {
-        console.warn(`⚠️ Failed to flush Galileo traces for session ${context.sessionId}: ${error.message}`);
+          // Flush Galileo traces if enabled (suppressed for cleaner output)
+      if (this.galileoEnabled) {
+        try {
+          await flush();
+          // console.log(`✅ Session ${context.sessionId} ended and traces flushed to Galileo`);
+        } catch (error: any) {
+          console.warn(`⚠️ Failed to flush Galileo traces for session ${context.sessionId}: ${error.message}`);
+        }
       }
-    }
 
     return endedContext;
   }
@@ -424,7 +455,7 @@ export class StripeAgent {
       await init();
       this.galileoCallback = new GalileoCallback();
       this.galileoEnabled = true;
-      console.log('✅ Galileo initialized successfully.');
+      // console.log('✅ Galileo initialized successfully.');
       
       // The existing suppressGalileoDebugMessages() should handle this, but let's add extra protection
       // for the specific "No node exists for run_id" error that might slip through
@@ -721,7 +752,7 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
 
       // 🤖 CORE AGENT PROCESSING - This is where the magic happens!
       // Direct Galileo integration manages all tracing automatically
-      console.log('🤖 Processing message with Galileo tracing...');
+      // console.log('🤖 Processing message with Galileo tracing...');
       
       // Direct Galileo callback usage
       const callbacks = this.galileoEnabled ? [this.galileoCallback] : [];
@@ -734,7 +765,7 @@ CRITICAL: Always use limit: 10 for both list_products and list_prices to avoid o
         callbacks,
       });
       
-      console.log('✅ Message processing completed');
+      // console.log('✅ Message processing completed');
       
       // 🔍 ERROR DETECTION: Check for circular tool usage
       this.detectCircularToolUsage(result.intermediateSteps);
@@ -1246,15 +1277,15 @@ ${paymentLinkUrl}
   async endConversation(): Promise<void> {
     this.conversationEnded = true;
     
-    // End the session and flush any remaining traces
-    if (this.sessionContext && this.galileoEnabled) {
-      try {
-        this.sessionContext = await this.endSession(this.sessionContext);
-        console.log(`📊 Session ${this.sessionContext?.sessionId} ended and traces flushed`);
-      } catch (error: any) {
-        console.warn(`⚠️ Failed to flush Galileo traces: ${error.message}`);
+          // End the session and flush any remaining traces
+      if (this.sessionContext && this.galileoEnabled) {
+        try {
+          this.sessionContext = await this.endSession(this.sessionContext);
+          // console.log(`📊 Session ${this.sessionContext?.sessionId} ended and traces flushed`);
+        } catch (error: any) {
+          console.warn(`⚠️ Failed to flush Galileo traces: ${error.message}`);
+        }
       }
-    }
   }
 
   // Add method to check if conversation has ended
@@ -1270,7 +1301,7 @@ ${paymentLinkUrl}
     if (this.sessionContext) {
       const newSessionId = `session-${Date.now()}`;
       this.sessionContext = this.createSessionContext(newSessionId);
-      console.log(`🔄 Conversation restarted with new session: ${newSessionId}`);
+      // console.log(`🔄 Conversation restarted with new session: ${newSessionId}`);
     }
   }
 }
