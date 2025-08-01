@@ -34,6 +34,8 @@ process.env.LANGCHAIN_CALLBACKS = 'true';   // Enable callback handlers (like Ga
 const originalConsoleError = console.error;
 const originalConsoleLog = console.log;
 const originalConsoleDebug = console.debug;
+const originalConsoleWarn = console.warn;
+const originalConsoleInfo = console.info;
 
 console.error = (...args: any[]) => {
   const message = args.join(' ');
@@ -60,10 +62,22 @@ console.log = (...args: any[]) => {
   originalConsoleLog(...args);
 };
 
-// Override console.debug to only print when VERBOSE is enabled
+// Override console methods to respect VERBOSE environment variable
 console.debug = (...args: any[]) => {
-  if (process.env.VERBOSE) {
+  if (process.env.VERBOSE !== 'false') {
     originalConsoleDebug(...args);
+  }
+};
+
+console.warn = (...args: any[]) => {
+  if (process.env.VERBOSE !== 'false') {
+    originalConsoleWarn(...args);
+  }
+};
+
+console.info = (...args: any[]) => {
+  if (process.env.VERBOSE !== 'false') {
+    originalConsoleInfo(...args);
   }
 };
 

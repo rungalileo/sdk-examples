@@ -3,33 +3,56 @@ process.env.LANGCHAIN_LOGGING = 'info';
 process.env.LANGCHAIN_VERBOSE = 'false';
 process.env.LANGCHAIN_CALLBACKS = 'true';
 
-// Immediately suppress Galileo flush messages in interactive mode
-const originalConsoleLog = console.log;
+// Suppress Galileo SDK internal messages to reduce console noise
+// These messages come from the Galileo SDK when it flushes traces to the server
 const originalConsoleError = console.error;
-console.log = (...args: any[]) => {
-  const message = args.join(' ');
-  if (message.includes('Flushing') ||
-      message.includes('Traces ingested') ||
-      message.includes('Successfully flushed') ||
-      message.includes('Setting root node') ||
-      message.includes('Session') && message.includes('started with Galileo') ||
-      message.includes('Session') && message.includes('ended and traces flushed') ||
-      message.includes('Message') && message.includes('added to session') ||
-      message.includes('Tool') && message.includes('used in session')) {
-    return; // Completely suppress these specific messages
-  }
-  originalConsoleLog(...args);
-};
+const originalConsoleLog = console.log;
+const originalConsoleDebug = console.debug;
+const originalConsoleWarn = console.warn;
+const originalConsoleInfo = console.info;
+
 console.error = (...args: any[]) => {
   const message = args.join(' ');
   if (message.includes('No node exists for run_id') ||
       message.includes('Flushing') ||
       message.includes('Traces ingested') ||
       message.includes('Successfully flushed') ||
-      message.includes('Setting root node')) {
-    return; // Completely suppress these specific messages
+      message.includes('Setting root node') ||
+      message.includes('No traces to flush')) {
+    return; // Suppress Galileo SDK internal messages
   }
   originalConsoleError(...args);
+};
+
+console.log = (...args: any[]) => {
+  const message = args.join(' ');
+  if (message.includes('Flushing') ||
+      message.includes('Traces ingested') ||
+      message.includes('Successfully flushed') ||
+      message.includes('Setting root node') ||
+      message.includes('No traces to flush')) {
+    return; // Suppress Galileo SDK internal messages
+  }
+  originalConsoleLog(...args);
+};
+
+// Override console methods to respect VERBOSE environment variable
+console.debug = (...args: any[]) => {
+  if (process.env.VERBOSE !== 'false') {
+    originalConsoleDebug(...args);
+  }
+};
+
+console.warn = (...args: any[]) => {
+  if (process.env.VERBOSE !== 'false') {
+    originalConsoleWarn(...args);
+  }
+};
+
+console.info = (...args: any[]) => {
+  if (process.env.VERBOSE !== 'false') {
+    originalConsoleInfo(...args);
+  }
 };
 
 import { StripeAgent } from './agents/StripeAgent';

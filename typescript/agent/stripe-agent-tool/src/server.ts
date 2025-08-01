@@ -1,10 +1,63 @@
 import express from 'express';
 import path from 'path';
 import cors from 'cors';
+
 // Enable LangChain callbacks for Galileo integration
 process.env.LANGCHAIN_LOGGING = 'info';
 process.env.LANGCHAIN_VERBOSE = 'false';
 process.env.LANGCHAIN_CALLBACKS = 'true';
+
+// Suppress Galileo SDK internal messages to reduce console noise
+// These messages come from the Galileo SDK when it flushes traces to the server
+const originalConsoleError = console.error;
+const originalConsoleLog = console.log;
+const originalConsoleDebug = console.debug;
+const originalConsoleWarn = console.warn;
+const originalConsoleInfo = console.info;
+
+console.error = (...args: any[]) => {
+  const message = args.join(' ');
+  if (message.includes('No node exists for run_id') ||
+      message.includes('Flushing') ||
+      message.includes('Traces ingested') ||
+      message.includes('Successfully flushed') ||
+      message.includes('Setting root node') ||
+      message.includes('No traces to flush')) {
+    return; // Suppress Galileo SDK internal messages
+  }
+  originalConsoleError(...args);
+};
+
+console.log = (...args: any[]) => {
+  const message = args.join(' ');
+  if (message.includes('Flushing') ||
+      message.includes('Traces ingested') ||
+      message.includes('Successfully flushed') ||
+      message.includes('Setting root node') ||
+      message.includes('No traces to flush')) {
+    return; // Suppress Galileo SDK internal messages
+  }
+  originalConsoleLog(...args);
+};
+
+// Override console methods to respect VERBOSE environment variable
+console.debug = (...args: any[]) => {
+  if (process.env.VERBOSE !== 'false') {
+    originalConsoleDebug(...args);
+  }
+};
+
+console.warn = (...args: any[]) => {
+  if (process.env.VERBOSE !== 'false') {
+    originalConsoleWarn(...args);
+  }
+};
+
+console.info = (...args: any[]) => {
+  if (process.env.VERBOSE !== 'false') {
+    originalConsoleInfo(...args);
+  }
+};
 
 import { StripeAgent } from './agents/StripeAgent';
 import { env } from './config/environment';
