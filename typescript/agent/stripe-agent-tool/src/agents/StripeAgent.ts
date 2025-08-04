@@ -342,7 +342,7 @@ export class StripeAgent {
     await init();
     
     // Initialize Galileo callback with enhanced tool tracking
-    // Parameters: (logger, enableToolTracking, enableDetailedLogging)
+    // Parameters: (galileoLogger, startNewTrace, flushOnChainEnd)
     this.galileoCallback = new GalileoCallback(
       undefined, // Use default logger
       true,      // Enable tool tracking
