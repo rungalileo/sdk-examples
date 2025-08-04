@@ -545,9 +545,6 @@ export class StripeAgent {
           // Case 3: Input is completely malformed - provide clear error message
           return `Error: Invalid input format. Received: "${input}". Please use the exact JSON format: {"product_name": "exact product name", "quantity": 1}. Example: {"product_name": "Galileo Telescope", "quantity": 2}`;
           
-          // Case 3: Input is completely malformed - provide clear error message
-          return `Error: Invalid input format. Received: "${input}". Please use the exact JSON format: {"product_name": "exact product name", "quantity": 1}. Example: {"product_name": "Galileo Telescope", "quantity": 2}`;
-          
         } catch (error) {
           console.error(`❌ Error in get_price_and_create_payment_link:`, error);
           return `Error creating payment link: ${error instanceof Error ? error.message : 'Unknown error'}`;
