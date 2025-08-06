@@ -1,6 +1,6 @@
 # Building a Stripe AI Agent with Galileo Agent Reliability
 
-This cookbook demonstrates how to set up and run a complete AI agent that integrates with Stripe's payment processing API via the Stripe Agent Toolkit while using Galileo for AI Agent Reliability.
+This cookbook demonstrates how to set up and run a complete AI agent that integrates with Stripe's payment processing API via the [Stripe Agent Toolkit](https://github.com/stripe/agent-toolkit) while using [Galileo](https://galileo.ai) for AI Agent Reliability.
 
 ## Overview
 
@@ -12,7 +12,7 @@ By the end of this tutorial, you'll have a fully functional AI agent that can:
 - Track all interactions with Galileo observability
 
 ## Prerequisites
-
+- Basic familiarity with TypeScript, Node.js, and the command line
 - Node.js 18+
 - npm or yarn
 - A code editor (VS Code recommended)
@@ -25,7 +25,7 @@ Before you start, you'll need to create a new project in Galileo, as well as cre
 
 Instructions are below on how to do each of these actions. 
 
-### Create a Galileo Project
+### Create a Galileo [Project](https://v2docs.galileo.ai/concepts/projects)
 1. Go to [Galileo Dashboard](https://app.galileo.ai)
 2. Click on "New Project"
 3. Name your project "Stripe Agent"
@@ -45,8 +45,8 @@ Instructions are below on how to do each of these actions.
 ### Step 1: Clone the Repository
 
 ```bash
-git clone <repository-url>
-cd stripe-agent-tool
+git clone https://github.com/rungalileo/sdk-examples
+cd typescript/agent/stripe-agent-tool
 ```
 
 ### Step 2: Install Dependencies
@@ -269,7 +269,7 @@ Your agent automatically tracks:
 - Performance metrics and response times
 - Error rates and failure patterns
 - Session information and user interactions
-- Tool selection quality and accuracy
+-[Tool selection quality](https://v2docs.galileo.ai/concepts/metrics/agentic/tool-selection-quality) and accuracy
 
 ### Viewing Your Data
 
@@ -417,7 +417,7 @@ Force flush Galileo traces:
 
 - [Stripe API Documentation](https://stripe.com/docs/api)
 - [LangChain Documentation](https://js.langchain.com/)
-- [Galileo Documentation](https://docs.galileo.ai/)
+- [Galileo Documentation](https://v2docs.galileo.ai/)
 - [OpenAI API Documentation](https://platform.openai.com/docs)
 - [TypeScript Documentation](https://www.typescriptlang.org/docs/)
 
@@ -426,8 +426,8 @@ Force flush Galileo traces:
 If you encounter issues:
 
 1. Check the troubleshooting section above
-2. Review the [Galileo documentation](https://docs.galileo.ai/)
+2. Review the [Galileo documentation](https://v2docs.galileo.ai/)
 3. Open an issue in the repository
-4. Contact the development team
+4. Reach out to the Galileo developer team at [devrel@galileo.ai](mailto:devrel@galileo.ai)
 
 Happy building! 🚀 
