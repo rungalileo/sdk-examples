@@ -39,16 +39,18 @@ def intent_classifier(state: State):
     - financial_agent: Handles cost analysis, financial risk, ROI calculations, budget planning, TCO analysis
     - both_agents: Requires collaboration between both agents
 
+    Examples:
+    - "Check supplier compliance" → supply_chain_agent
+    - "Calculate TCO" → financial_agent  
+    - "Should we switch suppliers?" → both_agents
+    
+    If the query does not fit into any of three agents, respond with supply_chain_agent by default.
+    
     Respond with ONLY a JSON object:
     {{
         "primary_agent": "supply_chain_agent" | "financial_agent" | "both_agents",
         "reasoning": "brief explanation of routing decision"
     }}
-
-    Examples:
-    - "Check supplier compliance" → supply_chain_agent
-    - "Calculate TCO" → financial_agent  
-    - "Should we switch suppliers?" → both_agents
     """
 
     response = classifier_llm.invoke([HumanMessage(content=classification_prompt)])
