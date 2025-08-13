@@ -1,3 +1,4 @@
+from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, START
 from langgraph.graph.state import CompiledStateGraph
@@ -29,3 +30,22 @@ def get_financial_agent() -> CompiledStateGraph:
     graph_builder.add_edge(START, "financial_chatbot")
 
     return graph_builder.compile()
+
+
+class FinancialAgentRunner:
+    def __init__(self, callbacks=None):
+        self.graph = get_financial_agent()
+        self.config = {"configurable": {"thread_id": "financial-agent"}}
+
+        if callbacks:
+            self.config["callbacks"] = callbacks
+
+    def process_query(self, user_query: str) -> str:
+        """Process a query through the modular multi-agent system"""
+        initial_state = {"messages": [HumanMessage(content=user_query)]}
+        result = self.graph.invoke(initial_state, self.config)
+
+        # Return the last message content
+        if result["messages"]:
+            return result["messages"][-1].content
+        return "No response generated"

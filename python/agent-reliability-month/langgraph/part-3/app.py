@@ -8,7 +8,9 @@ from galileo import galileo_context
 from galileo.handlers.langchain import GalileoCallback
 from langchain_core.messages import AIMessage, HumanMessage
 
+from financial_agent import FinancialAgentRunner
 from orchestrator import ModularMultiAgentOrchestrator
+from supply_chain_agent import SupplyChainAgentRunner
 
 load_dotenv()
 
@@ -20,15 +22,12 @@ def display_chat_history():
     for message_data in st.session_state.messages:
         if isinstance(message_data, dict):
             message = message_data.get("message")
-            agent = message_data.get("agent", "user")
 
             if isinstance(message, HumanMessage):
                 with st.chat_message("user"):
                     st.write(message.content)
             elif isinstance(message, AIMessage):
                 with st.chat_message("assistant"):
-                    if agent != "system" and agent != "synthesized":
-                        st.caption(f"🤖 {agent.title()} Response")
                     st.write(message.content)
         else:
             # Fallback for old message format
@@ -127,7 +126,7 @@ def orchestrate_streamlit_and_get_user_input(
             st.error(f"Failed to start Galileo session: {str(e)}")
             st.stop()
         # Add welcome message
-        welcome_message = AIMessage(content="Welcome! ")
+        welcome_message = AIMessage(content="Welcome!")
         st.session_state.messages.append({
             "message": welcome_message,
             "agent": "system"
@@ -147,10 +146,39 @@ def orchestrate_streamlit_and_get_user_input(
     return user_input
 
 
+def process_input_for_simple_app(user_input: str|None):
+    if user_input:
+        # Add user message to chat history
+        user_message = HumanMessage(content=user_input)
+        st.session_state.messages.append({
+            "message": user_message,
+            "agent": "user"
+        })
+
+        # Display the user message immediately
+        with st.chat_message("user"):
+            st.write(user_input)
+
+        with st.chat_message("assistant"):
+            with st.spinner("Processing..."):
+                # Get the actual response from modular orchestrator
+                response = st.session_state.runner.process_query(user_input)
+
+                # Create and display AI message
+                ai_message = AIMessage(content=response)
+                st.session_state.messages.append({"message": ai_message})
+
+                # Display response
+                st.write(response)
+
+        # Rerun to update chat history
+        st.rerun()
+
+
 def multi_agent_app():
     """Main function for the Modular Multi-Agent Streamlit app."""
     user_input = orchestrate_streamlit_and_get_user_input(
-        "Supply Chain Agent",
+        "Multi Agent System",
         "Should we switch from supplier SUP001 to SUP002 for our semiconductor components?",
         "Check compliance status for supplier SUP001"
     )
@@ -195,19 +223,35 @@ def multi_agent_app():
 
 
 def financial_agent_app():
-    pass
+    user_input = orchestrate_streamlit_and_get_user_input(
+        "Financial Agent",
+        "What are the financial risks of using supplier SUP001 vs SUP002 in SouthEast Asia?",
+        "When comparing supplier SUP001 vs SUP002, how should I factor in the Total Cost of Ownership?"
+    )
+    if "runner" not in st.session_state:
+        st.session_state.runner = FinancialAgentRunner(callbacks=[GalileoCallback()])
+    process_input_for_simple_app(user_input)
 
 
 def supply_chain_agent_app():
-    pass
+    user_input = orchestrate_streamlit_and_get_user_input(
+        "Supply Chain Agent",
+        "Check compliance status for supplier SUP001",
+        "What are the fundamentals of Supply Chain Management?"
+    )
+    if "runner" not in st.session_state:
+        st.session_state.runner = SupplyChainAgentRunner(callbacks=[GalileoCallback()])
+    process_input_for_simple_app(user_input)
 
 
 if __name__ == "__main__":
     os.environ["GALILEO_PROJECT"] = "sid-visa-playground"
-    os.environ["GALILEO_LOG_STREAM"] = "v1"
-    multi_agent_app()
 
-    # Example queries:
-    # 1. Check compliance status for supplier SUP001
-    # 2. Should we switch from supplier SUP001 to SUP002 for our semiconductor components?
-    # 3. Assess disruption risk for semiconductors in Southeast Asia
+    # os.environ["GALILEO_LOG_STREAM"] = "supply-chain"
+    # supply_chain_agent_app()
+
+    # os.environ["GALILEO_LOG_STREAM"] = "financial-agent"
+    # financial_agent_app()
+
+    os.environ["GALILEO_LOG_STREAM"] = "multi-agent"
+    multi_agent_app()

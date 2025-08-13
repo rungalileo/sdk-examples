@@ -4,6 +4,7 @@ from langchain_tavily import TavilySearch
 from langgraph.graph import StateGraph, START
 from langgraph.graph.state import CompiledStateGraph
 from langgraph.prebuilt import ToolNode, tools_condition
+from langchain_core.messages import HumanMessage
 
 from rag_tool import rag_search
 from shared_state import State
@@ -37,3 +38,22 @@ def get_supply_chain_agent() -> CompiledStateGraph:
     graph_builder.add_edge("tools", "chatbot")
     graph_builder.add_edge(START, "chatbot")
     return graph_builder.compile()
+
+
+class SupplyChainAgentRunner:
+    def __init__(self, callbacks=None):
+        self.graph = get_supply_chain_agent()
+        self.config = {"configurable": {"thread_id": "supply-chain-agent"}}
+
+        if callbacks:
+            self.config["callbacks"] = callbacks
+
+    def process_query(self, user_query: str) -> str:
+        """Process a query through the modular multi-agent system"""
+        initial_state = {"messages": [HumanMessage(content=user_query)]}
+        result = self.graph.invoke(initial_state, self.config)
+
+        # Return the last message content
+        if result["messages"]:
+            return result["messages"][-1].content
+        return "No response generated"
