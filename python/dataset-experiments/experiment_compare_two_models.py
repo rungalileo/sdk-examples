@@ -18,6 +18,7 @@ from galileo.datasets import create_dataset
 
 load_dotenv()
 
+
 class ExperimentCompareTwoModels:
     """
     This class is used to create Galileo experiments to compare the performance of two LLMs.
@@ -41,7 +42,7 @@ class ExperimentCompareTwoModels:
                 "cost_per_1k_tokens": 0.00015,
                 "performance_score": 0.85,
                 "context_window": 128000,
-                "client": self.openai_client
+                "client": self.openai_client,
             },
             "anthropic": {
                 "name": "Claude 3.7 Sonnet",
@@ -49,8 +50,8 @@ class ExperimentCompareTwoModels:
                 "cost_per_1k_tokens": 0.00015,
                 "performance_score": 0.88,
                 "context_window": 200000,
-                "client": self.anthropic_client
-            }
+                "client": self.anthropic_client,
+            },
         }
 
         # Prompt for simulating an LLM based app - A Data Quality Processor
@@ -83,7 +84,7 @@ class ExperimentCompareTwoModels:
         """
         transactions = []
         try:
-            with open(file_path, 'r', encoding='utf-8') as file:
+            with open(file_path, "r", encoding="utf-8") as file:
                 for line_num, line in enumerate(file, 1):
                     line = line.strip()
                     if line:
@@ -113,9 +114,7 @@ class ExperimentCompareTwoModels:
         try:
             dataset_content = []
             for transaction in transactions:
-                dataset_content.append({
-                    "transaction_data": json.dumps(transaction, ensure_ascii=False)
-                })
+                dataset_content.append({"transaction_data": json.dumps(transaction, ensure_ascii=False)})
 
             dataset = create_dataset(
                 name=dataset_name,
@@ -140,8 +139,7 @@ class ExperimentCompareTwoModels:
                 model=self.model_configs["openai"]["name"],
                 input=[
                     {"role": "system", "content": self.system_prompt},
-                    {"role": "user", "content": \
-                    f"Process this financial transaction data: {input_data}"},
+                    {"role": "user", "content": f"Process this financial transaction data: {input_data}"},
                 ],
                 temperature=0.1,
                 max_output_tokens=1000,
@@ -171,10 +169,7 @@ class ExperimentCompareTwoModels:
                 messages=[
                     {
                         "role": "user",
-                        "content": [
-                            {"type": "text", "text": \
-                            f"Process this financial transaction data: {input_data}"}
-                        ],
+                        "content": [{"type": "text", "text": f"Process this financial transaction data: {input_data}"}],
                     }
                 ],
             )
@@ -200,15 +195,11 @@ class ExperimentCompareTwoModels:
                 # Prompt experiment
                 results = run_experiment(
                     experiment_name=experiment_name,
-                    dataset=params['dataset'],
-                    prompt_template=params['prompt_template'],
-                    prompt_settings={
-                        "max_tokens": 1000,
-                        "model_alias": params['model_config']["name"],
-                        "temperature": 0.8
-                    },
+                    dataset=params["dataset"],
+                    prompt_template=params["prompt_template"],
+                    prompt_settings={"max_tokens": 1000, "model_alias": params["model_config"]["name"], "temperature": 0.8},
                     metrics=["correctness", "structural_correctness_fin_tx"],
-                    project=self.galileo_project
+                    project=self.galileo_project,
                 )
 
                 print(f"Experiment results for {experiment_name}: {results}")
@@ -247,35 +238,35 @@ class ExperimentCompareTwoModels:
 
             prompt_template = self.get_or_create_prompt_template()
 
-            print("\n" + "="*50)
+            print("\n" + "=" * 50)
             print("Running OpenAI Experiment")
-            print("="*50)
+            print("=" * 50)
             self.run_model_experiment(
                 experiment_name="test_openai",
                 params={
-                    'dataset': dataset,
-                    'prompt_template': prompt_template,
-                    'llm_function': self.openai_llm_call,
-                    'model_config': self.model_configs["openai"]
-                }
+                    "dataset": dataset,
+                    "prompt_template": prompt_template,
+                    "llm_function": self.openai_llm_call,
+                    "model_config": self.model_configs["openai"],
+                },
             )
 
-            print("\n" + "="*50)
+            print("\n" + "=" * 50)
             print("Running Anthropic Experiment")
-            print("="*50)
+            print("=" * 50)
             self.run_model_experiment(
                 experiment_name="test_anthropic",
                 params={
-                    'dataset': dataset,
-                    'prompt_template': prompt_template,
-                    'llm_function': self.anthropic_llm_call,
-                    'model_config': self.model_configs["anthropic"]
-                }
+                    "dataset": dataset,
+                    "prompt_template": prompt_template,
+                    "llm_function": self.anthropic_llm_call,
+                    "model_config": self.model_configs["anthropic"],
+                },
             )
 
-            print("\n" + "="*50)
+            print("\n" + "=" * 50)
             print("All experiments completed.")
-            print("="*50)
+            print("=" * 50)
 
         except Exception as e:
             print(f"Error running comparison experiments: {e}")
@@ -298,9 +289,8 @@ class ExperimentCompareTwoModels:
                 name=prompt_name,
                 template=[
                     Message(role=MessageRole.system, content=self.system_prompt),
-                    Message(role=MessageRole.user, \
-                    content="Process this financial transaction data: {{transaction_data}}")
-                ]
+                    Message(role=MessageRole.user, content="Process this financial transaction data: {{transaction_data}}"),
+                ],
             )
             return prompt_template
 
@@ -315,19 +305,18 @@ class ExperimentCompareTwoModels:
             return "openai"
         if context.get("high_accuracy_required", False):
             return "anthropic"
-        return max(self.model_configs.keys(),
-                  key=lambda x: self.model_configs[x]["performance_score"])
+        return max(self.model_configs.keys(), key=lambda x: self.model_configs[x]["performance_score"])
+
 
 def main():
     """
     Main function to execute the intelligent broker system for financial data quality.
     """
-    parser = argparse.ArgumentParser(description='Intelligent Broker System for Financial Data Quality')
+    parser = argparse.ArgumentParser(description="Intelligent Broker System for Financial Data Quality")
 
-    parser.add_argument('jsonl_file', help='Path to the JSONL file containing financial transactions')
-    parser.add_argument('--dataset-name', help='Optional name for the Galileo dataset')
-    parser.add_argument('--project', default=os.getenv("GALILEO_PROJECT"),
-                       help='Galileo project name (defaults to GALILEO_PROJECT env var)')
+    parser.add_argument("jsonl_file", help="Path to the JSONL file containing financial transactions")
+    parser.add_argument("--dataset-name", help="Optional name for the Galileo dataset")
+    parser.add_argument("--project", default=os.getenv("GALILEO_PROJECT"), help="Galileo project name (defaults to GALILEO_PROJECT env var)")
 
     args = parser.parse_args()
 
