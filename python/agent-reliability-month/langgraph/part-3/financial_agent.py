@@ -7,7 +7,11 @@ from langgraph.prebuilt import ToolNode, tools_condition
 from financial_agent_tools import calculate_tco, analyze_financial_risk, compare_supplier_costs
 from shared_state import State
 
-FINANCIAL_TOOLS = [calculate_tco, analyze_financial_risk, compare_supplier_costs]
+FINANCIAL_TOOLS = [
+    calculate_tco,
+    analyze_financial_risk,
+    compare_supplier_costs
+]
 
 
 def get_financial_agent() -> CompiledStateGraph:
