@@ -11,8 +11,6 @@ import os
 import time
 from typing import Any
 
-from dotenv import load_dotenv
-
 from langchain.schema.runnable.config import RunnableConfig
 from langchain_core.callbacks import Callbacks
 from langchain_core.messages import HumanMessage
@@ -36,9 +34,6 @@ def setup_module():
     This will load the environment variables, then ensure we have a valid dataset to run the experiment against.
     """
     print("Setting up test environment...")
-
-    # Load the environment variables from the .env file
-    load_dotenv()
 
     # Verify required environment variables are set
     # You will also need to set up the environment variables for your OpenAI API connection.

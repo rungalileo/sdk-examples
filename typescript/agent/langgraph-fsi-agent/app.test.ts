@@ -45,21 +45,24 @@ describe('Chatbot Galileo Tests', () => {
                 "GALILEO_PROJECT and GALILEO_API_KEY environment variables are required"
             );
         }
-
-        // Check to see if we already have the dataset, if not we can create it.
-        let dataset = await getDataset({
-            name: DATASET_NAME,
-        });
-
+        
         // If we don't have the dataset, create it with data from the dataset.json file. Some of these questions
         // are designed to be factual, while others are designed to be nonsensical or not
         // answerable by the model. This will help us test the correctness and instruction adherence
         // of the model when running the experiment.
-        if (dataset === null) {
+        try
+        {
+            // Check to see if we already have the dataset, if not we can create it.
+            await getDataset({
+                name: DATASET_NAME,
+            });
+        }
+        catch (error)
+        {
             // Load test data from the dataset.json file
-            const datasetPath = path.join(__dirname, '..', 'dataset.json');
+            const datasetPath = path.join(__dirname, 'dataset.json');
             const testData = JSON.parse(fs.readFileSync(datasetPath, 'utf8'));
-            dataset = await createDataset(testData, DATASET_NAME);
+            await createDataset(testData, DATASET_NAME);
         }
     }, 600000);
 
