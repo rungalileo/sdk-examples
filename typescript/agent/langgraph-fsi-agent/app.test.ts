@@ -57,11 +57,20 @@ describe('Chatbot Galileo Tests', () => {
         // of the model when running the experiment.
         if (dataset === null) {
             // Load test data from the dataset.json file
-            const datasetPath = path.join(__dirname, '..', 'dataset.json');
+            const datasetPath = path.join(__dirname, 'dataset.json');
             const testData = JSON.parse(fs.readFileSync(datasetPath, 'utf8'));
             dataset = await createDataset(testData, DATASET_NAME);
         }
     }, 600000);
+
+    afterAll(async () => {
+        // Wait for any pending Galileo operations to complete
+        const galileoLogger = getLogger();
+        await galileoLogger.flush();
+        
+        // Add a small delay to ensure all async operations complete
+        await new Promise(resolve => setTimeout(resolve, 2000));
+    });
 
     /**
      * This test will run the dataset against our chatbot app using the Galileo experiments framework.
@@ -86,5 +95,12 @@ describe('Chatbot Galileo Tests', () => {
 
         // Log the experiment response link
         console.log(`Experiment response link: ${experimentResponse.link}`);
-    }, 60000); // Increased timeout for API calls
+        
+        // Wait for any pending Galileo operations to complete
+        const galileoLogger = getLogger();
+        await galileoLogger.flush();
+        
+        // Add a small delay to ensure all async operations complete
+        await new Promise(resolve => setTimeout(resolve, 1000));
+    }, 120000); // Increased timeout for API calls and cleanup
 });
