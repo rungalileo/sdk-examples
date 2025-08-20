@@ -1,5 +1,5 @@
 from galileo import Message, MessageRole
-from galileo.prompts import get_prompt_template, create_prompt_template
+from galileo.prompts import get_prompt, create_prompt
 from galileo.experiments import run_experiment
 from galileo.datasets import get_dataset
 from dotenv import load_dotenv
@@ -8,15 +8,14 @@ load_dotenv()
 
 project = "datasets-experiments"
 
-prompt_template = get_prompt_template(name="geography-prompt", project=project)
-if prompt_template is None:
-    prompt_template = create_prompt_template(
+prompt = get_prompt(name="geography-prompt")
+if prompt is None:
+    prompt = create_prompt(
         name="geography-prompt",
-        project=project,
-        messages=[
+        template=[
             Message(
                 role=MessageRole.system,
-                content="You are a geography expert. Respond with only the continent name.",
+                content="You are a helpful assistant. Answer questions accurately and concisely.",
             ),
             Message(role=MessageRole.user, content="{{input}}"),
         ],
@@ -25,7 +24,7 @@ if prompt_template is None:
 results = run_experiment(
     "geography-experiment",
     dataset=get_dataset(name="countries"),
-    prompt_template=prompt_template,
+    prompt_template=prompt,
     # Optional
     prompt_settings={
         "max_tokens": 256,

@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Galileo's Gizmos - Space Commerce HQ</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Dark theme colors (default) */
+            --space-black: #0a0a0a;
+            --space-blue: #1e3a8a;
+            --space-purple: #6b46c1;
+            --space-cyan: #06b6d4;
+            --space-gold: #f59e0b;
+            --space-green: #10b981;
+            --space-red: #ef4444;
+            --nebula-gradient: linear-gradient(135deg, #1e3a8a 0%, #6b46c1 35%, #06b6d4 70%, #10b981 100%);
+            --glow-cyan: 0 0 20px rgba(6, 182, 212, 0.3);
+            --glow-gold: 0 0 20px rgba(245, 158, 11, 0.3);
+            --glow-purple: 0 0 20px rgba(107, 70, 193, 0.3);
+            
+            /* Theme variables */
+            --bg-primary: #0a0a0a;
+            --bg-secondary: rgba(10, 10, 10, 0.6);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --border-primary: var(--space-cyan);
+            --border-secondary: var(--space-purple);
+            --focus-ring: 0 0 0 3px rgba(6, 182, 212, 0.5);
+        }
+
+        /* Light theme */
+        [data-theme="light"] {
+            --space-black: #f8fafc;
+            --space-blue: #3b82f6;
+            --space-purple: #8b5cf6;
+            --space-cyan: #0891b2;
+            --space-gold: #d97706;
+            --space-green: #059669;
+            --space-red: #dc2626;
+            --nebula-gradient: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 35%, #0891b2 70%, #059669 100%);
+            --glow-cyan: 0 0 10px rgba(8, 145, 178, 0.2);
+            --glow-gold: 0 0 10px rgba(217, 119, 6, 0.2);
+            --glow-purple: 0 0 10px rgba(139, 92, 246, 0.2);
+            
+            --bg-primary: #ffffff;
+            --bg-secondary: rgba(248, 250, 252, 0.9);
+            --text-primary: #1f2937;
+            --text-secondary: #374151;
+            --text-muted: #6b7280;
+            --border-primary: var(--space-cyan);
+            --border-secondary: var(--space-purple);
+            --focus-ring: 0 0 0 3px rgba(8, 145, 178, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Space Mono', monospace;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--nebula-gradient);
+            opacity: 0.1;
+            animation: nebula-drift 20s infinite alternate;
+            z-index: -1;
+        }
+
+        @keyframes nebula-drift {
+            0% { transform: translateX(-10px) translateY(-10px) rotate(0deg); }
+            100% { transform: translateX(10px) translateY(10px) rotate(2deg); }
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            border: 2px solid var(--border-primary);
+            box-shadow: var(--glow-cyan);
+            position: relative;
+        }
+
+        .header h1 {
+            font-family: 'Orbitron', monospace;
+            font-size: 2.5em;
+            font-weight: 900;
+            background: var(--nebula-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px rgba(6, 182, 212, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: var(--space-cyan);
+            opacity: 0.8;
+        }
+
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-primary);
+            border-radius: 25px;
+            padding: 8px 16px;
+            color: var(--text-primary);
+            font-family: 'Space Mono', monospace;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 120px;
+            justify-content: center;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--glow-cyan);
+            border-color: var(--space-gold);
+        }
+
+        .theme-toggle:focus {
+            outline: none;
+            box-shadow: var(--focus-ring);
+        }
+
+        .theme-toggle:active {
+            transform: translateY(0);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            gap: 20px;
+            overflow: hidden;
+        }
+
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .chat-messages {
+            flex: 1;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            border: 2px solid var(--border-secondary);
+            padding: 20px;
+            overflow-y: auto;
+            box-shadow: var(--glow-purple);
+        }
+
+        .chat-messages:focus-within {
+            box-shadow: var(--focus-ring), var(--glow-purple);
+        }
+
+        .message {
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 15px;
+            max-width: 80%;
+            animation: message-appear 0.5s ease-out;
+        }
+
+        @keyframes message-appear {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            background: rgba(6, 182, 212, 0.2);
+            border: 1px solid var(--space-cyan);
+            margin-left: auto;
+            text-align: right;
+        }
+
+        .message.assistant {
+            background: rgba(107, 70, 193, 0.2);
+            border: 1px solid var(--space-purple);
+            margin-right: auto;
+        }
+
+        .message.system {
+            background: rgba(245, 158, 11, 0.2);
+            border: 1px solid var(--space-gold);
+            margin: 0 auto;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .message-meta {
+            font-size: 0.8em;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+
+        .tool-usage {
+            background: rgba(16, 185, 129, 0.2);
+            border: 1px solid var(--space-green);
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            border: 2px solid var(--space-gold);
+            padding: 20px;
+            box-shadow: var(--glow-gold);
+        }
+
+        .input-field {
+            flex: 1;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-primary);
+            border-radius: 10px;
+            padding: 15px;
+            color: var(--text-primary);
+            font-family: 'Space Mono', monospace;
+            font-size: 1em;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            border-color: var(--space-gold);
+            box-shadow: var(--focus-ring);
+        }
+
+        .input-field:disabled {
+            background: var(--bg-secondary);
+            border-color: var(--space-red);
+            color: var(--text-muted);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .input-field::placeholder {
+            color: var(--text-muted);
+        }
+
+        .send-btn {
+            background: var(--nebula-gradient);
+            border: none;
+            border-radius: 10px;
+            padding: 15px 30px;
+            color: white;
+            font-family: 'Orbitron', monospace;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .send-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--glow-cyan);
+        }
+
+        .send-btn:focus {
+            outline: none;
+            box-shadow: var(--focus-ring);
+        }
+
+        .send-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .sidebar {
+            width: 300px;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            border: 2px solid var(--space-gold);
+            padding: 20px;
+            box-shadow: var(--glow-gold);
+        }
+
+        .sidebar h3 {
+            font-family: 'Orbitron', monospace;
+            color: var(--space-gold);
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .tool-button {
+            display: block;
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-secondary);
+            border-radius: 10px;
+            padding: 12px;
+            color: var(--text-primary);
+            font-family: 'Space Mono', monospace;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .tool-button:hover {
+            background: rgba(107, 70, 193, 0.3);
+            transform: translateX(5px);
+            box-shadow: var(--glow-purple);
+        }
+
+        .tool-button:focus {
+            outline: none;
+            box-shadow: var(--focus-ring);
+        }
+
+        .tool-button:active {
+            transform: translateX(2px);
+        }
+
+        .resource-button,
+        .resource-link {
+            display: block;
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-secondary);
+            border-radius: 10px;
+            padding: 12px;
+            color: var(--text-primary);
+            font-family: 'Space Mono', monospace;
+            cursor: pointer;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .resource-link {
+            text-decoration: none;
+        }
+
+        .resource-button:hover,
+        .resource-link:hover {
+            background: rgba(107, 70, 193, 0.3);
+            transform: translateX(5px);
+            box-shadow: var(--glow-purple);
+        }
+
+        .resource-button:focus,
+        .resource-link:focus {
+            outline: none;
+            box-shadow: var(--focus-ring);
+        }
+
+        .resource-button:active,
+        .resource-link:active {
+            transform: translateX(2px);
+        }
+
+        .quick-examples {
+            margin-top: 20px;
+        }
+
+        .example-item {
+            display: block;
+            width: 100%;
+            background: rgba(6, 182, 212, 0.2);
+            border: 1px solid var(--space-cyan);
+            border-radius: 8px;
+            padding: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            color: var(--text-primary);
+            font-family: 'Space Mono', monospace;
+            text-align: left;
+        }
+
+        .example-item:hover {
+            background: rgba(6, 182, 212, 0.3);
+            transform: translateX(5px);
+        }
+
+        .example-item:focus {
+            outline: none;
+            box-shadow: var(--focus-ring);
+        }
+
+        .example-item:active {
+            transform: translateX(2px);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            color: var(--space-cyan);
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .rocket-loader {
+            font-size: 2em;
+            animation: rocket-bounce 1s infinite;
+        }
+
+        @keyframes rocket-bounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .status-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(16, 185, 129, 0.3);
+            border: 2px solid var(--space-green);
+            border-radius: 50%;
+            width: 15px;
+            height: 15px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes pulse-error {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.5; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .floating-gizmo {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            font-size: 3em;
+            animation: float 6s ease-in-out infinite;
+            z-index: 1000;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: inherit;
+            padding: 10px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .floating-gizmo:hover {
+            transform: scale(1.1);
+            text-shadow: 0 0 20px var(--space-cyan);
+        }
+
+        .floating-gizmo:focus {
+            outline: none;
+            box-shadow: var(--focus-ring);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(10deg); }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--space-black);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--space-cyan);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--space-gold);
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                order: -1;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .chat-container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-animation"></div>
+    <div class="stars" id="stars"></div>
+    <div class="status-indicator"></div>
+    
+    <div class="chat-container">
+        <div class="header">
+            <button 
+                class="theme-toggle" 
+                id="themeToggle" 
+                aria-label="Toggle between light and dark theme"
+                aria-pressed="false"
+                title="Switch theme"
+            >
+                <span class="theme-icon" aria-hidden="true">🌙</span>
+                <span class="theme-text">Dark</span>
+            </button>
+            <h1>🚀 Galileo's Gizmos</h1>
+            <p>Your AI-Powered Space Commerce Assistant</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="chat-area">
+                <div 
+                    class="chat-messages" 
+                    id="chatMessages"
+                    role="log"
+                    aria-live="polite"
+                    aria-label="Chat conversation"
+                    tabindex="0"
+                >
+                    <div class="message system" role="status">
+                        <div>🛸 Welcome to Galileo's Gizmos! I'm Gizmo, your space commerce assistant.</div>
+                        <div>🌌 I can help you with payment links, customer management, products, and more!</div>
+                        <div>💫 Try asking me something like "Create a payment link for the Mars Explorer Kit"</div>
+                    </div>
+                </div>
+                
+                <div class="loading" id="loading" role="status" aria-label="Processing request">
+                    <div class="rocket-loader" aria-hidden="true">🚀</div>
+                    <div>Processing your space mission...</div>
+                </div>
+                
+                <form class="input-area" role="search" aria-label="Send message to assistant">
+                    <input 
+                        type="text" 
+                        class="input-field" 
+                        id="messageInput" 
+                        placeholder="Ask me anything about your space commerce needs..."
+                        autocomplete="off"
+                        aria-label="Type your message here"
+                        aria-describedby="sendBtn"
+                    >
+                    <button 
+                        type="submit"
+                        class="send-btn" 
+                        id="sendBtn"
+                        aria-label="Send message"
+                    >
+                        🚀 Launch
+                    </button>
+                </form>
+            </div>
+            
+            <nav class="sidebar" role="complementary" aria-label="Quick tools">
+                <h3>📚 Resources</h3>
+                
+                <a 
+                    class="resource-link" 
+                    href="https://v2docs.galileo.ai/what-is-galileo" 
+                    target="_blank" 
+                    rel="noopener"
+                    aria-label="Learn more about Galileo"
+                >
+                    🛰️ About Galileo
+                </a>
+                
+                <a 
+                    class="resource-link" 
+                    href="https://github.com/stripe/stripe-agent-toolkit" 
+                    target="_blank" 
+                    rel="noopener"
+                    aria-label="Visit Stripe Agent Toolkit repository on GitHub"
+                >
+                    🛠️ Stripe Agent Toolkit
+                </a>
+
+                <a 
+                class="resource-link" 
+                href="https://github.com/rungalileo/sdk-examples" 
+                target="_blank" 
+                rel="noopener"
+                aria-label="Check out more examples of how to use the Galileo SDK"
+            >
+            👀 More Examples
+            </a>
+                
+                <!-- <a 
+                    class="resource-link" 
+                    href="https://github.com/stripe/stripe-agent-toolkit" 
+                    target="_blank" 
+                    rel="noopener"
+                    aria-label="Visit Stripe Agent Toolkit repository on GitHub"
+                >
+                    🛠️ Another resource
+                </a> -->
+                
+                
+                <div class="quick-examples">
+                    <h3>✨ Quick Examples</h3>
+                    
+                    <button 
+                        class="example-item" 
+                        data-example="Create payment link"
+                        aria-label="Example: Create payment link"
+                        type="button"
+                    >
+                        💳 Create payment link
+                    </button>
+                    
+                    <button 
+                        class="example-item" 
+                        data-example="What's for sale?"
+                        aria-label="Example: Ask what's for sale"
+                        type="button"
+                    >
+                        🛒 Ask what's for sale
+                    </button>
+                    
+                    <button 
+                        class="example-item" 
+                        data-example="Create a Lunar Rover rental plan for $999"
+                        aria-label="Example: Create a Lunar Rover rental plan for $999"
+                        type="button"
+                    >
+                        🌙 Create a Lunar Rover rental plan for $999
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </div>
+    
+    <button 
+        class="floating-gizmo" 
+        id="floatingGizmo"
+        aria-label="Click for a fun space message"
+        title="Gizmo's space facts"
+    >
+        🛸
+    </button>
+
+    <script src="app.js"></script>
+</body>
+</html>
