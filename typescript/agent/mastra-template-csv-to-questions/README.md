@@ -35,8 +35,6 @@ export const mastra = new Mastra({
         url: env.GALILEO_CONSOLE_URL,
         headers: {
           "Galileo-API-Key": env.GALILEO_API_KEY ?? "your-galileo-api-key",
-          "Galileo-Project": env.GALILEO_PROJECT ?? "your-galileo-project",
-          "Galileo-Log-Stream": env.GALILEO_LOG_STREAM ?? "default",
           "project": env.GALILEO_PROJECT ?? "your-galileo-project",
           "logstream": env.GALILEO_LOG_STREAM ?? "default",
         },
