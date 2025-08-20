@@ -1,5 +1,6 @@
 # 📖 Galileo.ai SDK Examples
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com) 
+
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 This repository contains example implementations and reference code for using the Galileo.ai SDK across both Python and TypeScript applications. Galileo helps folks build reliable AI applications across a multitude of tech stacks.
 
@@ -34,6 +35,7 @@ You can read more about these in our [Get started with sample projects documenta
 - **[TypeScript Agents](/typescript/agent/)**
   - [Minimal Agent](/typescript/agent/) - Basic TypeScript agent implementation
   - [LangGraph FSI Agent](/typescript/agent/langgraph-fsi-agent/) - Financial services agent
+  - [Mastra Project](/typescript/agent/mastra-template-csv-to-questions/) - An example on how to add galileo tracing to a Mastra project with open-inference
 
 ### 💬 Chatbot Examples
 
