@@ -1,4 +1,6 @@
-# How to add Galileo to your mastra project
+# How to add Galileo to your Mastra project
+
+[Example source here](https://github.com/mastra-ai/template-csv-to-questions).
 
 ## Step 1: Install OpenInference
 
