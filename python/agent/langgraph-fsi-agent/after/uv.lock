@@ -522,7 +522,7 @@ wheels = [
 
 [[package]]
 name = "galileo"
-version = "1.12.0"
+version = "1.16.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "attrs" },
@@ -533,14 +533,14 @@ dependencies = [
     { name = "python-dateutil" },
     { name = "wrapt" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/19/95/4e6a3e12aafdb90e1c5da6c516e438a17d14d29f89b8c3ddb1a9c6134d83/galileo-1.12.0.tar.gz", hash = "sha256:fb085c14e41c7e27b48403c696920a80fe4cab7ce4702fd50dfadda605c1ca4a", size = 341382, upload_time = "2025-07-30T17:23:22.06Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a2/5f/31841e5ef65a99125de1e78d5ab0af1258ee15f2da9768d30456bd4303d1/galileo-1.16.0.tar.gz", hash = "sha256:89381a1d538252ae5bda4d30f7e4201bf01dcb299b7800c6c9f71a21f19ca808", size = 363460, upload_time = "2025-08-19T20:13:23.258Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1b/3f/26353ce32c2d0f1445cd16ef32f5895bfbe484c1f51dfe3d865c3f1c64c5/galileo-1.12.0-py3-none-any.whl", hash = "sha256:f79cd398b5d71ddb1674e3047bb9d82357e16f2e59979162c9d85293412b302d", size = 929107, upload_time = "2025-07-30T17:23:20.082Z" },
+    { url = "https://files.pythonhosted.org/packages/68/cb/3fa8fe4cd0613627981a3456dc27840b7851364d39121e705595e47a795b/galileo-1.16.0-py3-none-any.whl", hash = "sha256:f10d0ee98b924d64a151cfe27ebe6a0d1cd4982af87b992dc1b793ad0105a22e", size = 964634, upload_time = "2025-08-19T20:13:20.398Z" },
 ]
 
 [[package]]
 name = "galileo-core"
-version = "3.59.1"
+version = "3.62.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "httpx" },
@@ -550,9 +550,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "uvloop", marker = "sys_platform != 'win32'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/97/94/883b8b650de2c7042913bf51f4744ad79e7e2fe1630c15247ba4e08493f3/galileo_core-3.59.1.tar.gz", hash = "sha256:687475a4e29638cc627c425b09cf7bdcb94cf7279bfd7a27acf45825f24a9569", size = 57805, upload_time = "2025-07-24T21:27:44.525Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/56/e7/4930e5db75cb36cddb62a9faa41b61974f6a7c6f903ca43737ca400f3fad/galileo_core-3.62.0.tar.gz", hash = "sha256:f80b6a735c6688dca1f49c7c93db2e95ce546c46f9afcee096b6ead0d5e5b796", size = 54529, upload_time = "2025-08-08T16:11:57.916Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5e/11/08020a2485e133e6b506f71a9b0ae284c8c439556c9b5b692b3b7f1d9957/galileo_core-3.59.1-py3-none-any.whl", hash = "sha256:803a750059954c20a8b8ca550d2c5943e8feb4ccb3169d1bad11189e3f3eba37", size = 97179, upload_time = "2025-07-24T21:27:42.925Z" },
+    { url = "https://files.pythonhosted.org/packages/08/f0/725d6bf88717aac9865752692f8dae623bc12cfb5f56692fed0ae595500f/galileo_core-3.62.0-py3-none-any.whl", hash = "sha256:c571d4b20cf511d6752d07a209c1bbcdfccdbdee961aa0d894ac27587e93a83f", size = 94300, upload_time = "2025-08-08T16:11:56.113Z" },
 ]
 
 [[package]]
@@ -575,13 +575,14 @@ dependencies = [
 [package.dev-dependencies]
 dev = [
     { name = "pytest" },
+    { name = "pytest-dotenv" },
     { name = "ruff" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "chainlit", specifier = "~=2.5.5" },
-    { name = "galileo", specifier = ">=1.12.0,<2.0.0" },
+    { name = "galileo", specifier = ">=1.16.0,<2.0.0" },
     { name = "grandalf", specifier = ">=0.8" },
     { name = "langchain", extras = ["openai"], specifier = "~=0.3.18" },
     { name = "langchain-community", specifier = ">=0.3.24" },
@@ -595,6 +596,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "pytest", specifier = ">=8.4.1,<9.0.0" },
+    { name = "pytest-dotenv", specifier = ">=0.5.2" },
     { name = "ruff", specifier = ">=0.11.11" },
 ]
 
@@ -2498,6 +2500,19 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/e2/15/60b18d40da66e7aa2ce4c4c66d5a17de20a2ae4a89ac09a58baa7a5bc535/pytest_codspeed-3.2.0-cp313-cp313-manylinux_2_17_aarch64.manylinux2014_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:66692506d33453df48b36a84703448cb8b22953eea51f03fbb2eb758dc2bdc4f", size = 27180, upload_time = "2025-01-31T14:28:18.056Z" },
     { url = "https://files.pythonhosted.org/packages/51/bd/6b164d4ae07d8bea5d02ad664a9762bdb63f83c0805a3c8fe7dc6ec38407/pytest_codspeed-3.2.0-cp313-cp313-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:479774f80d0bdfafa16112700df4dbd31bf2a6757fac74795fd79c0a7b3c389b", size = 25923, upload_time = "2025-01-31T14:28:19.725Z" },
     { url = "https://files.pythonhosted.org/packages/f1/9b/952c70bd1fae9baa58077272e7f191f377c86d812263c21b361195e125e6/pytest_codspeed-3.2.0-py3-none-any.whl", hash = "sha256:54b5c2e986d6a28e7b0af11d610ea57bd5531cec8326abe486f1b55b09d91c39", size = 15007, upload_time = "2025-01-31T14:28:24.458Z" },
+]
+
+[[package]]
+name = "pytest-dotenv"
+version = "0.5.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pytest" },
+    { name = "python-dotenv" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/cd/b0/cafee9c627c1bae228eb07c9977f679b3a7cb111b488307ab9594ba9e4da/pytest-dotenv-0.5.2.tar.gz", hash = "sha256:2dc6c3ac6d8764c71c6d2804e902d0ff810fa19692e95fe138aefc9b1aa73732", size = 3782, upload_time = "2020-06-16T12:38:03.4Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/d0/da/9da67c67b3d0963160e3d2cbc7c38b6fae342670cc8e6d5936644b2cf944/pytest_dotenv-0.5.2-py3-none-any.whl", hash = "sha256:40a2cece120a213898afaa5407673f6bd924b1fa7eafce6bda0e8abffe2f710f", size = 3993, upload_time = "2020-06-16T12:38:01.139Z" },
 ]
 
 [[package]]

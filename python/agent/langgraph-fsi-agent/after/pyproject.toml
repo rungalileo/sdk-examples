@@ -6,7 +6,7 @@ license = "MIT"
 requires-python = "<3.14,>=3.11"
 dependencies = [
   "chainlit~=2.5.5",
-  "galileo (>=1.12.0,<2.0.0)",
+  "galileo (>=1.16.0,<2.0.0)",
   "grandalf>=0.8",
   "langchain-community>=0.3.24",
   "langchain-pinecone>=0.2.6",
@@ -20,7 +20,8 @@ dependencies = [
 [dependency-groups]
 dev = [
   "ruff>=0.11.11",
-  "pytest (>=8.4.1,<9.0.0)"
+  "pytest (>=8.4.1,<9.0.0)",
+  "pytest-dotenv>=0.5.2"
 ]
 
 [tool.ruff]
