@@ -1,5 +1,5 @@
 from galileo import Message, MessageRole
-from galileo.prompts import get_prompt, create_prompt, get_prompt_template, create_prompt_template
+from galileo.prompts import get_prompt, create_prompt
 from galileo.experiments import run_experiment
 from galileo.datasets import get_dataset
 from dotenv import load_dotenv
@@ -13,10 +13,12 @@ if prompt is None:
     prompt = create_prompt(
         name="geography-prompt",
         template=[
-            Message(role=MessageRole.system, 
-                    content="You are a helpful assistant. Answer questions accurately and concisely."),
-            Message(role=MessageRole.user, content="{{input}}")
-        ]
+            Message(
+                role=MessageRole.system,
+                content="You are a helpful assistant. Answer questions accurately and concisely.",
+            ),
+            Message(role=MessageRole.user, content="{{input}}"),
+        ],
     )
 
 results = run_experiment(
@@ -30,6 +32,5 @@ results = run_experiment(
         "temperature": 0.8,
     },
     metrics=["correctness"],
-    project=project
+    project=project,
 )
-
