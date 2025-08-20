@@ -37,7 +37,7 @@ export const mastra = new Mastra({
     export: {
       type: "custom",
       exporter: new OpenInferenceOTLPTraceExporter({
-        url: env.GALILEO_CONSOLE_URL ?? "https://app.galileo.ai",
+        url: `${(env.GALILEO_CONSOLE_URL ?? "https://app.galileo.ai")}/api/galileo/otel/traces`,
         headers: {
           "Galileo-API-Key": env.GALILEO_API_KEY ?? "your-galileo-api-key",
           "Galileo-Project": env.GALILEO_PROJECT ?? "your-galileo-project",
