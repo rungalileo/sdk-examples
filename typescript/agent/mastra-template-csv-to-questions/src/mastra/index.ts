@@ -30,20 +30,18 @@ export const mastra = new Mastra({
   }),
   telemetry: {
     serviceName: "openinference-mastra-agent",
-    enabled: true,
+    enabled: true, // enable telemetry for this project
     sampling: {
-      type: "always_on",
+      type: "always_on", // this makes it always sample traces so it's easier to test
     },
     export: {
-      type: "custom",
+      type: "custom", // we need to use the custom open inference exporter
       exporter: new OpenInferenceOTLPTraceExporter({
-        url: `${(env.GALILEO_CONSOLE_URL ?? "https://app.galileo.ai")}/api/galileo/otel/traces`,
+        url: `${(env.GALILEO_CONSOLE_URL ?? "https://app.galileo.ai")}/api/galileo/otel/traces`,// this is the endpoint for the otel traces
         headers: {
-          "Galileo-API-Key": env.GALILEO_API_KEY ?? "your-galileo-api-key",
-          "Galileo-Project": env.GALILEO_PROJECT ?? "your-galileo-project",
-          "Galileo-Log-Stream": env.GALILEO_LOG_STREAM ?? "default",
-          "project": env.GALILEO_PROJECT ?? "your-galileo-project",
-          "logstream": env.GALILEO_LOG_STREAM ?? "default",
+          "Galileo-API-Key": env.GALILEO_API_KEY ?? "your-galileo-api-key", // your galileo api key
+          "project": env.GALILEO_PROJECT ?? "your-galileo-project", // your galileo project
+          "logstream": env.GALILEO_LOG_STREAM ?? "default", // your galileo log stream
         },
         spanFilter: isOpenInferenceSpan,
       }),
