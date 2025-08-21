@@ -29,7 +29,7 @@ export const mastra = new Mastra({
     level: 'info',
   }),
   telemetry: {
-    serviceName: "openinference-mastra-agent", // you can rename this to whatever you want to appear in the Phoenix UI
+    serviceName: "openinference-mastra-agent",
     enabled: true,
     sampling: {
       type: "always_on",
