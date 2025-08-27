@@ -46,17 +46,14 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install Jupyter runner
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install \
-            nbconvert==7.16.4 \
-            nbclient==0.10.0 \
-            ipykernel==6.29.5 \
-            jupyter_client==8.6.3 \
-            pyzmq==26.2.0 \
-            tornado==6.4.1 \
-            jupyter_core==5.7.2
+          pip install notebook \
+            opentelemetry-api opentelemetry-sdk opentelemetry-exporter-otlp opentelemetry-instrumentation \
+            openinference-instrumentation-langchain \
+            langchain langchain-community langchain-openai langgraph langchain-text-splitters \
+            beautifulsoup4 tiktoken
 
       - name: Execute notebook
         env:
@@ -67,13 +64,5 @@ jobs:
             --ExecutePreprocessor.kernel_name=python3 \
             --ExecutePreprocessor.shutdown_kernel=graceful \
             "$NB_PATH"
-
-      - name: Upload executed notebook (artifact)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: galileo-langgraph-executed
-          path: python/rag/langgraph-openinference/galileo-langgraph.ipynb
-          if-no-files-found: error
 
 
