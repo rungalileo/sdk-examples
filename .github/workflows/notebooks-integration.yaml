@@ -49,7 +49,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install notebook \
+          pip install --upgrade jupyter ipykernel jupyter-client
+          pip install \
             opentelemetry-api opentelemetry-sdk opentelemetry-exporter-otlp opentelemetry-instrumentation \
             openinference-instrumentation-langchain \
             langchain langchain-community langchain-openai langgraph langchain-text-splitters \
