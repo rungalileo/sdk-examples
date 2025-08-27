@@ -65,7 +65,7 @@ jobs:
           NB_PATH="python/rag/langgraph-openinference/galileo-langgraph.ipynb"
           jupyter nbconvert --to notebook --execute --inplace \
             --ExecutePreprocessor.kernel_name=python3 \
-            --ExecutePreprocessor.shutdown_kernel=now \
+            --ExecutePreprocessor.shutdown_kernel=graceful \
             "$NB_PATH"
 
       - name: Upload executed notebook (artifact)
