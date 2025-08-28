@@ -1,8 +1,15 @@
+"""
+Galileo Experiment Runner
+
+This module provides a command-line interface for running Galileo experiments
+with custom parameters including project, experiment, dataset, and prompt configurations.
+"""
+
 import argparse
 import os
 from datetime import datetime
 from galileo import Message, MessageRole
-from galileo.prompts import get_prompt, create_prompt
+from galileo.prompts import get_prompt_template, create_prompt_template
 from galileo.experiments import run_experiment
 from galileo.datasets import get_dataset
 from dotenv import load_dotenv
@@ -10,36 +17,39 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def main():
+    """
+    Main function to run Galileo experiments with command-line parameters.
+    
+    Parses command-line arguments, creates or retrieves prompt templates,
+    fetches datasets, and runs experiments with the specified configuration.
+    """
     galileo_console_url = os.getenv('GALILEO_CONSOLE_URL')
     print(f"🌐 Galileo URL: {galileo_console_url}")
-    
     print("Set GALILEO_CONSOLE_URL and GALILEO_API_KEY in your envvars.")
     print(" ⚠️⚠️  Make sure your project & dataset exist.\n")
-    
     parser = argparse.ArgumentParser(
         description='Run a Galileo experiment with custom parameters.',
-        epilog='Example: python app.py --project "my-project" --experiment "my-experiment" --dataset "my-dataset" --prompt-template-name "my-prompt" --prompt-content "You are a helpful assistant."'
+        epilog='Example: python app.py --project "my-project" \
+        --experiment "my-experiment" \
+        --dataset "my-dataset" \
+        --prompt-template-name "my-prompt" \
+        --prompt-content "You are a helpful assistant."'
     )
-
     parser.add_argument('--project', default='test project', help='Project name')
     parser.add_argument('--experiment', default='test experiment', help='Experiment name')
     parser.add_argument('--prompt-template-name', default='default', help='Prompt template name (optional, defaults to "default")')
     parser.add_argument('--dataset', default='default', help='Dataset name')
     parser.add_argument('--prompt-content', default='You are an assistant. Respond to the user input.', help='Prompt content')
-    
     args = parser.parse_args()
-    
     project = args.project
     experiment_name = args.experiment
     prompt_name = args.prompt_template_name
     dataset_name = args.dataset
     prompt_content = args.prompt_content
-
-    prompt_template = get_prompt(name=prompt_name, project=project)
-
+    prompt_template = get_prompt_template(name=prompt_name, project=project)
     if prompt_template is None:
         try:
-            prompt_template = create_prompt(
+            prompt_template = create_prompt_template(
                 name=prompt_name,
                 project=project,
                 messages=[
@@ -50,27 +60,29 @@ def main():
                     Message(role=MessageRole.user, content="{{input}}"),
                 ],
             )
-        except Exception as e:
-            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-            new_prompt_name = f"{prompt_name}_{timestamp}"
-            print(f"Template '{prompt_name}' already exists. Creating new template: '{new_prompt_name}'")
-            
-            prompt_template = create_prompt(
-                name=new_prompt_name,
-                project=project,
-                messages=[
-                    Message(
-                        role=MessageRole.system,
-                        content=prompt_content,
-                    ),
-                    Message(role=MessageRole.user, content="{{input}}"),
-                ],
-            )
-
+        except Exception as exc:
+            # Check if it's an "already exists" error
+            if "already exists" in str(exc).lower():
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                new_prompt_name = f"{prompt_name}_{timestamp}"
+                print(f"Template '{prompt_name}' already exists. Creating new template: '{new_prompt_name}'")
+                
+                prompt_template = create_prompt_template(
+                    name=new_prompt_name,
+                    project=project,
+                    messages=[
+                        Message(
+                            role=MessageRole.system,
+                            content=prompt_content,
+                        ),
+                        Message(role=MessageRole.user, content="{{input}}"),
+                    ],
+                )
+            else:
+                # Re-raise if it's a different error
+                raise
     print(f"Fetching dataset with name: {dataset_name}")
-
     dataset = get_dataset(name=dataset_name)
-
     run_experiment(
         experiment_name,
         dataset=dataset,
@@ -83,7 +95,6 @@ def main():
         metrics=["correctness"],
         project=project,
     )
-    
     print("-" * 60)
     print(f"Experiment '{experiment_name}' completed successfully!")
     print("-" * 60)
