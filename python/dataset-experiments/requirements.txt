@@ -1,3 +1,3 @@
 anthropic==0.64.0
-galileo==1.16.0
+galileo==1.16.1
 openai==1.99.9
