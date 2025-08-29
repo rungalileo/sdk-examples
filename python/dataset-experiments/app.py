@@ -34,9 +34,7 @@ def main():
         --prompt-content "You are a helpful assistant."',
     )
     parser.add_argument("--project", default="test project", help="Project name")
-    parser.add_argument(
-        "--experiment", default="test experiment", help="Experiment name"
-    )
+    parser.add_argument("--experiment", default="test experiment", help="Experiment name")
     parser.add_argument(
         "--prompt-name",
         default="default",
@@ -72,9 +70,7 @@ def main():
             if "already exists" in str(exc).lower():
                 timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
                 new_prompt_name = f"{prompt_name}_{timestamp}"
-                print(
-                    f"Template '{prompt_name}' already exists. Creating new template: '{new_prompt_name}'"
-                )
+                print(f"Template '{prompt_name}' already exists. Creating new template: '{new_prompt_name}'")
 
                 prompt = create_prompt(
                     name=new_prompt_name,
