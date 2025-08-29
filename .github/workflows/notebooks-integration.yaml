@@ -65,7 +65,7 @@ jobs:
           NB_FILE: ${{ matrix.notebook }}
         shell: bash
         run: |
-          python scripts/utils/get_notebook_pip_commands.py
+           python tests/utils/get_notebook_pip_commands.py
           if [ -s nb_pip_commands.txt ]; then
             while IFS= read -r cmd; do
               echo "+ $cmd"
@@ -79,4 +79,12 @@ jobs:
         env:
           NB_FILE: ${{ matrix.notebook }}
         run: |
-          jupyter nbconvert --to notebook --execute "$NB_FILE"
+          jupyter nbconvert --to notebook --execute --stdout "$NB_FILE" | cat
+
+      - name: Wait for 5 seconds
+        run: |
+          sleep 5
+
+      - name: Test results
+        run: |
+          python tests/test_langchain.py
