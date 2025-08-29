@@ -7,13 +7,16 @@ on:
   push:
     branches: [main]
     paths:
-      - "python/rag/langgraph-openinference/galileo-langgraph.ipynb"
+      - "python/**/*.ipynb"
       - ".github/workflows/notebooks-integration.yaml"
   pull_request:
     types: [opened, synchronize]
     paths:
-      - "python/rag/langgraph-openinference/galileo-langgraph.ipynb"
+      - "python/**/*.ipynb"
       - ".github/workflows/notebooks-integration.yaml"
+
+# LIST OF NOTEBOOKS TO RUN
+# python/rag/langgraph-openinference/galileo_langgraph.ipynb
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -31,7 +34,12 @@ env:
 
 jobs:
   run-notebook:
-    name: Execute galileo-langgraph.ipynb
+    strategy:
+      fail-fast: false
+      matrix:
+        notebook:
+          - "python/rag/langgraph-openinference/galileo_langgraph.ipynb"
+    name: Execute ${{ matrix.notebook }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
@@ -46,24 +54,29 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
+      - name: Install Jupyter tooling
         run: |
           python -m pip install --upgrade pip
-          pip install --upgrade jupyter ipykernel jupyter-client
-          pip install \
-            opentelemetry-api opentelemetry-sdk opentelemetry-exporter-otlp opentelemetry-instrumentation \
-            openinference-instrumentation-langchain \
-            langchain langchain-community langchain-openai langgraph langchain-text-splitters \
-            beautifulsoup4 tiktoken
+          pip install --upgrade ipywidgets nbformat
+          pip install --upgrade tornado\<6.2.0 pyzmq\<25
 
-      - name: Execute notebook
+      - name: Extract and install %pip/!pip requirements from notebook
         env:
-          PIP_DISABLE_PIP_VERSION_CHECK: "1"
+          NB_FILE: ${{ matrix.notebook }}
+        shell: bash
         run: |
-          NB_PATH="python/rag/langgraph-openinference/galileo-langgraph.ipynb"
-          jupyter nbconvert --to notebook --execute --inplace \
-            --ExecutePreprocessor.kernel_name=python3 \
-            --ExecutePreprocessor.shutdown_kernel=graceful \
-            "$NB_PATH"
+          python scripts/utils/get_notebook_pip_commands.py
+          if [ -s nb_pip_commands.txt ]; then
+            while IFS= read -r cmd; do
+              echo "+ $cmd"
+              eval "$cmd"
+            done < nb_pip_commands.txt
+          else
+            echo "No pip install commands found in notebook cells"
+          fi
 
-
+      - name: Execute notebook with nbconvert
+        env:
+          NB_FILE: ${{ matrix.notebook }}
+        run: |
+          jupyter nbconvert --to notebook --execute "$NB_FILE"
