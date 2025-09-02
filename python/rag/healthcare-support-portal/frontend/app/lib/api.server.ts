@@ -4,7 +4,16 @@ const API_BASE_URL = 'http://localhost';
 
 export const serverApi = {
   async login(credentials: { username: string; password: string }) {
-    const response = await axios.post(`${API_BASE_URL}:8001/api/v1/auth/login`, credentials);
+    // Create form data as the backend expects (username/password fields)
+    const formData = new URLSearchParams();
+    formData.append('username', credentials.username);
+    formData.append('password', credentials.password);
+    
+    const response = await axios.post(`${API_BASE_URL}:8001/api/v1/auth/login`, formData, {
+      headers: { 
+        'Content-Type': 'application/x-www-form-urlencoded'
+      }
+    });
     return response.data;
   },
 

@@ -32,7 +32,9 @@ class Settings(BaseSettings):
 
     # Oso Configuration
     oso_url: str = os.getenv("OSO_URL", "http://localhost:8080")
-    oso_auth: str = os.getenv("OSO_AUTH", "e_0123456789_12345_osotesttoken01xiIn")
+    oso_auth: str = os.getenv(
+        "OSO_AUTH", "e_0123456789_12345_osotesttoken01xiIn"
+    )
 
     # Galileo 2.0 Observability Configuration
     galileo_enabled: bool = os.getenv(
@@ -54,6 +56,9 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
+        # Explicitly ignore extra fields to prevent OpenTelemetry/Prometheus 
+        # env vars from being loaded
+        extra = "ignore"
 
 
 settings = Settings()

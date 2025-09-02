@@ -26,22 +26,36 @@ export async function loader({ request }: LoaderFunctionArgs) {
 export async function action({ request }: ActionFunctionArgs) {
   return handleFormSubmission(request, loginSchema, async (data) => {
     try {
+      console.log('[Login] Attempting login for:', data.username);
+      
       // Call auth service to login
       const authResponse = await serverApi.login(data);
+      console.log('[Login] Auth response received:', authResponse);
+      
       const token = authResponse.access_token;
+      if (!token) {
+        throw new Error('No access token received from auth service');
+      }
       
       // Get user data
       const user = await serverApi.getCurrentUser(token);
+      console.log('[Login] User data retrieved:', user);
       
       // Create redirect response with auth cookies
       const response = redirect('/');
       return setAuthCookies(response, token, user);
     } catch (error: any) {
+      console.error('[Login] Error during login:', error);
+      
       // Return form error
       const submission = parseWithZod(await request.formData(), { schema: loginSchema });
       return json({
         submission: submission.reply({
-          formErrors: [error.response?.data?.detail || 'Invalid username or password'],
+          formErrors: [
+            error.response?.data?.detail || 
+            error.message || 
+            'Invalid username or password'
+          ],
         }),
       }, { status: 400 });
     }
