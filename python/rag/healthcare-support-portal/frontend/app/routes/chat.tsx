@@ -54,7 +54,7 @@ export async function action({ request }: ActionFunctionArgs) {
       max_results: 5
     };
     
-    const response = await serverApi.askQuestion(chatRequest, token);
+    const response = await serverApi.askQuestion(token, chatRequest);
     
     // Return the response for the fetcher
     return Response.json({

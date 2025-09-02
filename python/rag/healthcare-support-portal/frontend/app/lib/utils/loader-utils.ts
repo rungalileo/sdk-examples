@@ -44,3 +44,39 @@ export function getAuthToken(request: Request): string | null {
   const cookieHeader = request.headers.get('Cookie');
   return cookieHeader?.match(/authToken=([^;]+)/)?.[1] || null;
 }
+
+export async function requireAuth(request: Request): Promise<User> {
+  const user = await getCurrentUser(request);
+  
+  if (!user) {
+    throw new Response('Authentication required', { 
+      status: 401, 
+      statusText: 'Unauthorized' 
+    });
+  }
+  
+  return user;
+}
+
+export function handleApiError(error: any): Response {
+  console.error('API Error:', error);
+  
+  // If it's already a Response, return it
+  if (error instanceof Response) {
+    return error;
+  }
+  
+  // If it's an error with status, create appropriate response
+  if (error?.status) {
+    return new Response(error.message || 'API Error', { 
+      status: error.status,
+      statusText: error.statusText || 'Error'
+    });
+  }
+  
+  // Default error response
+  return new Response(
+    error?.message || 'An unexpected error occurred', 
+    { status: 500, statusText: 'Internal Server Error' }
+  );
+}
