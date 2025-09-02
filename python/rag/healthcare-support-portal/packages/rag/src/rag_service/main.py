@@ -20,9 +20,6 @@ from .observability import (
 )
 from .routers import chat, documents
 
-# Initialize observability components
-initialize_observability()
-
 # Set OpenAI API key
 openai.api_key = settings.openai_api_key
 
@@ -64,6 +61,9 @@ app.include_router(chat.router, prefix="/api/v1/chat", tags=["Chat"])
 async def startup_event():
     """Verify migrations and start service"""
     try:
+        # Initialize observability components
+        initialize_observability()
+        
         # Verify database migrations are current
         require_migrations_current()
         

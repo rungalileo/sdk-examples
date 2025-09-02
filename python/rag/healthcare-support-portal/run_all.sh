@@ -7,7 +7,7 @@ echo "=================================================="
 # Function to check if a port is available
 check_port() {
     local port=$1
-    if lsof -Pi :$port -sTCP:LISTEN -t >/dev/null 2>&1; then
+    if lsof -i :$port -sTCP:LISTEN -t >/dev/null 2>&1; then
         echo "❌ Port $port is already in use"
         return 1
     else
@@ -24,7 +24,7 @@ check_port 8003 || exit 1
 check_port 3000 || exit 1
 
 # Special handling for port 8080 (Oso Dev Server) - informational only
-if lsof -Pi :8080 -sTCP:LISTEN -t >/dev/null 2>&1; then
+if lsof -i :8080 -sTCP:LISTEN -t >/dev/null 2>&1; then
     echo "ℹ️  Port 8080 is in use (Oso Dev Server likely running)"
 else
     echo "✅ Port 8080 is available"

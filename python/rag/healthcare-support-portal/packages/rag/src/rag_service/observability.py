@@ -9,7 +9,9 @@ from typing import Any, Dict, Optional
 
 import structlog
 from fastapi import Request
-from galileo import Galileo
+
+# Import Galileo modules correctly
+from galileo import GalileoLogger
 
 from .config import settings
 
@@ -34,29 +36,37 @@ structlog.configure(
 
 logger = structlog.get_logger(__name__)
 
-# Galileo client
-galileo_client: Optional[Galileo] = None
+# Galileo logger instance
+galileo_logger_instance: Optional[GalileoLogger] = None
 
 
 def initialize_observability():
     """Initialize all observability components."""
-    global galileo_client
+    global galileo_logger_instance
     
     logger.info("Initializing observability components")
     
-    # Initialize Galileo 2.0
-    if settings.galileo_enabled and settings.galileo_api_key:
+    # Read Galileo configuration directly from environment variables
+    import os
+    galileo_enabled = os.getenv("GALILEO_ENABLED", "false").lower() == "true"
+    galileo_api_key = os.getenv("GALILEO_API_KEY", "")
+    galileo_project_name = os.getenv("GALILEO_PROJECT_NAME", "")
+    
+    # Initialize Galileo 2.0 only if enabled and API key is provided
+    if galileo_enabled and galileo_api_key and galileo_api_key.strip():
         try:
-            galileo_client = Galileo(
-                api_key=settings.galileo_api_key,
-                project_name=settings.galileo_project_name,
-                environment=settings.galileo_environment
+            # Create GalileoLogger with explicit API key to avoid interactive prompts
+            galileo_logger_instance = GalileoLogger(
+                api_key=galileo_api_key,
+                project=galileo_project_name
             )
-            logger.info("Galileo 2.0 client initialized successfully")
+            logger.info("Galileo 2.0 logger initialized successfully")
         except Exception as e:
-            logger.error("Failed to initialize Galileo client", error=str(e))
+            logger.error("Failed to initialize Galileo logger", error=str(e))
+            galileo_logger_instance = None
     else:
         logger.info("Galileo observability disabled or API key not configured")
+        galileo_logger_instance = None
 
 
 @asynccontextmanager
@@ -451,14 +461,34 @@ def log_galileo_event(
     session_id: str = None
 ):
     """Log event to Galileo 2.0."""
-    if galileo_client:
+    if galileo_logger_instance:
         try:
-            galileo_client.log_event(
-                event_type=event_type,
-                event_data=event_data,
-                user_id=user_id,
-                session_id=session_id
+            # Start a session if not provided
+            if not session_id:
+                session_id = str(uuid.uuid4())
+            
+            # Start a trace for this event
+            galileo_logger_instance.start_trace(f"Event: {event_type}")
+            
+            # Add event data as span
+            galileo_logger_instance.add_llm_span(
+                input=str(event_data),
+                output=f"Event logged: {event_type}",
+                model="rag-service",
+                num_input_tokens=len(str(event_data)),
+                num_output_tokens=len(f"Event logged: {event_type}"),
+                total_tokens=len(str(event_data)) + 
+                len(f"Event logged: {event_type}"),
+                duration_ns=int(time.time() * 1e9) % 1000,
             )
+            
+            # Conclude and flush the trace
+            galileo_logger_instance.conclude(
+                output=f"Event logged: {event_type}",
+                duration_ns=int(time.time() * 1e9) % 1000
+            )
+            galileo_logger_instance.flush()
+            
             logger.debug(
                 "Event logged to Galileo",
                 event_type=event_type,
