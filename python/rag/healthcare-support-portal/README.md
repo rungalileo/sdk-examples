@@ -71,11 +71,14 @@ cp packages/patient/.env.example packages/patient/.env
 cp packages/rag/.env.example packages/rag/.env
 cp frontend/.env.example frontend/.env
 
-# Set your OpenAI API key (required for RAG functionality)
-export OPENAI_API_KEY="your-openai-api-key-here"
-echo "OPENAI_API_KEY=$OPENAI_API_KEY" >> packages/rag/.env
+# The .env.example files contain all the necessary configuration templates
+# You'll need to update these key values in your .env files:
 
-# Generate secure secret keys for production
+# 1. OpenAI API Key (required for RAG functionality)
+# Edit packages/rag/.env and set:
+# OPENAI_API_KEY=sk-your-actual-openai-api-key-here
+
+# 2. Generate secure secret keys for production
 SECRET_KEY=$(python -c "import secrets; print(secrets.token_urlsafe(32))")
 echo "SECRET_KEY=$SECRET_KEY" >> packages/auth/.env
 echo "SECRET_KEY=$SECRET_KEY" >> packages/patient/.env
@@ -453,6 +456,8 @@ uv run python -m common.seed_data
 
 ### Environment Configuration
 
+**🎯 Start with .env.example files!** Each service has its own `.env.example` file that contains all the configuration templates you need. This is the **recommended way** to set up your environment.
+
 Each service has its own `.env` file for configuration. Here's how to set up all environment variables:
 
 #### 🔐 Auth Service (packages/auth/.env)
@@ -541,6 +546,17 @@ cp packages/rag/.env.example packages/rag/.env
 cp frontend/.env.example frontend/.env
 ```
 
+**📋 What's in the .env.example files?**
+
+The `.env.example` files contain **templates** with all the necessary configuration variables and their default values. When you copy them to `.env`, you get a complete starting point with:
+
+- **🔑 Required variables** (like `OPENAI_API_KEY`, `SECRET_KEY`)
+- **⚙️ Optional variables** with sensible defaults
+- **📝 Clear comments** explaining what each variable does
+- **🚀 Development-ready** configuration values
+
+**💡 Pro tip:** Always check the `.env.example` files first to see what configuration options are available!
+
 #### 2. Configure Required Variables
 
 **🔑 OpenAI API Key (Required for RAG)**
@@ -549,6 +565,46 @@ cp frontend/.env.example frontend/.env
 # Then update the RAG service .env file:
 nano packages/rag/.env
 # Set: OPENAI_API_KEY=sk-your-actual-api-key-here
+```
+
+**📖 Understanding Your .env.example Files**
+
+Each service has a comprehensive `.env.example` file. Here's what you'll find:
+
+**🔐 Auth Service (.env.example)**
+```bash
+# View the template
+cat packages/auth/.env.example
+
+# Key variables:
+# - SECRET_KEY: JWT signing key
+# - DATABASE_URL: PostgreSQL connection string
+# - ACCESS_TOKEN_EXPIRE_MINUTES: JWT expiration time
+# - OSO_URL: Authorization service URL
+```
+
+**🏥 Patient Service (.env.example)**
+```bash
+# View the template
+cat packages/patient/.env.example
+
+# Key variables:
+# - SECRET_KEY: Service authentication key
+# - DATABASE_URL: PostgreSQL connection string
+# - OSO_URL: Authorization service URL
+```
+
+**🤖 RAG Service (.env.example)**
+```bash
+# View the template
+cat packages/rag/.env.example
+
+# Key variables:
+# - OPENAI_API_KEY: Your OpenAI API key (required)
+# - EMBEDDING_MODEL: AI model for document embeddings
+# - CHAT_MODEL: AI model for Q&A responses
+# - GALILEO_ENABLED: Observability platform toggle
+# - LOG_LEVEL: Logging verbosity
 ```
 
 **🔐 Security Keys (Required for Production)**
@@ -561,6 +617,28 @@ nano packages/auth/.env
 nano packages/patient/.env
 nano packages/rag/.env
 # Set: SECRET_KEY=your-generated-secret-key
+```
+
+**🔍 Quick Configuration Check**
+
+After copying your `.env.example` files, you can quickly see what needs to be configured:
+
+```bash
+# Check what variables need your attention
+echo "=== Checking required configuration ==="
+echo "OpenAI API Key:"
+grep "OPENAI_API_KEY" packages/rag/.env
+echo ""
+echo "Secret Keys:"
+grep "SECRET_KEY" packages/*/.env
+echo ""
+echo "Database URLs:"
+grep "DATABASE_URL" packages/*/.env
+
+# Look for placeholder values that need updating
+echo ""
+echo "=== Placeholder values to update ==="
+grep -r "change-me\|your-\|sk-" packages/*/.env
 ```
 
 **🗄️ Database Configuration**
@@ -624,9 +702,9 @@ cp packages/patient/.env.example packages/patient/.env
 cp packages/rag/.env.example packages/rag/.env
 cp frontend/.env.example frontend/.env
 
-# 2. Set your OpenAI API key (required for RAG)
-export OPENAI_API_KEY="your-openai-api-key-here"
-echo "OPENAI_API_KEY=$OPENAI_API_KEY" >> packages/rag/.env
+# 2. Update your OpenAI API key (required for RAG)
+# Edit packages/rag/.env and set your actual OpenAI API key:
+# OPENAI_API_KEY=sk-your-actual-api-key-here
 
 # 3. Generate secure secret keys
 SECRET_KEY=$(python -c "import secrets; print(secrets.token_urlsafe(32))")
