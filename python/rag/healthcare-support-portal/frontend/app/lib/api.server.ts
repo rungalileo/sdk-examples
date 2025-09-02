@@ -1,325 +1,122 @@
-import type {
-  User,
-  LoginRequest,
-  RegisterRequest,
-  AuthResponse,
-  Patient,
-  PatientCreate,
-  PatientUpdate,
-  Document,
-  DocumentCreate,
-  DocumentUpdate,
-  ChatRequest,
-  ChatResponse,
-  SearchRequest,
-  SearchResponse,
-} from './types';
+import axios from 'axios';
 
-// Server-side API configuration
-const BASE_URL = process.env.VITE_API_BASE_URL || 'http://localhost';
-const AUTH_PORT = process.env.VITE_AUTH_SERVICE_PORT || '8001';
-const PATIENT_PORT = process.env.VITE_PATIENT_SERVICE_PORT || '8002';
-const RAG_PORT = process.env.VITE_RAG_SERVICE_PORT || '8003';
+const API_BASE_URL = 'http://localhost';
 
-const AUTH_API_URL = `${BASE_URL}:${AUTH_PORT}/api/v1`;
-const PATIENT_API_URL = `${BASE_URL}:${PATIENT_PORT}/api/v1`;
-const RAG_API_URL = `${BASE_URL}:${RAG_PORT}/api/v1`;
-
-// Server-side fetch wrapper with error handling
-async function fetchApi<T>(
-  url: string,
-  options: RequestInit = {}
-): Promise<T> {
-  const response = await fetch(url, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
-    },
-  });
-
-  if (!response.ok) {
-    const error = await response.json().catch(() => ({ detail: 'An error occurred' }));
-    throw {
-      response: {
-        status: response.status,
-        statusText: response.statusText,
-        data: error,
-      },
-    };
-  }
-
-  return response.json();
-}
-
-// Server-side API client
 export const serverApi = {
-  // Authentication Methods
-  async login(credentials: LoginRequest): Promise<AuthResponse> {
-    const formData = new URLSearchParams();
-    formData.append('username', credentials.username);
-    formData.append('password', credentials.password);
+  async login(credentials: { username: string; password: string }) {
+    const response = await axios.post(`${API_BASE_URL}:8001/api/v1/auth/login`, credentials);
+    return response.data;
+  },
 
-    return fetchApi<AuthResponse>(`${AUTH_API_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: formData.toString(),
+  async getCurrentUser(token: string) {
+    const response = await axios.get(`${API_BASE_URL}:8001/api/v1/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  async getPatients(token: string) {
+    const response = await axios.get(`${API_BASE_URL}:8002/api/v1/patients/`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  async getDocuments(token: string) {
+    const response = await axios.get(`${API_BASE_URL}:8003/api/v1/documents/`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  async createPatient(token: string, patientData: any) {
+    const response = await axios.post(`${API_BASE_URL}:8002/api/v1/patients/`, patientData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  async updatePatient(token: string, patientId: string, patientData: any) {
+    const response = await axios.put(`${API_BASE_URL}:8002/api/v1/patients/${patientId}`, patientData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  async deletePatient(token: string, patientId: string) {
+    await axios.delete(`${API_BASE_URL}:8002/api/v1/patients/${patientId}`, {
+      headers: { Authorization: `Bearer ${token}` }
     });
   },
 
-  async register(userData: RegisterRequest): Promise<User> {
-    return fetchApi<User>(`${AUTH_API_URL}/auth/register`, {
-      method: 'POST',
-      body: JSON.stringify(userData),
+  async createDocument(token: string, documentData: any) {
+    const response = await axios.post(`${API_BASE_URL}:8003/api/v1/documents/`, documentData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  async updateDocument(token: string, documentId: string, documentData: any) {
+    const response = await axios.put(`${API_BASE_URL}:8003/api/v1/documents/${documentId}`, documentData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  async deleteDocument(token: string, documentId: string) {
+    await axios.delete(`${API_BASE_URL}:8003/api/v1/documents/${documentId}`, {
+      headers: { Authorization: `Bearer ${token}` }
     });
   },
 
-  async getCurrentUser(token: string): Promise<User> {
-    return fetchApi<User>(`${AUTH_API_URL}/auth/me`, {
-      headers: {
+  async uploadDocument(token: string, formData: FormData) {
+    const response = await axios.post(`${API_BASE_URL}:8003/api/v1/documents/upload`, formData, {
+      headers: { 
         Authorization: `Bearer ${token}`,
-      },
+        'Content-Type': 'multipart/form-data'
+      }
     });
+    return response.data;
   },
 
-  async getUsers(token: string): Promise<User[]> {
-    return fetchApi<User[]>(`${AUTH_API_URL}/users/`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+  async searchDocuments(token: string, searchData: any) {
+    const response = await axios.post(`${API_BASE_URL}:8003/api/v1/chat/search`, searchData, {
+      headers: { Authorization: `Bearer ${token}` }
     });
+    return response.data;
   },
 
-  async getUser(userId: number, token: string): Promise<User> {
-    return fetchApi<User>(`${AUTH_API_URL}/users/${userId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+  async askQuestion(token: string, questionData: any) {
+    const response = await axios.post(`${API_BASE_URL}:8003/api/v1/chat/ask`, questionData, {
+      headers: { Authorization: `Bearer ${token}` }
     });
+    return response.data;
   },
 
-  async createUser(userData: any, token: string): Promise<User> {
-    return fetchApi<User>(`${AUTH_API_URL}/users/`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(userData),
+  async getUsers(token: string) {
+    const response = await axios.get(`${API_BASE_URL}:8001/api/v1/users/`, {
+      headers: { Authorization: `Bearer ${token}` }
     });
+    return response.data;
   },
 
-  async updateUser(userId: number, userData: any, token: string): Promise<User> {
-    return fetchApi<User>(`${AUTH_API_URL}/users/${userId}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(userData),
+  async createUser(token: string, userData: any) {
+    const response = await axios.post(`${API_BASE_URL}:8001/api/v1/users/`, userData, {
+      headers: { Authorization: `Bearer ${token}` }
     });
+    return response.data;
   },
 
-  // Patient Methods
-  async getPatients(token: string): Promise<Patient[]> {
-    return fetchApi<Patient[]>(`${PATIENT_API_URL}/patients/`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+  async updateUser(token: string, userId: string, userData: any) {
+    const response = await axios.put(`${API_BASE_URL}:8001/api/v1/users/${userId}`, userData, {
+      headers: { Authorization: `Bearer ${token}` }
     });
+    return response.data;
   },
 
-  async getPatient(id: number, token: string): Promise<Patient> {
-    return fetchApi<Patient>(`${PATIENT_API_URL}/patients/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+  async deleteUser(token: string, userId: string) {
+    await axios.delete(`${API_BASE_URL}:8001/api/v1/users/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` }
     });
-  },
-
-  async createPatient(patientData: PatientCreate, token: string): Promise<Patient> {
-    return fetchApi<Patient>(`${PATIENT_API_URL}/patients/`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(patientData),
-    });
-  },
-
-  async updatePatient(
-    id: number,
-    patientData: PatientUpdate,
-    token: string
-  ): Promise<Patient> {
-    return fetchApi<Patient>(`${PATIENT_API_URL}/patients/${id}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(patientData),
-    });
-  },
-
-  async deletePatient(id: number, token: string): Promise<void> {
-    await fetch(`${PATIENT_API_URL}/patients/${id}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  },
-
-  // Document Methods
-  async getDocuments(token: string): Promise<Document[]> {
-    return fetchApi<Document[]>(`${RAG_API_URL}/documents/`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  },
-
-  async getDocument(id: number, token: string): Promise<Document> {
-    return fetchApi<Document>(`${RAG_API_URL}/documents/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  },
-
-  async createDocument(
-    documentData: DocumentCreate,
-    token: string
-  ): Promise<Document> {
-    return fetchApi<Document>(`${RAG_API_URL}/documents/`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(documentData),
-    });
-  },
-
-  async updateDocument(
-    id: number,
-    documentData: DocumentUpdate,
-    token: string
-  ): Promise<Document> {
-    return fetchApi<Document>(`${RAG_API_URL}/documents/${id}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(documentData),
-    });
-  },
-
-  async deleteDocument(id: number, token: string): Promise<void> {
-    await fetch(`${RAG_API_URL}/documents/${id}`, {
-      method: 'DELETE',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  },
-
-  async uploadDocument(
-    title: string,
-    documentType: string,
-    department: string,
-    file: File,
-    patientId?: number,
-    isSensitive?: boolean,
-    token?: string
-  ): Promise<Document> {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('title', title);
-    formData.append('document_type', documentType);
-    formData.append('department', department);
-    formData.append('is_sensitive', isSensitive ? 'true' : 'false');
-    
-    if (patientId) {
-      formData.append('patient_id', patientId.toString());
-    }
-
-    const response = await fetch(`${RAG_API_URL}/documents/upload`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: formData,
-    });
-
-    if (!response.ok) {
-      const error = await response.json().catch(() => ({ detail: 'Upload failed' }));
-      throw {
-        response: {
-          status: response.status,
-          statusText: response.statusText,
-          data: error,
-        },
-      };
-    }
-
-    return response.json();
-  },
-
-  async regenerateEmbeddings(documentId: number, token: string): Promise<any> {
-    return fetchApi(`${RAG_API_URL}/documents/${documentId}/regenerate-embeddings`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  },
-
-  async getEmbeddingStatus(documentId: number, token: string): Promise<any> {
-    return fetchApi(`${RAG_API_URL}/documents/${documentId}/embedding-status`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  },
-
-  async getAllEmbeddingStatuses(token: string): Promise<Record<number, any>> {
-    return fetchApi(`${RAG_API_URL}/documents/embedding-statuses`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  },
-
-  async regenerateAllEmbeddings(token: string): Promise<any> {
-    return fetchApi(`${RAG_API_URL}/documents/regenerate-all-embeddings`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-  },
-
-  // Chat/RAG Methods
-  async askQuestion(request: ChatRequest, token: string): Promise<ChatResponse> {
-    return fetchApi<ChatResponse>(`${RAG_API_URL}/chat/ask`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(request),
-    });
-  },
-
-  async searchDocuments(
-    request: SearchRequest,
-    token: string
-  ): Promise<SearchResponse> {
-    return fetchApi<SearchResponse>(`${RAG_API_URL}/search/documents`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(request),
-    });
-  },
+  }
 };

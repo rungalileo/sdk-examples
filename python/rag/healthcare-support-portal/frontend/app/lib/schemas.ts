@@ -1,99 +1,37 @@
 import { z } from 'zod';
 
-// Auth Schemas
 export const loginSchema = z.object({
   username: z.string().min(1, 'Username is required'),
   password: z.string().min(1, 'Password is required'),
 });
 
-export const registerSchema = z.object({
-  username: z.string()
-    .min(3, 'Username must be at least 3 characters')
-    .max(50, 'Username must be less than 50 characters')
-    .regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
-  email: z.string()
-    .email('Invalid email address'),
-  password: z.string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(/(?=.*[a-z])/, 'Password must contain at least one lowercase letter')
-    .regex(/(?=.*[A-Z])/, 'Password must contain at least one uppercase letter')
-    .regex(/(?=.*[0-9])/, 'Password must contain at least one number'),
+export const userCreateSchema = z.object({
+  username: z.string().min(3, 'Username must be at least 3 characters'),
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(8, 'Password must be at least 8 characters'),
   role: z.enum(['doctor', 'nurse', 'admin']),
-  department: z.enum([
-    'cardiology',
-    'neurology',
-    'pediatrics',
-    'oncology',
-    'emergency',
-    'endocrinology',
-    'general'
-  ]),
+  department: z.enum(['cardiology', 'neurology', 'pediatrics', 'oncology', 'emergency', 'endocrinology', 'general']),
 });
 
-// Patient Schemas
+export const userUpdateSchema = userCreateSchema.partial().omit({ password: true });
+
 export const patientCreateSchema = z.object({
-  name: z.string()
-    .min(1, 'Name is required')
-    .max(100, 'Name must be less than 100 characters'),
-  date_of_birth: z.string()
-    .optional()
-    .refine((val) => !val || !isNaN(Date.parse(val)), 'Invalid date format'),
-  medical_record_number: z.string()
-    .min(1, 'Medical record number is required')
-    .regex(/^MRN-\d{6}$/, 'Medical record number must be in format MRN-XXXXXX'),
-  department: z.enum([
-    'cardiology',
-    'neurology',
-    'pediatrics',
-    'oncology',
-    'emergency',
-    'endocrinology',
-    'general'
-  ]),
-  assigned_doctor_id: z.number()
-    .int()
-    .positive()
-    .optional()
-    .or(z.string().transform(val => val ? parseInt(val, 10) : undefined)),
+  name: z.string().min(1, 'Name is required'),
+  date_of_birth: z.string().optional(),
+  medical_record_number: z.string().min(1, 'Medical record number is required'),
+  department: z.enum(['cardiology', 'neurology', 'pediatrics', 'oncology', 'emergency', 'endocrinology', 'general']),
+  assigned_doctor_id: z.string().optional(),
 });
 
-export const patientUpdateSchema = patientCreateSchema.partial().extend({
-  is_active: z.boolean().optional(),
-});
+export const patientUpdateSchema = patientCreateSchema.partial();
 
-// Document Schemas
 export const documentCreateSchema = z.object({
-  title: z.string()
-    .min(1, 'Title is required')
-    .max(200, 'Title must be less than 200 characters'),
-  content: z.string()
-    .min(1, 'Content is required')
-    .max(10000, 'Content must be less than 10000 characters'),
-  document_type: z.enum([
-    'protocol',
-    'policy',
-    'guideline',
-    'research',
-    'report',
-    'medical_record'
-  ]),
-  patient_id: z.number()
-    .int()
-    .positive()
-    .optional()
-    .or(z.string().transform(val => val ? parseInt(val, 10) : undefined)),
-  department: z.enum([
-    'cardiology',
-    'neurology',
-    'pediatrics',
-    'oncology',
-    'emergency',
-    'endocrinology',
-    'general'
-  ]),
-  is_sensitive: z.boolean()
-    .optional()
-    .default(false),
+  title: z.string().min(1, 'Title is required'),
+  content: z.string().min(1, 'Content is required'),
+  document_type: z.enum(['protocol', 'policy', 'guideline', 'research', 'report', 'medical_record']),
+  patient_id: z.string().optional(),
+  department: z.enum(['cardiology', 'neurology', 'pediatrics', 'oncology', 'emergency', 'endocrinology', 'general']),
+  is_sensitive: z.boolean().default(false),
 });
 
 export const documentUpdateSchema = documentCreateSchema.partial();
@@ -135,7 +73,8 @@ export const searchRequestSchema = z.object({
 
 // Type exports
 export type LoginInput = z.infer<typeof loginSchema>;
-export type RegisterInput = z.infer<typeof registerSchema>;
+export type UserCreateInput = z.infer<typeof userCreateSchema>;
+export type UserUpdateInput = z.infer<typeof userUpdateSchema>;
 export type PatientCreateInput = z.infer<typeof patientCreateSchema>;
 export type PatientUpdateInput = z.infer<typeof patientUpdateSchema>;
 export type DocumentCreateInput = z.infer<typeof documentCreateSchema>;

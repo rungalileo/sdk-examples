@@ -1,75 +1,42 @@
-import { redirect } from 'react-router';
 import { parseWithZod } from '@conform-to/zod';
-import type { z } from 'zod';
+import { redirect } from 'react-router';
 import { json } from './loader-utils';
 
-/**
- * Parse form data with Zod schema
- */
-export async function parseFormData<T extends z.ZodSchema>(
+export async function handleFormSubmission(
   request: Request,
-  schema: T
+  schema: any,
+  handler: (data: any) => Promise<Response>
 ) {
-  const formData = await request.formData();
-  return parseWithZod(formData, { schema });
-}
-
-/**
- * Handle form submission with validation
- */
-export async function handleFormSubmission<T extends z.ZodSchema>(
-  request: Request,
-  schema: T,
-  onSuccess: (data: z.infer<T>) => Promise<Response | void>
-) {
-  const submission = await parseFormData(request, schema);
-  
-  if (submission.status !== 'success') {
-    return json({ submission: submission.reply() }, { status: 400 });
-  }
-  
   try {
-    const result = await onSuccess(submission.value);
-    return result || redirect('/');
-  } catch (error: any) {
-    // Handle API errors
-    if (error.response?.data?.detail) {
+    const formData = await request.formData();
+    const submission = parseWithZod(formData, { schema });
+
+    if (submission.status !== 'success') {
       return json({
-        submission: submission.reply({
-          formErrors: [error.response.data.detail],
-        }),
-      }, { status: error.response.status || 400 });
+        submission: submission.reply(),
+      }, { status: 400 });
     }
-    
-    // Generic error
+
+    return await handler(submission.value);
+  } catch (error) {
+    console.error('Form submission error:', error);
     return json({
-      submission: submission.reply({
-        formErrors: ['An error occurred. Please try again.'],
-      }),
+      submission: {
+        formErrors: ['An unexpected error occurred. Please try again.'],
+      },
     }, { status: 500 });
   }
 }
 
-/**
- * Set auth cookies in response
- */
 export function setAuthCookies(response: Response, token: string, user: any): Response {
+  // Set HTTP-only cookies for authentication
   const headers = new Headers(response.headers);
   
-  try {
-    // Set auth token cookie
-    headers.append('Set-Cookie', `authToken=${token}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400`);
-    
-    // Set user data cookie (for client-side access)
-    headers.append('Set-Cookie', `user=${encodeURIComponent(JSON.stringify(user))}; Path=/; SameSite=Lax; Max-Age=86400`);
-    
-    console.log(`[Auth] Set auth cookies for user: ${user.username}`);
-  } catch (error) {
-    console.error('[Auth] Failed to set auth cookies:', error);
-    // Clear any existing cookies if there's an error
-    headers.append('Set-Cookie', 'authToken=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0');
-    headers.append('Set-Cookie', 'user=; Path=/; SameSite=Lax; Max-Age=0');
-  }
+  // Set auth token cookie
+  headers.append('Set-Cookie', `authToken=${token}; HttpOnly; Path=/; SameSite=Strict; Max-Age=1800`);
+  
+  // Set user info cookie (for client-side access)
+  headers.append('Set-Cookie', `userInfo=${JSON.stringify(user)}; Path=/; SameSite=Strict; Max-Age=1800`);
   
   return new Response(response.body, {
     status: response.status,
@@ -78,59 +45,18 @@ export function setAuthCookies(response: Response, token: string, user: any): Re
   });
 }
 
-/**
- * Clear auth cookies
- */
 export function clearAuthCookies(): Response {
   const headers = new Headers();
-  headers.append('Set-Cookie', 'authToken=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0');
-  headers.append('Set-Cookie', 'user=; Path=/; SameSite=Lax; Max-Age=0');
   
-  return redirect('/login', { headers });
-}
-
-/**
- * Create form error response
- */
-export function formError(
-  submission: any,
-  errors: Record<string, string[]> | string[]
-) {
-  if (Array.isArray(errors)) {
-    return json({
-      submission: submission.reply({ formErrors: errors }),
-    }, { status: 400 });
-  }
+  // Clear auth cookies
+  headers.append('Set-Cookie', 'authToken=; HttpOnly; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT');
+  headers.append('Set-Cookie', 'userInfo=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT');
   
-  return json({
-    submission: submission.reply({ fieldErrors: errors }),
-  }, { status: 400 });
-}
-
-/**
- * Handle API form errors
- */
-export function handleApiFormError(error: any, submission: any) {
-  if (error.response?.data?.detail) {
-    // FastAPI validation errors
-    if (Array.isArray(error.response.data.detail)) {
-      const fieldErrors: Record<string, string[]> = {};
-      
-      error.response.data.detail.forEach((err: any) => {
-        const field = err.loc?.[err.loc.length - 1] || 'form';
-        if (!fieldErrors[field]) {
-          fieldErrors[field] = [];
-        }
-        fieldErrors[field].push(err.msg);
-      });
-      
-      return formError(submission, fieldErrors);
-    }
-    
-    // Single error message
-    return formError(submission, [error.response.data.detail]);
-  }
-  
-  // Generic error
-  return formError(submission, ['An error occurred. Please try again.']);
+  return new Response(null, {
+    status: 302,
+    headers: {
+      ...Object.fromEntries(headers.entries()),
+      Location: '/login',
+    },
+  });
 }
