@@ -1,0 +1,25 @@
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "patient"
+version = "0.1.0"
+description = "Patient management service for Healthcare Support Portal"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "sqlalchemy>=2.0.0",
+    "common",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/patient_service"]
+
+[tool.uv.sources]
+common = { workspace = true }

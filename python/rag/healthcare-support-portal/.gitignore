@@ -1,0 +1,266 @@
+# =======================
+# HEALTHCARE SUPPORT PORTAL
+# .gitignore
+# =======================
+
+# Logs
+logs/
+*.log
+*.log.*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+# Python lib directories (but not frontend lib directories)
+**/lib/
+!frontend/**/lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+.venv*/
+
+# uv
+uv.lock
+.uv/
+
+# PyCharm
+.idea/
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# PostgreSQL
+postgresql/
+pgdata/
+data/
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Editor backups
+*.bak
+*.swp
+*.swo
+*~
+
+# Process IDs
+*.pid
+
+# Coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# IPython
+profile_default/
+ipython_config.py
+
+# File uploads (if you implement file upload storage)
+uploads/
+media/
+static/
+
+# Package-specific ignores
+packages/*/logs/
+packages/*/.env
+packages/*/uploads/
+packages/*/temp/
+
+# OpenAI cache (if any)
+.openai_cache/
+
+# Vector database files (if using local vector storage)
+*.faiss
+*.index
+
+# Backup files
+*.backup
+*.bak
+
+# SSL certificates (if any)
+*.pem
+*.key
+*.crt
+*.csr
+
+# Local configuration overrides
+config.local.py
+settings.local.py
+local_settings.py
+
+# Test artifacts
+.pytest_cache/
+test-results/
+test-reports/
+
+# Performance profiling
+*.prof
+
+# Memory dumps
+*.dump
+
+# Core dumps
+core.*
+
+# OS generated files
+.directory
+.fuse_hidden*
+.nfs*
+
+# IDE and editor files
+*.sublime-project
+*.sublime-workspace
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+.vscode/extensions.json
+.history/
+
+# Claude Code settings
+.claude
+CLAUDE.md
+
+# Node.js and Frontend
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Frontend build outputs
+dist/
+build/
+.react-router/
+
+# Frontend environment files
+frontend/.env
+frontend/.env.local
+frontend/.env.development.local
+frontend/.env.test.local
+frontend/.env.production.local
+
+# Local environment files per package
+packages/auth/.env
+packages/patient/.env
+packages/rag/.env
+
+# Generated documentation
+site/

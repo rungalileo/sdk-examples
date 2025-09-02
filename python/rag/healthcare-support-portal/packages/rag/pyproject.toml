@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "rag"
+version = "0.1.0"
+description = "RAG service for Healthcare Support Portal"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "sqlalchemy>=2.0.0",
+    "pgvector>=0.2.0",
+    "openai>=1.0.0",
+    "tiktoken>=0.5.0",
+    "numpy>=1.24.0",
+    "python-multipart>=0.0.6",
+    "common",
+    "galileo-sdk>=1.16.1",
+    "structlog>=23.0.0",
+    "rich>=13.0.0",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/rag_service"]
+
+[tool.uv.sources]
+common = { workspace = true }
