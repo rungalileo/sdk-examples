@@ -55,7 +55,7 @@ The Healthcare Support Portal is a **production-ready RAG (Retrieval-Augmented G
 
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/rungalileo/sdk-examples/python/rag/healthcare-support-portal
 cd healthcare-support-portal
 
 # Run initial setup
