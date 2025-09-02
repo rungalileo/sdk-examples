@@ -9,7 +9,7 @@ from typing import Any, Dict, Optional
 
 import structlog
 from fastapi import Request
-from galileo_sdk import Galileo
+from galileo import Galileo
 
 from .config import settings
 

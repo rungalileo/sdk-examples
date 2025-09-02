@@ -33,6 +33,7 @@ The Healthcare Support Portal is a **production-ready RAG (Retrieval-Augmented G
 
 - **🔐 Security:** [Oso](https://osohq.com) for fine-grained authorization
 - **🧠 AI/RAG:** [OpenAI](https://openai.com) for embeddings and chat completions
+- **🔧 Observability:** [Galileo](https://galileo.ai) for observability and logging
 - **🗄️ Database:** PostgreSQL with [pgvector](https://github.com/pgvector/pgvector) for vector similarity search
 - **🐍 Backend:** [FastAPI](https://fastapi.tiangolo.com) microservices with [SQLAlchemy](https://sqlalchemy.org)
 - **📦 Package Management:** [uv](https://github.com/astral-sh/uv) for fast Python package management
@@ -56,7 +57,7 @@ The Healthcare Support Portal is a **production-ready RAG (Retrieval-Augmented G
 ```bash
 # Clone the repository
 git clone https://github.com/rungalileo/sdk-examples/python/rag/healthcare-support-portal
-cd healthcare-support-portal
+cd python/rag/healthcare-support-portal
 
 # Run initial setup
 ./setup.sh
