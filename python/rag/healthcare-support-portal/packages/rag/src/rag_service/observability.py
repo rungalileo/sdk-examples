@@ -449,7 +449,14 @@ def log_llm_call(
                 total_tokens=total_tokens,
                 duration_ns=duration_ns,
                 temperature=temperature,
-                tags=["llm", model]
+                tags=["llm", str(model)],
+                metadata={
+                    "model": str(model),
+                    "temperature": str(temperature) if temperature else "0.7",
+                    "input_tokens": str(num_input_tokens) if num_input_tokens else "unknown",
+                    "output_tokens": str(num_output_tokens) if num_output_tokens else "unknown",
+                    "total_tokens": str(total_tokens) if total_tokens else "unknown"
+                }
             )
             logger.debug("LLM call logged to Galileo", model=model)
         except Exception as e:
@@ -469,7 +476,12 @@ def log_retriever_call(
                 output=documents,
                 name="Document Retrieval",
                 duration_ns=duration_ns,
-                tags=["retriever", "rag"]
+                tags=["retriever", "rag"],
+                metadata={
+                    "query": str(query),
+                    "document_count": str(len(documents)) if documents else "0",
+                    "duration_ms": str(duration_ns / 1_000_000) if duration_ns else "unknown"
+                }
             )
             logger.debug("Retriever call logged to Galileo", doc_count=len(documents) if documents else 0)
         except Exception as e:
@@ -539,17 +551,23 @@ def log_galileo_event(
             message = event_data.get('query', event_data.get('message', f'{event_type} event'))
             
             # Add a workflow span to capture the event
+            # Convert all metadata values to strings for Galileo validation
+            metadata = {
+                "event_type": str(event_type),
+                "user_id": str(user_id) if user_id else "unknown",
+                "session_id": str(session_id or str(uuid.uuid4())),
+                "timestamp": str(time.time()),
+            }
+            
+            # Convert event_data values to strings
+            for key, value in event_data.items():
+                metadata[key] = str(value) if value is not None else "null"
+                
             galileo_logger.add_workflow_span(
                 input=message,
                 output=f"Event: {event_type}",
                 name=event_type,
-                metadata={
-                    "event_type": event_type,
-                    "user_id": user_id,
-                    "session_id": session_id or str(uuid.uuid4()),
-                    "timestamp": time.time(),
-                    **event_data
-                },
+                metadata=metadata,
                 tags=[event_type, "event"]
             )
             

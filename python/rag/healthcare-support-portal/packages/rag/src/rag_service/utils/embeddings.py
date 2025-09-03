@@ -81,6 +81,9 @@ async def similarity_search(
     """
     Perform similarity search using pgvector.
     """
+    import time
+    start_time = time.time()
+    
     try:
         # Generate query embedding
         query_embedding = await generate_embedding(query_text)
@@ -148,6 +151,30 @@ async def similarity_search(
                 }
             )
 
+        # Log retriever call to Galileo
+        try:
+            from ..observability import log_retriever_call
+            duration_ns = int((time.time() - start_time) * 1_000_000_000)
+            
+            # Format results for Galileo logging
+            formatted_results = []
+            for result in results:
+                formatted_results.append({
+                    "document_title": result["title"],
+                    "content_chunk": result["content_chunk"][:200] + "..." if len(result["content_chunk"]) > 200 else result["content_chunk"],
+                    "similarity_score": result["similarity_score"],
+                    "document_type": result["document_type"],
+                    "department": result["department"]
+                })
+            
+            log_retriever_call(
+                query=query_text,
+                documents=formatted_results,
+                duration_ns=duration_ns
+            )
+        except Exception as log_error:
+            print(f"Warning: Failed to log retriever call to Galileo: {log_error}")
+        
         return results
 
     except Exception as e:

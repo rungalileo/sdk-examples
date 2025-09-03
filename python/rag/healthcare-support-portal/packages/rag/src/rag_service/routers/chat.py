@@ -357,6 +357,9 @@ async def generate_ai_response(
     messages.append({"role": "user", "content": question})
 
     # Generate response using OpenAI (Galileo instrumented)
+    import time
+    start_time = time.time()
+    
     try:
         client = openai.OpenAI(api_key=settings.openai_api_key)
         response = client.chat.completions.create(
@@ -367,6 +370,32 @@ async def generate_ai_response(
         )
 
         ai_response = response.choices[0].message.content
+        
+        # Calculate duration and tokens
+        duration_ns = int((time.time() - start_time) * 1_000_000_000)
+        input_tokens = response.usage.prompt_tokens if hasattr(response, 'usage') else None
+        output_tokens = response.usage.completion_tokens if hasattr(response, 'usage') else None
+        total_tokens = response.usage.total_tokens if hasattr(response, 'usage') else None
+        
+        # Log LLM call to Galileo
+        try:
+            from ..observability import log_llm_call
+            
+            # Create full input context for logging
+            full_input = "\n\n".join([msg["content"] for msg in messages])
+            
+            log_llm_call(
+                input_text=full_input,
+                output_text=ai_response,
+                model=settings.chat_model,
+                num_input_tokens=input_tokens,
+                num_output_tokens=output_tokens,
+                total_tokens=total_tokens,
+                duration_ns=duration_ns,
+                temperature=0.7
+            )
+        except Exception as log_error:
+            print(f"Warning: Failed to log LLM call to Galileo: {log_error}")
 
         # Add disclaimer if no context was used
         if not context:
@@ -375,7 +404,25 @@ async def generate_ai_response(
         return ai_response
 
     except Exception as e:
-        return f"I apologize, but I'm unable to generate a response at this time. Error: {str(e)}"
+        error_msg = f"I apologize, but I'm unable to generate a response at this time. Error: {str(e)}"
+        
+        # Log error to Galileo
+        try:
+            from ..observability import log_llm_call
+            duration_ns = int((time.time() - start_time) * 1_000_000_000)
+            full_input = "\n\n".join([msg["content"] for msg in messages])
+            
+            log_llm_call(
+                input_text=full_input,
+                output_text=error_msg,
+                model=settings.chat_model,
+                duration_ns=duration_ns,
+                temperature=0.7
+            )
+        except Exception as log_error:
+            print(f"Warning: Failed to log LLM error to Galileo: {log_error}")
+            
+        return error_msg
 
 
 @router.get("/conversation-history")
