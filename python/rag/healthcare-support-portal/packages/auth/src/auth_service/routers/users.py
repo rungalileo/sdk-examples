@@ -50,9 +50,7 @@ async def get_user(
     # Get the user
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
     # Check authorization - admin can read any user, users can read themselves
     if current_user.role != "admin" and current_user.id != user_id:
@@ -78,9 +76,7 @@ async def update_user(
     # Get the user
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
 
     # Check authorization - only admin can update users
     if current_user.role != "admin":
@@ -134,11 +130,7 @@ async def create_user(
         )
 
     # Check if user already exists
-    existing_user = (
-        db.query(User)
-        .filter((User.username == user_data.username) | (User.email == user_data.email))
-        .first()
-    )
+    existing_user = db.query(User).filter((User.username == user_data.username) | (User.email == user_data.email)).first()
 
     if existing_user:
         raise HTTPException(

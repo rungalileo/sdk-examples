@@ -32,31 +32,21 @@ class Settings(BaseSettings):
 
     # Oso Configuration
     oso_url: str = os.getenv("OSO_URL", "http://localhost:8080")
-    oso_auth: str = os.getenv(
-        "OSO_AUTH", "e_0123456789_12345_osotesttoken01xiIn"
-    )
+    oso_auth: str = os.getenv("OSO_AUTH", "e_0123456789_12345_osotesttoken01xiIn")
 
     # Galileo 2.0 Observability Configuration
-    galileo_enabled: bool = os.getenv(
-        "GALILEO_ENABLED", "true"
-    ).lower() == "true"
-    galileo_api_key: str = os.getenv(
-        "GALILEO_API_KEY", ""
-    )
-    galileo_project_name: str = os.getenv(
-        "GALILEO_PROJECT_NAME", "healthcare-rag"
-    )
-    galileo_environment: str = os.getenv(
-        "GALILEO_ENVIRONMENT", "development"
-    )
-    
+    galileo_enabled: bool = os.getenv("GALILEO_ENABLED", "true").lower() == "true"
+    galileo_api_key: str = os.getenv("GALILEO_API_KEY", "")
+    galileo_project_name: str = os.getenv("GALILEO_PROJECT_NAME", "healthcare-rag")
+    galileo_environment: str = os.getenv("GALILEO_ENVIRONMENT", "development")
+
     # Logging Configuration
     log_level: str = os.getenv("LOG_LEVEL", "INFO")
     log_format: str = os.getenv("LOG_FORMAT", "json")  # json or console
 
     class Config:
         env_file = ".env"
-        # Explicitly ignore extra fields to prevent OpenTelemetry/Prometheus 
+        # Explicitly ignore extra fields to prevent OpenTelemetry/Prometheus
         # env vars from being loaded
         extra = "ignore"
 

@@ -20,10 +20,7 @@ def get_alembic_config() -> Config:
     alembic_ini = common_dir / "alembic.ini"
 
     if not alembic_ini.exists():
-        raise FileNotFoundError(
-            f"alembic.ini not found at {alembic_ini}. "
-            "Please ensure Alembic is properly initialized."
-        )
+        raise FileNotFoundError(f"alembic.ini not found at {alembic_ini}. " "Please ensure Alembic is properly initialized.")
 
     config = Config(str(alembic_ini))
 
@@ -65,9 +62,7 @@ def verify_migrations_current(database_url: str = None) -> bool:
 
         if current_rev != head_rev:
             print("❌ Database migrations are out of date!")
-            print(
-                f"   Current revision: {current_rev or 'None (no migrations applied)'}"
-            )
+            print(f"   Current revision: {current_rev or 'None (no migrations applied)'}")
             print(f"   Head revision: {head_rev}")
             print("")
             print("   To fix this, run one of the following:")

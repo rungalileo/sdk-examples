@@ -15,9 +15,7 @@ from .config import settings
 from .routers import patients
 
 # Initialize SQLAlchemy Oso Cloud with registry and server settings
-sqlalchemy_oso_cloud.init(
-    Base.registry, url=settings.oso_url, api_key=settings.oso_auth
-)
+sqlalchemy_oso_cloud.init(Base.registry, url=settings.oso_url, api_key=settings.oso_auth)
 
 # Create FastAPI app
 app = FastAPI(

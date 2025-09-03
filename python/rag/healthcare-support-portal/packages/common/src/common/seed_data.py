@@ -124,9 +124,7 @@ def seed_users(db: Session, admin_token: str) -> dict[str, User]:
 
     for user_data in demo_users:
         # Check if user already exists
-        existing_user = (
-            db.query(User).filter(User.username == user_data["username"]).first()
-        )
+        existing_user = db.query(User).filter(User.username == user_data["username"]).first()
         if existing_user:
             print(f"✅ User '{user_data['username']}' already exists, skipping")
             created_users[user_data["username"]] = existing_user
@@ -151,13 +149,9 @@ def seed_users(db: Session, admin_token: str) -> dict[str, User]:
                 # Get user from database
                 new_user = db.query(User).filter(User.id == user_response["id"]).first()
                 created_users[user_data["username"]] = new_user
-                print(
-                    f"✅ Created user via API: {user_data['full_name']} ({user_data['username']})"
-                )
+                print(f"✅ Created user via API: {user_data['full_name']} ({user_data['username']})")
             else:
-                print(
-                    f"⚠️  Failed to create user {user_data['username']}: {response.text}"
-                )
+                print(f"⚠️  Failed to create user {user_data['username']}: {response.text}")
 
         except Exception as e:
             print(f"⚠️  Error creating user {user_data['username']}: {e}")
@@ -165,9 +159,7 @@ def seed_users(db: Session, admin_token: str) -> dict[str, User]:
     return created_users
 
 
-def seed_patients(
-    db: Session, users: dict[str, User], admin_token: str
-) -> list[Patient]:
+def seed_patients(db: Session, users: dict[str, User], admin_token: str) -> list[Patient]:
     """Create demo patients via API if they don't exist."""
     created_patients = []
 
@@ -205,29 +197,17 @@ def seed_patients(
 
     for patient_data in demo_patients:
         # Check if patient already exists
-        existing_patient = (
-            db.query(Patient)
-            .filter(
-                Patient.medical_record_number == patient_data["medical_record_number"]
-            )
-            .first()
-        )
+        existing_patient = db.query(Patient).filter(Patient.medical_record_number == patient_data["medical_record_number"]).first()
         if existing_patient:
-            print(
-                f"✅ Patient '{patient_data['name']}' (MRN: {patient_data['medical_record_number']}) already exists, skipping"
-            )
+            print(f"✅ Patient '{patient_data['name']}' (MRN: {patient_data['medical_record_number']}) already exists, skipping")
             created_patients.append(existing_patient)
 
             # Sync OSO facts for existing patients (in case they weren't synced before)
             try:
                 sync_patient_access(existing_patient)
-                print(
-                    f"🔐 Synced access facts for existing patient {patient_data['name']}"
-                )
+                print(f"🔐 Synced access facts for existing patient {patient_data['name']}")
             except Exception as e:
-                print(
-                    f"⚠️  Failed to sync OSO facts for existing patient {patient_data['name']}: {e}"
-                )
+                print(f"⚠️  Failed to sync OSO facts for existing patient {patient_data['name']}: {e}")
             continue
 
         # Create patient via Patient Service API
@@ -247,19 +227,11 @@ def seed_patients(
             if response.status_code == 200:
                 patient_response = response.json()
                 # Get patient from database
-                new_patient = (
-                    db.query(Patient)
-                    .filter(Patient.id == patient_response["id"])
-                    .first()
-                )
+                new_patient = db.query(Patient).filter(Patient.id == patient_response["id"]).first()
                 created_patients.append(new_patient)
-                print(
-                    f"✅ Created patient via API (with OSO facts): {patient_data['name']} (MRN: {patient_data['medical_record_number']})"
-                )
+                print(f"✅ Created patient via API (with OSO facts): {patient_data['name']} (MRN: {patient_data['medical_record_number']})")
             else:
-                print(
-                    f"⚠️  Failed to create patient {patient_data['name']}: {response.text}"
-                )
+                print(f"⚠️  Failed to create patient {patient_data['name']}: {response.text}")
 
         except Exception as e:
             print(f"⚠️  Error creating patient {patient_data['name']}: {e}")
@@ -267,9 +239,7 @@ def seed_patients(
     return created_patients
 
 
-def seed_documents(
-    db: Session, users: dict[str, User], patients: list[Patient], admin_token: str
-) -> list[Document]:
+def seed_documents(db: Session, users: dict[str, User], patients: list[Patient], admin_token: str) -> list[Document]:
     """Create demo documents if they don't exist."""
     created_documents = []
 
@@ -408,9 +378,7 @@ Remember: You are an important part of your healthcare team!""",
 
     for doc_data in demo_documents:
         # Check if document already exists (by title)
-        existing_doc = (
-            db.query(Document).filter(Document.title == doc_data["title"]).first()
-        )
+        existing_doc = db.query(Document).filter(Document.title == doc_data["title"]).first()
         if existing_doc:
             print(f"✅ Document '{doc_data['title']}' already exists, skipping")
             created_documents.append(existing_doc)
@@ -433,17 +401,11 @@ Remember: You are an important part of your healthcare team!""",
             if response.status_code == 200:
                 doc_response = response.json()
                 # Get document from database
-                new_document = (
-                    db.query(Document).filter(Document.id == doc_response["id"]).first()
-                )
+                new_document = db.query(Document).filter(Document.id == doc_response["id"]).first()
                 created_documents.append(new_document)
-                print(
-                    f"✅ Created document via RAG API (with embeddings): {doc_data['title']}"
-                )
+                print(f"✅ Created document via RAG API (with embeddings): {doc_data['title']}")
             else:
-                print(
-                    f"⚠️  Failed to create document {doc_data['title']}: {response.text}"
-                )
+                print(f"⚠️  Failed to create document {doc_data['title']}: {response.text}")
 
         except Exception as e:
             print(f"⚠️  Error creating document {doc_data['title']}: {e}")
@@ -500,9 +462,7 @@ Stable coronary artery disease. Continue current medications. Next follow-up in 
                 .first()
             )
             if existing_doc:
-                print(
-                    f"✅ Patient document '{doc_data['title']}' already exists, skipping"
-                )
+                print(f"✅ Patient document '{doc_data['title']}' already exists, skipping")
                 created_documents.append(existing_doc)
                 continue
 
@@ -524,19 +484,11 @@ Stable coronary artery disease. Continue current medications. Next follow-up in 
                 if response.status_code == 200:
                     doc_response = response.json()
                     # Get document from database
-                    new_document = (
-                        db.query(Document)
-                        .filter(Document.id == doc_response["id"])
-                        .first()
-                    )
+                    new_document = db.query(Document).filter(Document.id == doc_response["id"]).first()
                     created_documents.append(new_document)
-                    print(
-                        f"✅ Created patient document via RAG API (with embeddings): {doc_data['title']}"
-                    )
+                    print(f"✅ Created patient document via RAG API (with embeddings): {doc_data['title']}")
                 else:
-                    print(
-                        f"⚠️  Failed to create patient document {doc_data['title']}: {response.text}"
-                    )
+                    print(f"⚠️  Failed to create patient document {doc_data['title']}: {response.text}")
 
             except Exception as e:
                 print(f"⚠️  Error creating patient document {doc_data['title']}: {e}")
@@ -588,9 +540,7 @@ def main() -> None:
             print(f"   Users created/verified: {len(users)}")
             print(f"   Patients created/verified: {len(patients)}")
             print(f"   Documents created/verified: {len(documents)}")
-            print(
-                "   📊 Documents created via RAG API include vector embeddings for chat!"
-            )
+            print("   📊 Documents created via RAG API include vector embeddings for chat!")
             print("\n🔐 Demo Login Credentials:")
             print("   Doctor:  dr_smith / secure_password")
             print("   Nurse:   nurse_johnson / secure_password")

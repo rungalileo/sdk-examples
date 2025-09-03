@@ -8,9 +8,7 @@ import logging
 try:
     from oso_cloud import Value
 except ImportError:
-    print(
-        "Warning: oso_cloud not installed. OSO fact synchronization will be disabled."
-    )
+    print("Warning: oso_cloud not installed. OSO fact synchronization will be disabled.")
     Value = None
 
 from .db import SessionLocal
@@ -146,9 +144,7 @@ def sync_patient_access(patient: Patient) -> bool:
                 # Doctor assignment fact
                 if patient.assigned_doctor_id:
                     doctor_value = Value("User", str(patient.assigned_doctor_id))
-                    tx.insert(
-                        ("has_role", doctor_value, "assigned_doctor", patient_value)
-                    )
+                    tx.insert(("has_role", doctor_value, "assigned_doctor", patient_value))
 
                 # Department nurse facts - all nurses in the patient's department
                 if patient.department:
@@ -164,14 +160,10 @@ def sync_patient_access(patient: Patient) -> bool:
 
                     for nurse in nurses:
                         nurse_value = Value("User", str(nurse.id))
-                        tx.insert(
-                            ("has_role", nurse_value, "department_nurse", patient_value)
-                        )
+                        tx.insert(("has_role", nurse_value, "department_nurse", patient_value))
 
                 # Admin access facts for all admins
-                admins = (
-                    db.query(User).filter(User.role == "admin", User.is_active).all()
-                )
+                admins = db.query(User).filter(User.role == "admin", User.is_active).all()
 
                 for admin in admins:
                     admin_value = Value("User", str(admin.id))
@@ -202,9 +194,7 @@ def remove_patient_access(patient_id: int) -> bool:
         return True
 
     except Exception as e:
-        logger.error(
-            f"Failed to remove patient access facts for patient {patient_id}: {e}"
-        )
+        logger.error(f"Failed to remove patient access facts for patient {patient_id}: {e}")
         return False
 
 
@@ -227,35 +217,21 @@ def sync_document_access(document: Document) -> bool:
 
                 # Patient doctor fact - if document is linked to a patient
                 if document.patient_id:
-                    patient = (
-                        db.query(Patient)
-                        .filter(Patient.id == document.patient_id)
-                        .first()
-                    )
+                    patient = db.query(Patient).filter(Patient.id == document.patient_id).first()
                     if patient and patient.assigned_doctor_id:
                         doctor_value = Value("User", str(patient.assigned_doctor_id))
-                        tx.insert(
-                            ("has_role", doctor_value, "patient_doctor", doc_value)
-                        )
+                        tx.insert(("has_role", doctor_value, "patient_doctor", doc_value))
 
                 # Department staff fact - for non-sensitive documents
                 if document.department and not document.is_sensitive:
-                    dept_users = (
-                        db.query(User)
-                        .filter(User.department == document.department, User.is_active)
-                        .all()
-                    )
+                    dept_users = db.query(User).filter(User.department == document.department, User.is_active).all()
 
                     for user in dept_users:
                         user_value = Value("User", str(user.id))
-                        tx.insert(
-                            ("has_role", user_value, "department_staff", doc_value)
-                        )
+                        tx.insert(("has_role", user_value, "department_staff", doc_value))
 
                 # Admin access facts for all admins
-                admins = (
-                    db.query(User).filter(User.role == "admin", User.is_active).all()
-                )
+                admins = db.query(User).filter(User.role == "admin", User.is_active).all()
 
                 for admin in admins:
                     admin_value = Value("User", str(admin.id))
@@ -286,9 +262,7 @@ def remove_document_access(document_id: int) -> bool:
         return True
 
     except Exception as e:
-        logger.error(
-            f"Failed to remove document access facts for document {document_id}: {e}"
-        )
+        logger.error(f"Failed to remove document access facts for document {document_id}: {e}")
         return False
 
 
@@ -305,9 +279,7 @@ def sync_embedding_access(embedding: Embedding) -> bool:
                 embed_value = Value("Embedding", str(embedding.id))
 
                 # Admin access facts for all admins
-                admins = (
-                    db.query(User).filter(User.role == "admin", User.is_active).all()
-                )
+                admins = db.query(User).filter(User.role == "admin", User.is_active).all()
 
                 for admin in admins:
                     admin_value = Value("User", str(admin.id))
@@ -320,9 +292,7 @@ def sync_embedding_access(embedding: Embedding) -> bool:
             db.close()
 
     except Exception as e:
-        logger.error(
-            f"Failed to sync embedding access for embedding {embedding.id}: {e}"
-        )
+        logger.error(f"Failed to sync embedding access for embedding {embedding.id}: {e}")
         return False
 
 
@@ -340,9 +310,7 @@ def remove_embedding_access(embedding_id: int) -> bool:
         return True
 
     except Exception as e:
-        logger.error(
-            f"Failed to remove embedding access facts for embedding {embedding_id}: {e}"
-        )
+        logger.error(f"Failed to remove embedding access facts for embedding {embedding_id}: {e}")
         return False
 
 
@@ -374,9 +342,7 @@ def sync_user_role_change(user: User, old_role: str | None = None) -> bool:
 
                 # Add new nurse access if applicable
                 if user.role == "nurse" and patient.department == user.department:
-                    oso.insert(
-                        ("has_role", user_value, "department_nurse", patient_value)
-                    )
+                    oso.insert(("has_role", user_value, "department_nurse", patient_value))
         finally:
             db.close()
 
@@ -401,40 +367,26 @@ def sync_department_change(user: User, old_department: str | None = None) -> boo
 
             # Remove old department nurse access
             if old_department and user.role == "nurse":
-                old_patients = (
-                    db.query(Patient)
-                    .filter(Patient.department == old_department, Patient.is_active)
-                    .all()
-                )
+                old_patients = db.query(Patient).filter(Patient.department == old_department, Patient.is_active).all()
 
                 with oso.batch() as tx:
                     for patient in old_patients:
                         patient_value = Value("Patient", str(patient.id))
-                        tx.delete(
-                            ("has_role", user_value, "department_nurse", patient_value)
-                        )
+                        tx.delete(("has_role", user_value, "department_nurse", patient_value))
 
             # Add new department nurse access
             if user.department and user.role == "nurse":
-                new_patients = (
-                    db.query(Patient)
-                    .filter(Patient.department == user.department, Patient.is_active)
-                    .all()
-                )
+                new_patients = db.query(Patient).filter(Patient.department == user.department, Patient.is_active).all()
 
                 with oso.batch() as tx:
                     for patient in new_patients:
                         patient_value = Value("Patient", str(patient.id))
-                        tx.insert(
-                            ("has_role", user_value, "department_nurse", patient_value)
-                        )
+                        tx.insert(("has_role", user_value, "department_nurse", patient_value))
 
         finally:
             db.close()
 
-        logger.info(
-            f"Synced department change for user {user.id}: {old_department} -> {user.department}"
-        )
+        logger.info(f"Synced department change for user {user.id}: {old_department} -> {user.department}")
         return True
 
     except Exception as e:

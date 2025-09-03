@@ -21,9 +21,7 @@ from common.models import Base
 target_metadata = Base.metadata
 
 # Get database URL from environment variable or use default
-DATABASE_URL = os.getenv(
-    "DATABASE_URL", "postgresql+psycopg2://postgres:postgres@localhost:5432/healthcare"
-)
+DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+psycopg2://postgres:postgres@localhost:5432/healthcare")
 
 # Override the ini file's sqlalchemy.url with environment variable
 config.set_main_option("sqlalchemy.url", DATABASE_URL)

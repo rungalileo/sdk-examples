@@ -18,9 +18,7 @@ router = APIRouter()
 
 
 @router.post("/login", response_model=Token)
-async def login(
-    form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)
-):
+async def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     """
     Authenticate user and return access token
     """
@@ -37,15 +35,11 @@ async def login(
 
     # Check if user is active
     if not user.is_active:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user"
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user")
 
     # Create access token
     access_token_expires = timedelta(minutes=30)
-    access_token = create_access_token(
-        data={"sub": user.username}, expires_delta=access_token_expires
-    )
+    access_token = create_access_token(data={"sub": user.username}, expires_delta=access_token_expires)
 
     return {"access_token": access_token, "token_type": "bearer"}
 
@@ -72,11 +66,7 @@ async def register(
             detail="Only administrators can create new users. Use POST /api/v1/users/ endpoint instead.",
         )
     # Check if user already exists
-    existing_user = (
-        db.query(User)
-        .filter((User.username == user_data.username) | (User.email == user_data.email))
-        .first()
-    )
+    existing_user = db.query(User).filter((User.username == user_data.username) | (User.email == user_data.email)).first()
 
     if existing_user:
         raise HTTPException(
@@ -116,8 +106,6 @@ async def refresh_token(current_user: User = Depends(get_current_user)):
     Refresh access token for authenticated user
     """
     access_token_expires = timedelta(minutes=30)
-    access_token = create_access_token(
-        data={"sub": current_user.username}, expires_delta=access_token_expires
-    )
+    access_token = create_access_token(data={"sub": current_user.username}, expires_delta=access_token_expires)
 
     return {"access_token": access_token, "token_type": "bearer"}

@@ -58,9 +58,7 @@ async def get_patient(
     # Get the patient
     patient = db.query(Patient).filter(Patient.id == patient_id).first()
     if not patient:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Patient not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Patient not found")
 
     # Check if current user is authorized to read this patient
     if not oso.authorize(current_user, "read", patient):
@@ -83,11 +81,7 @@ async def create_patient(
     Create a new patient
     """
     # Check if medical record number already exists
-    existing_patient = (
-        db.query(Patient)
-        .filter(Patient.medical_record_number == patient_data.medical_record_number)
-        .first()
-    )
+    existing_patient = db.query(Patient).filter(Patient.medical_record_number == patient_data.medical_record_number).first()
 
     if existing_patient:
         raise HTTPException(
@@ -128,11 +122,7 @@ async def create_patient(
 
     # If assigning to a doctor, ensure it's valid
     if patient_data.assigned_doctor_id:
-        doctor = (
-            db.query(User)
-            .filter(User.id == patient_data.assigned_doctor_id, User.role == "doctor")
-            .first()
-        )
+        doctor = db.query(User).filter(User.id == patient_data.assigned_doctor_id, User.role == "doctor").first()
         if not doctor:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
@@ -168,9 +158,7 @@ async def update_patient(
     # Get the patient
     patient = db.query(Patient).filter(Patient.id == patient_id).first()
     if not patient:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Patient not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Patient not found")
 
     # Check if current user is authorized to write this patient
     if not oso.authorize(current_user, "write", patient):
@@ -225,16 +213,11 @@ async def update_patient(
 
     # Sync OSO facts if assignments changed
     try:
-        if (
-            old_assigned_doctor_id != patient.assigned_doctor_id
-            or old_department != patient.department
-        ):
+        if old_assigned_doctor_id != patient.assigned_doctor_id or old_department != patient.department:
             # Resync all patient access facts
             sync_patient_access(patient)
     except Exception as e:
-        print(
-            f"Warning: Failed to sync OSO facts for updated patient {patient.id}: {e}"
-        )
+        print(f"Warning: Failed to sync OSO facts for updated patient {patient.id}: {e}")
 
     return patient
 
@@ -254,9 +237,7 @@ async def delete_patient(
     # Get the patient
     patient = db.query(Patient).filter(Patient.id == patient_id).first()
     if not patient:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Patient not found"
-        )
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Patient not found")
 
     # Check if current user is authorized to write this patient
     if not oso.authorize(current_user, "write", patient):
@@ -273,9 +254,7 @@ async def delete_patient(
     try:
         remove_patient_access(patient.id)
     except Exception as e:
-        print(
-            f"Warning: Failed to remove OSO facts for deactivated patient {patient.id}: {e}"
-        )
+        print(f"Warning: Failed to remove OSO facts for deactivated patient {patient.id}: {e}")
 
     return {"message": "Patient deactivated successfully"}
 

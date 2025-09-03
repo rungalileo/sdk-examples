@@ -77,9 +77,7 @@ def sync_all_facts() -> None:
                 sync_embedding_access(embedding)
                 print(f"✅ Synced embedding access for embedding {embedding.id}")
             except Exception as e:
-                print(
-                    f"❌ Failed to sync embedding access for embedding {embedding.id}: {e}"
-                )
+                print(f"❌ Failed to sync embedding access for embedding {embedding.id}: {e}")
 
         print("\n🎉 OSO fact synchronization completed!")
         print(f"   Admin users: {len(admin_users)}")
