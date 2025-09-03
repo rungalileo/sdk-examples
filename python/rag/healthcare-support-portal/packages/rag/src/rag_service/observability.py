@@ -11,7 +11,8 @@ import structlog
 from fastapi import Request
 
 # Import Galileo modules correctly
-from galileo import log
+from galileo import GalileoLogger, galileo_context
+import os
 
 from .config import settings
 
@@ -38,11 +39,12 @@ logger = structlog.get_logger(__name__)
 
 # Galileo logging enabled flag
 galileo_enabled: bool = False
+galileo_logger: GalileoLogger = None
 
 
 def initialize_observability():
     """Initialize all observability components."""
-    global galileo_enabled
+    global galileo_enabled, galileo_logger
     
     logger.info("Initializing observability components")
     
@@ -53,11 +55,17 @@ def initialize_observability():
     # Initialize Galileo logging if enabled and API key is provided
     if settings.galileo_enabled and galileo_api_key and galileo_api_key.strip():
         try:
-            # Initialize Galileo logging with the provided API key
-            log.init(
-                api_key=galileo_api_key,
-                project=galileo_project_name
+            # Set Galileo environment variables for the modern API
+            os.environ['GALILEO_API_KEY'] = galileo_api_key
+            os.environ['GALILEO_PROJECT_NAME'] = galileo_project_name
+            os.environ['GALILEO_ENVIRONMENT'] = settings.galileo_environment
+            
+            # Initialize GalileoLogger
+            galileo_logger = GalileoLogger(
+                project=galileo_project_name,
+                log_stream="rag-service"
             )
+            
             galileo_enabled = True
             logger.info(
                 "Galileo logging initialized successfully",
@@ -67,9 +75,11 @@ def initialize_observability():
         except Exception as e:
             logger.error("Failed to initialize Galileo logging", error=str(e))
             galileo_enabled = False
+            galileo_logger = None
     else:
         logger.info("Galileo observability disabled or API key not configured")
         galileo_enabled = False
+        galileo_logger = None
 
 
 @asynccontextmanager
@@ -84,6 +94,7 @@ async def rag_query_context(
         query_id = str(uuid.uuid4())
     
     start_time = time.time()
+    trace = None
     
     try:
         # Log query start
@@ -95,17 +106,26 @@ async def rag_query_context(
             query_id=query_id
         )
         
-        # Log to Galileo
-        log_galileo_event(
-            event_type="rag_query_started",
-            event_data={
-                "query_type": query_type,
-                "user_role": user_role,
-                "department": department,
-                "query_id": query_id,
-                "timestamp": start_time
-            }
-        )
+        # Start Galileo trace if enabled
+        if galileo_enabled and galileo_logger:
+            try:
+                # Start a session if not already started
+                session_id = galileo_logger.start_session(name=f"RAG-{query_type}", external_id=query_id)
+                
+                # Start a trace
+                trace = galileo_logger.start_trace(
+                    input=f"RAG {query_type} query",
+                    name=f"RAG Query - {query_type}",
+                    tags=[query_type, user_role, department] if department else [query_type, user_role],
+                    metadata={
+                        "query_type": query_type,
+                        "user_role": user_role,
+                        "department": department,
+                        "query_id": query_id
+                    }
+                )
+            except Exception as e:
+                logger.warning("Failed to start Galileo trace", error=str(e))
         
         yield query_id
         
@@ -120,25 +140,26 @@ async def rag_query_context(
             error=str(e)
         )
         
-        # Log error to Galileo
-        log_galileo_event(
-            event_type="rag_query_failed",
-            event_data={
-                "query_type": query_type,
-                "user_role": user_role,
-                "department": department,
-                "query_id": query_id,
-                "error": str(e),
-                "error_type": type(e).__name__,
-                "timestamp": time.time()
-            }
-        )
+        # Add error information to Galileo trace if enabled
+        if galileo_enabled and galileo_logger and trace:
+            try:
+                # Add an agent span to capture the error
+                galileo_logger.add_agent_span(
+                    input=f"RAG {query_type} query",
+                    output=f"Error: {str(e)}",
+                    name=f"RAG Error - {query_type}",
+                    metadata={"error_type": type(e).__name__, "error": str(e)},
+                    tags=["error", query_type]
+                )
+            except Exception as galileo_error:
+                logger.warning("Failed to log error to Galileo", error=str(galileo_error))
         
         raise
     
     finally:
         # Calculate duration
         duration = time.time() - start_time
+        duration_ns = int(duration * 1_000_000_000)
         
         # Log query completion
         logger.info(
@@ -150,18 +171,16 @@ async def rag_query_context(
             duration=duration
         )
         
-        # Log completion to Galileo
-        log_galileo_event(
-            event_type="rag_query_completed",
-            event_data={
-                "query_type": query_type,
-                "user_role": user_role,
-                "department": department,
-                "query_id": query_id,
-                "duration": duration,
-                "timestamp": time.time()
-            }
-        )
+        # Conclude Galileo trace if enabled
+        if galileo_enabled and galileo_logger and trace:
+            try:
+                galileo_logger.conclude(
+                    output="RAG query completed",
+                    duration_ns=duration_ns
+                )
+                galileo_logger.flush()
+            except Exception as galileo_error:
+                logger.warning("Failed to conclude Galileo trace", error=str(galileo_error))
 
 
 @asynccontextmanager
@@ -407,6 +426,56 @@ async def ai_response_context(
         )
 
 
+def log_llm_call(
+    input_text: str,
+    output_text: str, 
+    model: str,
+    num_input_tokens: int = None,
+    num_output_tokens: int = None,
+    total_tokens: int = None,
+    duration_ns: int = None,
+    temperature: float = None
+):
+    """Log an LLM call to Galileo."""
+    if galileo_enabled and galileo_logger:
+        try:
+            galileo_logger.add_llm_span(
+                input=input_text,
+                output=output_text,
+                model=model,
+                name=f"LLM Call - {model}",
+                num_input_tokens=num_input_tokens,
+                num_output_tokens=num_output_tokens,
+                total_tokens=total_tokens,
+                duration_ns=duration_ns,
+                temperature=temperature,
+                tags=["llm", model]
+            )
+            logger.debug("LLM call logged to Galileo", model=model)
+        except Exception as e:
+            logger.warning("Failed to log LLM call to Galileo", error=str(e))
+
+
+def log_retriever_call(
+    query: str,
+    documents: list,
+    duration_ns: int = None
+):
+    """Log a retriever call to Galileo."""
+    if galileo_enabled and galileo_logger:
+        try:
+            galileo_logger.add_retriever_span(
+                input=query,
+                output=documents,
+                name="Document Retrieval",
+                duration_ns=duration_ns,
+                tags=["retriever", "rag"]
+            )
+            logger.debug("Retriever call logged to Galileo", doc_count=len(documents) if documents else 0)
+        except Exception as e:
+            logger.warning("Failed to log retriever call to Galileo", error=str(e))
+
+
 def log_document_upload(
     document_type: str,
     department: str,
@@ -463,22 +532,25 @@ def log_galileo_event(
     user_id: str = None,
     session_id: str = None
 ):
-    """Log event to Galileo using the logging API."""
-    if galileo_enabled:
+    """Log event to Galileo using the GalileoLogger."""
+    if galileo_enabled and galileo_logger:
         try:
-            # Create a structured log entry for Galileo
-            log_entry = {
-                "event_type": event_type,
-                "user_id": user_id,
-                "session_id": session_id or str(uuid.uuid4()),
-                "timestamp": time.time(),
-                **event_data
-            }
+            # Create a workflow span for general events
+            message = event_data.get('query', event_data.get('message', f'{event_type} event'))
             
-            # Log to Galileo using the logging API
-            log.log(
-                message=f"{event_type}: {event_data.get('query', event_data.get('message', 'RAG operation'))}" if 'query' in event_data or 'message' in event_data else f"Event: {event_type}",
-                metadata=log_entry
+            # Add a workflow span to capture the event
+            galileo_logger.add_workflow_span(
+                input=message,
+                output=f"Event: {event_type}",
+                name=event_type,
+                metadata={
+                    "event_type": event_type,
+                    "user_id": user_id,
+                    "session_id": session_id or str(uuid.uuid4()),
+                    "timestamp": time.time(),
+                    **event_data
+                },
+                tags=[event_type, "event"]
             )
             
             logger.debug(
