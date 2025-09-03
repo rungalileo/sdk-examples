@@ -43,12 +43,27 @@ The Healthcare Support Portal is a **production-ready RAG (Retrieval-Augmented G
 
 ### Prerequisites
 
-- **Python 3.11+**
-- **Node.js 18+** (for frontend)
-- **PostgreSQL 12+** with pgvector extension
-- **Docker & Docker Compose** (for database)
-- **OpenAI API Key** (for RAG functionality)
-- **uv package manager**
+**⚠️ Important**: Please verify you have all prerequisites before proceeding.
+
+- **Python 3.11+** (Required for backend services)
+- **Node.js 20.19.0+** (Required for React Router 7 frontend) 
+- **uv package manager** (Install with: `curl -LsSf https://astral.sh/uv/install.sh | sh`)
+- **Docker & Docker Compose** (Required for PostgreSQL database)
+- **OpenAI API Key** [Get yours here](https://platform.openai.com/api-keys)
+- **Free Galileo Account** [Get yours here](https://app.galileo.ai/sign-up)
+- **Git** (For cloning the repository)
+
+#### Quick Prerequisites Check
+```bash
+# Verify all tools are installed
+echo "Checking prerequisites..."
+python3 --version    # Should be 3.11+
+node --version       # Should be 20.19.0+
+uv --version        # Should be installed
+docker --version    # Should be installed
+docker compose version # Should be installed
+echo "✅ All prerequisites verified!"
+```
 
 ### ⚡ Get Running in 5 Minutes
 
@@ -72,42 +87,68 @@ cp packages/patient/.env.example packages/patient/.env
 cp packages/rag/.env.example packages/rag/.env
 cp frontend/.env.example frontend/.env
 
-# The .env.example files contain all the necessary configuration templates
-# You'll need to update these key values in your .env files:
-
-# 1. OpenAI API Key (required for RAG functionality)
-# Edit packages/rag/.env and set:
-# OPENAI_API_KEY=sk-your-actual-openai-api-key-here
-
-# 2. Generate secure secret keys for production
+# Generate secure secret keys for all services
 SECRET_KEY=$(python -c "import secrets; print(secrets.token_urlsafe(32))")
 echo "SECRET_KEY=$SECRET_KEY" >> packages/auth/.env
 echo "SECRET_KEY=$SECRET_KEY" >> packages/patient/.env
 echo "SECRET_KEY=$SECRET_KEY" >> packages/rag/.env
+
+# ⚠️ CRITICAL: Add your OpenAI API Key
+echo "⚠️  You must add your OpenAI API key to packages/rag/.env"
+echo "   Edit the file and replace the placeholder with your actual key:"
+echo "   OPENAI_API_KEY=sk-your-actual-openai-api-key-here"
+echo ""
+echo "📝 Opening the file for you to edit..."
+# Uncomment the next line to auto-open the file for editing:
+# nano packages/rag/.env
 ```
 
-#### 3. Start All Services
+**🔑 Get your OpenAI API Key**: Visit [OpenAI Platform](https://platform.openai.com/api-keys) to create your API key.
+
+#### 3. Install Frontend Dependencies
+
+```bash
+# Install frontend dependencies
+cd frontend
+npm install
+cd ..
+```
+
+#### 4. Start All Services
 
 ```bash
 # Start everything at once
 ./run_all.sh
 
 # This starts:
+# - 🗄️ PostgreSQL Database (Port 5432)
+# - ⚖️ Oso Authorization Server (Port 8080) 
 # - 🔐 Auth Service (Port 8001)
 # - 🏥 Patient Service (Port 8002) 
 # - 🤖 RAG Service (Port 8003)
 # - 🌐 Frontend (Port 3000)
-# - 🗄️ PostgreSQL (Port 5432)
 ```
 
-#### 4. Access Your Application
+#### 5. Seed Demo Data (Optional)
+
+```bash
+# Wait for services to start (about 30 seconds), then:
+uv run python -m common.seed_data
+
+# This creates demo users:
+# - Doctor: dr_smith / secure_password
+# - Nurse: nurse_johnson / secure_password  
+# - Admin: admin_wilson / secure_password
+```
+
+#### 6. Access Your Application
 
 - **🌐 Web Interface:** http://localhost:3000
 - **🤖 RAG API Docs:** http://localhost:8003/docs
 - **🔐 Auth API Docs:** http://localhost:8001/docs
 - **🏥 Patient API Docs:** http://localhost:8002/docs
 
-#### 5. Test Your RAG System
+#### 7. Test Your RAG System
 
 ```bash
 # Upload a document

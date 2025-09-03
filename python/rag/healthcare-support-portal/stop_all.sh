@@ -1,6 +1,9 @@
 #!/bin/bash
 # stop_all.sh - Stop all Healthcare Support Portal services
 
+# Don't exit on error for this script (we want to try stopping all services)
+# set -e would cause the script to exit if one service isn't running
+
 echo "🛑 Healthcare Support Portal - Stopping All Services"
 echo "=================================================="
 
@@ -32,10 +35,17 @@ stop_service "frontend"
 
 # Also try to kill any remaining uvicorn processes for our services
 echo "🧹 Cleaning up any remaining processes..."
-pkill -f "src.auth_service.main:app" 2>/dev/null
-pkill -f "src.patient_service.main:app" 2>/dev/null
-pkill -f "src.rag_service.main:app" 2>/dev/null
+if command -v pkill >/dev/null 2>&1; then
+    pkill -f "src.auth_service.main:app" 2>/dev/null || true
+    pkill -f "src.patient_service.main:app" 2>/dev/null || true
+    pkill -f "src.rag_service.main:app" 2>/dev/null || true
+    # Also kill any npm/node processes for frontend
+    pkill -f "react-router dev" 2>/dev/null || true
+else
+    echo "⚠️  pkill not available. Manual cleanup may be needed."
+fi
 
 echo ""
 echo "✅ All services stopped!"
 echo "🗄️  Database is still running. Use 'docker-compose down' to stop it."
+echo "   To stop everything including database: docker-compose down"

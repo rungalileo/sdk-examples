@@ -1,6 +1,14 @@
 #!/bin/bash
 # run_all.sh - Start all Healthcare Support Portal services and infrastructure
 
+# Exit on any error (but allow controlled errors)
+set -e
+
+# Function to check if a command exists
+command_exists() {
+    command -v "$1" >/dev/null 2>&1
+}
+
 echo "🏥 Healthcare Support Portal - Starting All Services"
 echo "=================================================="
 
@@ -28,6 +36,51 @@ if lsof -i :8080 -sTCP:LISTEN -t >/dev/null 2>&1; then
     echo "ℹ️  Port 8080 is in use (Oso Dev Server likely running)"
 else
     echo "✅ Port 8080 is available"
+fi
+
+# Check prerequisites before starting services
+echo "🔍 Checking prerequisites..."
+
+# Check Docker
+if ! command_exists docker; then
+    echo "❌ Docker not found. Please install Docker and try again."
+    exit 1
+fi
+
+# Check docker-compose
+if ! command_exists docker-compose && ! docker compose version >/dev/null 2>&1; then
+    echo "❌ Docker Compose not found. Please install Docker Compose and try again."
+    exit 1
+fi
+
+# Check if frontend dependencies are installed
+echo "🔍 Checking frontend dependencies..."
+if [ ! -d "frontend/node_modules" ]; then
+    echo "⚠️  Frontend dependencies not found. Installing..."
+    if command_exists node && command_exists npm; then
+        NODE_VERSION=$(node --version | sed 's/v//')
+        if [ "$(printf '%s\n' "20.19.0" "$NODE_VERSION" | sort -V | head -n1)" = "20.19.0" ]; then
+            echo "📦 Installing frontend dependencies..."
+            cd frontend
+            if ! npm install; then
+                echo "❌ Failed to install frontend dependencies"
+                cd ..
+                exit 1
+            fi
+            cd ..
+            echo "✅ Frontend dependencies installed"
+        else
+            echo "❌ Node.js $NODE_VERSION found, but 20.19.0+ is required for frontend"
+            echo "   Frontend service will not start. Please upgrade Node.js."
+            SKIP_FRONTEND=true
+        fi
+    else
+        echo "❌ Node.js or npm not found. Frontend service will not start."
+        echo "   Please install Node.js 20.19.0+ and run: cd frontend && npm install"
+        SKIP_FRONTEND=true
+    fi
+else
+    echo "✅ Frontend dependencies found"
 fi
 
 echo ""
@@ -86,25 +139,39 @@ else
 fi
 RAG_PID=$!
 
-echo "🌐 Starting Frontend Service..."
-if [ "$LOG_TO_FILE" = true ]; then
-    (cd frontend && ./run.sh) > "$ROOT_DIR/logs/frontend.log" 2>&1 &
+# Start Frontend Service (only if dependencies are available)
+if [ "$SKIP_FRONTEND" = true ]; then
+    echo "⚠️  Skipping Frontend Service (dependencies not available)"
+    FRONTEND_PID=""
 else
-    (cd frontend && ./run.sh) &
+    echo "🌐 Starting Frontend Service..."
+    if [ "$LOG_TO_FILE" = true ]; then
+        (cd frontend && ./run.sh) > "$ROOT_DIR/logs/frontend.log" 2>&1 &
+    else
+        (cd frontend && ./run.sh) &
+    fi
+    FRONTEND_PID=$!
 fi
-FRONTEND_PID=$!
 
 echo ""
-echo "✅ All services started!"
+echo "✅ Services started!"
 echo "=================================================="
-echo "🌐 Frontend:        http://localhost:3000"
+if [ "$SKIP_FRONTEND" != true ]; then
+    echo "🌐 Frontend:        http://localhost:3000"
+else
+    echo "⚠️  Frontend:        Not started (missing dependencies)"
+fi
 echo "🔐 Auth Service:    http://localhost:8001/docs"
 echo "🏥 Patient Service: http://localhost:8002/docs"
 echo "🤖 RAG Service:     http://localhost:8003/docs"
 echo "⚖️  Oso Dev Server:  http://localhost:8080"
 echo ""
 echo "📋 Service PIDs:"
-echo "   Frontend Service: $FRONTEND_PID"
+if [ -n "$FRONTEND_PID" ]; then
+    echo "   Frontend Service: $FRONTEND_PID"
+else
+    echo "   Frontend Service: Not started"
+fi
 echo "   Auth Service: $AUTH_PID"
 echo "   Patient Service: $PATIENT_PID"
 echo "   RAG Service: $RAG_PID"
@@ -118,7 +185,9 @@ echo ""
 
 # Save PIDs for stopping later (create logs directory if needed for PID files)
 if [ "$LOG_TO_FILE" = true ] || mkdir -p logs 2>/dev/null; then
-    echo "$FRONTEND_PID" > logs/frontend.pid
+    if [ -n "$FRONTEND_PID" ]; then
+        echo "$FRONTEND_PID" > logs/frontend.pid
+    fi
     echo "$AUTH_PID" > logs/auth.pid
     echo "$PATIENT_PID" > logs/patient.pid
     echo "$RAG_PID" > logs/rag.pid
@@ -128,7 +197,11 @@ fi
 
 # Wait for user input
 echo "Press Ctrl+C to stop all services..."
-trap 'echo ""; echo "🛑 Stopping all services..."; kill $FRONTEND_PID $AUTH_PID $PATIENT_PID $RAG_PID 2>/dev/null; exit 0' INT
+PIDS_TO_KILL="$AUTH_PID $PATIENT_PID $RAG_PID"
+if [ -n "$FRONTEND_PID" ]; then
+    PIDS_TO_KILL="$FRONTEND_PID $PIDS_TO_KILL"
+fi
+trap "echo ''; echo '🛑 Stopping all services...'; kill $PIDS_TO_KILL 2>/dev/null; exit 0" INT
 
 # Keep script running
 wait
