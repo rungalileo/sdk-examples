@@ -30,9 +30,6 @@ A **Secure, Efficient, and Reliable Agentic RAG Application** built with Python 
 - [📄 License](#-license)
 
 ## 🎯 What You'll Build
-
-
-
 In the next **15 minutes**, you'll deploy a complete **healthcare-grade AI knowledge management system** that transforms how medical teams access information:
 
 ### 🏥 **Real-World Healthcare Scenarios**
@@ -78,7 +75,7 @@ In the next **15 minutes**, you'll deploy a complete **healthcare-grade AI knowl
 - **🔐 Security:** [Oso](https://osohq.com) - Hospital-grade authorization with role isolation
 - **🧠 AI/RAG:** [OpenAI](https://openai.com) - Medical-grade embeddings and reasoning
 - **📊 Observability:** [Galileo](https://galileo.ai) - AI performance monitoring and compliance tracking
-- **🗄️ Database:** PostgreSQL + [pgvector](https://github.com/pgvector/pgvector) - HIPAA-ready with semantic search
+- **🗄️ Database:** PostgreSQL + [pgvector](https://github.com/pgvector/pgvector) - database with semantic search
 - **🐍 Backend:** [FastAPI](https://fastapi.tiangolo.com) microservices - Production-ready with automatic API docs
 - **📦 Package Management:** [uv](https://github.com/astral-sh/uv) - Fast, reliable Python dependency management
 
