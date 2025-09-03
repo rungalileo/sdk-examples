@@ -1,4 +1,4 @@
-# 🧠 RAG Application: Complete User Guide
+# 🧠 RAG Application: 
 
 ## 🎯 **What is RAG and Why It Matters**
 
