@@ -6,7 +6,7 @@ common_path = Path(__file__).parent.parent.parent.parent.parent / "common" / "sr
 sys.path.insert(0, str(common_path))
 
 
-import openai
+from galileo.openai import openai
 from common.auth import get_current_user
 from common.db import get_db
 from common.models import Document, User
@@ -328,9 +328,9 @@ async def generate_ai_response(
 
     messages.append({"role": "user", "content": question})
 
-    # Generate response using OpenAI
+    # Generate response using OpenAI (Galileo instrumented)
     try:
-        client = openai.OpenAI()
+        client = openai.OpenAI(api_key=settings.openai_api_key)
         response = client.chat.completions.create(
             model=settings.chat_model,
             messages=messages,

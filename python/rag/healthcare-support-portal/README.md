@@ -112,10 +112,6 @@ echo "✅ Ready to proceed!"
 git clone https://github.com/rungalileo/sdk-examples.git
 cd sdk-examples/python/rag/healthcare-support-portal
 
-# OR clone just this example (if available):
-# git clone --depth 1 --filter=blob:none --sparse https://github.com/rungalileo/sdk-examples.git
-# cd sdk-examples && git sparse-checkout set python/rag/healthcare-support-portal
-
 # 2. Run automated setup (installs everything)
 ./setup.sh
 ```
@@ -154,8 +150,9 @@ export OPENAI_API_KEY="sk-your-real-key-here"
 
 🔒 **Optional - Add Galileo** (for AI monitoring):
 1. Sign up at [galileo.ai](https://app.galileo.ai/sign-up)
-2. Get your Galileo API key from the dashboard
-3. Add to `packages/rag/.env`: `GALILEO_API_KEY=your-galileo-key`
+2. Get your Galileo API key from the dashboard  
+3. Add to `packages/rag/.env`: `****************your-galileo-key`
+4. **Test Galileo integration**: `cd packages/rag && uv run python test_galileo.py`
 
 ---
 

@@ -5,7 +5,7 @@ from pathlib import Path
 common_path = Path(__file__).parent.parent.parent.parent.parent / "common" / "src"
 sys.path.insert(0, str(common_path))
 
-import openai
+from galileo.openai import openai
 from common.models import Document, Embedding
 from common.oso_sync import sync_embedding_access
 from sqlalchemy import text
@@ -15,9 +15,12 @@ from sqlalchemy.orm import Session
 async def generate_embedding(
     text: str, model: str = "text-embedding-3-small"
 ) -> list[float]:
-    """Generate embedding for a given text using OpenAI."""
+    """Generate embedding for a given text using OpenAI (Galileo instrumented)."""
     try:
-        client = openai.OpenAI()
+        # Import settings to get API key
+        from ..config import settings
+        
+        client = openai.OpenAI(api_key=settings.openai_api_key)
         response = client.embeddings.create(input=text, model=model)
         return response.data[0].embedding
     except Exception as e:

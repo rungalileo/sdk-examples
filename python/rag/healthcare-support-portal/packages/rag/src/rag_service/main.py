@@ -5,12 +5,12 @@ from pathlib import Path
 common_path = Path(__file__).parent.parent.parent.parent / "common" / "src"
 sys.path.insert(0, str(common_path))
 
-import openai
 import sqlalchemy_oso_cloud
 from common.migration_check import require_migrations_current
 from common.models import Base
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from galileo.openai import openai
 
 from .config import settings
 from .observability import (
