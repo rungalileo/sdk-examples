@@ -74,6 +74,22 @@ for i in $(seq 1 $MAX_RETRIES); do
     echo "📋 Current migration status:"
     $UV_CMD run alembic current
     
+    # After successful migration, seed demo users if needed
+    echo ""
+    echo "🌱 Seeding demo users if not present..."
+    PGPASSWORD=$DB_PASS psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME -c "
+      INSERT INTO users (id, username, email, hashed_password, role, department, is_active, created_at) VALUES 
+        (1, 'admin_wilson', 'jennifer.wilson@hospital.com', '\$2b\$12\$gdtwLxe4YU648JwtZPX8/uAv9n5qpKZ8VFXJ1iyjqVU/HExd20IXC', 'admin', 'administration', true, NOW()),
+        (2, 'dr_smith', 'sarah.smith@hospital.com', '\$2b\$12\$xDK9vMsg6XD0wrbp9mTONeqZgViFvQGbUT9HMb2l1aU.nX5ssLnkS', 'doctor', 'cardiology', true, NOW()),
+        (3, 'nurse_johnson', 'michael.johnson@hospital.com', '\$2b\$12\$tVxonl15Y9xoKXKeBLQcX.mZO7ovvOtfRiI.vqPCqjRyuOVCmazfC', 'nurse', 'emergency', true, NOW())
+      ON CONFLICT (username) DO NOTHING;
+    " > /dev/null
+    
+    # Check how many users were seeded
+    USER_COUNT=$(PGPASSWORD=$DB_PASS psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME -t -c "SELECT COUNT(*) FROM users;" | tr -d ' ')
+    echo "   ✅ Demo users available: $USER_COUNT (admin_wilson, dr_smith, nurse_johnson)"
+    echo "   🔑 All demo passwords: secure_password"
+    
     exit 0
   fi
   
