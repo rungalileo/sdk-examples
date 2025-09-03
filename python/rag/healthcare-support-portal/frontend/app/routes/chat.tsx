@@ -184,7 +184,7 @@ export default function Chat() {
                     <div className="font-medium mb-1">Sources:</div>
                     <div className="space-y-1">
                       {message.sources.slice(0, 3).map((source, idx) => (
-                        <div key={idx} className="flex items-center space-x-1">
+                        <div key={`${message.id}-source-${idx}`} className="flex items-center space-x-1">
                           <FileText className="h-3 w-3" />
                           <span className="truncate">{source.title}</span>
                         </div>
@@ -288,7 +288,11 @@ export default function Chat() {
               </div>
             )}
             
-            {messages.length > 1 && messages.slice(1).map(renderMessage)}
+            {messages.length > 1 && messages.slice(1).map((message) => (
+              <div key={message.id}>
+                {renderMessage(message)}
+              </div>
+            ))}
             
             {isLoading && (
               <div className="flex justify-start mb-4">
