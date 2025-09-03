@@ -41,129 +41,274 @@ The Healthcare Support Portal is a **production-ready RAG (Retrieval-Augmented G
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### 🎯 What You'll Build
 
-**⚠️ Important**: Please verify you have all prerequisites before proceeding.
+In the next 10 minutes, you'll have a **complete RAG application** running locally that:
 
-- **Python 3.11+** (Required for backend services)
-- **Node.js 20.19.0+** (Required for React Router 7 frontend) 
-- **uv package manager** (Install with: `curl -LsSf https://astral.sh/uv/install.sh | sh`)
-- **Docker & Docker Compose** (Required for PostgreSQL database)
-- **OpenAI API Key** [Get yours here](https://platform.openai.com/api-keys)
-- **Free Galileo Account** [Get yours here](https://app.galileo.ai/sign-up)
-- **Git** (For cloning the repository)
+- 🤖 **Answers questions** using your uploaded documents (RAG)
+- 🔐 **Secure access control** with roles (Doctor, Nurse, Admin) using Oso
+- 📊 **AI monitoring & analytics** with Galileo observability
+- 🏥 **Department-based document isolation** for healthcare compliance
+- 🌐 **Modern web interface** for document upload and chat
 
-#### Quick Prerequisites Check
+**Perfect for**: Learning RAG, testing AI applications, healthcare document management
+
+### 🤔 **New to RAG, Oso, or Galileo?** 
+
+**🤖 What is RAG (Retrieval-Augmented Generation)?**
+- Think of it as "AI + Your Documents"
+- Instead of AI giving generic answers, it reads YOUR documents first
+- Then gives accurate, sourced answers based on your content
+- Example: Upload medical guidelines → Ask "What's the diabetes protocol?" → Get answer WITH sources
+
+**🔐 What is Oso (Authorization)?**
+- Controls who can see what (like hospital departments)
+- Doctors see different documents than nurses
+- Prevents unauthorized access to sensitive data
+- Think: "Only cardiology staff can see cardiology documents"
+
+**📊 What is Galileo (AI Observability)?**
+- Monitors your AI system's performance
+- Tracks what questions are asked, response quality, costs
+- Helps you improve and debug AI applications
+- Optional but helpful for production AI systems
+
+---
+
+### 📋 Prerequisites 
+
+You'll need these tools installed on your computer:
+
+| Tool | Version | Purpose | Installation |
+|------|---------|---------|-------------|
+| **Python** | 3.11+ | Backend services | [Download](https://python.org/downloads) |
+| **Node.js** | 20.19.0+ | Frontend web app | [Download](https://nodejs.org) |
+| **Docker** | Latest | Database & services | [Download](https://docker.com/get-started) |
+| **Git** | Any | Clone repository | [Download](https://git-scm.com) |
+
+**🔑 API Keys** (free accounts):
+- **OpenAI API Key** → [Get here](https://platform.openai.com/api-keys) (Required for RAG)
+- **Galileo Account** → [Sign up here](https://app.galileo.ai/sign-up) (Optional for monitoring)
+
+#### 🔍 Quick Check - Verify Installation
 ```bash
-# Verify all tools are installed
-echo "Checking prerequisites..."
-python3 --version    # Should be 3.11+
-node --version       # Should be 20.19.0+
-uv --version        # Should be installed
-docker --version    # Should be installed
-docker compose version # Should be installed
-echo "✅ All prerequisites verified!"
+# Run this to verify everything is installed
+python3 --version    # Should show 3.11 or higher
+node --version       # Should show v20.19.0 or higher  
+docker --version     # Should show Docker version
+git --version        # Should show Git version
+echo "✅ Ready to proceed!"
+```
 ```
 
-### ⚡ Get Running in 5 Minutes
+---
 
-#### 1. Clone and Setup
+## 🚀 **3-Step Setup** (10 minutes)
+
+### Step 1: 📥 **Download & Setup**
 
 ```bash
-# Clone the repository
-git clone https://github.com/rungalileo/sdk-examples/python/rag/healthcare-support-portal
-cd python/rag/healthcare-support-portal
+# 1. Clone the repository
+git clone https://github.com/rungalileo/sdk-examples.git
+cd sdk-examples/python/rag/healthcare-support-portal
 
-# Run initial setup
+# OR clone just this example (if available):
+# git clone --depth 1 --filter=blob:none --sparse https://github.com/rungalileo/sdk-examples.git
+# cd sdk-examples && git sparse-checkout set python/rag/healthcare-support-portal
+
+# 2. Run automated setup (installs everything)
 ./setup.sh
 ```
 
-#### 2. Configure Environment Variables
+**What this does:**
+- ✅ Installs Python dependencies with `uv`
+- ✅ Installs frontend dependencies with `npm`
+- ✅ Creates all configuration files
+- ✅ Generates secure secret keys
+- ✅ Sets up the database
+
+---
+
+### Step 2: 🔑 **Add Your OpenAI API Key**
+
+🚨 **REQUIRED**: The RAG system needs OpenAI to work.
+
+1. **Get your API key**: Visit [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
+2. **Copy your key** (starts with `sk-`)
+3. **Add it to the configuration**:
 
 ```bash
-# Copy example environment files
-cp packages/auth/.env.example packages/auth/.env
-cp packages/patient/.env.example packages/patient/.env
-cp packages/rag/.env.example packages/rag/.env
-cp frontend/.env.example frontend/.env
+# Open the RAG service configuration file
+nano packages/rag/.env
 
-# Generate secure secret keys for all services
-SECRET_KEY=$(python -c "import secrets; print(secrets.token_urlsafe(32))")
-echo "SECRET_KEY=$SECRET_KEY" >> packages/auth/.env
-echo "SECRET_KEY=$SECRET_KEY" >> packages/patient/.env
-echo "SECRET_KEY=$SECRET_KEY" >> packages/rag/.env
-
-# ⚠️ CRITICAL: Add your OpenAI API Key
-echo "⚠️  You must add your OpenAI API key to packages/rag/.env"
-echo "   Edit the file and replace the placeholder with your actual key:"
-echo "   OPENAI_API_KEY=sk-your-actual-openai-api-key-here"
-echo ""
-echo "📝 Opening the file for you to edit..."
-# Uncomment the next line to auto-open the file for editing:
-# nano packages/rag/.env
+# Find this line:
+# OPENAI_API_KEY=sk-your-openai-api-key-here
+# Replace with your actual key:
+# OPENAI_API_KEY=sk-abcd1234your-real-key-here
 ```
 
-**🔑 Get your OpenAI API Key**: Visit [OpenAI Platform](https://platform.openai.com/api-keys) to create your API key.
-
-#### 3. Install Frontend Dependencies
-
+💡 **Alternative**: Set as environment variable:
 ```bash
-# Install frontend dependencies
-cd frontend
-npm install
-cd ..
+export OPENAI_API_KEY="sk-your-real-key-here"
 ```
 
-#### 4. Start All Services
+🔒 **Optional - Add Galileo** (for AI monitoring):
+1. Sign up at [galileo.ai](https://app.galileo.ai/sign-up)
+2. Get your Galileo API key from the dashboard
+3. Add to `packages/rag/.env`: `GALILEO_API_KEY=your-galileo-key`
+
+---
+
+### Step 3: 🎆 **Launch Everything**
 
 ```bash
-# Start everything at once
+# Start all services (database, backend, frontend)
 ./run_all.sh
-
-# This starts:
-# - 🗄️ PostgreSQL Database (Port 5432)
-# - ⚖️ Oso Authorization Server (Port 8080) 
-# - 🔐 Auth Service (Port 8001)
-# - 🏥 Patient Service (Port 8002) 
-# - 🤖 RAG Service (Port 8003)
-# - 🌐 Frontend (Port 3000)
 ```
 
-#### 5. Seed Demo Data (Optional)
+**Wait 30 seconds**, then visit: **http://localhost:3000** 🎉
+
+🔄 **Success Indicators** (you should see these):
+```
+✅ PostgreSQL Database (Port 5432)
+✅ Oso Dev Server (Port 8080)
+✅ Auth Service (Port 8001)
+✅ Patient Service (Port 8002) 
+✅ RAG Service (Port 8003)
+✅ Frontend Service (Port 3000)
+
+All services started!
+🌐 Frontend: http://localhost:3000
+```
+
+📋 **What's running:**
+- 🌐 **Web App**: http://localhost:3000 (main interface)
+- 🤖 **RAG API**: http://localhost:8003/docs (upload docs, ask questions)
+- 🔐 **Auth API**: http://localhost:8001/docs (user management)
+- 🏥 **Patient API**: http://localhost:8002/docs (patient records)
+- 🗄️ **Database**: PostgreSQL with vector search
+- ⚖️ **Security**: Oso authorization server
+
+---
+
+## 🎉 **You're Ready!** - Try Your RAG System
+
+### 👥 **Step 4a: Get Demo Users** (Optional)
 
 ```bash
-# Wait for services to start (about 30 seconds), then:
+# Create demo accounts with sample data
 uv run python -m common.seed_data
-
-# This creates demo users:
-# - Doctor: dr_smith / secure_password
-# - Nurse: nurse_johnson / secure_password  
-# - Admin: admin_wilson / secure_password
 ```
 
-#### 6. Access Your Application
+**Demo Login Credentials:**
+- 👨‍⚕️ Doctor: `dr_smith` / `secure_password`
+- 👩‍⚕️ Nurse: `nurse_johnson` / `secure_password`  
+- 👨‍💼 Admin: `admin_wilson` / `secure_password`
 
-- **🌐 Web Interface:** http://localhost:3000
-- **🤖 RAG API Docs:** http://localhost:8003/docs
-- **🔐 Auth API Docs:** http://localhost:8001/docs
-- **🏥 Patient API Docs:** http://localhost:8002/docs
+### 📄 **Step 4b: Test Document Upload & Chat**
 
-#### 7. Test Your RAG System
+1. **Via Web Interface** (easiest):
+   - Go to http://localhost:3000
+   - Login with demo credentials
+   - Upload a PDF document
+   - Ask questions about it!
 
+2. **Via API** (for developers):
 ```bash
-# Upload a document
-curl -X POST "http://localhost:8003/api/v1/documents/upload" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
-  -F "file=@your_document.pdf" \
-  -F "title=Medical Guidelines" \
-  -F "document_type=guidelines"
+# First, get a JWT token by logging in
+curl -X POST "http://localhost:8001/api/v1/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{"email": "dr_smith@hospital.com", "password": "secure_password"}'
 
-# Ask a question
+# Use the token to upload a document
+curl -X POST "http://localhost:8003/api/v1/documents/upload" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_FROM_ABOVE" \
+  -F "file=@your_document.pdf" \
+  -F "title=Medical Guidelines"
+
+# Ask the RAG system a question
 curl -X POST "http://localhost:8003/api/v1/chat/ask" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN_FROM_ABOVE" \
   -H "Content-Type: application/json" \
   -d '{"message": "What are the treatment guidelines?"}'
 ```
+
+### 🛑 **Stop Services**
+
+```bash
+# Stop all services when done
+./stop_all.sh
+```
+
+---
+
+## 🔧 **Quick Start Troubleshooting**
+
+### 🚫 **Common Issues & Solutions**
+
+| Problem | Solution |
+|---------|----------|
+| **"Port already in use"** | Run `./stop_all.sh` then try again |
+| **"uv not found"** | Install with: `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
+| **"Docker not running"** | Start Docker Desktop application |
+| **"OpenAI API error"** | Check your API key in `packages/rag/.env` |
+| **"Permission denied"** | Run `chmod +x *.sh` to make scripts executable |
+| **"Node.js version"** | Upgrade to Node.js 20.19.0+ from [nodejs.org](https://nodejs.org) |
+
+### 📝 **Step-by-Step Debugging**
+
+1. **Check if services are running**:
+   ```bash
+   # See what's using your ports
+   lsof -i :3000,8001,8002,8003,5432,8080
+   ```
+
+2. **Check service logs**:
+   ```bash
+   # View logs for debugging
+   tail -f logs/rag.log        # RAG service logs
+   tail -f logs/auth.log       # Auth service logs
+   tail -f logs/frontend.log   # Frontend logs
+   ```
+
+3. **Reset everything**:
+   ```bash
+   ./stop_all.sh               # Stop all services
+   docker-compose down         # Stop database
+   docker-compose up -d        # Restart database
+   ./run_all.sh               # Restart services
+   ```
+
+### 🌐 **Still Having Issues?**
+
+- **Check the detailed troubleshooting guide** in the full README below
+- **Open an issue** on [GitHub](https://github.com/rungalileo/sdk-examples/issues)
+- **Join the community** on [Discord](https://discord.gg/galileo) for help
+
+---
+
+## 🚀 **What's Next?**
+
+Now that your RAG system is running, explore these features:
+
+### 📋 **Immediate Next Steps**
+1. **Upload your first document** at http://localhost:3000
+2. **Try different user roles** (Doctor vs Nurse vs Admin permissions)
+3. **Ask questions** and see how RAG finds answers in your docs
+4. **Check the Galileo dashboard** (if you added the API key) for AI insights
+
+### 🕰 **Learn More About the System**
+- **🏥 [Architecture Guide](#-architecture)** - How the microservices work
+- **🔐 [Security Features](#-security)** - Oso authorization deep-dive  
+- **🤖 [RAG System Guide](#-rag-system-guide)** - How document search works
+- **🛠️ [Development Guide](#-development)** - Customize and extend the system
+
+### 🎆 **Production Deployment**
+- **🚀 [Deployment Guide](#-deployment)** - Take your system live
+- **🔧 [Configuration Options](#-environment-configuration)** - Advanced settings
+- **📊 [Monitoring Setup](#-observability)** - Production monitoring
+
+**🎉 Congratulations! You now have a production-ready RAG system running locally!**
 
 ## 🧠 RAG System Guide
 
