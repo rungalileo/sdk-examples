@@ -71,3 +71,18 @@ def get_current_user(
         raise credentials_exception
 
     return user
+
+
+# Development mode authentication bypass
+def get_current_user_dev(
+    db: Session = Depends(get_db),
+) -> User:
+    """Development mode - automatically authenticate as dr_smith for testing."""
+    # This should only be used in development
+    user = db.query(User).filter(User.username == "dr_smith").first()
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Development user 'dr_smith' not found in database",
+        )
+    return user

@@ -24,9 +24,16 @@ from .routers import chat, documents
 openai.api_key = settings.openai_api_key
 
 # Initialize SQLAlchemy Oso Cloud with registry and server settings
-sqlalchemy_oso_cloud.init(
-    Base.registry, url=settings.oso_url, api_key=settings.oso_auth
-)
+# Add error handling for development environments where OSO might not be available
+try:
+    sqlalchemy_oso_cloud.init(
+        Base.registry, url=settings.oso_url, api_key=settings.oso_auth
+    )
+    print(f"✅ OSO Cloud initialized: {settings.oso_url}")
+except Exception as e:
+    print(f"⚠️  OSO Cloud initialization failed: {e}")
+    print("🔧 Authorization will be disabled - use for development only!")
+    # You may want to set a flag here to disable authorization checks
 
 # Create FastAPI app
 app = FastAPI(

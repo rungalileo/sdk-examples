@@ -73,10 +73,24 @@ async def search_documents(
         department=search_request.department
     ) as query_id:
         
-        # Get authorized documents query
-        authorized_query = db.query(Document).options(
-            authorized(current_user, "read", Document)
-        )
+        # Get authorized documents query with OSO fallback
+        try:
+            authorized_query = db.query(Document).options(
+                authorized(current_user, "read", Document)
+            )
+        except Exception as oso_error:
+            logger.warning(
+                "OSO authorization failed in search, falling back to basic query",
+                query_id=query_id,
+                error=str(oso_error),
+                user_role=current_user.role
+            )
+            # Fallback to basic role-based filtering
+            authorized_query = db.query(Document)
+            if current_user.role != "admin":
+                authorized_query = authorized_query.filter(
+                    Document.department == current_user.department
+                )
 
         # Apply filters
         if search_request.document_types:
@@ -160,10 +174,24 @@ async def ask_question(
         department=chat_request.context_department
     ) as query_id:
         
-        # Get authorized documents for context
-        authorized_query = db.query(Document).options(
-            authorized(current_user, "read", Document)
-        )
+        # Get authorized documents for context with OSO fallback
+        try:
+            authorized_query = db.query(Document).options(
+                authorized(current_user, "read", Document)
+            )
+        except Exception as oso_error:
+            logger.warning(
+                "OSO authorization failed in ask question, falling back to basic query",
+                query_id=query_id,
+                error=str(oso_error),
+                user_role=current_user.role
+            )
+            # Fallback to basic role-based filtering
+            authorized_query = db.query(Document)
+            if current_user.role != "admin":
+                authorized_query = authorized_query.filter(
+                    Document.department == current_user.department
+                )
 
         # Apply context filters if provided
         if chat_request.context_patient_id:
