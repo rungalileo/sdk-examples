@@ -4,177 +4,225 @@ A **Secure, Efficient, and Reliable Agentic RAG Application** built with Python 
 
 ## 📋 Table of Contents
 
-- [🎯 Overview](#-overview)
-- [🚀 Quick Start](#-quick-start)
+### 🚀 Getting Started
+- [🎯 What You'll Build](#-what-youll-build)
+- [📋 Prerequisites](#-prerequisites) 
+- [⚡ Quick Setup (15 min)](#-quick-setup)
+- [🔍 Validation & Testing](#-validation--testing)
+
+### 🏥 For Healthcare Organizations
+- [🏥 Healthcare Team Guide](#-healthcare-team-guide)
+- [🔐 Security & Compliance](#-security--compliance)
+- [👥 Team Onboarding](#-team-onboarding)
+
+### 💻 Technical Documentation
 - [🧠 RAG System Guide](#-rag-system-guide)
 - [🏗️ Architecture](#️-architecture)
 - [🔧 Services](#-services)
 - [📚 API Documentation](#-api-documentation)
-- [🔐 Security](#-security)
-- [📊 Usage Examples](#-usage-examples)
 - [🛠️ Development](#️-development)
 - [🚀 Deployment](#-deployment)
-- [🔧 Troubleshooting](#-troubleshooting)
+
+### 🆘 Support & Troubleshooting
+- [🔧 Troubleshooting Guide](#-troubleshooting-guide)
+- [📞 Getting Help](#-getting-help)
 - [📖 Contributing](#-contributing)
 - [📄 License](#-license)
 
-## 🎯 Overview
+## 🎯 What You'll Build
 
-The Healthcare Support Portal is a **production-ready RAG (Retrieval-Augmented Generation) application** that revolutionizes how healthcare professionals access and use knowledge. It combines the power of AI with your organization's documents to provide intelligent, contextual assistance.
 
-### 🧠 What is RAG and Why It's Revolutionary
 
-**RAG (Retrieval-Augmented Generation)** solves the biggest problems with traditional AI:
+In the next **15 minutes**, you'll deploy a complete **healthcare-grade AI knowledge management system** that transforms how medical teams access information:
 
-- **❌ Traditional AI**: Knowledge cutoff, hallucinations, no sources
-- **✅ RAG**: Always current, factual responses, source transparency
+### 🏥 **Real-World Healthcare Scenarios**
 
-### 🏥 Key Technologies
+**👩‍⚕️ For Doctors:**
+- *"What are the contraindications for prescribing metformin to elderly patients?"*
+- **AI Response:** Searches your uploaded medical guidelines and research papers to provide evidence-based, sourced answers with specific page references.
 
-- **🔐 Security:** [Oso](https://osohq.com) for fine-grained authorization
-- **🧠 AI/RAG:** [OpenAI](https://openai.com) for embeddings and chat completions
-- **🔧 Observability:** [Galileo](https://galileo.ai) for observability and logging
-- **🗄️ Database:** PostgreSQL with [pgvector](https://github.com/pgvector/pgvector) for vector similarity search
-- **🐍 Backend:** [FastAPI](https://fastapi.tiangolo.com) microservices with [SQLAlchemy](https://sqlalchemy.org)
-- **📦 Package Management:** [uv](https://github.com/astral-sh/uv) for fast Python package management
-- **🏗️ Architecture:** Python microservices in a monorepo with uv workspaces
+**👩‍⚕️ For Nurses:**
+- *"Show me the step-by-step protocol for insulin administration in ICU patients"*
+- **AI Response:** Retrieves department-specific procedures with safety checklists and dosage calculations.
 
-## 🚀 Quick Start
+**👨‍💼 For Administrators:**
+- *"What are our HIPAA requirements for patient data backup?"*
+- **AI Response:** Cites relevant policy documents and compliance frameworks.
 
-### 🎯 What You'll Build
+### 🚀 **What Makes This Special**
 
-In the next 10 minutes, you'll have a **complete RAG application** running locally that:
+| Feature | Traditional Search | Healthcare Support Portal |
+|---------|-------------------|---------------------------|
+| **Accuracy** | Keyword matching | AI understands context & medical terminology |
+| **Security** | Basic permissions | Role-based access (Doctor/Nurse/Admin) + audit trails |
+| **Sources** | No attribution | Every answer shows exact document sources |
+| **Knowledge** | Static documents | AI synthesizes information from multiple sources |
+| **Compliance** | Manual tracking | Built-in HIPAA-conscious design patterns |
 
-- 🤖 **Answers questions** using your uploaded documents (RAG)
-- 🔐 **Secure access control** with roles (Doctor, Nurse, Admin) using Oso
-- 📊 **AI monitoring & analytics** with Galileo observability
-- 🏥 **Department-based document isolation** for healthcare compliance
-- 🌐 **Modern web interface** for document upload and chat
+### 🧠 **The RAG Revolution in Healthcare**
 
-**Perfect for**: Learning RAG, testing AI applications, healthcare document management
+**Traditional AI Problems:**
+- ❌ Knowledge cutoff dates ("I don't know about 2024 guidelines")
+- ❌ Hallucinations (making up medical facts)
+- ❌ No source verification
+- ❌ Generic responses
 
-### 🤔 **New to RAG, Oso, or Galileo?** 
+**RAG Solution:**
+- ✅ **Always Current:** Uses YOUR latest medical documents
+- ✅ **Factual:** Only uses information from uploaded sources
+- ✅ **Transparent:** Shows exactly which documents were referenced
+- ✅ **Contextual:** Tailored responses based on user role and department
 
-**🤖 What is RAG (Retrieval-Augmented Generation)?**
-- Think of it as "AI + Your Documents"
-- Instead of AI giving generic answers, it reads YOUR documents first
-- Then gives accurate, sourced answers based on your content
-- Example: Upload medical guidelines → Ask "What's the diabetes protocol?" → Get answer WITH sources
+### 🏗️ **Technical Foundation**
 
-**🔐 What is Oso (Authorization)?**
-- Controls who can see what (like hospital departments)
-- Doctors see different documents than nurses
-- Prevents unauthorized access to sensitive data
-- Think: "Only cardiology staff can see cardiology documents"
+- **🔐 Security:** [Oso](https://osohq.com) - Hospital-grade authorization with role isolation
+- **🧠 AI/RAG:** [OpenAI](https://openai.com) - Medical-grade embeddings and reasoning
+- **📊 Observability:** [Galileo](https://galileo.ai) - AI performance monitoring and compliance tracking
+- **🗄️ Database:** PostgreSQL + [pgvector](https://github.com/pgvector/pgvector) - HIPAA-ready with semantic search
+- **🐍 Backend:** [FastAPI](https://fastapi.tiangolo.com) microservices - Production-ready with automatic API docs
+- **📦 Package Management:** [uv](https://github.com/astral-sh/uv) - Fast, reliable Python dependency management
 
-**📊 What is Galileo (AI Observability)?**
-- Monitors your AI system's performance
-- Tracks what questions are asked, response quality, costs
-- Helps you improve and debug AI applications
-- Optional but helpful for production AI systems
+## 📋 Prerequisites
 
----
 
-### 📋 Prerequisites 
+### 🔧 **System Requirements**
 
-You'll need these tools installed on your computer:
+| Component | Minimum | Recommended | Purpose |
+|-----------|---------|-------------|----------|
+| **Python** | 3.11+ | 3.12+ | Backend services & AI processing |
+| **Node.js** | 20.19.0+ | 22.0+ | React frontend application |
+| **Docker** | 20.0+ | Latest | PostgreSQL + microservices |
+| **RAM** | 8GB | 16GB+ | AI embeddings + database |
+| **Storage** | 5GB free | 10GB+ | Documents + embeddings |
 
-| Tool | Version | Purpose | Installation |
-|------|---------|---------|-------------|
-| **Python** | 3.11+ | Backend services | [Download](https://python.org/downloads) |
-| **Node.js** | 20.19.0+ | Frontend web app | [Download](https://nodejs.org) |
-| **Docker** | Latest | Database & services | [Download](https://docker.com/get-started) |
-| **Git** | Any | Clone repository | [Download](https://git-scm.com) |
+### 🔑 **API Keys** 
 
-**🔑 API Keys** (free accounts):
-- **OpenAI API Key** → [Get here](https://platform.openai.com/api-keys) (Required for RAG)
-- **Galileo Account** → [Sign up here](https://app.galileo.ai/sign-up) (Optional for monitoring)
+| Service | Required | Purpose | Cost |
+|---------|----------|---------|------|
+| **OpenAI** | ✅ **Yes** | AI embeddings & responses | ~$0.10-0.50/day testing |
+| **Galileo** | ⭕ Optional | AI performance monitoring | Free tier available |
 
-#### 🔍 Quick Check - Verify Installation
+🔗 **Get your keys:**
+- **OpenAI:** [platform.openai.com/api-keys](https://platform.openai.com/api-keys) 
+- **Galileo:** [app.galileo.ai/sign-up](https://app.galileo.ai/sign-up)
+
+### 🔍 **Environment Validation**
+
+**Step 1: Check Dependencies**
 ```bash
-# Run this to verify everything is installed
-python3 --version    # Should show 3.11 or higher
-node --version       # Should show v20.19.0 or higher  
-docker --version     # Should show Docker version
-git --version        # Should show Git version
-echo "✅ Ready to proceed!"
+# Run this validation script
+echo "🔍 Validating environment..."
+python3 --version && echo "✅ Python OK" || echo "❌ Install Python 3.11+"
+node --version && echo "✅ Node.js OK" || echo "❌ Install Node.js 20.19.0+"
+docker --version && echo "✅ Docker OK" || echo "❌ Install Docker"
+git --version && echo "✅ Git OK" || echo "❌ Install Git"
+
+# Check available ports
+echo "🔍 Checking port availability..."
+for port in 3000 8001 8002 8003 5432; do
+  if ! lsof -i :$port > /dev/null 2>&1; then
+    echo "✅ Port $port available"
+  else
+    echo "⚠️  Port $port in use - you may need to stop other services"
+  fi
+done
+
+echo "🎉 Environment validation complete!"
 ```
+
+**Expected Output:**
+```bash
+✅ Python 3.11.9 OK
+✅ Node.js v20.19.0 OK  
+✅ Docker 24.0.7 OK
+✅ Git 2.40.0 OK
+✅ Port 3000 available
+✅ Port 8001 available
+✅ Port 8002 available
+✅ Port 8003 available
+✅ Port 5432 available
+🎉 Environment validation complete!
 ```
+
+> ⚠️ **Troubleshooting:** If any checks fail, see our [Environment Setup Guide](#-environment-setup-troubleshooting) below.
 
 ---
 
-## 🚀 **3-Step Setup** (10 minutes)
+## ⚡ Quick Setup (15 min)
 
-### Step 1: 📥 **Download & Setup**
+
+### **Step 1: Download & Install** ⏱️ *3 minutes*
 
 ```bash
 # 1. Clone the repository
 git clone https://github.com/rungalileo/sdk-examples.git
 cd sdk-examples/python/rag/healthcare-support-portal
 
-# 2. Run automated setup (installs everything)
+# 2. Run automated setup
+chmod +x setup.sh
 ./setup.sh
 ```
 
-**What this does:**
-- ✅ Installs Python dependencies with `uv`
-- ✅ Installs frontend dependencies with `npm`
-- ✅ Creates all configuration files
-- ✅ Generates secure secret keys
-- ✅ Sets up the database
+**🔍 Validation:** You should see:
+```bash
+✅ Python dependencies synced
+✅ Created packages/auth/.env from example
+✅ Created packages/patient/.env from example  
+✅ Created packages/rag/.env from example
+✅ Updated SECRET_KEY in packages/auth/.env
+✅ Frontend dependencies installed successfully
+✅ Setup complete!
+```
 
----
+### **Step 2: Configure API Keys** ⏱️ *2 minutes*
 
-### Step 2: 🔑 **Add Your OpenAI API Key**
-
-🚨 **REQUIRED**: The RAG system needs OpenAI to work.
-
-1. **Get your API key**: Visit [platform.openai.com/api-keys](https://platform.openai.com/api-keys)
-2. **Copy your key** (starts with `sk-`)
-3. **Add it to the configuration**:
+**🎨 Critical:** The RAG system requires your OpenAI API key to function.
 
 ```bash
-# Open the RAG service configuration file
+# Open the RAG service configuration
 nano packages/rag/.env
-
-# Find this line:
-# OPENAI_API_KEY=sk-your-openai-api-key-here
-# Replace with your actual key:
-# OPENAI_API_KEY=sk-abcd1234your-real-key-here
+# Or use your preferred editor: code packages/rag/.env
 ```
 
-💡 **Alternative**: Set as environment variable:
-```bash
-export OPENAI_API_KEY="sk-your-real-key-here"
+**Find this line:**
+```env
+OPENAI_API_KEY=sk-your-openai-api-key-here
 ```
 
-🔒 **Optional - Add Galileo** (for AI monitoring):
-1. Sign up at [galileo.ai](https://app.galileo.ai/sign-up)
-2. Get your Galileo API key from the dashboard  
-3. Add to `packages/rag/.env`: `****************your-galileo-key`
-4. **Test Galileo integration**: `cd packages/rag && uv run python test_galileo.py`
+**Replace with your actual key:**
+```env
+OPENAI_API_KEY=sk-abcd1234your-real-key-here
+```
 
----
+**🔍 Validation:** Test your API key:
+```bash
+# Quick API key test
+cd packages/rag
+uv run python -c "import os; print('✅ API key configured' if os.getenv('OPENAI_API_KEY', '').startswith('sk-') else '❌ Invalid API key format')"
+```
 
-### Step 3: 🎆 **Launch Everything**
+**Add Galileo for AI observability and monitoring:**
+1. Get your Galileo API key from [app.galileo.ai](https://app.galileo.ai)
+2. Add to `packages/rag/.env`: `GALILEO_API_KEY=your-galileo-key`
+3. Test: `uv run python test_config.py`
+
+
+### **Step 3: Launch All Services** ⏱️ *5 minutes*
 
 ```bash
-# Start all services (database, backend, frontend)
+# Start database, backend services, and frontend
 ./run_all.sh
 ```
 
-**Wait 30 seconds**, then visit: **http://localhost:3000** 🎉
-
-🔄 **Success Indicators** (you should see these):
-```
+**🔍 Watch for Success Indicators:**
+```bash
 ✅ PostgreSQL Database (Port 5432)
-✅ Oso Dev Server (Port 8080)
+✅ Oso Dev Server (Port 8080) 
 ✅ Auth Service (Port 8001)
-✅ Patient Service (Port 8002) 
+✅ Patient Service (Port 8002)
 ✅ RAG Service (Port 8003)
 ✅ Frontend Service (Port 3000)
 
-All services started!
 🌐 Frontend: http://localhost:3000
 ```
 
@@ -193,119 +241,570 @@ All services started!
 ### 👥 **Step 4a: Get Demo Users** (Optional)
 
 ```bash
-# Create demo accounts with sample data
+# Health check for all services
+echo "🔍 Running system health check..."
+
+# Check if all services are responding
+echo "Testing Auth Service..."
+curl -s http://localhost:8001/health && echo "✅ Auth Service OK" || echo "❌ Auth Service DOWN"
+
+echo "Testing Patient Service..."
+curl -s http://localhost:8002/health && echo "✅ Patient Service OK" || echo "❌ Patient Service DOWN"
+
+echo "Testing RAG Service..."
+curl -s http://localhost:8003/health && echo "✅ RAG Service OK" || echo "❌ RAG Service DOWN"
+
+echo "Testing Frontend..."
+curl -s http://localhost:3000 > /dev/null && echo "✅ Frontend OK" || echo "❌ Frontend DOWN"
+
+echo "Testing Database..."
+docker exec healthcare-support-portal-postgres-1 pg_isready && echo "✅ Database OK" || echo "❌ Database DOWN"
+
+echo "🎉 Health check complete!"
+```
+
+### **Step 5: Create Demo Users & Test RAG** ⏱️ *5 minutes*
+
+**5a. Setup Demo Data:**
+```bash
+# Create sample users and data
 uv run python -m common.seed_data
 ```
 
-**Demo Login Credentials:**
-- 👨‍⚕️ Doctor: `dr_smith` / `secure_password`
-- 👩‍⚕️ Nurse: `nurse_johnson` / `secure_password`  
-- 👨‍💼 Admin: `admin_wilson` / `secure_password`
-
-### 📄 **Step 4b: Test Document Upload & Chat**
-
-1. **Via Web Interface** (easiest):
-   - Go to http://localhost:3000
-   - Login with demo credentials
-   - Upload a PDF document
-   - Ask questions about it!
-
-2. **Via API** (for developers):
+**🔍 Expected Output:**
 ```bash
-# First, get a JWT token by logging in
-curl -X POST "http://localhost:8001/api/v1/auth/login" \
-  -H "Content-Type: application/json" \
-  -d '{"email": "dr_smith@hospital.com", "password": "secure_password"}'
-
-# Use the token to upload a document
-curl -X POST "http://localhost:8003/api/v1/documents/upload" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN_FROM_ABOVE" \
-  -F "file=@your_document.pdf" \
-  -F "title=Medical Guidelines"
-
-# Ask the RAG system a question
-curl -X POST "http://localhost:8003/api/v1/chat/ask" \
-  -H "Authorization: Bearer YOUR_JWT_TOKEN_FROM_ABOVE" \
-  -H "Content-Type: application/json" \
-  -d '{"message": "What are the treatment guidelines?"}'
+✅ Created demo users:
+   - Doctor: dr_smith@hospital.com / secure_password  
+   - Nurse: nurse_johnson@hospital.com / secure_password
+   - Admin: admin_wilson@hospital.com / secure_password
+✅ Sample patients created
+✅ Demo data seeding complete
 ```
 
-### 🛑 **Stop Services**
+**5b. Test the Web Interface:**
+1. 🌐 Open **http://localhost:3000**
+2. 🔑 Login with: `dr_smith@hospital.com` / `secure_password`
+3. 📄 Upload a PDF document (medical guideline, research paper, etc.)
+4. 🤖 Ask a question: *"What are the key recommendations in this document?"*
+5. ✅ Verify you get an AI response with document sources!
 
+**5c. Test RAG API (Advanced):**
 ```bash
-# Stop all services when done
+# Get authentication token
+TOKEN=$(curl -s -X POST "http://localhost:8001/api/v1/auth/login" \
+  -H "Content-Type: application/json" \
+  -d '{"email": "dr_smith@hospital.com", "password": "secure_password"}' | \
+  python3 -c "import sys, json; print(json.load(sys.stdin)['access_token'])")
+
+echo "Got auth token: ${TOKEN:0:20}..."
+
+# Test document upload
+echo "Testing document upload..."
+curl -X POST "http://localhost:8003/api/v1/documents/upload" \
+  -H "Authorization: Bearer $TOKEN" \
+  -F "file=@README.md" \
+  -F "title=Test Document" && echo "✅ Upload successful"
+
+# Test RAG query
+echo "Testing RAG question-answering..."
+curl -X POST "http://localhost:8003/api/v1/chat/ask" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "What is this application about?"}' && echo "✅ RAG response received"
+```
+
+### 🎉 **Success! Your Healthcare RAG System is Running**
+
+**🌐 Access Points:**
+- **Main Application:** http://localhost:3000
+- **Auth API Docs:** http://localhost:8001/docs  
+- **Patient API Docs:** http://localhost:8002/docs
+- **RAG API Docs:** http://localhost:8003/docs
+- **Oso Authorization:** http://localhost:8080
+
+**👥 Demo Accounts:**
+| Role | Email | Password | Department | Permissions |
+|------|--------|----------|------------|-------------|
+| Doctor | `dr_smith@hospital.com` | `secure_password` | Cardiology | Full access to cardiology docs |
+| Nurse | `nurse_johnson@hospital.com` | `secure_password` | Emergency | Access to procedures & protocols |
+| Admin | `admin_wilson@hospital.com` | `secure_password` | Administration | System-wide access |
+
+**🛑 To Stop Services:**
+```bash
 ./stop_all.sh
 ```
 
----
-
-## 🔧 **Quick Start Troubleshooting**
-
-### 🚫 **Common Issues & Solutions**
-
-| Problem | Solution |
-|---------|----------|
-| **"Port already in use"** | Run `./stop_all.sh` then try again |
-| **"uv not found"** | Install with: `curl -LsSf https://astral.sh/uv/install.sh \| sh` |
-| **"Docker not running"** | Start Docker Desktop application |
-| **"OpenAI API error"** | Check your API key in `packages/rag/.env` |
-| **"Permission denied"** | Run `chmod +x *.sh` to make scripts executable |
-| **"Node.js version"** | Upgrade to Node.js 20.19.0+ from [nodejs.org](https://nodejs.org) |
-
-### 📝 **Step-by-Step Debugging**
-
-1. **Check if services are running**:
-   ```bash
-   # See what's using your ports
-   lsof -i :3000,8001,8002,8003,5432,8080
-   ```
-
-2. **Check service logs**:
-   ```bash
-   # View logs for debugging
-   tail -f logs/rag.log        # RAG service logs
-   tail -f logs/auth.log       # Auth service logs
-   tail -f logs/frontend.log   # Frontend logs
-   ```
-
-3. **Reset everything**:
-   ```bash
-   ./stop_all.sh               # Stop all services
-   docker-compose down         # Stop database
-   docker-compose up -d        # Restart database
-   ./run_all.sh               # Restart services
-   ```
-
-### 🌐 **Still Having Issues?**
-
-- **Check the detailed troubleshooting guide** in the full README below
-- **Open an issue** on [GitHub](https://github.com/rungalileo/sdk-examples/issues)
-- **Join the community** on [Discord](https://discord.gg/galileo) for help
+**➡️ What's Next?**
+- [🏥 Healthcare Team Guide](#-healthcare-team-guide) - Role-specific usage patterns
+- [🔧 Troubleshooting Guide](#-troubleshooting-guide) - Common issues & solutions  
+- [🔐 Security & Compliance](#-security--compliance) - HIPAA considerations
+- [🛠️ Development Guide](#-development) - Customize and extend
 
 ---
 
-## 🚀 **What's Next?**
+---
 
-Now that your RAG system is running, explore these features:
+## 🔧 Troubleshooting Guide
 
-### 📋 **Immediate Next Steps**
-1. **Upload your first document** at http://localhost:3000
-2. **Try different user roles** (Doctor vs Nurse vs Admin permissions)
-3. **Ask questions** and see how RAG finds answers in your docs
-4. **Check the Galileo dashboard** (if you added the API key) for AI insights
+<details>
+<summary><strong>🚑 Quick Fixes for Common Issues</strong></summary>
 
-### 🕰 **Learn More About the System**
-- **🏥 [Architecture Guide](#-architecture)** - How the microservices work
-- **🔐 [Security Features](#-security)** - Oso authorization deep-dive  
-- **🤖 [RAG System Guide](#-rag-system-guide)** - How document search works
-- **🛠️ [Development Guide](#-development)** - Customize and extend the system
+### 📝 **Decision Tree: What's Wrong?**
 
-### 🎆 **Production Deployment**
-- **🚀 [Deployment Guide](#-deployment)** - Take your system live
-- **🔧 [Configuration Options](#-environment-configuration)** - Advanced settings
-- **📊 [Monitoring Setup](#-observability)** - Production monitoring
+```
+🚨 Having issues? Follow this decision tree:
 
-**🎉 Congratulations! You now have a production-ready RAG system running locally!**
+🔍 Is the system not starting?
+├── ❌ Ports in use? → Run `./stop_all.sh` then `./run_all.sh`
+├── ❌ Docker not running? → Start Docker Desktop
+├── ❌ "uv not found"? → Install uv: `curl -LsSf https://astral.sh/uv/install.sh | sh`
+└── ❌ Dependencies missing? → Run `./setup.sh` again
+
+🔍 Services start but RAG doesn't work?
+├── ❌ "OpenAI API error"? → Check API key in `packages/rag/.env`
+├── ❌ "Invalid API key"? → Ensure key starts with `sk-`
+└── ❌ "Galileo span error"? → See Galileo troubleshooting below
+
+🔍 Frontend not loading?
+├── ❌ Node.js version? → Upgrade to 20.19.0+ from nodejs.org
+└── ❌ Dependencies? → Run `cd frontend && npm install`
+```
+
+</details>
+
+### 📝 **Environment Setup Troubleshooting**
+
+<details>
+<summary><strong>Python, Node.js, Docker Issues</strong></summary>
+
+**🐍 Python Issues:**
+```bash
+# Check Python version
+python3 --version
+
+# If Python < 3.11, install newer version:
+# macOS: brew install python@3.12
+# Ubuntu: sudo apt install python3.12
+# Windows: Download from python.org
+
+# Verify uv installation
+which uv || curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Reload shell after uv install
+source ~/.bashrc  # or ~/.zshrc
+```
+
+**💻 Node.js Issues:**
+```bash
+# Check Node version
+node --version
+
+# If version < 20.19.0:
+# Install Node Version Manager (nvm)
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+source ~/.bashrc
+
+# Install and use Node 20+
+nvm install 20
+nvm use 20
+
+# Verify npm is working
+npm --version
+```
+
+**🐳 Docker Issues:**
+```bash
+# Check if Docker is running
+docker ps
+
+# Start Docker (varies by OS)
+# macOS: Open Docker Desktop
+# Linux: sudo systemctl start docker
+# Windows: Start Docker Desktop
+
+# Test Docker
+docker run hello-world
+```
+
+</details>
+
+### 🔑 **API Key & Configuration Issues**
+
+<details>
+<summary><strong>OpenAI, Galileo, Environment Variables</strong></summary>
+
+**🤖 OpenAI API Key Problems:**
+```bash
+# Check if API key is set
+grep "OPENAI_API_KEY" packages/rag/.env
+
+# Key should look like: OPENAI_API_KEY=sk-abcd1234...
+# If missing 'sk-' prefix, it's invalid
+
+# Test API key manually
+export OPENAI_API_KEY="your-key-here"
+curl -H "Authorization: Bearer $OPENAI_API_KEY" \
+  https://api.openai.com/v1/models | head -20
+
+# Should return JSON with model list, not error
+```
+
+**📊 Galileo "Span Error" Fix:**
+```bash
+# The "add_workflow_span: A trace needs to be created" error is non-fatal
+# It means Galileo monitoring is enabled but not properly initialized
+
+# Option 1: Disable Galileo (simplest)
+echo "GALILEO_ENABLED=false" >> packages/rag/.env
+
+# Option 2: Fix Galileo setup
+echo "GALILEO_API_KEY=your-galileo-key" >> packages/rag/.env
+echo "GALILEO_PROJECT_NAME=healthcare-rag" >> packages/rag/.env
+
+# Option 3: Test Galileo connection
+cd packages/rag
+uv run python test_config.py
+```
+
+**🔒 Environment Variable Debug:**
+```bash
+# Check all .env files exist
+ls -la packages/*/.env
+
+# View environment variables (without exposing keys)
+echo "Checking environment configuration..."
+for service in auth patient rag; do
+  echo "=== $service service ==="
+  grep -v "API_KEY\|SECRET" packages/$service/.env || echo "No .env file"
+done
+
+# Generate new SECRET_KEY if needed
+python3 -c "import secrets; print('SECRET_KEY=' + secrets.token_urlsafe(32))"
+```
+
+</details>
+
+### 🛠️ **Service & Port Issues**
+
+<details>
+<summary><strong>Services Won't Start, Port Conflicts</strong></summary>
+
+**📋 Port Conflict Resolution:**
+```bash
+# Find what's using required ports
+echo "Checking port usage..."
+for port in 3000 8001 8002 8003 5432 8080; do
+  process=$(lsof -ti:$port 2>/dev/null)
+  if [ -n "$process" ]; then
+    echo "⚠️  Port $port used by PID $process:"
+    ps -p $process -o pid,ppid,cmd
+  else
+    echo "✅ Port $port available"
+  fi
+done
+
+# Kill processes on our ports (be careful!)
+echo "Kill conflicting processes? (y/N)"
+read answer
+if [ "$answer" = "y" ]; then
+  for port in 3000 8001 8002 8003; do
+    lsof -ti:$port | xargs kill -9 2>/dev/null || true
+  done
+fi
+```
+
+**📊 Service Health Debugging:**
+```bash
+# Check individual service logs
+echo "Recent service logs:"
+echo "=== RAG Service ==="
+tail -20 logs/rag.log
+
+echo "=== Auth Service ==="
+tail -20 logs/auth.log
+
+echo "=== Frontend ==="
+tail -20 logs/frontend.log
+
+# Test services individually
+echo "Testing service endpoints:"
+curl -s http://localhost:8001/docs > /dev/null && echo "✅ Auth API responding" || echo "❌ Auth API down"
+curl -s http://localhost:8003/docs > /dev/null && echo "✅ RAG API responding" || echo "❌ RAG API down"
+```
+
+**🗄️ Database Issues:**
+```bash
+# Check if PostgreSQL is running
+docker ps | grep postgres
+
+# Check database logs
+docker logs healthcare-support-portal-postgres-1
+
+# Test database connection
+docker exec healthcare-support-portal-postgres-1 \
+  psql -U postgres -d healthcare -c "\\dt" 2>/dev/null && \
+  echo "✅ Database tables exist" || echo "❌ Database connection failed"
+
+# Reset database (nuclear option)
+echo "Reset database? This will delete all data! (y/N)"
+read answer
+if [ "$answer" = "y" ]; then
+  docker-compose down
+  docker volume rm healthcare-support-portal_postgres_data 2>/dev/null || true
+  docker-compose up -d db
+  sleep 5
+  docker-compose run --rm migrate
+fi
+```
+
+</details>
+
+### 🧠 **RAG System Issues**
+
+<details>
+<summary><strong>Document Upload, Embeddings, AI Responses</strong></summary>
+
+**📄 Document Upload Problems:**
+```bash
+# Test document upload with curl
+TOKEN="your-jwt-token-here"
+
+# Upload test document
+echo "Testing document upload..."
+response=$(curl -s -w "%{http_code}" -X POST "http://localhost:8003/api/v1/documents/upload" \
+  -H "Authorization: Bearer $TOKEN" \
+  -F "file=@README.md" \
+  -F "title=Test Document")
+
+echo "Upload response: $response"
+
+# Check upload status
+curl -s "http://localhost:8003/api/v1/documents/" \
+  -H "Authorization: Bearer $TOKEN" | \
+  python3 -c "import sys,json; print(f'Documents: {len(json.load(sys.stdin))}')"
+```
+
+**🤖 AI Response Issues:**
+```bash
+# Test RAG question directly
+TOKEN="your-jwt-token-here"
+
+# Simple test query
+echo "Testing RAG query..."
+curl -X POST "http://localhost:8003/api/v1/chat/ask" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "Hello, are you working?"}'
+
+# Check embedding generation
+echo "Checking embedding status..."
+curl -s "http://localhost:8003/api/v1/documents/" \
+  -H "Authorization: Bearer $TOKEN" | \
+  python3 -c "
+import sys,json
+data = json.load(sys.stdin)
+for doc in data:
+    status = 'embedded' if doc.get('embedding_id') else 'no embedding'
+    print(f'{doc[\"title\"]}: {status}')
+"
+```
+
+**📈 Performance Issues:**
+```bash
+# Check system resources
+echo "System resources:"
+echo "RAM usage: $(free -h | grep Mem | awk '{print $3"/"$2}')"
+echo "Disk usage: $(df -h . | tail -1 | awk '{print $3"/"$2" ("$5" used)"}')"
+
+# Check Docker resources
+echo "Docker stats:"
+docker stats --no-stream
+
+# Monitor RAG service performance
+echo "Monitoring RAG API response times..."
+for i in {1..5}; do
+  start=$(date +%s.%N)
+  curl -s "http://localhost:8003/health" > /dev/null
+  end=$(date +%s.%N)
+  echo "Response $i: $(echo "$end - $start" | bc -l)s"
+  sleep 1
+done
+```
+
+</details>
+
+### 🎨 **Complete System Reset**
+
+<details>
+<summary><strong>Nuclear Option: Fresh Start</strong></summary>
+
+```bash
+#!/bin/bash
+echo "🚨 COMPLETE SYSTEM RESET - This will delete all data!"
+echo "Continue? (type 'RESET' to confirm)"
+read confirm
+
+if [ "$confirm" = "RESET" ]; then
+  echo "Stopping all services..."
+  ./stop_all.sh
+  
+  echo "Removing containers and volumes..."
+  docker-compose down --volumes --remove-orphans
+  
+  echo "Cleaning up logs and data..."
+  rm -rf logs/*
+  rm -rf data/postgres/*
+  
+  echo "Removing environment files..."
+  rm -f packages/*/.env
+  
+  echo "Cleaning Python environment..."
+  rm -rf .venv
+  
+  echo "Cleaning Node modules..."
+  rm -rf frontend/node_modules
+  
+  echo "Starting fresh setup..."
+  ./setup.sh
+  
+  echo "✅ Fresh installation complete!"
+  echo "Don't forget to add your OpenAI API key to packages/rag/.env"
+else
+  echo "Reset cancelled."
+fi
+```
+
+**Save this as `reset.sh`, make executable with `chmod +x reset.sh`, then run `./reset.sh`**
+
+</details>
+
+### 📞 Getting Help
+
+**🔍 Before Asking for Help, Collect This Info:**
+```bash
+# Run this diagnostic script
+echo "=== Healthcare RAG System Diagnostics ==="
+echo "OS: $(uname -s) $(uname -r)"
+echo "Python: $(python3 --version)"
+echo "Node: $(node --version 2>/dev/null || echo 'Not installed')"
+echo "Docker: $(docker --version 2>/dev/null || echo 'Not installed')"
+echo "uv: $(uv --version 2>/dev/null || echo 'Not installed')"
+echo ""
+echo "Port Status:"
+for port in 3000 8001 8002 8003 5432; do
+  lsof -i :$port > /dev/null 2>&1 && echo "Port $port: IN USE" || echo "Port $port: Available"
+done
+echo ""
+echo "Service Status:"
+docker ps --format "table {{.Names}}\t{{.Status}}"
+echo ""
+echo "Environment Files:"
+ls -la packages/*/.env 2>/dev/null || echo "No .env files found"
+echo ""
+echo "Recent Errors (last 10 lines from each log):"
+for log in logs/*.log; do
+  if [ -f "$log" ]; then
+    echo "=== $(basename $log) ==="
+    tail -10 "$log" | grep -i error || echo "No recent errors"
+  fi
+done
+```
+
+**🔗 Community Support:**
+- **GitHub Issues:** [sdk-examples/issues](https://github.com/rungalileo/sdk-examples/issues)
+- **Galileo Documentation:** [Galileo Docs](https://v2docs.galileo.ai)
+- **Oso Support:** [Oso Documentation](https://docs.osohq.com)
+
+
+---
+
+## Example use cases
+
+### 👩‍⚕️ **For Medical Professionals**
+
+**🎯 Why This Matters for Healthcare:**
+- **🚑 Emergency Response:** Get instant access to protocols during critical situations
+- **📊 Evidence-Based Care:** AI responses include source citations for clinical decisions
+- **🗺️ Department Isolation:** Only see documents relevant to your specialty
+- **📋 Compliance Ready:** Built-in audit trails and access controls
+
+#### **👨‍⚕️ Doctor Workflow**
+1. **Upload Clinical Guidelines:**
+   - Latest treatment protocols
+   - Research papers and meta-analyses
+   - Drug interaction databases
+   - Departmental procedures
+
+2. **Ask Clinical Questions:**
+   - *"What are the contraindications for ACE inhibitors in elderly patients?"*
+   - *"Show me the latest guidelines for diabetes management"*
+   - *"What's the recommended antibiotic for pneumonia in immunocompromised patients?"*
+
+3. **Get Sourced Answers:**
+   - AI provides evidence-based responses
+   - Shows exact page/section references
+   - Highlights key recommendations
+   - Flags any conflicting information
+
+#### **👩‍⚕️ Nurse Workflow**
+1. **Upload Procedure Documents:**
+   - Nursing protocols and checklists
+   - Medication administration guides
+   - Patient care standards
+   - Safety procedures
+
+2. **Quick Procedure Lookup:**
+   - *"How do I properly administer insulin via IV?"*
+   - *"What's the protocol for fall risk assessment?"*
+   - *"Show me the steps for wound care documentation"*
+
+3. **Safety-First Responses:**
+   - Step-by-step procedures with safety checkpoints
+   - Dosage calculations and double-check requirements
+   - Patient monitoring guidelines
+
+#### **👨‍💼 Administrator Workflow**
+1. **Upload Policy Documents:**
+   - HIPAA compliance guides
+   - Organizational policies
+   - Quality assurance standards
+   - Regulatory requirements
+
+2. **Policy & Compliance Questions:**
+   - *"What are our data retention requirements?"*
+   - *"Show me the incident reporting procedure"*
+   - *"What's required for Joint Commission compliance?"*
+
+#### **🔒 Security Best Practices**
+
+**🔑 API Key Management:**
+```bash
+# Store API keys securely (never in code)
+export ***************"your-key-here"
+export GALILEO_API_KEY="your-galileo-key"
+
+# Use environment-specific keys
+# Development: test keys with limited permissions
+# Production: full keys with monitoring
+```
+
+**🏥 Department Access Control:**
+```python
+# Example: Only cardiology staff can access cardiology documents
+# This is handled automatically by the Oso authorization system
+
+# In authorization.polar:
+allow(user: User, "read", document: Document) if
+    user.department = document.department;
+```
+
+**📊 Audit & Monitoring:**
+- All document access is logged with user, timestamp, and document
+- AI queries are tracked for compliance and quality review
+- Galileo provides AI performance monitoring and cost tracking
+- Failed authorization attempts are logged for security review
+
+#
 
 ## 🧠 RAG System Guide
 
@@ -622,17 +1121,29 @@ healthcare-support-portal/
 ### Development Commands
 
 ```bash
-# Install dependencies
+# Install all dependencies (respects uv.lock for consistency)
 uv sync
+
+# Install development tools
+uv sync --group dev
 
 # Start development services
 ./run_all.sh
 
 # Run database migrations
-docker-compose run migrate
+docker-compose run --rm migrate
 
 # Seed demo data
 uv run python -m common.seed_data
+
+# Run tests (when available)
+uv run pytest
+
+# Format code
+uv run ruff format .
+
+# Lint code
+uv run ruff check .
 
 # Stop all services
 ./stop_all.sh
@@ -1002,12 +1513,43 @@ docker-compose -f docker-compose.prod.yml up -d
 
 ```bash
 # Build and run with Docker Compose
-docker-compose up -d
+docker-compose -f docker-compose.prod.yml up -d
 
 # Or build individual services
 docker build -f Dockerfile.auth -t auth-service .
 docker build -f Dockerfile.patient -t patient-service .
 docker build -f Dockerfile.rag -t rag-service .
+```
+
+### Backup & Recovery
+
+```bash
+# Database backup
+docker exec healthcare-support-portal-postgres-1 \
+  pg_dump -U postgres healthcare > backup_$(date +%Y%m%d).sql
+
+# Document backup (export all documents)
+uv run python -c "
+import json
+from datetime import date
+from packages.common.db import SessionLocal
+from packages.common.models import Document
+
+with SessionLocal() as db:
+    docs = db.query(Document).all()
+    backup = [{'title': d.title, 'content': d.content, 'department': d.department} for d in docs]
+    with open(f'documents_backup_{date.today().isoformat()}.json', 'w') as f:
+        json.dump(backup, f, indent=2)
+print('Documents backed up successfully')
+"
+
+# Restore database
+docker exec -i healthcare-support-portal-postgres-1 \
+  psql -U postgres healthcare < backup_20241201.sql
+
+# Monitor system performance
+docker stats --no-stream
+uv run python -c "from packages.rag.src.rag_service.main import app; print('RAG service health check passed')"
 ```
 
 ## 🔧 Troubleshooting
@@ -1142,7 +1684,6 @@ You now have a **world-class RAG application** that can transform how your organ
 - ✅ **All services starting** without errors
 - ✅ **RAG functionality** tested with document upload and query
 - ✅ **Galileo observability** configured (optional)
-- ✅ **Prometheus metrics** accessible at `/metrics` endpoint
 
 **Welcome to the future of intelligent knowledge management!** 🏥✨
 
