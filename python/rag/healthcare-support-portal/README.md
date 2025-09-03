@@ -89,8 +89,6 @@ In the next **15 minutes**, you'll deploy a complete **healthcare-grade AI knowl
 | **Python** | 3.11+ | 3.12+ | Backend services & AI processing |
 | **Node.js** | 20.19.0+ | 22.0+ | React frontend application |
 | **Docker** | 20.0+ | Latest | PostgreSQL + microservices |
-| **RAM** | 8GB | 16GB+ | AI embeddings + database |
-| **Storage** | 5GB free | 10GB+ | Documents + embeddings |
 
 ### 🔑 **API Keys** 
 
