@@ -90,13 +90,6 @@ In the next **15 minutes**, you'll deploy a complete **healthcare-grade AI knowl
 | **Node.js** | 20.19.0+ | 22.0+ | React frontend application |
 | **Docker** | 20.0+ | Latest | PostgreSQL + microservices |
 
-### 🔑 **API Keys** 
-
-| Service | Required | Purpose | Cost |
-|---------|----------|---------|------|
-| **OpenAI** | ✅ **Yes** | AI embeddings & responses | ~$0.10-0.50/day testing |
-| **Galileo** | ⭕ Optional | AI performance monitoring | Free tier available |
-
 🔗 **Get your keys:**
 - **OpenAI:** [platform.openai.com/api-keys](https://platform.openai.com/api-keys) 
 - **Galileo:** [app.galileo.ai/sign-up](https://app.galileo.ai/sign-up)
