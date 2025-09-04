@@ -20,6 +20,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import type { User as UserType, Patient } from '@/lib/types';
+import { api } from '@/lib/api';
 
 interface DocumentUploadProps {
   patients?: Patient[];

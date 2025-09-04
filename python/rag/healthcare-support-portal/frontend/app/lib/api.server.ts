@@ -78,6 +78,20 @@ export const serverApi = {
     });
   },
 
+  async getAllEmbeddingStatuses(token: string) {
+    const response = await axios.get(`${API_BASE_URL}:8003/api/v1/documents/embedding-statuses`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  async regenerateEmbeddings(token: string, documentId: number) {
+    const response = await axios.post(`${API_BASE_URL}:8003/api/v1/documents/${documentId}/regenerate-embeddings`, {}, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
   async uploadDocument(token: string, formData: FormData) {
     const response = await axios.post(`${API_BASE_URL}:8003/api/v1/documents/upload`, formData, {
       headers: { 
