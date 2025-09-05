@@ -14,14 +14,14 @@ A demonstration of instrumenting LangGraph workflows with OpenTelemetry (OTEL) f
 
 - Python >= 3.12
 - [UV package manager](https://docs.astral.sh/uv/) for dependency management
-- Galileo AI account (optional, for trace visualization)
+- A free [Galileo developer](https://app.galileo.ai) account
 
 ## Installation
 
-1. **Clone the repository** (if not already cloned):
+1. **Clone the repository**:
    ```bash
-   git clone <repository-url>
-   cd sdk-examples/python/agent/langgraph-otel
+   git clone https://github.com/rungalileo/sdk-examples
+   cd /python/agent/langgraph-otel
    ```
 
 2. **Install dependencies using UV**:
@@ -36,7 +36,7 @@ A demonstration of instrumenting LangGraph workflows with OpenTelemetry (OTEL) f
 
 ## Configuration
 
-### Environment Variables
+### Environment variables
 
 Create a `.env` file based on the provided `.env.example`:
 
@@ -50,10 +50,7 @@ Configure the following variables in your `.env` file:
 # Galileo Environment Variables (for trace export)
 GALILEO_API_KEY=your_galileo_api_key_here
 GALILEO_PROJECT=your_project_name
-GALILEO_LOG_STREAM=default
-
-# Optional: Custom Galileo deployment URL
-# GALILEO_CONSOLE_URL=https://app.galileo.ai
+GALILEO_LOG_STREAM=your-log-stream-name
 
 # Optional: AI model configuration
 OPENAI_API_KEY=your_openai_key_here
@@ -96,9 +93,9 @@ LangGraph result: {'query': 'hello world', 'response': 'Processed: HELLO WORLD'}
 
 You'll also see detailed span information in the console showing the execution flow through each node.
 
-## Code Structure
+## Code structure
 
-### Main Components
+### Main components
 
 ```
 langgraph-otel/
@@ -108,7 +105,7 @@ langgraph-otel/
 └── README.md         # This file
 ```
 
-### Workflow Architecture
+### Workflow architecture
 
 The example implements a simple two-node LangGraph workflow:
 
@@ -122,7 +119,7 @@ Each node is instrumented with OpenTelemetry spans that capture:
 
 ### OpenTelemetry Integration
 
-#### Span Structure
+#### Span structure
 
 ```python
 def initial_node(state: AgentState):
@@ -136,7 +133,7 @@ def initial_node(state: AgentState):
         return {"query": q}
 ```
 
-#### Tracer Configuration
+#### Tracer configuration
 
 ```python
 # Configure OpenTelemetry
@@ -149,7 +146,7 @@ tracer = trace.get_tracer(__name__)
 
 ## Observability
 
-### Viewing Traces
+### Viewing traces
 
 #### Console Output
 Traces are automatically displayed in the console during execution, showing:
@@ -157,21 +154,21 @@ Traces are automatically displayed in the console during execution, showing:
 - Attributes and events
 - Parent-child relationships
 
-#### Galileo AI Dashboard
+#### Galileo AI dashboard
 When properly configured, traces are exported to Galileo AI where you can:
 - Visualize workflow execution flow
 - Analyze performance bottlenecks
 - Monitor system behavior over time
 - Debug failed executions
 
-### Span Attributes
+### Span attributes
 
 The example demonstrates best practices for span attributes:
 - **Small string/number values**: Preferred for indexing in backends
 - **Descriptive names**: Use dot notation (e.g., `input.query`, `processed.preview`)
 - **Relevant metadata**: Include data that aids in debugging and analysis
 
-### Span Events
+### Span events
 
 Events provide breadcrumb-style logging within spans:
 - `received_query`: Logged when input is received
