@@ -3,6 +3,7 @@ from typing import TypedDict
 
 # Load environment variables first (contains API keys and project settings)
 import dotenv
+
 dotenv.load_dotenv()
 
 # ============================================================================
@@ -13,8 +14,8 @@ dotenv.load_dotenv()
 # "instrument" your code so you can see exactly what's happening during execution.
 
 # Core OpenTelemetry imports
-from opentelemetry.sdk import trace as trace_sdk     # SDK for creating traces
-from opentelemetry import trace as trace_api         # API for interacting with traces
+from opentelemetry.sdk import trace as trace_sdk  # SDK for creating traces
+from opentelemetry import trace as trace_api  # API for interacting with traces
 from opentelemetry.sdk.trace.export import BatchSpanProcessor  # Efficiently batches spans before export
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter  # Sends traces via HTTP
 from opentelemetry.sdk.trace.export import ConsoleSpanExporter  # Prints traces to console (for debugging)
@@ -35,16 +36,14 @@ from langgraph.graph import StateGraph, END
 # Set up authentication headers for Galileo
 # These tell Galileo who you are and which project to store traces in
 headers = {
-    "Galileo-API-Key": os.environ.get("GALILEO_API_KEY"),      # Your unique API key
-    "project": os.environ.get("GALILEO_PROJECT"),              # Which Galileo project to use
+    "Galileo-API-Key": os.environ.get("GALILEO_API_KEY"),  # Your unique API key
+    "project": os.environ.get("GALILEO_PROJECT"),  # Which Galileo project to use
     "logstream": os.environ.get("GALILEO_LOG_STREAM", "default"),  # Organize traces within the project
 }
 
 # OpenTelemetry requires headers in a specific format: "key1=value1,key2=value2"
 # This converts our dictionary to that format
-os.environ["OTEL_EXPORTER_OTLP_TRACES_HEADERS"] = ",".join(
-    [f"{k}={v}" for k, v in headers.items()]
-)
+os.environ["OTEL_EXPORTER_OTLP_TRACES_HEADERS"] = ",".join([f"{k}={v}" for k, v in headers.items()])
 
 # Debug: Print the formatted headers to verify they're correct
 print(f"OTEL Headers: {os.environ['OTEL_EXPORTER_OTLP_TRACES_HEADERS']}")
@@ -62,21 +61,14 @@ endpoint = "https://app.galileo.ai/api/galileo/otel/traces"
 # Create a TracerProvider with descriptive resource information
 # This helps identify these traces as coming from OpenTelemetry in Galileo
 from opentelemetry.sdk.resources import Resource
-resource = Resource.create({
-    "service.name": "LangGraph-OpenTelemetry-Demo",
-    "service.version": "1.0.0",
-    "deployment.environment": "development"
-})
+
+resource = Resource.create({"service.name": "LangGraph-OpenTelemetry-Demo", "service.version": "1.0.0", "deployment.environment": "development"})
 tracer_provider = trace_sdk.TracerProvider(resource=resource)
 
 # Add a span processor that sends traces to Galileo
 # BatchSpanProcessor is more efficient than SimpleSpanProcessor for production
 # because it batches multiple spans together before sending
-tracer_provider.add_span_processor(
-    BatchSpanProcessor(
-        OTLPSpanExporter(endpoint)  # OTLP = OpenTelemetry Protocol
-    )
-)
+tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter(endpoint)))  # OTLP = OpenTelemetry Protocol
 
 # OPTIONAL: Console output disabled to reduce noise in Galileo
 # Uncomment the next 3 lines if you want local console debugging:
@@ -111,8 +103,9 @@ tracer = trace_api.get_tracer(__name__)
 # LangGraph uses a shared state object (a dict) that flows through nodes. Each
 # node reads from the state and can write updates back to it.
 class AgentState(TypedDict, total=False):
-    query: str    # The user's input
-    response: str # The processed response
+    query: str  # The user's input
+    response: str  # The processed response
+
 
 # Node 1: Validate/record the input
 # OpenInference will automatically create spans for this function
@@ -122,6 +115,7 @@ def initial_node(state: AgentState):
     print(f"📥 Processing input: '{q}'")
     return {"query": q}
 
+
 # Node 2: Perform business logic
 # OpenInference automatically traces this - no manual spans needed for cleaner output
 def processing_node(state: AgentState):
@@ -129,6 +123,7 @@ def processing_node(state: AgentState):
     processed = f"Processed: {q.upper()}"
     print(f"⚙️ Transformed: '{q}' → '{processed}'")
     return {"response": processed}
+
 
 # ============================================================================
 # STEP 5: BUILD AND RUN THE LANGGRAPH WORKFLOW
