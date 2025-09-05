@@ -1,20 +1,42 @@
-# LangGraph OpenTelemetry Integration Example
+# LangGraph + OpenTelemetry + Galileo Integration Guide
 
-A demonstration of instrumenting LangGraph workflows with OpenTelemetry (OTEL) for comprehensive observability and tracing. This example shows how to create spans, add events, and export trace data to observability platforms like Galileo AI.
+This example shows how to add **observability** to your LangGraph AI workflows using OpenTelemetry and Galileo. If you're new to these tools, think of this as adding "X-ray vision" to your AI application so you can see exactly what's happening inside.
 
-## Features
+## 🤔 What Are These Tools?
 
-- **LangGraph Workflow**: Simple two-node state machine with query processing
-- **OpenTelemetry Integration**: Full OTEL instrumentation with custom spans and events
-- **Galileo AI Integration**: Export traces to Galileo for visualization and analysis
-- **Console Debugging**: Local span output for development and testing
-- **Environment Configuration**: Flexible setup using environment variables
+### OpenTelemetry (OTel)
+OpenTelemetry is like a **diagnostic system** for your code. It creates "traces" that show:
+- What functions/operations ran
+- How long each step took
+- What data flowed through your system
+- Where errors occurred
+
+Think of a trace like a detailed timeline of everything that happened when processing a user request.
+
+### OpenInference
+OpenInference is a **specialized version** of OpenTelemetry that understands AI frameworks like LangChain and LangGraph. It automatically creates meaningful traces for AI operations without you having to write extra code.
+
+### Galileo
+Galileo is an AI Reliability and Observability tool that helps developers at scale build reliable AI tooling. Instead of traces just being printed to your terminal, Galileo gives you:
+
+## What this example shows
+
+This example demonstrates:
+- **Automatic tracing**: OpenInference automatically traces your LangGraph workflow
+- **Custom tracing**: How to add your own detailed spans with attributes and events
+- **Multiple destinations**: Traces go to both your console (for debugging - optional) and Galileo (for analysis)
+- **Real-world setup**: Proper authentication and configuration for production use
 
 ## Prerequisites
 
-- Python >= 3.12
-- [UV package manager](https://docs.astral.sh/uv/) for dependency management
-- A free [Galileo developer](https://app.galileo.ai) account
+Before you start, you'll need:
+
+- **Python 3.12+**: [Download from python.org](https://www.python.org/downloads/)
+- **UV Package Manager**: [Install UV](https://docs.astral.sh/uv/getting-started/installation/) (faster alternative to pip)
+- **Galileo Account**: [Sign up for free](https://app.galileo.ai) to get:
+  - API key
+- **Basic understanding**: Familiarity with Python and environment variables
+- [OpenAI API Key](https://openai.com/api/)
 
 ## Installation
 
@@ -36,62 +58,99 @@ A demonstration of instrumenting LangGraph workflows with OpenTelemetry (OTEL) f
 
 ## Configuration
 
-### Environment variables
+### Step 3: Set up Galileo
 
-Create a `.env` file based on the provided `.env.example`:
+1. **Create a Galileo account** at [app.galileo.ai](https://app.galileo.ai) if you haven't already
 
-```bash
-cp .env.example .env
-```
+2. **Get your API key**:
+   - Log into Galileo dashboard
+   - Click on your profile/settings
+   - Generate or copy your API key
 
-Configure the following variables in your `.env` file:
+3. **Create a project**:
+   - In the Galileo dashboard, create a new project
+   - Give it a name like "Langgraph-OTel" 
+   - Note the project name - you'll use this in your `.env` file
 
-```bash
-# Galileo Environment Variables (for trace export)
-GALILEO_API_KEY=your_galileo_api_key_here
-GALILEO_PROJECT=your_project_name
-GALILEO_LOG_STREAM=your-log-stream-name
+4. **Create your `.env` file**:
+   ```bash
+   cp .env.example .env
+   ```
 
-# Optional: AI model configuration
-OPENAI_API_KEY=your_openai_key_here
-MODEL_NAME=gpt-4
-```
+5. **Edit your `.env` file** with your actual values:
+   ```bash
+   # Replace with YOUR actual API key from Galileo dashboard
+   GALILEO_API_KEY=your_actual_api_key_here
+   
+   # Replace with YOUR project name from step 3
+   GALILEO_PROJECT=LangGraph Demo
+   
+   # This organizes traces within your project (you can use any name - for the sake of ours, we'll call it `development`')
+   GALILEO_LOG_STREAM=development
+   ```
 
-### Required Variables
+### Important Notes
 
-- `GALILEO_API_KEY`: Your Galileo API key for trace export
-- `GALILEO_PROJECT`: Project name in Galileo where traces will be stored
-- `GALILEO_LOG_STREAM`: Log stream name (defaults to "default")
+- **Never commit your `.env` file** - it contains your API keys!
+- **Project names are case-sensitive** - use exactly what you created in Galileo
+- **Log streams** help organize traces (like folders) - create any name you want
 
-### Optional Variables
+## Running the example
 
-- `GALILEO_CONSOLE_URL`: Custom Galileo deployment URL (defaults to https://app.galileo.ai)
-- `OPENAI_API_KEY`: OpenAI API key (for future AI integrations)
-- `MODEL_NAME`: AI model name to use
-
-## Usage
-
-### Basic Execution
-
-Run the example workflow:
+### Step 4: Run It!
 
 ```bash
 uv run python main.py
 ```
 
-This will:
-1. Initialize the OpenTelemetry tracer
-2. Create a LangGraph workflow with two nodes
-3. Execute the workflow with a sample query
-4. Output traces to console and export to Galileo (if configured)
+### What you'll see
 
-### Expected Output
+The program does several things:
+1. Sets up OpenTelemetry with your Galileo credentials
+2. Applies automatic instrumentation to LangGraph 
+3. Runs a simple workflow: "hello world" → "PROCESSED: HELLO WORLD"
+4. Sends detailed traces to both console and Galileo
 
+**Console Output:**
 ```
+OTEL Headers: Galileo-API-Key=your_key,project=YourProject,logstream=development
+✓ LangGraph instrumentation applied - automatic spans will be created
 LangGraph result: {'query': 'hello world', 'response': 'Processed: HELLO WORLD'}
+✓ Execution complete - check Galileo for traces in your project/log stream
+
+# Followed by detailed JSON trace data...
 ```
 
-You'll also see detailed span information in the console showing the execution flow through each node.
+### Understanding the Traces
+
+You'll see traces for:
+- **LangGraph**: The main workflow execution
+- **initial**: The first node (validates input)
+- **process**: The second node (transforms input)
+- **initial_node**: Your custom span with attributes
+- **processing_node**: Your custom span with events
+
+Each trace shows:
+- ⏱️ **Timing**: How long each operation took
+- 🏷️ **Attributes**: Key-value data (like input text)
+- 📝 **Events**: Breadcrumb-style log messages
+- 🧵 **Relationships**: Parent-child span connections
+
+### 🔍 Viewing Traces in Galileo
+
+1. **Open Galileo**: Go to [app.galileo.ai](https://app.galileo.ai) and log in
+
+2. **Navigate to your project**: Click on the project you created (e.g., "LangGraph Demo") and then the relevant Log stream name. 
+
+3. **Find your traces**: Look for traces with names like:
+
+
+4. **Explore the timeline**: Click on any trace to see:
+   - Detailed attributes and events
+   - Hierarchical span relationships
+
+**Pro tip**: Traces may take 30-60 seconds to appear in Galileo after execution.
+Refresh the screen to see recent changes and updates.
 
 ## Code structure
 
@@ -117,7 +176,7 @@ Each node is instrumented with OpenTelemetry spans that capture:
 - Processing events and milestones
 - Execution timing and metadata
 
-### OpenTelemetry Integration
+### OpenTelemetry integration
 
 #### Span structure
 
@@ -148,13 +207,13 @@ tracer = trace.get_tracer(__name__)
 
 ### Viewing traces
 
-#### Console Output
+#### Console output
 Traces are automatically displayed in the console during execution, showing:
 - Span names and timing
 - Attributes and events
 - Parent-child relationships
 
-#### Galileo AI dashboard
+#### Galileo console
 When properly configured, traces are exported to Galileo AI where you can:
 - Visualize workflow execution flow
 - Analyze performance bottlenecks
@@ -176,15 +235,15 @@ Events provide breadcrumb-style logging within spans:
 
 ## Troubleshooting
 
-### Common Issues
+### Common issues
 
-#### 1. Missing Environment Variables
+#### 1. Missing environment variables
 ```
 Error: GALILEO_API_KEY not found
 ```
 **Solution**: Ensure your `.env` file is properly configured and located in the project root.
 
-#### 2. Network Connectivity
+#### 2. Network connectivity
 ```
 Error: Failed to export traces
 ```
@@ -193,7 +252,7 @@ Error: Failed to export traces
 - Check `GALILEO_CONSOLE_URL` if using custom deployment
 - Ensure firewall allows OTLP exports
 
-#### 3. Authentication Errors
+#### 3. Authentication errors
 ```
 Error: 403 Forbidden
 ```
@@ -201,22 +260,22 @@ Error: 403 Forbidden
 - Verify `GALILEO_API_KEY` is correct and active
 - Check project permissions in Galileo dashboard
 
-#### 4. Import Errors
+#### 4. Import errors
 ```
 ModuleNotFoundError: No module named 'langgraph'
 ```
 **Solution**: Ensure dependencies are installed with `uv sync`
 
-### Debugging Tips
+### Debugging tips
 
 1. **Enable Console Export**: The example includes console span output for local debugging
 2. **Check Environment Loading**: Add print statements to verify `.env` variables are loaded
 3. **Validate Network**: Test OTLP endpoint connectivity independently
 4. **Review Logs**: Check both console output and Galileo dashboard for error details
 
-## Advanced Configuration
+## Advanced configuration
 
-### Custom OTLP Exporters
+### Custom OTLP exporters
 
 To use different observability backends, modify the tracer setup:
 
@@ -231,7 +290,7 @@ otlp_exporter = OTLPSpanExporter(
 provider.add_span_processor(SimpleSpanProcessor(otlp_exporter))
 ```
 
-### Additional Span Processors
+### Additional span processors
 
 For production use, consider batch span processing:
 
@@ -244,7 +303,7 @@ provider.add_span_processor(BatchSpanProcessor(otlp_exporter))
 
 ## Development
 
-### Extending the Workflow
+### Extending the workflow
 
 To add new nodes to the LangGraph workflow:
 
@@ -253,18 +312,18 @@ To add new nodes to the LangGraph workflow:
 3. **Configure edges** between nodes
 4. **Update state schema** if needed
 
-### Best Practices
+### Best practices
 
 - **Span Naming**: Use descriptive, consistent names
 - **Attribute Limits**: Keep attribute values small for optimal indexing
 - **Error Handling**: Add span status and error information for failed operations
 - **Resource Cleanup**: Ensure proper span closure in all execution paths
 
-## Related Documentation
+## Related documentation
 
 - [LangGraph Documentation](https://langchain-ai.github.io/langgraph/)
 - [OpenTelemetry Python Guide](https://opentelemetry.io/docs/instrumentation/python/)
-- [Galileo AI Documentation](https://docs.galileo.ai/)
+- [Galileo Documentation](https://v2docs.galileo.ai/)
 - [UV Package Manager](https://docs.astral.sh/uv/)
 
 ## License

@@ -12,5 +12,6 @@ dependencies = [
     "opentelemetry-exporter-otlp>=1.36.0",
     "opentelemetry-exporter-otlp-proto-grpc>=1.36.0",
     "opentelemetry-exporter-otlp-proto-http>=1.36.0",
+    "openinference-instrumentation-langchain>=0.1.0",
     "python-dotenv>=1.1.0",
 ]
