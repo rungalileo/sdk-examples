@@ -5,13 +5,12 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "typing>=3.10.0.0",
-    "langgraph>=0.3.0",
-    "langgraph-prebuilt>=0.2.0",
-    "opentelemetry>=1.26.0",
-    "opentelemetry-sdk>=1.26.0",
-    "opentelemetry-exporter-otlp>=1.26.0",
-    "opentelemetry-exporter-otlp-proto-grpc>=1.26.0",
-    "opentelemetry-exporter-otlp-proto-http>=1.26.0",
-    "opentelemetry-exporter-otlp-proto-http>=1.26.0",
+    "langgraph>=0.6.0",
+    "langgraph-prebuilt>=0.6.0",
+    "opentelemetry-api>=1.36.0",
+    "opentelemetry-sdk>=1.36.0",
+    "opentelemetry-exporter-otlp>=1.36.0",
+    "opentelemetry-exporter-otlp-proto-grpc>=1.36.0",
+    "opentelemetry-exporter-otlp-proto-http>=1.36.0",
+    "python-dotenv>=1.1.0",
 ]

@@ -1,9 +1,31 @@
+import os
 from typing import TypedDict
 from langgraph.graph import StateGraph, END
 from opentelemetry import trace
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import ConsoleSpanExporter, SimpleSpanProcessor
+from opentelemetry.sdk.trace.export import (
+    ConsoleSpanExporter,
+    SimpleSpanProcessor,
+)
+
+# load environment variables from .env file
+import dotenv
+dotenv.load_dotenv()
+
+# Authenticate your headers with your current OTEL setup.
+headers = {
+    "Galileo-API-Key": os.environ.get("GALILEO_API_KEY"),
+    "project": os.environ.get("GALILEO_PROJECT"),
+    "logstream": os.environ.get("GALILEO_LOG_STREAM", "default"),
+}
+os.environ["OTEL_EXPORTER_OTLP_TRACES_HEADERS"] = ",".join(
+    [f"{k}={v}" for k, v in headers.items()]
+)
+traces_url = os.environ.get("GALILEO_CONSOLE_URL", "https://app.galileo.ai")
+os.environ["OTEL_EXPORTER_OTLP_TRACES_ENDPOINT"] = (
+    f"{traces_url}/api/galileo/otel/traces"
+)
 
 # ---------- 1) Configure OpenTelemetry ----------
 resource = Resource.create({"service.name": "langgraph-agent"})
