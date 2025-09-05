@@ -7,7 +7,17 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import (
     ConsoleSpanExporter,
     SimpleSpanProcessor,
+    BatchSpanProcessor,
 )
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+
+# Import OpenInference LangChain instrumentor for better integration
+try:
+    from openinference.instrumentation.langchain import LangChainInstrumentor
+    LANGCHAIN_INSTRUMENTATION_AVAILABLE = True
+except ImportError:
+    print("Warning: OpenInference LangChain instrumentation not available. Install with: pip install openinference-instrumentation-langchain")
+    LANGCHAIN_INSTRUMENTATION_AVAILABLE = False
 
 # load environment variables from .env file
 import dotenv
@@ -30,9 +40,24 @@ os.environ["OTEL_EXPORTER_OTLP_TRACES_ENDPOINT"] = (
 # ---------- 1) Configure OpenTelemetry ----------
 resource = Resource.create({"service.name": "langgraph-agent"})
 provider = TracerProvider(resource=resource)
+
+# Add OTLP exporter for Galileo (uses environment variables set above)
+otlp_exporter = OTLPSpanExporter(
+    endpoint=os.environ["OTEL_EXPORTER_OTLP_TRACES_ENDPOINT"],
+    headers=dict([h.split("=") for h in os.environ["OTEL_EXPORTER_OTLP_TRACES_HEADERS"].split(",")])
+)
+provider.add_span_processor(BatchSpanProcessor(otlp_exporter))
+
+# Optional: Also add console output for local debugging
 provider.add_span_processor(SimpleSpanProcessor(ConsoleSpanExporter()))
+
 trace.set_tracer_provider(provider)
 tracer = trace.get_tracer(__name__)
+
+# Apply LangChain instrumentation if available
+if LANGCHAIN_INSTRUMENTATION_AVAILABLE:
+    LangChainInstrumentor().instrument(tracer_provider=provider)
+    print("LangChain instrumentation applied successfully")
 
 
 # ---------- 2) Define state & nodes ----------
