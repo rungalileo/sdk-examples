@@ -326,6 +326,4 @@ To add new nodes to the LangGraph workflow:
 - [Galileo Documentation](https://v2docs.galileo.ai/)
 - [UV Package Manager](https://docs.astral.sh/uv/)
 
-## License
 
-This example is part of the SDK examples collection and follows the same licensing terms as the parent repository.
