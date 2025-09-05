@@ -1,0 +1,337 @@
+@import "tailwindcss";
+@import "highlight.js/styles/github-dark.css";
+
+/* Custom healthcare theme configuration using TailwindCSS v4 @theme directive */
+@theme {
+  --color-primary: #3b82f6;
+  --color-secondary: #64748b;
+  --color-accent: #06b6d4;
+  --color-healthcare-blue: #1e40af;
+  --color-healthcare-green: #059669;
+  --color-danger: #dc2626;
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  
+  /* Healthcare-specific spacing */
+  --spacing-card: 1.5rem;
+  --spacing-section: 2rem;
+  
+  /* Healthcare-specific border radius */
+  --radius-card: 0.5rem;
+  --radius-button: 0.375rem;
+  
+  /* Healthcare-specific shadows */
+  --shadow-card: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-elevated: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+/* Base styles */
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  color: hsl(var(--foreground));
+  background: hsl(var(--background));
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+/* Healthcare-specific component styles */
+.healthcare-card {
+  @apply bg-white border border-gray-200 rounded-lg shadow-sm p-6;
+}
+
+.healthcare-card-elevated {
+  @apply bg-white border border-gray-200 rounded-lg shadow-md p-6;
+}
+
+/* Role-based badge styles */
+.role-badge-doctor {
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-blue-100 text-blue-800;
+}
+
+.role-badge-nurse {
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-green-100 text-green-800;
+}
+
+.role-badge-admin {
+  @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-purple-100 text-purple-800;
+}
+
+/* Department indicator styles */
+.dept-cardiology {
+  @apply border-l-4 border-red-500;
+}
+
+.dept-neurology {
+  @apply border-l-4 border-purple-500;
+}
+
+.dept-pediatrics {
+  @apply border-l-4 border-yellow-500;
+}
+
+.dept-oncology {
+  @apply border-l-4 border-pink-500;
+}
+
+.dept-emergency {
+  @apply border-l-4 border-orange-500;
+}
+
+.dept-general {
+  @apply border-l-4 border-blue-500;
+}
+
+/* Status indicator styles */
+.status-active {
+  @apply text-green-600 bg-green-50 border border-green-200;
+}
+
+.status-inactive {
+  @apply text-gray-600 bg-gray-50 border border-gray-200;
+}
+
+.status-pending {
+  @apply text-yellow-600 bg-yellow-50 border border-yellow-200;
+}
+
+.status-urgent {
+  @apply text-red-600 bg-red-50 border border-red-200;
+}
+
+/* Chat interface styles */
+.chat-bubble-user {
+  @apply bg-blue-600 text-white rounded-lg rounded-br-sm px-4 py-2 max-w-xs ml-auto;
+}
+
+.chat-bubble-assistant {
+  @apply bg-gray-100 text-gray-900 rounded-lg rounded-bl-sm px-4 py-2 max-w-xs mr-auto;
+}
+
+.chat-bubble-system {
+  @apply bg-green-50 text-green-800 rounded-lg px-4 py-2 max-w-md mx-auto text-center text-sm;
+}
+
+/* Markdown content styles for assistant responses */
+.markdown-content {
+  @apply text-sm leading-relaxed;
+}
+
+.markdown-content h1 {
+  @apply text-lg font-bold text-healthcare-blue mb-2 mt-3 first:mt-0;
+}
+
+.markdown-content h2 {
+  @apply text-base font-bold text-healthcare-blue mb-2 mt-3 first:mt-0;
+}
+
+.markdown-content h3 {
+  @apply text-sm font-semibold text-gray-800 mb-1 mt-2 first:mt-0;
+}
+
+.markdown-content h4, 
+.markdown-content h5, 
+.markdown-content h6 {
+  @apply text-sm font-medium text-gray-700 mb-1 mt-2 first:mt-0;
+}
+
+.markdown-content p {
+  @apply mb-2 last:mb-0;
+}
+
+.markdown-content ul,
+.markdown-content ol {
+  @apply mb-2 pl-4 space-y-1;
+}
+
+.markdown-content ul {
+  @apply list-disc;
+}
+
+.markdown-content ol {
+  @apply list-decimal;
+}
+
+.markdown-content li {
+  @apply text-sm;
+}
+
+.markdown-content blockquote {
+  @apply border-l-4 border-healthcare-blue pl-3 py-1 my-2 bg-blue-50 text-gray-700 italic;
+}
+
+.markdown-content code {
+  @apply bg-gray-200 text-gray-800 px-1 py-0.5 rounded text-xs font-mono;
+}
+
+.markdown-content pre {
+  @apply bg-gray-900 text-gray-100 p-3 rounded-md my-2 overflow-x-auto;
+}
+
+.markdown-content pre code {
+  @apply bg-transparent text-inherit p-0 text-xs;
+}
+
+.markdown-content table {
+  @apply w-full border-collapse my-2 text-xs;
+}
+
+.markdown-content th {
+  @apply bg-gray-50 border border-gray-300 px-2 py-1 text-left font-medium text-gray-700;
+}
+
+.markdown-content td {
+  @apply border border-gray-300 px-2 py-1 text-gray-900;
+}
+
+.markdown-content strong {
+  @apply font-semibold text-gray-900;
+}
+
+.markdown-content em {
+  @apply italic;
+}
+
+.markdown-content a {
+  @apply text-healthcare-blue underline hover:text-blue-800;
+}
+
+.markdown-content hr {
+  @apply border-t border-gray-300 my-3;
+}
+
+/* Syntax highlighting for code blocks */
+.markdown-content .hljs {
+  @apply bg-gray-900 text-gray-100;
+}
+
+.markdown-content .hljs-comment {
+  @apply text-gray-500;
+}
+
+.markdown-content .hljs-keyword {
+  @apply text-blue-400;
+}
+
+.markdown-content .hljs-string {
+  @apply text-green-400;
+}
+
+.markdown-content .hljs-number {
+  @apply text-yellow-400;
+}
+
+.markdown-content .hljs-function {
+  @apply text-purple-400;
+}
+
+/* Navigation styles */
+.nav-link-active {
+  @apply bg-gray-100 text-gray-900 font-medium;
+}
+
+.nav-link-inactive {
+  @apply text-gray-600 hover:bg-gray-50 hover:text-gray-900;
+}
+
+/* Form styles */
+.form-field-error {
+  @apply border-red-300 focus:border-red-500 focus:ring-red-500;
+}
+
+.form-error-message {
+  @apply text-sm text-red-600 mt-1;
+}
+
+/* Loading styles */
+.loading-skeleton {
+  @apply animate-pulse bg-gray-200 rounded;
+}
+
+/* Patient card styles */
+.patient-card {
+  @apply bg-white border border-gray-200 rounded-lg shadow-sm p-6 hover:shadow-md transition-shadow cursor-pointer;
+}
+
+.patient-card-priority-high {
+  @apply border-l-4 border-red-500;
+}
+
+.patient-card-priority-medium {
+  @apply border-l-4 border-yellow-500;
+}
+
+.patient-card-priority-low {
+  @apply border-l-4 border-green-500;
+}
+
+/* Document upload styles */
+.upload-zone {
+  @apply border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-gray-400 transition-colors;
+}
+
+.upload-zone-active {
+  @apply border-blue-500 bg-blue-50;
+}
+
+/* Accessibility improvements */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus styles for better accessibility */
+.focus-visible {
+  @apply outline-2 outline-offset-2 outline-blue-600;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .healthcare-card {
+    @apply bg-white border-2 border-gray-400 rounded-lg shadow-sm p-6;
+  }
+  
+  .role-badge-doctor {
+    @apply bg-blue-200 text-blue-900 border border-blue-900;
+  }
+  
+  .role-badge-nurse {
+    @apply bg-green-200 text-green-900 border border-green-900;
+  }
+  
+  .role-badge-admin {
+    @apply bg-purple-200 text-purple-900 border border-purple-900;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print styles for medical records */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  .healthcare-card {
+    @apply bg-white border border-gray-400 rounded-lg shadow-sm p-6 break-inside-avoid;
+  }
+  
+  .patient-card {
+    @apply break-inside-avoid mb-4;
+  }
+}
