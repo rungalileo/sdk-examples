@@ -98,24 +98,8 @@ In the next **15 minutes**, you'll deploy a complete **healthcare-grade AI knowl
 
 **Step 1: Check Dependencies**
 ```bash
-# Run this validation script
-echo "🔍 Validating environment..."
-python3 --version && echo "✅ Python OK" || echo "❌ Install Python 3.11+"
-node --version && echo "✅ Node.js OK" || echo "❌ Install Node.js 20.19.0+"
-docker --version && echo "✅ Docker OK" || echo "❌ Install Docker"
-git --version && echo "✅ Git OK" || echo "❌ Install Git"
-
-# Check available ports
-echo "🔍 Checking port availability..."
-for port in 3000 8001 8002 8003 5432; do
-  if ! lsof -i :$port > /dev/null 2>&1; then
-    echo "✅ Port $port available"
-  else
-    echo "⚠️  Port $port in use - you may need to stop other services"
-  fi
-done
-
-echo "🎉 Environment validation complete!"
+# Run the validation script
+./validate_environment.sh
 ```
 
 **Expected Output:**
@@ -246,7 +230,7 @@ echo "Testing Frontend..."
 curl -s http://localhost:3000 > /dev/null && echo "✅ Frontend OK" || echo "❌ Frontend DOWN"
 
 echo "Testing Database..."
-docker exec healthcare-support-portal-postgres-1 pg_isready && echo "✅ Database OK" || echo "❌ Database DOWN"
+docker exec healthcare-support-portal-db-1 pg_isready && echo "✅ Database OK" || echo "❌ Database DOWN"
 
 echo "🎉 Health check complete!"
 ```
@@ -280,8 +264,8 @@ uv run python -m common.seed_data
 ```bash
 # Get authentication token
 TOKEN=$(curl -s -X POST "http://localhost:8001/api/v1/auth/login" \
-  -H "Content-Type: application/json" \
-  -d '{"email": "dr_smith@hospital.com", "password": "secure_password"}' | \
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "username=dr_smith@hospital.com&password=secure_password" | \
   python3 -c "import sys, json; print(json.load(sys.stdin)['access_token'])")
 
 echo "Got auth token: ${TOKEN:0:20}..."
@@ -526,10 +510,10 @@ curl -s http://localhost:8003/docs > /dev/null && echo "✅ RAG API responding" 
 docker ps | grep postgres
 
 # Check database logs
-docker logs healthcare-support-portal-postgres-1
+docker logs healthcare-support-portal-db-1
 
 # Test database connection
-docker exec healthcare-support-portal-postgres-1 \
+docker exec healthcare-support-portal-db-1 \
   psql -U postgres -d healthcare -c "\\dt" 2>/dev/null && \
   echo "✅ Database tables exist" || echo "❌ Database connection failed"
 
@@ -1513,7 +1497,7 @@ docker build -f Dockerfile.rag -t rag-service .
 
 ```bash
 # Database backup
-docker exec healthcare-support-portal-postgres-1 \
+docker exec healthcare-support-portal-db-1 \
   pg_dump -U postgres healthcare > backup_$(date +%Y%m%d).sql
 
 # Document backup (export all documents)
@@ -1532,7 +1516,7 @@ print('Documents backed up successfully')
 "
 
 # Restore database
-docker exec -i healthcare-support-portal-postgres-1 \
+docker exec -i healthcare-support-portal-db-1 \
   psql -U postgres healthcare < backup_20241201.sql
 
 # Monitor system performance

@@ -20,7 +20,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import type { User as UserType, Patient } from '@/lib/types';
-import { api } from '@/lib/api';
+import { serverApi } from '@/lib/api.server';
 
 interface DocumentUploadProps {
   patients?: Patient[];
@@ -175,31 +175,19 @@ export function DocumentUpload({ patients = [], user }: DocumentUploadProps) {
       // Get auth token from cookies
       const token = document.cookie.match(/authToken=([^;]+)/)?.[1];
       
-      const response = await fetch('http://localhost:8003/api/v1/documents/upload', {
-        method: 'POST',
-        body: formData,
-        headers: {
-          // Don't set Content-Type - let browser set it with boundary for multipart
-          'Authorization': `Bearer ${token}`,
-        },
-      });
+      if (!token) {
+        throw new Error('Authentication required');
+      }
+      
+      const result = await serverApi.uploadDocument(formData, token);
 
       clearInterval(progressInterval);
 
-      if (response.ok) {
-        updateUploadFile(uploadFile.id, { 
-          status: 'success', 
-          progress: 100 
-        });
-        setCompletedUploads(prev => prev + 1);
-      } else {
-        const errorData = await response.json();
-        updateUploadFile(uploadFile.id, { 
-          status: 'error', 
-          progress: 0,
-          error: errorData.detail || 'Upload failed'
-        });
-      }
+      updateUploadFile(uploadFile.id, { 
+        status: 'success', 
+        progress: 100 
+      });
+      setCompletedUploads(prev => prev + 1);
     } catch (error) {
       updateUploadFile(uploadFile.id, { 
         status: 'error', 

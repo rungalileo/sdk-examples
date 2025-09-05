@@ -58,7 +58,7 @@ export const serverApi = {
     });
   },
 
-  async createDocument(token: string, documentData: any) {
+  async createDocument(documentData: any, token: string) {
     const response = await axios.post(`${API_BASE_URL}:8003/api/v1/documents/`, documentData, {
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -92,7 +92,7 @@ export const serverApi = {
     return response.data;
   },
 
-  async uploadDocument(token: string, formData: FormData) {
+  async uploadDocument(formData: FormData, token: string) {
     const response = await axios.post(`${API_BASE_URL}:8003/api/v1/documents/upload`, formData, {
       headers: { 
         Authorization: `Bearer ${token}`,
