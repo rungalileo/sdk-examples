@@ -59,9 +59,15 @@ print(f"OTEL Headers: {os.environ['OTEL_EXPORTER_OTLP_TRACES_HEADERS']}")
 # Define where to send the traces - Galileo's OpenTelemetry endpoint
 endpoint = "https://app.galileo.ai/api/galileo/otel/traces"
 
-# Create a TracerProvider - this is the main entry point for OpenTelemetry
-# Think of it as the "manager" that coordinates all tracing activity
-tracer_provider = trace_sdk.TracerProvider()
+# Create a TracerProvider with descriptive resource information
+# This helps identify these traces as coming from OpenTelemetry in Galileo
+from opentelemetry.sdk.resources import Resource
+resource = Resource.create({
+    "service.name": "LangGraph-OpenTelemetry-Demo",
+    "service.version": "1.0.0",
+    "deployment.environment": "development"
+})
+tracer_provider = trace_sdk.TracerProvider(resource=resource)
 
 # Add a span processor that sends traces to Galileo
 # BatchSpanProcessor is more efficient than SimpleSpanProcessor for production
@@ -72,11 +78,11 @@ tracer_provider.add_span_processor(
     )
 )
 
-# OPTIONAL: Also send traces to console for local debugging
-# Comment out the next two lines if you don't want console output
-tracer_provider.add_span_processor(
-    BatchSpanProcessor(ConsoleSpanExporter())
-)
+# OPTIONAL: Console output disabled to reduce noise in Galileo
+# Uncomment the next 3 lines if you want local console debugging:
+# tracer_provider.add_span_processor(
+#     BatchSpanProcessor(ConsoleSpanExporter())
+# )
 
 # Register our tracer provider as the global one
 # This means all OpenTelemetry operations will use our configuration
@@ -109,26 +115,20 @@ class AgentState(TypedDict, total=False):
     response: str # The processed response
 
 # Node 1: Validate/record the input
-# We also create a custom span here to show how to add attributes & events
-# Manually created spans give you fine-grained observability alongside the
-# automatic spans from OpenInference.
+# OpenInference will automatically create spans for this function
+# We rely on automatic instrumentation instead of manual spans to keep traces clean
 def initial_node(state: AgentState):
-    # Create a child span for this node's work
-    with tracer.start_as_current_span("initial_node") as span:
-        q = state.get("query", "")
-        span.set_attribute("input.query", q)     # Small strings/numbers are best for attributes
-        span.add_event("received_query", {"len": len(q)})  # Events act like breadcrumbs
-        return {"query": q}
+    q = state.get("query", "")
+    print(f"📥 Processing input: '{q}'")
+    return {"query": q}
 
 # Node 2: Perform business logic
-# Here we transform the input and record a preview as a span attribute
+# OpenInference automatically traces this - no manual spans needed for cleaner output
 def processing_node(state: AgentState):
-    with tracer.start_as_current_span("processing_node") as span:
-        q = state["query"]
-        processed = f"Processed: {q.upper()}"
-        span.set_attribute("processed.preview", processed[:50])
-        span.add_event("computed_response")
-        return {"response": processed}
+    q = state["query"]
+    processed = f"Processed: {q.upper()}"
+    print(f"⚙️ Transformed: '{q}' → '{processed}'")
+    return {"response": processed}
 
 # ============================================================================
 # STEP 5: BUILD AND RUN THE LANGGRAPH WORKFLOW
