@@ -1,10 +1,18 @@
 import wikipedia
+import os
+from pathlib import Path
+from dotenv import load_dotenv, find_dotenv
 from crewai import Agent, Crew, Process, Task
 from crewai.tools import BaseTool as CrewAITool
 from langchain_community.tools import DuckDuckGoSearchRun, WikipediaQueryRun
 from langchain_community.utilities.wikipedia import WikipediaAPIWrapper
 from observability import setup_observability
 from pydantic import Field
+
+# 1) load global/shared first
+load_dotenv(os.path.expanduser("~/.config/secrets/myapps.env"), override=False)
+# 2) then load per-app .env (if present) to override selectively
+load_dotenv(find_dotenv(usecwd=True), override=True)
 
 setup_observability()
 
