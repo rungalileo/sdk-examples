@@ -1,10 +1,7 @@
+import "./config/env";  // side-effect: loads env vars
 import Anthropic from '@anthropic-ai/sdk';
 
 import { getLogger, log } from "galileo";
-
-// Load environment variables from .env file
-import dotenv from 'dotenv';
-dotenv.config();
 
 // Validate required environment variables
 const requiredEnvVars = {

@@ -1,5 +1,5 @@
 // Global test setup
-import { config } from 'dotenv';
+import "./config/environment";  // side-effect: loads env va
 
 // Load environment variables for testing
 config();

@@ -1,10 +1,8 @@
+import "./config/env";  // side-effect: loads env vars
 import { getLogger, log, wrapOpenAI } from "galileo";
 
 import { OpenAI } from "openai";
 
-// Load environment variables from .env file
-import dotenv from 'dotenv';
-dotenv.config();
 
 // Validate required environment variables
 const requiredEnvVars = {

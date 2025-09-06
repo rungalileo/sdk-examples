@@ -1,5 +1,5 @@
 import { createDataset, GalileoCallback, GalileoScorers, getDataset, getLogger, runExperiment } from "galileo";
-import dotenv from 'dotenv';
+import "./config/env";  // side-effect: loads env vars
 import fs from 'fs';
 import path from 'path';
 
@@ -35,8 +35,6 @@ const sendInputToLlm = async (datasetRow: any): Promise<string> => {
 
 describe('Chatbot Galileo Tests', () => {
     beforeAll(async () => {
-        // Load environment variables from .env file
-        dotenv.config();
 
         // Verify required environment variables are set
         // You will also need to set up the environment variables for your OpenAI API connection.

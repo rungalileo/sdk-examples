@@ -1,11 +1,9 @@
+import "./config/env";  // side-effect: loads env vars
 import ModelClient from "@azure-rest/ai-inference";
 import { AzureKeyCredential } from "@azure/core-auth";
 
 import { getLogger, log } from "galileo";
 
-// Load environment variables from .env file
-import dotenv from 'dotenv';
-dotenv.config();
 
 // Validate required environment variables
 const requiredEnvVars = {

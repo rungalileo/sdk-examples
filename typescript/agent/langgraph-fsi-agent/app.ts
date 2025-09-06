@@ -1,24 +1,22 @@
 /**
  * A demo Financial Services Agent using LangGraph, with Galileo as the evaluation platform.
  */
+import "./config/env";  // side-effect: loads env vars
 import * as readline from 'readline';
 
 import { getLogger, GalileoCallback } from "galileo";
 import { createSupervisorAgent } from './agents/supervisorAgent';
 
-// Load environment variables from .env file
-import dotenv from 'dotenv';
-dotenv.config();
 
 // Validate required environment variables
-const requiredEnvVars = {
-    GALILEO_API_KEY: process.env.GALILEO_API_KEY,
-    GALILEO_PROJECT: process.env.GALILEO_PROJECT,
-    GALILEO_LOG_STREAM: process.env.GALILEO_LOG_STREAM,
-    MODEL_NAME: process.env.MODEL_NAME,
-    PINECONE_API_KEY: process.env.PINECONE_API_KEY,
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
-};
+const required = [
+  "GALILEO_API_KEY",
+  "GALILEO_PROJECT",
+  "GALILEO_LOG_STREAM",
+  "MODEL_NAME",
+  "PINECONE_API_KEY",
+  "OPENAI_API_KEY",
+] as const;
 
 for (const [key, value] of Object.entries(requiredEnvVars)) {
     if (!value) {
