@@ -13,11 +13,14 @@ import json
 import os
 import sys
 from pathlib import Path
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 from galileo import log, galileo_context
 
-# Load environment variables & set up path
-load_dotenv()
+# 1) load global/shared secrets first
+load_dotenv(os.path.expanduser("~/.config/secrets/myapps.env"), override=False)
+# 2) then load per-app .env (if present) to override selectively
+load_dotenv(find_dotenv(usecwd=True), override=True)
+#setup path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 # Quick environment check
