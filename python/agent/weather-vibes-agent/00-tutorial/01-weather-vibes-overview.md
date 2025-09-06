@@ -9,8 +9,8 @@ Before we dive into the code ocean, make sure you've packed:
 - **Python 3.8+** installed on your system
 - **API Keys** (free options available):
   - OpenAI API key (for agent reasoning)
-  - WeatherAPI key (for weather data)
-  - YouTube API key (for video recommendations)
+  - WeatherAPI key (for weather data https://www.weatherapi.com/)
+  - YouTube V3 API key (for video recommendations)
   - Galileo API key (for monitoring and evaluation)
 - **Development Environment**:
   - Code editor of choice
