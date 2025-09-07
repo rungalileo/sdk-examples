@@ -1,7 +1,7 @@
 /**
  * A demo Financial Services Agent using LangGraph, with Galileo as the evaluation platform.
  */
-import "./config/env";  // side-effect: loads env vars
+import "./src/config/env";  // side-effect: loads env vars
 import * as readline from 'readline';
 
 import { getLogger, GalileoCallback } from "galileo";

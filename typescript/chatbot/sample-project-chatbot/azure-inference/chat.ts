@@ -1,4 +1,4 @@
-import "./config/env";  // side-effect: loads env vars
+import "./src/config/env";  // side-effect: loads env vars
 import ModelClient from "@azure-rest/ai-inference";
 import { AzureKeyCredential } from "@azure/core-auth";
 

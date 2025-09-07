@@ -1,4 +1,4 @@
-import "./config/env";  // side-effect: loads env vars
+import "./src/config/env";  // side-effect: loads env vars
 import { createDataset, getDataset, runExperiment, wrapOpenAI, createPromptTemplate } from "galileo";
 import { MessageRole } from "galileo/dist/types/message.types";
 import { OpenAI } from 'openai';

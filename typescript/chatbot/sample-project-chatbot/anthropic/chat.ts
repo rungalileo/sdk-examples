@@ -1,4 +1,4 @@
-import "./config/env";  // side-effect: loads env vars
+import "./src/config/env";  // side-effect: loads env vars
 import Anthropic from '@anthropic-ai/sdk';
 
 import { getLogger, log } from "galileo";

@@ -1,5 +1,5 @@
 import { createDataset, GalileoCallback, GalileoScorers, getDataset, getLogger, runExperiment } from "galileo";
-import "./config/env";  // side-effect: loads env vars
+import "./src/config/env";  // side-effect: loads env vars
 import fs from 'fs';
 import path from 'path';
 

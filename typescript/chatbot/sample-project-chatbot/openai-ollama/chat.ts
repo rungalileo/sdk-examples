@@ -1,4 +1,4 @@
-import "./config/env";  // side-effect: loads env vars
+import "./src/config/env";  // side-effect: loads env vars
 import { getLogger, log, wrapOpenAI } from "galileo";
 
 import { OpenAI } from "openai";

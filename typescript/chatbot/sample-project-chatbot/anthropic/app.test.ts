@@ -1,4 +1,4 @@
-import "./config/env";  // side-effect: loads env vars
+import "./src/config/env";  // side-effect: loads env vars
 import { createDataset, GalileoScorers, getDataset, runExperiment } from "galileo";
 import { chatWithLLM } from "./chat";
 import fs from 'fs';
