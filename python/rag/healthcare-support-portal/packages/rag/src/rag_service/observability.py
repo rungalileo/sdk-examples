@@ -90,9 +90,7 @@ async def rag_query_context(query_type: str, user_role: str, department: str = N
 
     try:
         # Log query start
-        logger.info(
-            "RAG query started", query_type=query_type, user_role=user_role, department=department, query_id=query_id
-        )
+        logger.info("RAG query started", query_type=query_type, user_role=user_role, department=department, query_id=query_id)
 
         # Start Galileo trace if enabled
         if galileo_enabled and galileo_logger:
@@ -193,9 +191,7 @@ async def embedding_generation_context(model: str, chunk_count: int, operation_i
         yield operation_id
 
     except Exception as e:
-        logger.error(
-            "Embedding generation failed", model=model, chunk_count=chunk_count, operation_id=operation_id, error=str(e)
-        )
+        logger.error("Embedding generation failed", model=model, chunk_count=chunk_count, operation_id=operation_id, error=str(e))
 
         # Log error to Galileo
         log_galileo_event(
@@ -338,9 +334,7 @@ async def ai_response_context(model: str, token_count: int, response_id: str = N
         yield response_id
 
     except Exception as e:
-        logger.error(
-            "AI response generation failed", model=model, token_count=token_count, response_id=response_id, error=str(e)
-        )
+        logger.error("AI response generation failed", model=model, token_count=token_count, response_id=response_id, error=str(e))
 
         # Log error to Galileo
         log_galileo_event(

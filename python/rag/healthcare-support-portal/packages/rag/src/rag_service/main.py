@@ -64,9 +64,7 @@ async def startup_event():
         # Verify database migrations are current
         require_migrations_current()
 
-        logger.info(
-            f"🚀 {settings.app_name} started successfully", port=settings.port, galileo_enabled=settings.galileo_enabled
-        )
+        logger.info(f"🚀 {settings.app_name} started successfully", port=settings.port, galileo_enabled=settings.galileo_enabled)
 
     except Exception as e:
         logger.error(f"Failed to start {settings.app_name}", error=str(e))

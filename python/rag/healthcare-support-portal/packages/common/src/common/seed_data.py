@@ -197,13 +197,9 @@ def seed_patients(db: Session, users: dict[str, User], admin_token: str) -> list
 
     for patient_data in demo_patients:
         # Check if patient already exists
-        existing_patient = (
-            db.query(Patient).filter(Patient.medical_record_number == patient_data["medical_record_number"]).first()
-        )
+        existing_patient = db.query(Patient).filter(Patient.medical_record_number == patient_data["medical_record_number"]).first()
         if existing_patient:
-            print(
-                f"✅ Patient '{patient_data['name']}' (MRN: {patient_data['medical_record_number']}) already exists, skipping"
-            )
+            print(f"✅ Patient '{patient_data['name']}' (MRN: {patient_data['medical_record_number']}) already exists, skipping")
             created_patients.append(existing_patient)
 
             # Sync OSO facts for existing patients (in case they weren't synced before)
@@ -233,9 +229,7 @@ def seed_patients(db: Session, users: dict[str, User], admin_token: str) -> list
                 # Get patient from database
                 new_patient = db.query(Patient).filter(Patient.id == patient_response["id"]).first()
                 created_patients.append(new_patient)
-                print(
-                    f"✅ Created patient via API (with OSO facts): {patient_data['name']} (MRN: {patient_data['medical_record_number']})"
-                )
+                print(f"✅ Created patient via API (with OSO facts): {patient_data['name']} (MRN: {patient_data['medical_record_number']})")
             else:
                 print(f"⚠️  Failed to create patient {patient_data['name']}: {response.text}")
 

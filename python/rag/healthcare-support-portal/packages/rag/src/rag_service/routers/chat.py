@@ -61,9 +61,7 @@ async def search_documents(
     """
     settings = request.app.state.settings
 
-    async with rag_query_context(
-        query_type="search", user_role=current_user.role, department=search_request.department
-    ) as query_id:
+    async with rag_query_context(query_type="search", user_role=current_user.role, department=search_request.department) as query_id:
 
         # Get authorized documents query with OSO fallback
         try:
@@ -152,9 +150,7 @@ async def ask_question(
     """
     settings = request.app.state.settings
 
-    async with rag_query_context(
-        query_type="ask", user_role=current_user.role, department=chat_request.context_department
-    ) as query_id:
+    async with rag_query_context(query_type="ask", user_role=current_user.role, department=chat_request.context_department) as query_id:
 
         # Get authorized documents for context with OSO fallback
         try:
@@ -358,7 +354,9 @@ async def generate_ai_response(question: str, context_results: list[dict], user_
 
         # Add disclaimer if no context was used
         if not context:
-            ai_response += "\n\n*Note: This response was generated without specific document context. Please verify information with current medical guidelines.*"
+            ai_response += (
+                "\n\n*Note: This response was generated without specific document context. Please verify information with current medical guidelines.*"
+            )
 
         return ai_response
 

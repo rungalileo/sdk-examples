@@ -59,9 +59,7 @@ async def list_documents(
     try:
         query = db.query(Document).options(authorized(current_user, "read", Document))
     except Exception as oso_error:
-        logger.warning(
-            "OSO authorization failed, falling back to basic query", error=str(oso_error), user_role=current_user.role
-        )
+        logger.warning("OSO authorization failed, falling back to basic query", error=str(oso_error), user_role=current_user.role)
         # In development, fallback to showing documents based on role/department
         query = db.query(Document)
         if current_user.role != "admin":
@@ -169,9 +167,7 @@ async def get_document(
             pass
         else:
             # Access denied
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN, detail="Access denied - document not in your department"
-            )
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied - document not in your department")
 
     logger.info(
         "Document accessed",
@@ -296,9 +292,7 @@ async def upload_document(
             chunk_overlap=settings.chunk_overlap,
         )
 
-        async with embedding_generation_context(
-            model=settings.embedding_model, chunk_count=len(chunks)
-        ) as operation_id:
+        async with embedding_generation_context(model=settings.embedding_model, chunk_count=len(chunks)) as operation_id:
 
             success = await store_document_embeddings(
                 document=document,
@@ -354,9 +348,7 @@ async def upload_document(
                 }
 
     except Exception as e:
-        logger.error(
-            "Error processing uploaded document", document_id=document.id, user_role=current_user.role, error=str(e)
-        )
+        logger.error("Error processing uploaded document", document_id=document.id, user_role=current_user.role, error=str(e))
 
         # Log error to Galileo
         log_galileo_event(
@@ -392,9 +384,7 @@ async def regenerate_embeddings(
     document = db.query(Document).filter(Document.id == document_id).first()
 
     if not document:
-        logger.warning(
-            "Document not found for embedding regeneration", document_id=document_id, user_role=current_user.role
-        )
+        logger.warning("Document not found for embedding regeneration", document_id=document_id, user_role=current_user.role)
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
 
     # Check authorization
@@ -418,9 +408,7 @@ async def regenerate_embeddings(
             chunk_overlap=settings.chunk_overlap,
         )
 
-        async with embedding_generation_context(
-            model=settings.embedding_model, chunk_count=len(chunks)
-        ) as operation_id:
+        async with embedding_generation_context(model=settings.embedding_model, chunk_count=len(chunks)) as operation_id:
 
             result = await regenerate_document_embeddings(
                 document=document,
@@ -464,9 +452,7 @@ async def regenerate_embeddings(
                 return result
 
     except Exception as e:
-        logger.error(
-            "Error regenerating document embeddings", document_id=document_id, user_role=current_user.role, error=str(e)
-        )
+        logger.error("Error regenerating document embeddings", document_id=document_id, user_role=current_user.role, error=str(e))
 
         # Log error to Galileo
         log_galileo_event(
@@ -503,9 +489,7 @@ async def delete_document(
         oso = get_oso()
         oso.authorize(current_user, "delete", document)
     except Exception as e:
-        logger.warning(
-            "Unauthorized document deletion attempt", document_id=document_id, user_role=current_user.role, error=str(e)
-        )
+        logger.warning("Unauthorized document deletion attempt", document_id=document_id, user_role=current_user.role, error=str(e))
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Access denied")
 
     # Remove Oso facts
