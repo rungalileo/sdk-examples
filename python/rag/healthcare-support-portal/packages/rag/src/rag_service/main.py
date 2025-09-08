@@ -64,7 +64,9 @@ async def startup_event():
         # Verify database migrations are current
         require_migrations_current()
 
-        logger.info(f"🚀 {settings.app_name} started successfully", port=settings.port, galileo_enabled=settings.galileo_enabled)
+        logger.info(
+            f"🚀 {settings.app_name} started successfully", port=settings.port, galileo_enabled=settings.galileo_enabled
+        )
 
     except Exception as e:
         logger.error(f"Failed to start {settings.app_name}", error=str(e))
@@ -73,7 +75,12 @@ async def startup_event():
 
 @app.get("/")
 async def root():
-    return {"service": "rag_service", "status": "healthy", "version": "0.1.0", "observability": {"galileo_enabled": settings.galileo_enabled}}
+    return {
+        "service": "rag_service",
+        "status": "healthy",
+        "version": "0.1.0",
+        "observability": {"galileo_enabled": settings.galileo_enabled},
+    }
 
 
 @app.get("/health")
@@ -85,7 +92,11 @@ async def health_check():
 async def observability_status():
     """Get observability configuration status"""
     return {
-        "galileo": {"enabled": settings.galileo_enabled, "project": settings.galileo_project_name, "environment": settings.galileo_environment},
+        "galileo": {
+            "enabled": settings.galileo_enabled,
+            "project": settings.galileo_project_name,
+            "environment": settings.galileo_environment,
+        },
         "logging": {"level": settings.log_level, "format": settings.log_format},
     }
 

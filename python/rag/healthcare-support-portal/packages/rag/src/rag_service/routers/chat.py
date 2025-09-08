@@ -61,14 +61,19 @@ async def search_documents(
     """
     settings = request.app.state.settings
 
-    async with rag_query_context(query_type="search", user_role=current_user.role, department=search_request.department) as query_id:
+    async with rag_query_context(
+        query_type="search", user_role=current_user.role, department=search_request.department
+    ) as query_id:
 
         # Get authorized documents query with OSO fallback
         try:
             authorized_query = db.query(Document).options(authorized(current_user, "read", Document))
         except Exception as oso_error:
             logger.warning(
-                "OSO authorization failed in search, falling back to basic query", query_id=query_id, error=str(oso_error), user_role=current_user.role
+                "OSO authorization failed in search, falling back to basic query",
+                query_id=query_id,
+                error=str(oso_error),
+                user_role=current_user.role,
             )
             # Fallback to basic role-based filtering
             authorized_query = db.query(Document)
@@ -87,12 +92,18 @@ async def search_documents(
         authorized_doc_ids = [doc.id for doc in authorized_docs]
 
         if not authorized_doc_ids:
-            logger.info("No authorized documents found for search", query_id=query_id, user_role=current_user.role, department=search_request.department)
+            logger.info(
+                "No authorized documents found for search",
+                query_id=query_id,
+                user_role=current_user.role,
+                department=search_request.department,
+            )
             return SearchResponse(results=[], total_results=0)
 
         # Perform similarity search with observability
         async with vector_search_context(
-            result_count=search_request.limit or settings.max_results, similarity_threshold=settings.similarity_threshold
+            result_count=search_request.limit or settings.max_results,
+            similarity_threshold=settings.similarity_threshold,
         ) as search_id:
 
             results = await similarity_search(
@@ -118,7 +129,13 @@ async def search_documents(
                 session_id=query_id,
             )
 
-            logger.info("Document search completed", query_id=query_id, search_id=search_id, results_count=len(results), user_role=current_user.role)
+            logger.info(
+                "Document search completed",
+                query_id=query_id,
+                search_id=search_id,
+                results_count=len(results),
+                user_role=current_user.role,
+            )
 
             return SearchResponse(results=results, total_results=len(results))
 
@@ -135,14 +152,19 @@ async def ask_question(
     """
     settings = request.app.state.settings
 
-    async with rag_query_context(query_type="ask", user_role=current_user.role, department=chat_request.context_department) as query_id:
+    async with rag_query_context(
+        query_type="ask", user_role=current_user.role, department=chat_request.context_department
+    ) as query_id:
 
         # Get authorized documents for context with OSO fallback
         try:
             authorized_query = db.query(Document).options(authorized(current_user, "read", Document))
         except Exception as oso_error:
             logger.warning(
-                "OSO authorization failed in ask question, falling back to basic query", query_id=query_id, error=str(oso_error), user_role=current_user.role
+                "OSO authorization failed in ask question, falling back to basic query",
+                query_id=query_id,
+                error=str(oso_error),
+                user_role=current_user.role,
             )
             # Fallback to basic role-based filtering
             authorized_query = db.query(Document)
@@ -166,7 +188,8 @@ async def ask_question(
         if authorized_doc_ids:
             # Perform similarity search with observability
             async with vector_search_context(
-                result_count=chat_request.max_results or settings.max_results, similarity_threshold=settings.similarity_threshold
+                result_count=chat_request.max_results or settings.max_results,
+                similarity_threshold=settings.similarity_threshold,
             ) as search_id:
 
                 search_results = await similarity_search(
@@ -181,7 +204,11 @@ async def ask_question(
                 context_used = len(search_results) > 0
 
                 logger.info(
-                    "Vector search completed for AI question", query_id=query_id, search_id=search_id, sources_count=len(sources), context_used=context_used
+                    "Vector search completed for AI question",
+                    query_id=query_id,
+                    search_id=search_id,
+                    sources_count=len(sources),
+                    context_used=context_used,
                 )
 
         # Generate AI response with observability
@@ -331,9 +358,7 @@ async def generate_ai_response(question: str, context_results: list[dict], user_
 
         # Add disclaimer if no context was used
         if not context:
-            ai_response += (
-                "\n\n*Note: This response was generated without specific document context. Please verify information with current medical guidelines.*"
-            )
+            ai_response += "\n\n*Note: This response was generated without specific document context. Please verify information with current medical guidelines.*"
 
         return ai_response
 
@@ -347,7 +372,13 @@ async def generate_ai_response(question: str, context_results: list[dict], user_
             duration_ns = int((time.time() - start_time) * 1_000_000_000)
             full_input = "\n\n".join([msg["content"] for msg in messages])
 
-            log_llm_call(input_text=full_input, output_text=error_msg, model=settings.chat_model, duration_ns=duration_ns, temperature=0.7)
+            log_llm_call(
+                input_text=full_input,
+                output_text=error_msg,
+                model=settings.chat_model,
+                duration_ns=duration_ns,
+                temperature=0.7,
+            )
         except Exception as log_error:
             print(f"Warning: Failed to log LLM error to Galileo: {log_error}")
 
@@ -381,7 +412,9 @@ async def submit_feedback(
     """
     # Log feedback to Galileo
     log_galileo_event(
-        event_type="ai_response_feedback", event_data={"response_id": response_id, "rating": rating, "feedback": feedback}, user_id=str(current_user.id)
+        event_type="ai_response_feedback",
+        event_data={"response_id": response_id, "rating": rating, "feedback": feedback},
+        user_id=str(current_user.id),
     )
 
     logger.info("AI response feedback submitted", response_id=response_id, rating=rating, user_role=current_user.role)

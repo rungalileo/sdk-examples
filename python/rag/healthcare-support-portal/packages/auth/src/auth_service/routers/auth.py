@@ -66,7 +66,9 @@ async def register(
             detail="Only administrators can create new users. Use POST /api/v1/users/ endpoint instead.",
         )
     # Check if user already exists
-    existing_user = db.query(User).filter((User.username == user_data.username) | (User.email == user_data.email)).first()
+    existing_user = (
+        db.query(User).filter((User.username == user_data.username) | (User.email == user_data.email)).first()
+    )
 
     if existing_user:
         raise HTTPException(

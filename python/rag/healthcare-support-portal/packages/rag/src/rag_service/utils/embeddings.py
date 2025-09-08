@@ -160,7 +160,11 @@ async def similarity_search(
                 formatted_results.append(
                     {
                         "document_title": result["title"],
-                        "content_chunk": result["content_chunk"][:200] + "..." if len(result["content_chunk"]) > 200 else result["content_chunk"],
+                        "content_chunk": (
+                            result["content_chunk"][:200] + "..."
+                            if len(result["content_chunk"]) > 200
+                            else result["content_chunk"]
+                        ),
                         "similarity_score": result["similarity_score"],
                         "document_type": result["document_type"],
                         "department": result["department"],
@@ -178,7 +182,9 @@ async def similarity_search(
         return []
 
 
-async def regenerate_document_embeddings(document: Document, db: Session, model: str = "text-embedding-3-small") -> dict:
+async def regenerate_document_embeddings(
+    document: Document, db: Session, model: str = "text-embedding-3-small"
+) -> dict:
     """
     Regenerate embeddings for an existing document.
     Returns status dict with success and message.

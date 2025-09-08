@@ -20,7 +20,9 @@ def get_alembic_config() -> Config:
     alembic_ini = common_dir / "alembic.ini"
 
     if not alembic_ini.exists():
-        raise FileNotFoundError(f"alembic.ini not found at {alembic_ini}. " "Please ensure Alembic is properly initialized.")
+        raise FileNotFoundError(
+            f"alembic.ini not found at {alembic_ini}. " "Please ensure Alembic is properly initialized."
+        )
 
     config = Config(str(alembic_ini))
 

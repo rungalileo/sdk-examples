@@ -81,7 +81,9 @@ async def create_patient(
     Create a new patient
     """
     # Check if medical record number already exists
-    existing_patient = db.query(Patient).filter(Patient.medical_record_number == patient_data.medical_record_number).first()
+    existing_patient = (
+        db.query(Patient).filter(Patient.medical_record_number == patient_data.medical_record_number).first()
+    )
 
     if existing_patient:
         raise HTTPException(

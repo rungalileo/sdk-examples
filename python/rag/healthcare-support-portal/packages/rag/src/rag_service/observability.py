@@ -64,7 +64,11 @@ def initialize_observability():
             galileo_logger = GalileoLogger(project=galileo_project_name, log_stream="rag-service")
 
             galileo_enabled = True
-            logger.info("Galileo logging initialized successfully", project=galileo_project_name, environment=settings.galileo_environment)
+            logger.info(
+                "Galileo logging initialized successfully",
+                project=galileo_project_name,
+                environment=settings.galileo_environment,
+            )
         except Exception as e:
             logger.error("Failed to initialize Galileo logging", error=str(e))
             galileo_enabled = False
@@ -86,7 +90,9 @@ async def rag_query_context(query_type: str, user_role: str, department: str = N
 
     try:
         # Log query start
-        logger.info("RAG query started", query_type=query_type, user_role=user_role, department=department, query_id=query_id)
+        logger.info(
+            "RAG query started", query_type=query_type, user_role=user_role, department=department, query_id=query_id
+        )
 
         # Start Galileo trace if enabled
         if galileo_enabled and galileo_logger:
@@ -99,7 +105,12 @@ async def rag_query_context(query_type: str, user_role: str, department: str = N
                     input=f"RAG {query_type} query",
                     name=f"RAG Query - {query_type}",
                     tags=[query_type, user_role, department] if department else [query_type, user_role],
-                    metadata={"query_type": query_type, "user_role": user_role, "department": department, "query_id": query_id},
+                    metadata={
+                        "query_type": query_type,
+                        "user_role": user_role,
+                        "department": department,
+                        "query_id": query_id,
+                    },
                 )
             except Exception as e:
                 logger.warning("Failed to start Galileo trace", error=str(e))
@@ -108,7 +119,14 @@ async def rag_query_context(query_type: str, user_role: str, department: str = N
 
     except Exception as e:
         # Log error
-        logger.error("RAG query failed", query_type=query_type, user_role=user_role, department=department, query_id=query_id, error=str(e))
+        logger.error(
+            "RAG query failed",
+            query_type=query_type,
+            user_role=user_role,
+            department=department,
+            query_id=query_id,
+            error=str(e),
+        )
 
         # Add error information to Galileo trace if enabled
         if galileo_enabled and galileo_logger and trace:
@@ -132,7 +150,14 @@ async def rag_query_context(query_type: str, user_role: str, department: str = N
         duration_ns = int(duration * 1_000_000_000)
 
         # Log query completion
-        logger.info("RAG query completed", query_type=query_type, user_role=user_role, department=department, query_id=query_id, duration=duration)
+        logger.info(
+            "RAG query completed",
+            query_type=query_type,
+            user_role=user_role,
+            department=department,
+            query_id=query_id,
+            duration=duration,
+        )
 
         # Conclude Galileo trace if enabled
         if galileo_enabled and galileo_logger and trace:
@@ -157,13 +182,20 @@ async def embedding_generation_context(model: str, chunk_count: int, operation_i
         # Log to Galileo
         log_galileo_event(
             event_type="embedding_generation_started",
-            event_data={"model": model, "chunk_count": chunk_count, "operation_id": operation_id, "timestamp": start_time},
+            event_data={
+                "model": model,
+                "chunk_count": chunk_count,
+                "operation_id": operation_id,
+                "timestamp": start_time,
+            },
         )
 
         yield operation_id
 
     except Exception as e:
-        logger.error("Embedding generation failed", model=model, chunk_count=chunk_count, operation_id=operation_id, error=str(e))
+        logger.error(
+            "Embedding generation failed", model=model, chunk_count=chunk_count, operation_id=operation_id, error=str(e)
+        )
 
         # Log error to Galileo
         log_galileo_event(
@@ -183,12 +215,24 @@ async def embedding_generation_context(model: str, chunk_count: int, operation_i
     finally:
         duration = time.time() - start_time
 
-        logger.info("Embedding generation completed", model=model, chunk_count=chunk_count, operation_id=operation_id, duration=duration)
+        logger.info(
+            "Embedding generation completed",
+            model=model,
+            chunk_count=chunk_count,
+            operation_id=operation_id,
+            duration=duration,
+        )
 
         # Log completion to Galileo
         log_galileo_event(
             event_type="embedding_generation_completed",
-            event_data={"model": model, "chunk_count": chunk_count, "operation_id": operation_id, "duration": duration, "timestamp": time.time()},
+            event_data={
+                "model": model,
+                "chunk_count": chunk_count,
+                "operation_id": operation_id,
+                "duration": duration,
+                "timestamp": time.time(),
+            },
         )
 
 
@@ -201,18 +245,34 @@ async def vector_search_context(result_count: int, similarity_threshold: float, 
     start_time = time.time()
 
     try:
-        logger.info("Vector search started", result_count=result_count, similarity_threshold=similarity_threshold, search_id=search_id)
+        logger.info(
+            "Vector search started",
+            result_count=result_count,
+            similarity_threshold=similarity_threshold,
+            search_id=search_id,
+        )
 
         # Log to Galileo
         log_galileo_event(
             event_type="vector_search_started",
-            event_data={"result_count": result_count, "similarity_threshold": similarity_threshold, "search_id": search_id, "timestamp": start_time},
+            event_data={
+                "result_count": result_count,
+                "similarity_threshold": similarity_threshold,
+                "search_id": search_id,
+                "timestamp": start_time,
+            },
         )
 
         yield search_id
 
     except Exception as e:
-        logger.error("Vector search failed", result_count=result_count, similarity_threshold=similarity_threshold, search_id=search_id, error=str(e))
+        logger.error(
+            "Vector search failed",
+            result_count=result_count,
+            similarity_threshold=similarity_threshold,
+            search_id=search_id,
+            error=str(e),
+        )
 
         # Log error to Galileo
         log_galileo_event(
@@ -232,7 +292,13 @@ async def vector_search_context(result_count: int, similarity_threshold: float, 
     finally:
         duration = time.time() - start_time
 
-        logger.info("Vector search completed", result_count=result_count, similarity_threshold=similarity_threshold, search_id=search_id, duration=duration)
+        logger.info(
+            "Vector search completed",
+            result_count=result_count,
+            similarity_threshold=similarity_threshold,
+            search_id=search_id,
+            duration=duration,
+        )
 
         # Log completion to Galileo
         log_galileo_event(
@@ -261,13 +327,20 @@ async def ai_response_context(model: str, token_count: int, response_id: str = N
         # Log to Galileo
         log_galileo_event(
             event_type="ai_response_generation_started",
-            event_data={"model": model, "token_count": token_count, "response_id": response_id, "timestamp": start_time},
+            event_data={
+                "model": model,
+                "token_count": token_count,
+                "response_id": response_id,
+                "timestamp": start_time,
+            },
         )
 
         yield response_id
 
     except Exception as e:
-        logger.error("AI response generation failed", model=model, token_count=token_count, response_id=response_id, error=str(e))
+        logger.error(
+            "AI response generation failed", model=model, token_count=token_count, response_id=response_id, error=str(e)
+        )
 
         # Log error to Galileo
         log_galileo_event(
@@ -287,12 +360,24 @@ async def ai_response_context(model: str, token_count: int, response_id: str = N
     finally:
         duration = time.time() - start_time
 
-        logger.info("AI response generation completed", model=model, token_count=token_count, response_id=response_id, duration=duration)
+        logger.info(
+            "AI response generation completed",
+            model=model,
+            token_count=token_count,
+            response_id=response_id,
+            duration=duration,
+        )
 
         # Log completion to Galileo
         log_galileo_event(
             event_type="ai_response_generation_completed",
-            event_data={"model": model, "token_count": token_count, "response_id": response_id, "duration": duration, "timestamp": time.time()},
+            event_data={
+                "model": model,
+                "token_count": token_count,
+                "response_id": response_id,
+                "duration": duration,
+                "timestamp": time.time(),
+            },
         )
 
 
@@ -356,12 +441,24 @@ def log_retriever_call(query: str, documents: list, duration_ns: int = None):
 
 def log_document_upload(document_type: str, department: str, file_size: int, document_id: int):
     """Log document upload metrics."""
-    logger.info("Document uploaded", document_type=document_type, department=department, file_size=file_size, document_id=document_id)
+    logger.info(
+        "Document uploaded",
+        document_type=document_type,
+        department=department,
+        file_size=file_size,
+        document_id=document_id,
+    )
 
     # Log to Galileo
     log_galileo_event(
         event_type="document_uploaded",
-        event_data={"document_type": document_type, "department": department, "file_size": file_size, "document_id": document_id, "timestamp": time.time()},
+        event_data={
+            "document_type": document_type,
+            "department": department,
+            "file_size": file_size,
+            "document_id": document_id,
+            "timestamp": time.time(),
+        },
     )
 
 
@@ -370,7 +467,10 @@ def log_embeddings_stored(document_id: int, chunk_count: int):
     logger.info("Embeddings stored", document_id=document_id, chunk_count=chunk_count)
 
     # Log to Galileo
-    log_galileo_event(event_type="embeddings_stored", event_data={"document_id": document_id, "chunk_count": chunk_count, "timestamp": time.time()})
+    log_galileo_event(
+        event_type="embeddings_stored",
+        event_data={"document_id": document_id, "chunk_count": chunk_count, "timestamp": time.time()},
+    )
 
 
 def log_galileo_event(event_type: str, event_data: Dict[str, Any], user_id: str = None, session_id: str = None):
@@ -393,7 +493,13 @@ def log_galileo_event(event_type: str, event_data: Dict[str, Any], user_id: str 
             for key, value in event_data.items():
                 metadata[key] = str(value) if value is not None else "null"
 
-            galileo_logger.add_workflow_span(input=message, output=f"Event: {event_type}", name=event_type, metadata=metadata, tags=[event_type, "event"])
+            galileo_logger.add_workflow_span(
+                input=message,
+                output=f"Event: {event_type}",
+                name=event_type,
+                metadata=metadata,
+                tags=[event_type, "event"],
+            )
 
             logger.debug("Event logged to Galileo", event_type=event_type, user_id=user_id, session_id=session_id)
         except Exception as e:
@@ -418,14 +524,24 @@ class ObservabilityMiddleware:
                 # Log error to Galileo
                 log_galileo_event(
                     event_type="http_request_failed",
-                    event_data={"method": request.method, "path": request.url.path, "error": str(e), "error_type": type(e).__name__, "timestamp": time.time()},
+                    event_data={
+                        "method": request.method,
+                        "path": request.url.path,
+                        "error": str(e),
+                        "error_type": type(e).__name__,
+                        "timestamp": time.time(),
+                    },
                 )
                 raise
             finally:
                 duration = time.time() - start_time
 
                 logger.info(
-                    "HTTP request completed", method=request.method, path=request.url.path, duration=duration, status_code=getattr(scope, "status_code", 500)
+                    "HTTP request completed",
+                    method=request.method,
+                    path=request.url.path,
+                    duration=duration,
+                    status_code=getattr(scope, "status_code", 500),
                 )
 
                 # Log to Galileo
