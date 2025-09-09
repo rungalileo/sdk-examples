@@ -1,4 +1,5 @@
-from dotenv import load_dotenv
+from pathlib import Path
+from dotenv import load_dotenv, find_dotenv
 from langchain.agents import initialize_agent, Tool
 from langchain.agents.agent_types import AgentType
 from langchain_openai import ChatOpenAI
@@ -7,8 +8,10 @@ from galileo import galileo_context
 from galileo.handlers.langchain import GalileoCallback
 import os
 
-# Load environment variables (e.g., API keys)
-load_dotenv()
+# 1) load global/shared first
+load_dotenv(os.path.expanduser("~/.config/secrets/myapps.env"), override=False)
+# 2) then load per-app .env (if present) to override selectively
+load_dotenv(find_dotenv(usecwd=True), override=True)
 
 
 # Define a tool for the agent to use
