@@ -30,13 +30,15 @@ import os
 
 from anthropic import Anthropic
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
 from galileo import galileo_context, log
 
-# Load the environment variables from the .env file
-# This will override any existing environment variables with the same name
-load_dotenv(override=True)
+# Load environment variables
+# 1) load global/shared first
+load_dotenv(os.path.expanduser("~/.config/secrets/myapps.env"), override=False)
+# 2) then load per-app .env (if present) to override selectively
+load_dotenv(find_dotenv(usecwd=True), override=True)
 
 # Set the model name from the environment variable
 # If this is not set, raise an exception

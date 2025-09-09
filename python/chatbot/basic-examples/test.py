@@ -3,9 +3,13 @@ import time
 import openai  # Using the standard OpenAI library
 from galileo import GalileoLogger  # Import GalileoLogger for logging
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
-load_dotenv()
+# Load environment variables
+# 1) load global/shared first
+load_dotenv(os.path.expanduser("~/.config/secrets/myapps.env"), override=False)
+# 2) then load per-app .env (if present) to override selectively
+load_dotenv(find_dotenv(usecwd=True), override=True)
 
 # Initialize the GalileoLogger
 logger = GalileoLogger(project="chatbot", log_stream="test")
