@@ -57,16 +57,12 @@ print("✓ OpenAI client configured")
 headers = {
     "Galileo-API-Key": os.environ.get("GALILEO_API_KEY"),  # Your unique API key
     "project": os.environ.get("GALILEO_PROJECT"),  # Which Galileo project to use
-    "logstream": os.environ.get(
-        "GALILEO_LOG_STREAM", "default"
-    ),  # Organize traces within the project
+    "logstream": os.environ.get("GALILEO_LOG_STREAM", "default"),  # Organize traces within the project
 }
 
 # OpenTelemetry requires headers in a specific format: "key1=value1,key2=value2"
 # This converts our dictionary to that format
-os.environ["OTEL_EXPORTER_OTLP_TRACES_HEADERS"] = ",".join(
-    [f"{k}={v}" for k, v in headers.items()]
-)
+os.environ["OTEL_EXPORTER_OTLP_TRACES_HEADERS"] = ",".join([f"{k}={v}" for k, v in headers.items()])
 
 # Debug: Print the formatted headers to verify they're correct
 print(f"OTEL Headers: {os.environ['OTEL_EXPORTER_OTLP_TRACES_HEADERS']}")
@@ -97,9 +93,7 @@ tracer_provider = trace_sdk.TracerProvider(resource=resource)
 # Add a span processor that sends traces to Galileo
 # BatchSpanProcessor is more efficient than SimpleSpanProcessor for production
 # because it batches multiple spans together before sending
-tracer_provider.add_span_processor(
-    BatchSpanProcessor(OTLPSpanExporter(endpoint))
-)  # OTLP = OpenTelemetry Protocol
+tracer_provider.add_span_processor(BatchSpanProcessor(OTLPSpanExporter(endpoint)))  # OTLP = OpenTelemetry Protocol
 
 # OPTIONAL: Console output disabled to reduce noise in Galileo
 # Uncomment the next 3 lines if you want local console debugging:
@@ -252,9 +246,7 @@ if __name__ == "__main__":
             session_span.set_attribute("output.mime_type", "text/plain")
             session_span.set_status(trace_api.Status(trace_api.StatusCode.OK))
         else:
-            session_span.set_status(
-                trace_api.Status(trace_api.StatusCode.ERROR, "No response generated")
-            )
+            session_span.set_status(trace_api.Status(trace_api.StatusCode.ERROR, "No response generated"))
 
         print(f"\n=== FINAL RESULT ===")
         print(f"Question: {result.get('user_input', 'N/A')}")
