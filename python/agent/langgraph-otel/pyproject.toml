@@ -17,3 +17,8 @@ dependencies = [
     "python-dotenv>=1.1.0",
     "openinference-instrumentation-openai>=0.1.32",
 ]
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+]
