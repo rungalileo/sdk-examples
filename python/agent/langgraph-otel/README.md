@@ -6,12 +6,12 @@ This example demonstrates how to add comprehensive observability to your LangGra
 
 **OpenTelemetry** is an observability framework that creates traces showing what functions ran, their timing, and data flow through your application. **OpenInference** automatically instruments AI frameworks like LangChain and OpenAI. **Galileo** provides a sophisticated platform for visualizing and analyzing your AI application traces.
 
-For detailed explanations and advanced patterns, see the [LangGraph OpenTelemetry cookbook](https://docs.galileo.ai/galileo/how-to-and-faq/galileo-python-logger/integrations/opentelemetry)
+For detailed explanations and advanced patterns, see the [LangGraph OpenTelemetry cookbook](https://v2docs.galileo.ai/cookbooks/features/integrations/langgraph-otel-cookbook)
 
 ## Quick start
 
 ### Prerequisites
-- Python 3.12+
+- Python 3.9+
 - [UV package manager](https://docs.astral.sh/uv/getting-started/installation/)
 - [Galileo account](https://app.galileo.ai) (free)
 - OpenAI API key
@@ -44,6 +44,9 @@ GALILEO_PROJECT=your_project_name
 # Log stream for organizing traces
 GALILEO_LOG_STREAM=langgraph
 
+# Galileo console URL (if using a custom deployment is different than https://app.galileo.ai)
+GALILEO_CONSOLE_URL=https://app.galileo.ai
+
 # Your OpenAI API key
 OPENAI_API_KEY=your_openai_api_key_here
 ```
@@ -71,6 +74,7 @@ The example implements a 3-step question-answering workflow:
 3. **Answer Formatting** (`format_answer`) - Extracts and formats the final answer
 
 ### Trace Hierarchy
+
 In Galileo, you'll see a clean trace structure:
 
 ```
@@ -86,14 +90,17 @@ In Galileo, you'll see a clean trace structure:
 ```
 
 ### Key Observability Benefits
-- **Complete Input/Output Visibility** - See data flowing through each step
+
+- **Complete Input/Output Visibility** - See data flowing through each step  
 - **LLM Call Details** - Token usage, model parameters, and timing
 - **Session Context** - Grouped operations with meaningful metadata
 - **Error Tracking** - Automatic error capture and status tracking
 - **Performance Insights** - Timing for each workflow step
 
 ### Trace Attributes
+
 Each span includes rich metadata:
+
 - **Session Level**: Question, answer, domain (astronomy), type (Q&A)
 - **Node Level**: Input/output values, node type, processing details
 - **LLM Level**: Model name, tokens, temperature, messages, vendor
@@ -107,10 +114,8 @@ Each span includes rich metadata:
 
 ## Learn more
 
-- [LangGraph OpenTelemetry cookbook](https://docs.galileo.ai/galileo/how-to-and-faq/galileo-python-logger/integrations/opentelemetry) - Detailed guide and patterns
+- [LangGraph OpenTelemetry cookbook](https://v2docs.galileo.ai/cookbooks/features/integrations/langgraph-otel-cookbook) 
 - [LangGraph Documentation](https://langchain-ai.github.io/langgraph/)
 - [OpenTelemetry Python](https://opentelemetry.io/docs/instrumentation/python/)
 - [Galileo Documentation](https://v2docs.galileo.ai/)
 - [UV Package Manager](https://docs.astral.sh/uv/)
-
-
