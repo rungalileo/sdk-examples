@@ -1,7 +1,7 @@
 # 📖 Galileo.ai SDK Examples
 
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
-[![Last Updated](https://img.shields.io/github/last-commit/rungalileo/sdk-examples?style=flat-square&label=Last%20Updated&color=blue)](https://github.com/rungalileo/sdk-examples/commits/main)oi
+[![Last Updated](https://img.shields.io/github/last-commit/rungalileo/sdk-examples?style=flat-square&label=Last%20Updated&color=blue)](https://github.com/rungalileo/sdk-examples/commits/main)
 [![Examples](https://img.shields.io/badge/Examples-40+-orange.svg?style=flat-square)](#-repository-structure)
 
 This repository contains example implementations and reference code for using the Galileo.ai SDK across both Python and TypeScript applications. Galileo helps folks build reliable AI applications across a multitude of tech stacks.
