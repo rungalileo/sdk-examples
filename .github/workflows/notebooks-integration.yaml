@@ -1,0 +1,90 @@
+name: test
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 8 * * 1-5"
+  push:
+    branches: [main]
+    paths:
+      - "python/**/*.ipynb"
+      - ".github/workflows/notebooks-integration.yaml"
+  pull_request:
+    types: [opened, synchronize]
+    paths:
+      - "python/**/*.ipynb"
+      - ".github/workflows/notebooks-integration.yaml"
+
+# LIST OF NOTEBOOKS TO RUN
+# python/rag/langgraph-openinference/galileo_langgraph.ipynb
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+  GALILEO_API_KEY: ${{ secrets.GALILEO_API_KEY }}
+  GALILEO_PROJECT: ${{ secrets.GALILEO_PROJECT }}
+  GALILEO_LOGSTREAM: ${{ secrets.GALILEO_LOGSTREAM }}
+  GALILEO_OTEL_ENDPOINT: ${{ secrets.GALILEO_OTEL_ENDPOINT }}
+
+jobs:
+  run-notebook:
+    strategy:
+      fail-fast: false
+      matrix:
+        notebook:
+          - "python/rag/langgraph-openinference/galileo_langgraph.ipynb"
+    name: Execute ${{ matrix.notebook }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Jupyter tooling
+        run: |
+          python -m pip install --upgrade pip
+          pip install --upgrade ipywidgets nbformat
+          pip install --upgrade tornado\<6.2.0 pyzmq\<25
+
+      - name: Extract and install %pip/!pip requirements from notebook
+        env:
+          NB_FILE: ${{ matrix.notebook }}
+        shell: bash
+        run: |
+           python tests/utils/get_notebook_pip_commands.py
+          if [ -s nb_pip_commands.txt ]; then
+            while IFS= read -r cmd; do
+              echo "+ $cmd"
+              eval "$cmd"
+            done < nb_pip_commands.txt
+          else
+            echo "No pip install commands found in notebook cells"
+          fi
+
+      - name: Execute notebook with nbconvert
+        env:
+          NB_FILE: ${{ matrix.notebook }}
+        run: |
+          jupyter nbconvert --to notebook --execute --stdout "$NB_FILE" | cat
+
+      - name: Wait for 5 seconds
+        run: |
+          sleep 5
+
+      - name: Test results
+        run: |
+          python tests/test_langchain.py
