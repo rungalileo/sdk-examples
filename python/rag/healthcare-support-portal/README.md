@@ -1003,7 +1003,8 @@ Each service provides interactive API documentation:
 curl -X POST "http://localhost:8001/api/v1/auth/register" \
   -H "Content-Type: application/json" \
   -d '{
-    "email": "doctor@hospital.com",
+    "username": "dr_smith",
+    "email": "sarah.smith@hospital.com",
     "password": "secure_password",
     "role": "doctor",
     "department": "cardiology"
@@ -1011,11 +1012,8 @@ curl -X POST "http://localhost:8001/api/v1/auth/register" \
 
 # Login to get JWT token
 curl -X POST "http://localhost:8001/api/v1/auth/login" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "doctor@hospital.com",
-    "password": "secure_password"
-  }'
+  -H "Content-Type: application/x-www-form-urlencoded" \
+  -d "username=dr_smith&password=secure_password"
 ```
 
 ### 2. Upload Medical Documents
