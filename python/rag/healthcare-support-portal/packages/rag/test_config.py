@@ -13,6 +13,10 @@ import os
 import sys
 from typing import Dict, Any
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 def test_environment_variables() -> Dict[str, Any]:
     """Test that all required environment variables are set."""

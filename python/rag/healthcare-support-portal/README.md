@@ -246,7 +246,7 @@ uv run python -m common.seed_data
 **🔍 Expected Output:**
 ```bash
 ✅ Created demo users:
-   - Doctor: dr_smith@hospital.com / secure_password  
+   - Doctor: dr_smith / secure_password
    - Nurse: nurse_johnson@hospital.com / secure_password
    - Admin: admin_wilson@hospital.com / secure_password
 ✅ Sample patients created
@@ -255,7 +255,7 @@ uv run python -m common.seed_data
 
 **5b. Test the Web Interface:**
 1. 🌐 Open **http://localhost:3000**
-2. 🔑 Login with: `dr_smith@hospital.com` / `secure_password`
+2. 🔑 Login with: `dr_smith` / `secure_password`
 3. 📄 Upload a PDF document (medical guideline, research paper, etc.)
 4. 🤖 Ask a question: *"What are the key recommendations in this document?"*
 5. ✅ Verify you get an AI response with document sources!
@@ -265,7 +265,7 @@ uv run python -m common.seed_data
 # Get authentication token
 TOKEN=$(curl -s -X POST "http://localhost:8001/api/v1/auth/login" \
   -H "Content-Type: application/x-www-form-urlencoded" \
-  -d "username=dr_smith@hospital.com&password=secure_password" | \
+  -d "username=dr_smith&password=secure_password" | \
   python3 -c "import sys, json; print(json.load(sys.stdin)['access_token'])")
 
 echo "Got auth token: ${TOKEN:0:20}..."
@@ -297,7 +297,7 @@ curl -X POST "http://localhost:8003/api/v1/chat/ask" \
 **👥 Demo Accounts:**
 | Role | Email | Password | Department | Permissions |
 |------|--------|----------|------------|-------------|
-| Doctor | `dr_smith@hospital.com` | `secure_password` | Cardiology | Full access to cardiology docs |
+| Doctor | `dr_smith` | `secure_password` | Cardiology | Full access to cardiology docs |
 | Nurse | `nurse_johnson@hospital.com` | `secure_password` | Emergency | Access to procedures & protocols |
 | Admin | `admin_wilson@hospital.com` | `secure_password` | Administration | System-wide access |
 

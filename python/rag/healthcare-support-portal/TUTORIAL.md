@@ -338,14 +338,14 @@ uv run python -m common.seed_data
 ```
 
 **You now have three types of users:**
-- **Dr. Smith** (`dr_smith@hospital.com` / `secure_password`) - Cardiologist
+- **Dr. Smith** (`dr_smith` / `secure_password`) - Cardiologist
 - **Nurse Johnson** (`nurse_johnson@hospital.com` / `secure_password`) - Emergency Department
 - **Admin Wilson** (`admin_wilson@hospital.com` / `secure_password`) - Hospital Administrator
 
 ### Your First Login
 
 1. **Go to http://localhost:3000**
-2. **Login as Dr. Smith**: `dr_smith@hospital.com` / `secure_password`
+2. **Login as Dr. Smith**: `dr_smith` / `secure_password`
 3. **Look around the interface** - notice how it's tailored for medical professionals
 
 ### Understanding the AI's Brain - Document Processing
@@ -921,7 +921,7 @@ curl http://localhost:8003/health  # RAG service
 - **OpenAI Usage:** https://platform.openai.com/usage
 
 ### Demo Accounts
-- **Doctor:** `dr_smith@hospital.com` / `secure_password`
+- **Doctor:** `dr_smith` / `secure_password`
 - **Nurse:** `nurse_johnson@hospital.com` / `secure_password`
 - **Admin:** `admin_wilson@hospital.com` / `secure_password`
 
