@@ -176,10 +176,14 @@ export function DocumentUpload({ patients = [], user }: DocumentUploadProps) {
       const token = document.cookie.match(/authToken=([^;]+)/)?.[1];
       
       if (!token) {
-        throw new Error('Authentication required');
+        console.error('No authentication token found in cookies');
+        throw new Error('Authentication required. Please log in again.');
       }
       
+      console.log('Starting upload for:', uploadFile.file.name);
+      
       const result = await serverApi.uploadDocument(formData, token);
+      console.log('Upload successful:', result);
 
       clearInterval(progressInterval);
 
@@ -189,10 +193,17 @@ export function DocumentUpload({ patients = [], user }: DocumentUploadProps) {
       });
       setCompletedUploads(prev => prev + 1);
     } catch (error) {
+      console.error('Upload failed for', uploadFile.file.name, ':', error);
+      clearInterval(progressInterval);
+      
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : 'Upload failed - please try again';
+        
       updateUploadFile(uploadFile.id, { 
         status: 'error', 
         progress: 0,
-        error: error instanceof Error ? error.message : 'Upload failed'
+        error: errorMessage
       });
     }
   };

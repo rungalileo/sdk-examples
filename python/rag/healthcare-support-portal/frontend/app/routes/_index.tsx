@@ -126,6 +126,22 @@ export default function Dashboard() {
     }
   };
 
+  const formatDisplayName = (username: string, role: string) => {
+    // Convert username like 'dr_smith' to 'Smith' for display
+    if (username === 'dr_smith') return 'Smith';
+    if (username === 'nurse_johnson') return 'Johnson';
+    if (username === 'admin_wilson') return 'Wilson';
+    
+    // For other usernames, extract last part after underscore and capitalize
+    const parts = username.split('_');
+    if (parts.length > 1) {
+      return parts[parts.length - 1].charAt(0).toUpperCase() + parts[parts.length - 1].slice(1);
+    }
+    
+    // Fallback: capitalize the whole username
+    return username.charAt(0).toUpperCase() + username.slice(1);
+  };
+
   const getDocumentIcon = (type: string) => {
     switch (type) {
       case 'protocol': return '📋';
@@ -144,7 +160,7 @@ export default function Dashboard() {
       <div className="md:flex md:items-center md:justify-between">
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl">
-            {getGreeting()}, {getRoleTitle(user.role)} {user.username}
+            {getGreeting()}, {getRoleTitle(user.role)} {formatDisplayName(user.username, user.role)}
           </h1>
           <p className="mt-1 text-sm text-gray-500">
             {formatDateTime(currentTime.toISOString())} • {user.department} Department

@@ -85,7 +85,7 @@ export const serverApi = {
     return response.data;
   },
 
-  async regenerateEmbeddings(token: string, documentId: number) {
+  async regenerateEmbeddings(documentId: number, token: string) {
     const response = await axios.post(`${API_BASE_URL}:8003/api/v1/documents/${documentId}/regenerate-embeddings`, {}, {
       headers: { Authorization: `Bearer ${token}` }
     });
