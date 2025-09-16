@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Form, useFetcher, useLoaderData } from 'react-router';
+import { Form, useLoaderData } from 'react-router';
 import { useForm, getFormProps, getInputProps, getSelectProps } from '@conform-to/react';
 import { parseWithZod } from '@conform-to/zod';
 import { Button } from '@/components/ui/button';
@@ -31,7 +31,6 @@ const departments = [
 ];
 
 export function PatientForm({ isEdit, patient, doctors = [] }: PatientFormProps) {
-  const fetcher = useFetcher();
   const [selectedDepartment, setSelectedDepartment] = useState(patient?.department || '');
   const [selectedDoctorId, setSelectedDoctorId] = useState(
     patient?.assigned_doctor_id?.toString() || 'none'
@@ -100,7 +99,7 @@ export function PatientForm({ isEdit, patient, doctors = [] }: PatientFormProps)
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <fetcher.Form method={isEdit ? 'PUT' : 'POST'} {...getFormProps(form)}>
+          <Form method={isEdit ? 'PUT' : 'POST'} {...getFormProps(form)}>
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               {/* Patient Name */}
               <div className="sm:col-span-2">
@@ -222,18 +221,7 @@ export function PatientForm({ isEdit, patient, doctors = [] }: PatientFormProps)
               </div>
             </div>
 
-            {/* Form Status Messages */}
-            {fetcher.data?.error && (
-              <Alert className="mt-6" variant="destructive">
-                <AlertDescription>{fetcher.data.error}</AlertDescription>
-              </Alert>
-            )}
-
-            {fetcher.data?.success && (
-              <Alert className="mt-6">
-                <AlertDescription>{fetcher.data.message}</AlertDescription>
-              </Alert>
-            )}
+            {/* Form Status Messages - These will be handled by the route action */}
 
             {/* Form Actions */}
             <div className="mt-8 flex justify-end space-x-3">
@@ -242,17 +230,13 @@ export function PatientForm({ isEdit, patient, doctors = [] }: PatientFormProps)
               </Button>
               <Button 
                 type="submit" 
-                disabled={fetcher.state === 'submitting'}
                 variant="healthcare"
               >
                 <Save className="mr-2 h-4 w-4" />
-                {fetcher.state === 'submitting' 
-                  ? (isEdit ? 'Updating...' : 'Creating...') 
-                  : (isEdit ? 'Update Patient' : 'Create Patient')
-                }
+                {isEdit ? 'Update Patient' : 'Create Patient'}
               </Button>
             </div>
-          </fetcher.Form>
+          </Form>
         </CardContent>
       </Card>
     </div>

@@ -20,7 +20,11 @@ export const patientCreateSchema = z.object({
   date_of_birth: z.string().optional(),
   medical_record_number: z.string().min(1, 'Medical record number is required'),
   department: z.enum(['cardiology', 'neurology', 'pediatrics', 'oncology', 'emergency', 'endocrinology', 'obgyn', 'general']),
-  assigned_doctor_id: z.string().optional(),
+  assigned_doctor_id: z.string().optional().transform(val => {
+    if (!val || val === '' || val === 'none') return undefined;
+    const num = parseInt(val);
+    return isNaN(num) ? undefined : num;
+  }),
 });
 
 export const patientUpdateSchema = patientCreateSchema.partial();

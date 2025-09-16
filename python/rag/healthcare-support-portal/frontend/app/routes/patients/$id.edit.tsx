@@ -20,8 +20,8 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     const currentUser = await requireAuth(request);
     
     // Check if user has permission to edit patients (doctors and admins only)
-    if (!['doctor', 'admin'].includes(currentUser.role)) {
-      throw new Response('Access denied. Only doctors and administrators can edit patients.', { status: 403 });
+    if (!['doctor', 'nurse', 'admin'].includes(currentUser.role)) {
+      throw new Response('Access denied. Only doctors, nurses, and administrators can edit patients.', { status: 403 });
     }
     
     // Get patient ID from params
