@@ -96,5 +96,4 @@ Dr. Shepherd was involved in a high-speed car accident in 2015. He sustained sig
 ---
 
 **Physician’s Note:**  
-Dr. Derek Shepherd’s death underscores the importance of timely trauma protocols and neurosurgical intervention in TBI cases. Despite a history of resilience through multiple traumatic injuries, the final event was unsurvivable due to systemic delays in care.  
-
+Dr. Derek Shepherd’s death underscores the importance of timely trauma protocols and neurosurgical intervention in TBI cases. Despite a history of resilience through multiple traumatic injuries, the final event was unsurvivable due to systemic delays in care. 
