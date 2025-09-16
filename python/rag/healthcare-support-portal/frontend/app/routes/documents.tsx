@@ -10,7 +10,8 @@ import {
   AlertCircle,
   Calendar,
   User as UserIcon,
-  RefreshCw
+  RefreshCw,
+  Trash2
 } from 'lucide-react';
 import { useLoaderData, Form, useFetcher, Link } from 'react-router';
 import { useForm, getFormProps, getInputProps, getSelectProps } from '@conform-to/react';
@@ -96,6 +97,32 @@ export async function action({ request }: ActionFunctionArgs) {
       return Response.json({ 
         success: false, 
         error: error instanceof Error ? error.message : 'Failed to regenerate embeddings' 
+      }, { status: 500 });
+    }
+  }
+
+  // Handle document deletion
+  if (action === 'delete') {
+    const documentId = formData.get('documentId') as string;
+    
+    // Check if user has permission to delete documents (doctors and admins only)
+    if (!['doctor', 'admin'].includes(user.role)) {
+      return Response.json({ 
+        success: false, 
+        error: 'Access denied. Only doctors and administrators can delete documents.' 
+      }, { status: 403 });
+    }
+    
+    try {
+      await serverApi.deleteDocument(token, documentId);
+      return Response.json({ 
+        success: true, 
+        message: 'Document deleted successfully' 
+      });
+    } catch (error) {
+      return Response.json({ 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Failed to delete document' 
       }, { status: 500 });
     }
   }
@@ -192,6 +219,16 @@ export default function Documents() {
     formData.append('documentId', documentId.toString());
     
     fetcher.submit(formData, { method: 'post' });
+  };
+
+  const handleDeleteDocument = async (documentId: number, documentTitle: string) => {
+    if (window.confirm(`Are you sure you want to delete "${documentTitle}"? This action cannot be undone.`)) {
+      const formData = new FormData();
+      formData.append('action', 'delete');
+      formData.append('documentId', documentId.toString());
+      
+      fetcher.submit(formData, { method: 'post' });
+    }
   };
 
 
@@ -368,6 +405,16 @@ export default function Documents() {
                     <Button variant="ghost" size="sm">
                       <Download className="h-3 w-3" />
                     </Button>
+                    {(user?.role === 'doctor' || user?.role === 'admin') && (
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => handleDeleteDocument(document.id, document.title)}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    )}
                   </div>
                 </div>
               </CardContent>

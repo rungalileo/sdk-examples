@@ -1,4 +1,4 @@
-import { useLoaderData, Link } from 'react-router';
+import { useLoaderData, Link, useFetcher, redirect } from 'react-router';
 import { 
   ArrowLeft, 
   Download, 
@@ -9,7 +9,8 @@ import {
   FileText,
   AlertCircle,
   Shield,
-  Eye
+  Eye,
+  Trash2
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -19,7 +20,7 @@ import { formatDateTime, getDepartmentColor } from '@/lib/utils';
 import { requireAuth, handleApiError } from '@/lib/utils/loader-utils';
 import { serverApi } from '@/lib/api.server';
 import type { Document, User } from '@/lib/types';
-import type { LoaderFunctionArgs } from 'react-router';
+import type { LoaderFunctionArgs, ActionFunctionArgs } from 'react-router';
 
 interface DocumentDetailData {
   user: User;
@@ -62,8 +63,58 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
   }
 }
 
+// Action function - handle document deletion
+export async function action({ request, params }: ActionFunctionArgs) {
+  const user = await requireAuth(request);
+  
+  // Check if user has permission to delete documents (doctors and admins only)
+  if (!['doctor', 'admin'].includes(user.role)) {
+    throw new Response('Access denied. Only doctors and administrators can delete documents.', { status: 403 });
+  }
+  
+  const cookieHeader = request.headers.get('Cookie');
+  const token = cookieHeader?.match(/authToken=([^;]+)/)?.[1];
+  
+  if (!token) {
+    throw new Response('Authentication required', { status: 401 });
+  }
+
+  const formData = await request.formData();
+  const action = formData.get('action');
+  
+  if (action === 'delete') {
+    const documentId = params.id;
+    
+    if (!documentId) {
+      throw new Response('Document ID is required', { status: 400 });
+    }
+    
+    try {
+      await serverApi.deleteDocument(token, documentId);
+      return redirect('/documents');
+    } catch (error) {
+      throw new Response(
+        error instanceof Error ? error.message : 'Failed to delete document', 
+        { status: 500 }
+      );
+    }
+  }
+  
+  throw new Response('Invalid action', { status: 400 });
+}
+
 export default function DocumentDetail() {
   const { user, document: doc, embeddingStatus } = useLoaderData<DocumentDetailData>();
+  const fetcher = useFetcher();
+
+  const handleDeleteDocument = () => {
+    if (window.confirm(`Are you sure you want to delete "${doc.title}"? This action cannot be undone.`)) {
+      const formData = new FormData();
+      formData.append('action', 'delete');
+      
+      fetcher.submit(formData, { method: 'post' });
+    }
+  };
 
   const getDocumentIcon = (type: string) => {
     switch (type) {
@@ -138,6 +189,17 @@ export default function DocumentDetail() {
             <Button size="sm">
               <Edit className="mr-2 h-4 w-4" />
               Edit Document
+            </Button>
+          )}
+          {(user?.role === 'doctor' || user?.role === 'admin') && (
+            <Button 
+              size="sm" 
+              variant="destructive"
+              onClick={handleDeleteDocument}
+              disabled={fetcher.state === 'submitting'}
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              {fetcher.state === 'submitting' ? 'Deleting...' : 'Delete Document'}
             </Button>
           )}
         </div>
@@ -300,6 +362,18 @@ ng.                 <Link to={`/chat?document=${doc.id}`}>
                 <Button variant="outline" size="sm" className="w-full justify-start">
                   <Edit className="mr-2 h-4 w-4" />
                   Edit Document
+                </Button>
+              )}
+              {(user?.role === 'doctor' || user?.role === 'admin') && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
+                  onClick={handleDeleteDocument}
+                  disabled={fetcher.state === 'submitting'}
+                >
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  {fetcher.state === 'submitting' ? 'Deleting...' : 'Delete Document'}
                 </Button>
               )}
               <Button variant="outline" size="sm" className="w-full justify-start" asChild>

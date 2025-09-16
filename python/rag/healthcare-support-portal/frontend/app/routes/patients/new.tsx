@@ -32,8 +32,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
     }
     
     // Load all users to get doctors for assignment
-    const users = await serverApi.getUsers(token);
-    const doctors = users.filter((user: User) => user.role === 'doctor' && user.is_active);
+    let doctors: User[] = [];
+    try {
+      const users = await serverApi.getUsers(token);
+      doctors = users.filter((user: User) => user.role === 'doctor' && user.is_active);
+    } catch (error) {
+      console.warn('Failed to load doctors list:', error);
+      // Continue without doctors list - form will still work
+    }
     
     return {
       currentUser,
@@ -67,7 +73,7 @@ export async function action({ request }: ActionFunctionArgs) {
       department: data.department || currentUser.department, // Use user's department as default
     };
     
-    await serverApi.createPatient(patientData, token);
+    await serverApi.createPatient(token, patientData);
     // Redirect to patients list on success
     return redirect('/patients');
   });
