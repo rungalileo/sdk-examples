@@ -33,7 +33,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     
     // Load all users to get doctors for assignment
     const users = await serverApi.getUsers(token);
-    const doctors = users.filter(user => user.role === 'doctor' && user.is_active);
+    const doctors = users.filter((user: User) => user.role === 'doctor' && user.is_active);
     
     return {
       currentUser,

@@ -1,4 +1,4 @@
-import { useLoaderData } from 'react-router';
+import { useLoaderData, redirect } from 'react-router';
 import { UserForm } from '@/components/users/UserForm';
 import { requireAuth, handleApiError } from '@/lib/utils/loader-utils';
 import { handleFormSubmission } from '@/lib/utils/action-utils';
@@ -40,7 +40,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
     }
     
     // Load the user to edit
-    const userId = parseInt(params.id as string);
+    const userId = params.id as string;
     const user = await serverApi.getUser(userId, token);
     
     return {
@@ -78,7 +78,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
     }
     
     await serverApi.updateUser(userId, updateData, token);
-    // Redirect will be handled by handleFormSubmission
+    return redirect('/users');
   });
 }
 

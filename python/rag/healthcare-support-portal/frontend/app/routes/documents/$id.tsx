@@ -247,7 +247,7 @@ export default function DocumentDetail() {
           </Card>
 
           {/* Associated Patient */}
-          {document.patient && (
+          {doc.patient && (
             <Card>
               <CardHeader>
                 <CardTitle className="text-lg">Associated Patient</CardTitle>
@@ -259,19 +259,19 @@ export default function DocumentDetail() {
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-900">
-                      {document.patient.name}
+                      {doc.patient.name}
                     </p>
                     <p className="text-sm text-gray-500">
-                      MRN: {document.patient.medical_record_number}
+                      MRN: {doc.patient.medical_record_number}
                     </p>
                     <Badge variant="outline" className="mt-1">
-                      {document.patient.department}
+                      {doc.patient.department}
                     </Badge>
                   </div>
                 </div>
                 <div className="mt-4">
                   <Button asChild variant="outline" size="sm" className="w-full">
-                    <Link to={`/patients/${document.patient.id}`}>
+                    <Link to={`/patients/${doc.patient.id}`}>
                       View Patient Details
                     </Link>
                   </Button>

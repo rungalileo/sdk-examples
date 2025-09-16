@@ -44,7 +44,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
       serverApi.getUsers(token)
     ]);
     
-    const doctors = users.filter(user => user.role === 'doctor' && user.is_active);
+    const doctors = users.filter((user: User) => user.role === 'doctor' && user.is_active);
     
     return {
       currentUser,

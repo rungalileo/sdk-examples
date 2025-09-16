@@ -70,18 +70,18 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
     // Process data for dashboard
     const myPatients = user.role === 'doctor' 
-      ? patients.filter(p => p.assigned_doctor_id === user.id)
-      : patients.filter(p => p.department === user.department);
+      ? patients.filter((p: Patient) => p.assigned_doctor_id === user.id)
+      : patients.filter((p: Patient) => p.department === user.department);
     
     const recentDocuments = documents
-      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+      .sort((a: Document, b: Document) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
       .slice(0, 5);
 
     const departmentStats = {
       totalPatients: patients.length,
       totalDocuments: documents.length,
-      activePatients: patients.filter(p => p.is_active).length,
-      sensitiveDocuments: documents.filter(d => d.is_sensitive).length,
+      activePatients: patients.filter((p: Patient) => p.is_active).length,
+      sensitiveDocuments: documents.filter((d: Document) => d.is_sensitive).length,
     };
 
     console.log(`[Dashboard] Loaded ${patients.length} patients, ${documents.length} documents`);

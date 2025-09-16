@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link, useLoaderData } from 'react-router';
+import { Link, useLoaderData, redirect } from 'react-router';
 import { Plus, Search, Filter, Users, Calendar, Phone, Mail } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -62,7 +62,7 @@ export async function action({ request }: ActionFunctionArgs) {
     };
     
     await serverApi.createPatient(patientData, token);
-    // No need to return anything - handleFormSubmission will handle success
+    return redirect('/patients');
   });
 }
 

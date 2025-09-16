@@ -1,4 +1,4 @@
-import { useLoaderData, Link } from 'react-router';
+import { useLoaderData, Link, redirect } from 'react-router';
 import { 
   ArrowLeft, 
   Edit, 
@@ -75,7 +75,7 @@ export async function action({ request, params }: ActionFunctionArgs) {
 
   return handleFormSubmission(request, patientUpdateSchema, async (data) => {
     await serverApi.updatePatient(parseInt(patientId), data, token);
-    // No need to return anything - handleFormSubmission will handle success
+    return redirect(`/patients/${patientId}`);
   });
 }
 

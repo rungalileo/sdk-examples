@@ -1,4 +1,4 @@
-import { useLoaderData } from 'react-router';
+import { useLoaderData, redirect } from 'react-router';
 import { UserForm } from '@/components/users/UserForm';
 import { requireAuth, handleApiError } from '@/lib/utils/loader-utils';
 import { handleFormSubmission } from '@/lib/utils/action-utils';
@@ -56,7 +56,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
   return handleFormSubmission(request, createUserSchema, async (data) => {
     await serverApi.createUser(data, token);
-    // Redirect will be handled by handleFormSubmission
+    return redirect('/users');
   });
 }
 
