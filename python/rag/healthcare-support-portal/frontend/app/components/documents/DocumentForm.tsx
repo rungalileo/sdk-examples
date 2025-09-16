@@ -44,7 +44,7 @@ export function DocumentForm({ isEdit, document, patients = [] }: DocumentFormPr
   const fetcher = useFetcher();
   const [selectedDepartment, setSelectedDepartment] = useState(document?.department || '');
   const [selectedPatientId, setSelectedPatientId] = useState(
-    document?.patient_id?.toString() || ''
+    document?.patient_id?.toString() || 'none'
   );
   const [selectedDocumentType, setSelectedDocumentType] = useState(document?.document_type || '');
   const [isSensitive, setIsSensitive] = useState(document?.is_sensitive || false);
@@ -59,7 +59,7 @@ export function DocumentForm({ isEdit, document, patients = [] }: DocumentFormPr
       title: document.title,
       content: document.content,
       document_type: document.document_type,
-      patient_id: document.patient_id?.toString() || '',
+      patient_id: document.patient_id?.toString() || 'none',
       department: document.department,
       is_sensitive: document.is_sensitive,
     } : undefined,
@@ -154,7 +154,7 @@ export function DocumentForm({ isEdit, document, patients = [] }: DocumentFormPr
                   value={selectedDepartment} 
                   onValueChange={(value) => {
                     setSelectedDepartment(value);
-                    setSelectedPatientId(''); // Reset patient selection when department changes
+                    setSelectedPatientId('none'); // Reset patient selection when department changes
                   }}
                 >
                   <SelectTrigger className="mt-1">
@@ -188,7 +188,7 @@ export function DocumentForm({ isEdit, document, patients = [] }: DocumentFormPr
                     <SelectValue placeholder="Select patient (optional)" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">No associated patient</SelectItem>
+                    <SelectItem value="none">No associated patient</SelectItem>
                     {availablePatients.map((patient) => (
                       <SelectItem key={patient.id} value={patient.id.toString()}>
                         {patient.name} - {patient.medical_record_number}
@@ -196,7 +196,7 @@ export function DocumentForm({ isEdit, document, patients = [] }: DocumentFormPr
                     ))}
                   </SelectContent>
                 </Select>
-                <input type="hidden" name="patient_id" value={selectedPatientId} />
+                <input type="hidden" name="patient_id" value={selectedPatientId === 'none' ? '' : selectedPatientId} />
                 {fields.patient_id.errors && (
                   <p className="mt-1 text-sm text-red-600">{fields.patient_id.errors[0]}</p>
                 )}

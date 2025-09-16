@@ -33,7 +33,7 @@ export function PatientForm({ isEdit, patient, doctors = [] }: PatientFormProps)
   const fetcher = useFetcher();
   const [selectedDepartment, setSelectedDepartment] = useState(patient?.department || '');
   const [selectedDoctorId, setSelectedDoctorId] = useState(
-    patient?.assigned_doctor_id?.toString() || ''
+    patient?.assigned_doctor_id?.toString() || 'none'
   );
 
   const schema = isEdit ? patientUpdateSchema : patientCreateSchema;
@@ -47,7 +47,7 @@ export function PatientForm({ isEdit, patient, doctors = [] }: PatientFormProps)
       date_of_birth: patient.date_of_birth || '',
       medical_record_number: patient.medical_record_number,
       department: patient.department,
-      assigned_doctor_id: patient.assigned_doctor_id?.toString() || '',
+      assigned_doctor_id: patient.assigned_doctor_id?.toString() || 'none',
     } : undefined,
   });
 
@@ -206,7 +206,7 @@ export function PatientForm({ isEdit, patient, doctors = [] }: PatientFormProps)
                     <SelectValue placeholder="Select doctor (optional)" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">No assigned doctor</SelectItem>
+                    <SelectItem value="none">No assigned doctor</SelectItem>
                     {availableDoctors.map((doctor) => (
                       <SelectItem key={doctor.id} value={doctor.id.toString()}>
                         Dr. {doctor.username} - {doctor.department}
@@ -214,7 +214,7 @@ export function PatientForm({ isEdit, patient, doctors = [] }: PatientFormProps)
                     ))}
                   </SelectContent>
                 </Select>
-                <input type="hidden" name="assigned_doctor_id" value={selectedDoctorId} />
+                <input type="hidden" name="assigned_doctor_id" value={selectedDoctorId === 'none' ? '' : selectedDoctorId} />
                 {fields.assigned_doctor_id.errors && (
                   <p className="mt-1 text-sm text-red-600">{fields.assigned_doctor_id.errors[0]}</p>
                 )}

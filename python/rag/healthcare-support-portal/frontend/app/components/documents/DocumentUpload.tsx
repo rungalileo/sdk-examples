@@ -133,7 +133,7 @@ export function DocumentUpload({ patients = [], user }: DocumentUploadProps) {
       title: file.name.replace(/\.[^/.]+$/, ''), // Remove extension
       documentType: defaultDocumentType,
       department: defaultDepartment,
-      patientId: '',
+      patientId: 'none',
       isSensitive: false,
     }));
 
@@ -161,7 +161,7 @@ export function DocumentUpload({ patients = [], user }: DocumentUploadProps) {
       formData.append('department', uploadFile.department || '');
       formData.append('is_sensitive', uploadFile.isSensitive?.toString() || 'false');
       
-      if (uploadFile.patientId) {
+      if (uploadFile.patientId && uploadFile.patientId !== 'none') {
         formData.append('patient_id', uploadFile.patientId);
       }
 
@@ -479,7 +479,7 @@ export function DocumentUpload({ patients = [], user }: DocumentUploadProps) {
                             <SelectValue placeholder="Select patient" />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="">No associated patient</SelectItem>
+                            <SelectItem value="none">No associated patient</SelectItem>
                             {patients
                               .filter(p => p.department === uploadFile.department)
                               .map((patient) => (
