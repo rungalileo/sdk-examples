@@ -170,13 +170,15 @@ OPENAI_API_KEY=sk-abcd1234your-real-key-here
 ```bash
 # Quick API key test
 cd packages/rag
-uv run python -c "import os; print('✅ API key configured' if os.getenv('OPENAI_API_KEY', '').startswith('sk-') else '❌ Invalid API key format')"
+uv run python -c "from dotenv import load_dotenv; load_dotenv(); import os; print('✅ API key configured' if os.getenv('OPENAI_API_KEY', '').startswith('sk-') else '❌ Invalid API key format')"
 ```
 
 **Add Galileo for AI observability and monitoring:**
 1. Get your Galileo API key from [app.galileo.ai](https://app.galileo.ai)
 2. Add to `packages/rag/.env`: `GALILEO_API_KEY=your-galileo-key`
 3. Test: `uv run python test_config.py`
+
+At this point, if you've exactly followed the step by steps in the repository, everything should be active except for the Database connection. The Database connection will be configured through the next step.
 
 
 ### **Step 3: Launch All Services** ⏱️ *5 minutes*
