@@ -29,9 +29,13 @@ export const documentCreateSchema = z.object({
   title: z.string().min(1, 'Title is required'),
   content: z.string().min(1, 'Content is required'),
   document_type: z.enum(['protocol', 'policy', 'guideline', 'research', 'report', 'medical_record']),
-  patient_id: z.string().optional(),
+  patient_id: z.string().optional().transform(val => {
+    if (!val || val === '' || val === 'none') return undefined;
+    const num = parseInt(val);
+    return isNaN(num) ? undefined : num;
+  }),
   department: z.enum(['cardiology', 'neurology', 'pediatrics', 'oncology', 'emergency', 'endocrinology', 'obgyn', 'general']),
-  is_sensitive: z.boolean().default(false),
+  is_sensitive: z.string().transform(val => val === 'true').default('false'),
 });
 
 export const documentUpdateSchema = documentCreateSchema.partial();
