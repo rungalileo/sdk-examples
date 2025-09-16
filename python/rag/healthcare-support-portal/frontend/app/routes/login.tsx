@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Form, redirect, useNavigation } from 'react-router';
-import { Activity, Eye, EyeOff } from 'lucide-react';
+import { Form, redirect, useNavigation, Link } from 'react-router';
+import { Activity, Eye, EyeOff, Users, ArrowRight } from 'lucide-react';
 import { useForm, getFormProps, getInputProps } from '@conform-to/react';
 import { parseWithZod } from '@conform-to/zod';
 import { Button } from '@/components/ui/button';
@@ -199,11 +199,33 @@ export default function Login({ actionData }: LoginProps) {
           </CardContent>
         </Card>
 
-        {/* Demo Credentials */}
+        {/* Demo Login Link */}
         <Card className="bg-blue-50 border-blue-200">
           <CardContent className="pt-6">
-            <h3 className="text-sm font-medium text-blue-900 mb-2">Demo Credentials</h3>
-            <div className="text-xs text-blue-700 space-y-1">
+            <div className="text-center">
+              <div className="flex justify-center mb-3">
+                <Users className="h-8 w-8 text-blue-600" />
+              </div>
+              <h3 className="text-sm font-medium text-blue-900 mb-2">Quick Demo Access</h3>
+              <p className="text-xs text-blue-700 mb-4">
+                Try different user roles and see how permissions affect the RAG chat assistant
+              </p>
+              <Link to="/demo-login">
+                <Button variant="outline" size="sm" className="w-full">
+                  <Users className="h-4 w-4 mr-2" />
+                  Demo User Switcher
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Demo Credentials */}
+        <Card className="bg-gray-50 border-gray-200">
+          <CardContent className="pt-6">
+            <h3 className="text-sm font-medium text-gray-900 mb-2">Manual Demo Credentials</h3>
+            <div className="text-xs text-gray-700 space-y-1">
               <div><strong>Doctor:</strong> dr_smith / secure_password</div>
               <div><strong>Nurse:</strong> nurse_johnson / secure_password</div>
               <div><strong>Admin:</strong> admin_wilson / secure_password</div>

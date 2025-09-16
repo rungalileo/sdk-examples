@@ -17,6 +17,7 @@ import type { User } from '@/lib/types';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { UserSwitcher } from '@/components/UserSwitcher';
 import { cn } from '@/lib/utils';
 
 interface NavItem {
@@ -155,7 +156,7 @@ export function Navigation({ user }: NavigationProps) {
           </nav>
 
           {/* User section */}
-          <div className="border-t border-gray-200 p-4">
+          <div className="border-t border-gray-200 p-4 space-y-3">
             <div className="flex items-center">
               <Avatar className="h-10 w-10">
                 <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${user.username}`} />
@@ -178,11 +179,15 @@ export function Navigation({ user }: NavigationProps) {
                 </p>
               </div>
             </div>
+            
+            {/* User Switcher */}
+            <UserSwitcher currentUser={user} />
+            
             <Button
               variant="outline"
               size="sm"
               onClick={handleLogout}
-              className="mt-3 w-full justify-start"
+              className="w-full justify-start"
             >
               <LogOut className="mr-2 h-4 w-4" />
               Sign out
@@ -238,7 +243,7 @@ export function Navigation({ user }: NavigationProps) {
 
               {/* User section */}
               <li className="mt-auto">
-                <div className="border-t border-gray-200 pt-4">
+                <div className="border-t border-gray-200 pt-4 space-y-3">
                   <div className="flex items-center">
                     <Avatar className="h-10 w-10">
                       <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${user.username}`} />
@@ -261,11 +266,15 @@ export function Navigation({ user }: NavigationProps) {
                       </p>
                     </div>
                   </div>
+                  
+                  {/* User Switcher */}
+                  <UserSwitcher currentUser={user} />
+                  
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={handleLogout}
-                    className="mt-3 w-full justify-start"
+                    className="w-full justify-start"
                   >
                     <LogOut className="mr-2 h-4 w-4" />
                     Sign out
