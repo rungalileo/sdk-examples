@@ -18,9 +18,9 @@ export async function loader({ request }: LoaderFunctionArgs) {
     // Require authentication
     const currentUser = await requireAuth(request);
     
-    // Check if user has permission to create documents (doctors and admins only)
-    if (!['doctor', 'admin'].includes(currentUser.role)) {
-      throw new Response('Access denied. Only doctors and administrators can create documents.', { status: 403 });
+    // Check if user has permission to create documents (doctors, nurses, and admins)
+    if (!['doctor', 'nurse', 'admin'].includes(currentUser.role)) {
+      throw new Response('Access denied. Only doctors, nurses, and administrators can create documents.', { status: 403 });
     }
     
     // Get auth token from cookies
@@ -57,8 +57,8 @@ export async function action({ request }: ActionFunctionArgs) {
   const currentUser = await requireAuth(request);
   
   // Check if user has permission to create documents
-  if (!['doctor', 'admin'].includes(currentUser.role)) {
-    throw new Response('Access denied. Only doctors and administrators can create documents.', { status: 403 });
+  if (!['doctor', 'nurse', 'admin'].includes(currentUser.role)) {
+    throw new Response('Access denied. Only doctors, nurses, and administrators can create documents.', { status: 403 });
   }
   
   const cookieHeader = request.headers.get('Cookie');

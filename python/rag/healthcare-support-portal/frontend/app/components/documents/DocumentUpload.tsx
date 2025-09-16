@@ -274,14 +274,14 @@ export function DocumentUpload({ patients = [], user }: DocumentUploadProps) {
     }
   };
 
-  const canUpload = user && ['doctor', 'admin'].includes(user.role);
+  const canUpload = user && ['doctor', 'nurse', 'admin'].includes(user.role);
 
   if (!canUpload) {
     return (
       <Alert>
         <AlertCircle className="h-4 w-4" />
         <AlertDescription>
-          Only doctors and administrators can upload documents.
+          Only doctors, nurses, and administrators can upload documents.
         </AlertDescription>
       </Alert>
     );

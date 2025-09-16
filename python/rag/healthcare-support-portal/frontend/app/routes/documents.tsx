@@ -328,7 +328,7 @@ export default function Documents() {
                           hasEmbeddings={embeddingStatuses[document.id]?.has_embeddings ?? false}
                           embeddingCount={embeddingStatuses[document.id]?.embedding_count ?? 0}
                           onRegenerate={() => handleRegenerateEmbeddings(document.id)}
-                          canRegenerate={user?.role === 'admin' || user?.role === 'doctor'}
+                          canRegenerate={user?.role === 'admin' || user?.role === 'doctor' || user?.role === 'nurse'}
                         />
                       </div>
                     </div>
