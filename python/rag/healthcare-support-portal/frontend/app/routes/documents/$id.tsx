@@ -63,7 +63,7 @@ export async function loader({ request, params }: LoaderFunctionArgs) {
 }
 
 export default function DocumentDetail() {
-  const { user, document, embeddingStatus } = useLoaderData<DocumentDetailData>();
+  const { user, document: doc, embeddingStatus } = useLoaderData<DocumentDetailData>();
 
   const getDocumentIcon = (type: string) => {
     switch (type) {
@@ -79,13 +79,13 @@ export default function DocumentDetail() {
 
   const handleDownload = () => {
     // Create a blob with the document content
-    const blob = new Blob([document.content], { type: 'text/plain' });
+    const blob = new Blob([doc.content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     
     // Create a temporary link and trigger download
     const link = document.createElement('a');
     link.href = url;
-    link.download = `${document.title}.txt`;
+    link.download = `${doc.title}.txt`;
     document.body.appendChild(link);
     link.click();
     
@@ -108,17 +108,17 @@ export default function DocumentDetail() {
           <div>
             <div className="flex items-center space-x-3">
               <div className="text-3xl">
-                {getDocumentIcon(document.document_type)}
+                {getDocumentIcon(doc.document_type)}
               </div>
               <div>
                 <h1 className="text-2xl font-bold leading-7 text-gray-900">
-                  {document.title}
+                  {doc.title}
                 </h1>
                 <div className="flex items-center space-x-2 mt-1">
                   <Badge variant="outline" className="capitalize">
-                    {document.document_type.replace('_', ' ')}
+                    {doc.document_type.replace('_', ' ')}
                   </Badge>
-                  {document.is_sensitive && (
+                  {doc.is_sensitive && (
                     <Badge variant="destructive">
                       <AlertCircle className="mr-1 h-3 w-3" />
                       Sensitive
@@ -134,7 +134,7 @@ export default function DocumentDetail() {
             <Download className="mr-2 h-4 w-4" />
             Download
           </Button>
-          {(user?.role === 'admin' || document.created_by_id === user?.id) && (
+          {(user?.role === 'admin' || doc.created_by_id === user?.id) && (
             <Button size="sm">
               <Edit className="mr-2 h-4 w-4" />
               Edit Document
@@ -157,7 +157,7 @@ export default function DocumentDetail() {
             <CardContent>
               <div className="prose prose-sm max-w-none">
                 <div className="whitespace-pre-wrap text-gray-900 font-mono text-sm leading-relaxed">
-                  {document.content}
+                  {doc.content}
                 </div>
               </div>
             </CardContent>
@@ -174,7 +174,7 @@ export default function DocumentDetail() {
               </CardHeader>
               <CardContent>
                 <EmbeddingStatus
-                  documentId={document.id}
+                  documentId={doc.id}
                   hasEmbeddings={embeddingStatus?.has_embeddings ?? false}
                   embeddingCount={embeddingStatus?.embedding_count ?? 0}
                   canRegenerate={user?.role === 'admin' || user?.role === 'doctor'}
@@ -187,7 +187,7 @@ export default function DocumentDetail() {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Document Information */}
-          <Card className={getDepartmentColor(document.department)}>
+          <Card className={getDepartmentColor(doc.department)}>
             <CardHeader>
               <CardTitle className="text-lg">Document Details</CardTitle>
             </CardHeader>
@@ -196,7 +196,7 @@ export default function DocumentDetail() {
                 <div>
                   <dt className="text-sm font-medium text-gray-500">Type</dt>
                   <dd className="mt-1 text-sm text-gray-900 capitalize">
-                    {document.document_type.replace('_', ' ')}
+                    {doc.document_type.replace('_', ' ')}
                   </dd>
                 </div>
 
@@ -204,7 +204,7 @@ export default function DocumentDetail() {
                   <dt className="text-sm font-medium text-gray-500">Department</dt>
                   <dd className="mt-1 text-sm text-gray-900 flex items-center capitalize">
                     <MapPin className="mr-2 h-4 w-4 text-gray-400" />
-                    {document.department}
+                    {doc.department}
                   </dd>
                 </div>
 
@@ -212,16 +212,16 @@ export default function DocumentDetail() {
                   <dt className="text-sm font-medium text-gray-500">Created</dt>
                   <dd className="mt-1 text-sm text-gray-900 flex items-center">
                     <Calendar className="mr-2 h-4 w-4 text-gray-400" />
-                    {formatDateTime(document.created_at)}
+                    {formatDateTime(doc.created_at)}
                   </dd>
                 </div>
 
-                {document.created_by && (
+                {doc.created_by && (
                   <div>
                     <dt className="text-sm font-medium text-gray-500">Created By</dt>
                     <dd className="mt-1 text-sm text-gray-900 flex items-center">
                       <UserIcon className="mr-2 h-4 w-4 text-gray-400" />
-                      {document.created_by.username}
+                      {doc.created_by.username}
                     </dd>
                   </div>
                 )}
@@ -229,7 +229,7 @@ export default function DocumentDetail() {
                 <div>
                   <dt className="text-sm font-medium text-gray-500">Sensitivity</dt>
                   <dd className="mt-1">
-                    {document.is_sensitive ? (
+                    {doc.is_sensitive ? (
                       <Badge variant="destructive">
                         <Shield className="mr-1 h-3 w-3" />
                         Sensitive Document
@@ -291,12 +291,12 @@ export default function DocumentDetail() {
                 Download Document
               </Button>
               <Button variant="outline" size="sm" className="w-full justify-start" asChild>
-                <Link to={`/chat?document=${document.id}`}>
+ng.                 <Link to={`/chat?document=${doc.id}`}>
                   <FileText className="mr-2 h-4 w-4" />
                   Chat About Document
                 </Link>
               </Button>
-              {(user?.role === 'admin' || document.created_by_id === user?.id) && (
+              {(user?.role === 'admin' || doc.created_by_id === user?.id) && (
                 <Button variant="outline" size="sm" className="w-full justify-start">
                   <Edit className="mr-2 h-4 w-4" />
                   Edit Document

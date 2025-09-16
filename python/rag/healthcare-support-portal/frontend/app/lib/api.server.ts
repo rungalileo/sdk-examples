@@ -31,8 +31,22 @@ export const serverApi = {
     return response.data;
   },
 
+  async getPatient(patientId: number, token: string) {
+    const response = await axios.get(`${API_BASE_URL}:8002/api/v1/patients/${patientId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
   async getDocuments(token: string) {
     const response = await axios.get(`${API_BASE_URL}:8003/api/v1/documents/`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  async getDocument(documentId: number, token: string) {
+    const response = await axios.get(`${API_BASE_URL}:8003/api/v1/documents/${documentId}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     return response.data;
@@ -45,7 +59,7 @@ export const serverApi = {
     return response.data;
   },
 
-  async updatePatient(token: string, patientId: string, patientData: any) {
+  async updatePatient(patientId: number, patientData: any, token: string) {
     const response = await axios.put(`${API_BASE_URL}:8002/api/v1/patients/${patientId}`, patientData, {
       headers: { Authorization: `Bearer ${token}` }
     });
@@ -80,6 +94,13 @@ export const serverApi = {
 
   async getAllEmbeddingStatuses(token: string) {
     const response = await axios.get(`${API_BASE_URL}:8003/api/v1/documents/embedding-statuses`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
+  async getEmbeddingStatus(documentId: number, token: string) {
+    const response = await axios.get(`${API_BASE_URL}:8003/api/v1/documents/${documentId}/embedding-status`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     return response.data;
@@ -123,6 +144,13 @@ export const serverApi = {
     return response.data;
   },
 
+  async getUser(userId: string, token: string) {
+    const response = await axios.get(`${API_BASE_URL}:8001/api/v1/users/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  },
+
   async createUser(token: string, userData: any) {
     const response = await axios.post(`${API_BASE_URL}:8001/api/v1/users/`, userData, {
       headers: { Authorization: `Bearer ${token}` }
@@ -130,7 +158,7 @@ export const serverApi = {
     return response.data;
   },
 
-  async updateUser(token: string, userId: string, userData: any) {
+  async updateUser(userId: number, userData: any, token: string) {
     const response = await axios.put(`${API_BASE_URL}:8001/api/v1/users/${userId}`, userData, {
       headers: { Authorization: `Bearer ${token}` }
     });

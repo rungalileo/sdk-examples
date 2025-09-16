@@ -153,6 +153,8 @@ export function DocumentUpload({ patients = [], user }: DocumentUploadProps) {
   const uploadSingleFile = async (uploadFile: UploadFile) => {
     updateUploadFile(uploadFile.id, { status: 'uploading', progress: 0 });
 
+    let progressInterval: NodeJS.Timeout | null = null;
+
     try {
       const formData = new FormData();
       formData.append('file', uploadFile.file);
@@ -166,7 +168,7 @@ export function DocumentUpload({ patients = [], user }: DocumentUploadProps) {
       }
 
       // Simulate progress
-      const progressInterval = setInterval(() => {
+      progressInterval = setInterval(() => {
         updateUploadFile(uploadFile.id, { 
           progress: Math.min(uploadFile.progress + 10, 90) 
         });
@@ -185,7 +187,9 @@ export function DocumentUpload({ patients = [], user }: DocumentUploadProps) {
       const result = await serverApi.uploadDocument(formData, token);
       console.log('Upload successful:', result);
 
-      clearInterval(progressInterval);
+      if (progressInterval) {
+        clearInterval(progressInterval);
+      }
 
       updateUploadFile(uploadFile.id, { 
         status: 'success', 
@@ -194,7 +198,9 @@ export function DocumentUpload({ patients = [], user }: DocumentUploadProps) {
       setCompletedUploads(prev => prev + 1);
     } catch (error) {
       console.error('Upload failed for', uploadFile.file.name, ':', error);
-      clearInterval(progressInterval);
+      if (progressInterval) {
+        clearInterval(progressInterval);
+      }
       
       const errorMessage = error instanceof Error 
         ? error.message 

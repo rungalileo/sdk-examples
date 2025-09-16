@@ -109,7 +109,7 @@ export async function action({ request }: ActionFunctionArgs) {
     };
     
     await serverApi.createDocument(documentData, token);
-    // No need to return anything - handleFormSubmission will handle success
+    return Response.json({ success: true, message: 'Document created successfully' });
   });
 }
 
