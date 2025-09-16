@@ -20,7 +20,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import type { User as UserType, Patient } from '@/lib/types';
-import { serverApi } from '@/lib/api.server';
+import { clientApi } from '@/lib/api.client';
 
 interface DocumentUploadProps {
   patients?: Patient[];
@@ -184,7 +184,7 @@ export function DocumentUpload({ patients = [], user }: DocumentUploadProps) {
       
       console.log('Starting upload for:', uploadFile.file.name);
       
-      const result = await serverApi.uploadDocument(formData, token);
+      const result = await clientApi.uploadDocument(formData, token);
       console.log('Upload successful:', result);
 
       if (progressInterval) {

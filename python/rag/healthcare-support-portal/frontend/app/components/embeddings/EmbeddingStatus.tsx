@@ -8,6 +8,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
 
 interface EmbeddingStatusProps {
   documentId: number;
@@ -110,9 +111,4 @@ export function EmbeddingStatus({
       )}
     </div>
   );
-}
-
-// Helper function for className concatenation
-function cn(...classes: (string | boolean | undefined)[]) {
-  return classes.filter(Boolean).join(' ');
 }
