@@ -79,6 +79,14 @@ body {
   @apply border-l-4 border-orange-500;
 }
 
+.dept-endocrinology {
+  @apply border-l-4 border-teal-500;
+}
+
+.dept-obgyn {
+  @apply border-l-4 border-rose-500;
+}
+
 .dept-general {
   @apply border-l-4 border-blue-500;
 }

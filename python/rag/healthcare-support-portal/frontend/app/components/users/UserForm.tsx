@@ -42,7 +42,7 @@ export function UserForm({ user, isEdit = false, error, departments, roles }: Us
 
   const defaultDepartments = [
     'cardiology', 'neurology', 'pediatrics', 'oncology', 
-    'emergency', 'endocrinology', 'general'
+    'emergency', 'endocrinology', 'obgyn', 'general'
   ];
   
   const defaultRoles = ['doctor', 'nurse', 'admin'];

@@ -10,7 +10,7 @@ export const userCreateSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
   role: z.enum(['doctor', 'nurse', 'admin']),
-  department: z.enum(['cardiology', 'neurology', 'pediatrics', 'oncology', 'emergency', 'endocrinology', 'general']),
+  department: z.enum(['cardiology', 'neurology', 'pediatrics', 'oncology', 'emergency', 'endocrinology', 'obgyn', 'general']),
 });
 
 export const userUpdateSchema = userCreateSchema.partial().omit({ password: true });
@@ -19,7 +19,7 @@ export const patientCreateSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   date_of_birth: z.string().optional(),
   medical_record_number: z.string().min(1, 'Medical record number is required'),
-  department: z.enum(['cardiology', 'neurology', 'pediatrics', 'oncology', 'emergency', 'endocrinology', 'general']),
+  department: z.enum(['cardiology', 'neurology', 'pediatrics', 'oncology', 'emergency', 'endocrinology', 'obgyn', 'general']),
   assigned_doctor_id: z.string().optional(),
 });
 
@@ -30,7 +30,7 @@ export const documentCreateSchema = z.object({
   content: z.string().min(1, 'Content is required'),
   document_type: z.enum(['protocol', 'policy', 'guideline', 'research', 'report', 'medical_record']),
   patient_id: z.string().optional(),
-  department: z.enum(['cardiology', 'neurology', 'pediatrics', 'oncology', 'emergency', 'endocrinology', 'general']),
+  department: z.enum(['cardiology', 'neurology', 'pediatrics', 'oncology', 'emergency', 'endocrinology', 'obgyn', 'general']),
   is_sensitive: z.boolean().default(false),
 });
 

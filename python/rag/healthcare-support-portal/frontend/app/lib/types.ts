@@ -199,6 +199,7 @@ export type Department =
   | 'oncology' 
   | 'emergency' 
   | 'endocrinology' 
+  | 'obgyn'
   | 'general';
 
 export type DocumentType = 

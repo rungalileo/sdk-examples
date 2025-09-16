@@ -12,7 +12,7 @@ const updateUserSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().optional(),
   role: z.enum(['doctor', 'nurse', 'admin']),
-  department: z.enum(['cardiology', 'neurology', 'pediatrics', 'oncology', 'emergency', 'endocrinology', 'general']),
+  department: z.enum(['cardiology', 'neurology', 'pediatrics', 'oncology', 'emergency', 'endocrinology', 'obgyn', 'general']),
 });
 
 interface EditUserData {

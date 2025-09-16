@@ -72,7 +72,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
     };
 
     // System configuration options
-    const departments = ['cardiology', 'neurology', 'pediatrics', 'oncology', 'emergency', 'endocrinology', 'general'];
+    const departments = ['cardiology', 'neurology', 'pediatrics', 'oncology', 'emergency', 'endocrinology', 'obgyn', 'general'];
     const roles = ['doctor', 'nurse', 'admin'];
 
     return {

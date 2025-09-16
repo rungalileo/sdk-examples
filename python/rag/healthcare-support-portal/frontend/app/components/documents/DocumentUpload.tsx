@@ -47,6 +47,7 @@ const departments = [
   { value: 'oncology', label: 'Oncology' },
   { value: 'emergency', label: 'Emergency' },
   { value: 'endocrinology', label: 'Endocrinology' },
+  { value: 'obgyn', label: 'OB/GYN' },
   { value: 'general', label: 'General Medicine' },
 ];
 
