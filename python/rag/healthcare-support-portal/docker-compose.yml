@@ -1,0 +1,40 @@
+services:
+  db:
+    image: ankane/pgvector
+    environment:
+      POSTGRES_DB: healthcare
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d healthcare"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  oso:
+    container_name: oso_service
+    image: public.ecr.aws/osohq/dev-server:latest
+    command: --watch-for-changes /authorization.polar
+    ports:
+      - "8080:8080"
+    volumes:
+      - type: bind
+        source: ./authorization.polar
+        target: /authorization.polar
+
+  migrate:
+    build:
+      context: .
+      dockerfile: Dockerfile.migrate
+    environment:
+      DATABASE_URL: postgresql+psycopg2://postgres:postgres@db:5432/healthcare
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./packages/common:/app/packages/common
+      - ./scripts:/app/scripts
+    command: /app/scripts/migrate.sh

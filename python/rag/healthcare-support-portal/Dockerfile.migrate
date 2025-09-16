@@ -1,0 +1,35 @@
+# Dockerfile.migrate - Migration runner container using uv
+FROM python:3.11-slim
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    postgresql-client \
+    gcc \
+    python3-dev \
+    libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install uv for faster Python package management
+RUN pip install uv
+
+# Set working directory
+WORKDIR /app
+
+# Copy the workspace files
+COPY pyproject.toml uv.lock ./
+COPY packages/ ./packages/
+
+# Install dependencies using uv (now works without oso package!)
+RUN uv sync --frozen
+
+# Copy migration scripts
+COPY scripts/ ./scripts/
+
+# Make scripts executable
+RUN chmod +x scripts/migrate.sh
+
+# Set PYTHONPATH to include common package
+ENV PYTHONPATH=/app/packages/common/src:$PYTHONPATH
+
+# Default command
+CMD ["/app/scripts/migrate.sh"]

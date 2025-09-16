@@ -1,0 +1,41 @@
+Healthcare Protocol: Patient Admission Guidelines
+
+OVERVIEW
+This document outlines the standard procedures for patient admission to the cardiology department.
+
+ADMISSION CRITERIA
+1. Patients presenting with chest pain lasting more than 30 minutes
+2. Abnormal ECG findings indicating cardiac abnormalities
+3. Elevated cardiac biomarkers (troponin levels above normal)
+4. Physician referral for specialized cardiac evaluation
+
+PROCEDURES
+1. Initial Assessment
+   - Vital signs monitoring every 15 minutes for first hour
+   - 12-lead ECG within 10 minutes of arrival
+   - Blood draw for cardiac enzymes and lipid panel
+
+2. Documentation Requirements
+   - Complete medical history
+   - Current medications list
+   - Emergency contact information
+   - Insurance verification
+
+3. Treatment Protocol
+   - Oxygen therapy if saturation below 94%
+   - Continuous cardiac monitoring
+   - Pain assessment using 1-10 scale
+   - Antiplatelet therapy as indicated
+
+SPECIAL CONSIDERATIONS
+- Patients with diabetes require glucose monitoring every 4 hours
+- Elderly patients (>75 years) need fall risk assessment
+- Consider cardiothoracic surgery consultation for severe cases
+
+DISCHARGE CRITERIA
+- Stable vital signs for 24 hours
+- Normal or stable cardiac enzymes
+- Patient education completed
+- Follow-up appointment scheduled
+
+This protocol should be reviewed quarterly and updated as needed based on current medical guidelines and research findings.
