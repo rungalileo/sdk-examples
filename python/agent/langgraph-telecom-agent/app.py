@@ -51,9 +51,7 @@ def create_galileo_session():
         # Start Galileo session with unique session name
         current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         session_name = f"Telecom Agent - {current_time}"
-        galileo_context.start_session(
-            name=session_name, external_id=cl.context.session.id
-        )
+        galileo_context.start_session(name=session_name, external_id=cl.context.session.id)
 
         # Create the callback. This needs to be created in the same thread as the session
         # so that it uses the same session context.
@@ -112,15 +110,11 @@ async def main(msg: cl.Message) -> None:
     print(f"Starting to process message: {msg.content[:50]}...")
 
     # Create main processing step
-    async with cl.Step(
-        name="🎯 Processing Request", type="run", show_input=True
-    ) as main_step:
+    async with cl.Step(name="🎯 Processing Request", type="run", show_input=True) as main_step:
         main_step.input = msg.content
 
         # Call the graph with the user's message and stream the response back to the user
-        async for response_msg in supervisor_agent.astream(
-            input=messages, stream_mode="updates", config=runnable_config
-        ):
+        async for response_msg in supervisor_agent.astream(input=messages, stream_mode="updates", config=runnable_config):
             # Debug: Log the response structure
             print(f"Response keys: {response_msg.keys()}")
 
@@ -139,13 +133,9 @@ async def main(msg: cl.Message) -> None:
 
                     # Create new step for this agent
                     step_counter += 1
-                    agent_display_name = (
-                        agent_name.replace("-", " ").replace("_", " ").title()
-                    )
+                    agent_display_name = agent_name.replace("-", " ").replace("_", " ").title()
 
-                    current_step = cl.Step(
-                        name=f"Step {step_counter}: {agent_display_name}", type="tool"
-                    )
+                    current_step = cl.Step(name=f"Step {step_counter}: {agent_display_name}", type="tool")
                     current_step.input = "Processing..."
                     await current_step.send()
                     current_agent = agent_name
@@ -156,9 +146,7 @@ async def main(msg: cl.Message) -> None:
                         if agent_messages:
                             last_msg = agent_messages[-1]
                             if hasattr(last_msg, "content") and last_msg.content:
-                                current_step.output = (
-                                    f"Working: {last_msg.content[:100]}..."
-                                )
+                                current_step.output = f"Working: {last_msg.content[:100]}..."
                                 await current_step.update()
 
             # Check for supervisor's routing decision
@@ -176,10 +164,7 @@ async def main(msg: cl.Message) -> None:
                         await routing_step.send()
 
             # Check for a response from the supervisor agent with the final message
-            if (
-                supervisor_agent.name in response_msg
-                and "messages" in response_msg[supervisor_agent.name]
-            ):
+            if supervisor_agent.name in response_msg and "messages" in response_msg[supervisor_agent.name]:
                 # Get the last message from the supervisor's response
                 message = response_msg[supervisor_agent.name]["messages"][-1]
                 # If it is an AI message, then it is the final answer

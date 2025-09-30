@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 
 class RetrievalInput(BaseModel):
     """Input schema for document retrieval."""
+
     query: str = Field(description="Search query")
     k: int = Field(default=3, description="Number of documents to retrieve")
 
@@ -30,11 +31,9 @@ class PineconeRetrievalTool(BaseTool):
         try:
             from langchain_pinecone import PineconeVectorStore
             from langchain_openai import OpenAIEmbeddings
+
             self._embeddings = OpenAIEmbeddings()
-            self._vector_store = PineconeVectorStore(
-                index_name=self._index_name,
-                embedding=self._embeddings
-            )
+            self._vector_store = PineconeVectorStore(index_name=self._index_name, embedding=self._embeddings)
         except Exception:
             # Use mock data if Pinecone not configured
             pass
@@ -71,7 +70,7 @@ International Features:
 - International Plus: +$15/month
 - Unlimited texting to 200+ countries
 - Call rates from $0.25/minute
-"""
+""",
         }
 
         # Simple keyword matching

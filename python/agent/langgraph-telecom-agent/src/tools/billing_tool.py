@@ -31,7 +31,7 @@ class BillingTool(BaseTool):
             "monthly_charge": 85.00,
             "data_used": random.uniform(20, 80),
             "data_limit": "Unlimited",
-            "due_date": (datetime.now() + timedelta(days=15)).strftime("%Y-%m-%d")
+            "due_date": (datetime.now() + timedelta(days=15)).strftime("%Y-%m-%d"),
         }
 
         if query_type == "usage":
@@ -59,8 +59,8 @@ Available Upgrades:
         elif query_type == "history":
             history = []
             for i in range(3):
-                date = (datetime.now() - timedelta(days=30*(i+1))).strftime("%Y-%m-%d")
-                amount = customer['monthly_charge'] + random.uniform(-5, 15)
+                date = (datetime.now() - timedelta(days=30 * (i + 1))).strftime("%Y-%m-%d")
+                amount = customer["monthly_charge"] + random.uniform(-5, 15)
                 history.append(f"- {date}: ${amount:.2f} (Paid)")
 
             return f"""
