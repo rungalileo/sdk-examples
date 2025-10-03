@@ -57,8 +57,4 @@ def create_supervisor_agent():
     ).compile(checkpointer=checkpointer)
     telecom_supervisor_agent.name = "connecttel-supervisor-agent"
 
-    # Uncomment the following lines to print the compiled graph to the console in Mermaid format
-    # print("Compiled Telecom Supervisor Agent Graph:")
-    # print(telecom_supervisor_agent.get_graph().draw_mermaid())
-
     return telecom_supervisor_agent

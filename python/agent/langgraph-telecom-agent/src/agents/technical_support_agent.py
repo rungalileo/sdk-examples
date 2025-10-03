@@ -8,9 +8,13 @@ from langgraph.graph.graph import CompiledGraph
 from langgraph.prebuilt import create_react_agent
 
 from ..tools.technical_support_tool import TechnicalSupportTool
+from ..tools.pinecone_retrieval_tool import PineconeRetrievalTool
 
 # Create the technical support tool
 technical_support_tool = TechnicalSupportTool()
+
+# Create the plan information retrieval tool
+plan_information_retrieval_tool = PineconeRetrievalTool("telecom")
 
 
 def create_technical_support_agent() -> CompiledGraph:
@@ -22,8 +26,10 @@ def create_technical_support_agent() -> CompiledGraph:
 
     # Create an agent
     agent = create_react_agent(
-        model=ChatOpenAI(model=os.environ["MODEL_NAME_WORKER"], name="Technical Support Agent"),
-        tools=[technical_support_tool],
+        model=ChatOpenAI(
+            model=os.environ["MODEL_NAME_WORKER"], name="Technical Support Agent"
+        ),
+        tools=[technical_support_tool, plan_information_retrieval_tool],
         prompt=(
             """
             You are a Technical Support specialist for ConnectTel.

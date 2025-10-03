@@ -19,10 +19,12 @@ class PineconeRetrievalTool(BaseTool):
     """Tool for retrieving telecom plan and service information."""
 
     name: str = "pinecone_retrieval"
-    description: str = "Retrieve telecom plans and service information from knowledge base"
+    description: str = (
+        "Retrieve telecom plans and service information from knowledge base"
+    )
     args_schema: type[BaseModel] = RetrievalInput
 
-    def __init__(self, index_name: str = "telecom-plans"):
+    def __init__(self, index_name: str = "telecom"):
         super().__init__()
         self._index_name = index_name
         self._vector_store = None
@@ -33,7 +35,9 @@ class PineconeRetrievalTool(BaseTool):
             from langchain_openai import OpenAIEmbeddings
 
             self._embeddings = OpenAIEmbeddings()
-            self._vector_store = PineconeVectorStore(index_name=self._index_name, embedding=self._embeddings)
+            self._vector_store = PineconeVectorStore(
+                index_name=self._index_name, embedding=self._embeddings
+            )
         except Exception:
             # Use mock data if Pinecone not configured
             pass

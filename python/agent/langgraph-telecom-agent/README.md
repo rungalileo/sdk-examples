@@ -1,6 +1,6 @@
 # ConnectTel Telecom Multi-Agent System
 
-This is a telecom customer service multi-agent system built with LangGraph and Chainlit. It demonstrates how AI agents can handle various telecom support scenarios including network issues, billing inquiries, technical support, and service management.
+This is a telecom customer service multi-agent system built with LangGraph and Chainlit. It demonstrates how AI agents can handle various telecom support scenarios including network issues, billing inquiries, technical support, and service management. Read our [blog](https://galileo.ai/blog/evaluate-langgraph-multi-agent-telecom) for implementation details, metrics and how to use Galileo in the console.
 
 ## Overview
 
@@ -95,17 +95,17 @@ Since this is a demo system without live telecom APIs, all tools use mock data g
 
 ### Prerequisites
 
-- Python 3.8+
+- Python 3.9+
 - [OpenAI API Key](https://platform.openai.com/api-keys)
-- [Pinecone Account](https://www.pinecone.io) (optional)
-- [Galileo Account](https://app.galileo.ai/sign-up) (optional for monitoring)
+- [Pinecone Account](https://www.pinecone.io) 
+- [Galileo Account](https://app.galileo.ai/sign-up) 
 
 ### Installation
 
 1. **Clone the repository**
 ```bash
-git clone <repository-url>
-cd langgraph-telecom-agent
+git clone https://github.com/rungalileo/sdk-examples
+cd sdk-examples/python/agent/langgraph-telecom-agent
 ```
 
 2. **Set up environment variables**
@@ -119,18 +119,16 @@ cp .env.example .env
 # Using uv (recommended)
 uv sync --dev
 
-# Or using pip
-pip install -r requirements.txt
+# Or using pip with pyproject.toml
+pip install -e .
 ```
 
 4. **Set up vector database (optional - only needed for Plan Advisor Agent)**
 ```bash
 # Upload telecom documentation to Pinecone
-# This will create a "telecom-plans" index with plan information and troubleshooting guides
+# This will create a "telecom" index with plan information and troubleshooting guides
 python ./scripts/setup_pinecone.py
 ```
-
-**Note**: The Pinecone setup is only required if you want to use the Plan Advisor Agent with vector search capabilities. The other agents (Network Operations, Billing, Technical Support, SIM Management) work with mock data and don't require Pinecone.
 
 ### Running the Application
 
@@ -184,30 +182,6 @@ langgraph-telecom-agent/
 
 ## Monitoring with Galileo
 
-If configured, the system integrates with Galileo for:
-- Real-time trace monitoring
-- Performance metrics
-- Agent interaction analysis
-- Error tracking
-
 View traces at [app.galileo.ai](https://app.galileo.ai) after running conversations.
 
-## Customization
-
-### Adding New Tools
-1. Create a new tool class extending `BaseTool`
-2. Implement the `_run` method with mock data logic
-3. Add the tool to the appropriate agent
-
-### Modifying Mock Data
-Edit the tool implementations to change:
-- Customer profiles
-- Network scenarios
-- Plan offerings
-- Troubleshooting guides
-
-### Creating New Agents
-1. Create agent file in `src/agents/`
-2. Define agent with appropriate tools
-3. Add to supervisor routing logic
-4. Update agent imports
+Read our [blog](https://galileo.ai/blog/evaluate-langgraph-multi-agent-telecom) to learn more on how to setup metrics and use Galileo in the console.
