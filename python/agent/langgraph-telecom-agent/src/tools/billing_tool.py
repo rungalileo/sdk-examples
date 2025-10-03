@@ -13,9 +13,13 @@ class BillingTool(BaseTool):
     """Tool for retrieving customer billing and usage information."""
 
     name: str = "billing_account"
-    description: str = "Check account balance, data usage, plan details, and billing history"
+    description: str = (
+        "Check account balance, data usage, plan details, and billing history"
+    )
 
-    def _run(self, customer_id: Optional[str] = None, query_type: str = "summary") -> str:
+    def _run(
+        self, customer_id: Optional[str] = None, query_type: str = "summary"
+    ) -> str:
         """
         Get billing and usage information.
 
@@ -59,7 +63,9 @@ Available Upgrades:
         elif query_type == "history":
             history = []
             for i in range(3):
-                date = (datetime.now() - timedelta(days=30 * (i + 1))).strftime("%Y-%m-%d")
+                date = (datetime.now() - timedelta(days=30 * (i + 1))).strftime(
+                    "%Y-%m-%d"
+                )
                 amount = customer["monthly_charge"] + random.uniform(-5, 15)
                 history.append(f"- {date}: ${amount:.2f} (Paid)")
 
