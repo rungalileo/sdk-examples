@@ -22,9 +22,7 @@ def create_plan_advisor_agent() -> CompiledGraph:
 
     # Create an agent
     agent = create_react_agent(
-        model=ChatOpenAI(
-            model=os.environ["MODEL_NAME_WORKER"], name="Plan Advisor Agent"
-        ),
+        model=ChatOpenAI(model=os.environ["MODEL_NAME_WORKER"], name="Plan Advisor Agent"),
         tools=[plan_information_retrieval_tool],
         prompt=(
             """
