@@ -22,9 +22,7 @@ def create_billing_account_agent() -> CompiledGraph:
 
     # Create an agent
     agent = create_react_agent(
-        model=ChatOpenAI(
-            model=os.environ["MODEL_NAME_WORKER"], name="Billing Account Agent"
-        ),
+        model=ChatOpenAI(model=os.environ["MODEL_NAME_WORKER"], name="Billing Account Agent"),
         tools=[billing_tool],
         prompt=(
             """

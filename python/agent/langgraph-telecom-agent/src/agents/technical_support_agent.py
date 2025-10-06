@@ -26,9 +26,7 @@ def create_technical_support_agent() -> CompiledGraph:
 
     # Create an agent
     agent = create_react_agent(
-        model=ChatOpenAI(
-            model=os.environ["MODEL_NAME_WORKER"], name="Technical Support Agent"
-        ),
+        model=ChatOpenAI(model=os.environ["MODEL_NAME_WORKER"], name="Technical Support Agent"),
         tools=[technical_support_tool, plan_information_retrieval_tool],
         prompt=(
             """
