@@ -5,6 +5,7 @@ description = "Healthcare Support Portal - Microservices RAG Application"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "bcrypt>=4.0.0,<5.0.0",
     "oso-cloud>=2.5.0",
     "psycopg2-binary>=2.9.10",
     "python-multipart>=0.0.20",
