@@ -94,6 +94,8 @@ In the next **15 minutes**, you'll deploy a complete **healthcare-grade AI knowl
 - **OpenAI:** [platform.openai.com/api-keys](https://platform.openai.com/api-keys) 
 - **Galileo:** [app.galileo.ai/sign-up](https://app.galileo.ai/sign-up)
 
+> **Windows Users:** Use Git Bash or WSL to run bash scripts, or use `bash setup.sh` instead of `./setup.sh`
+
 ### 🔍 **Environment Validation**
 
 **Step 1: Check Dependencies**
@@ -131,8 +133,10 @@ git clone https://github.com/rungalileo/sdk-examples.git
 cd sdk-examples/python/rag/healthcare-support-portal
 
 # 2. Run automated setup
-chmod +x setup.sh
 ./setup.sh
+
+# Windows users (if needed):
+# bash setup.sh
 ```
 
 **🔍 Validation:** You should see:
@@ -186,6 +190,8 @@ At this point, if you've exactly followed the step by steps in the repository, e
 ```bash
 # Start database, backend services, and frontend
 ./run_all.sh
+
+# Windows: bash run_all.sh
 ```
 
 **🔍 Watch for Success Indicators:**
@@ -249,8 +255,8 @@ uv run python -m common.seed_data
 ```bash
 ✅ Created demo users:
    - Doctor: dr_smith / secure_password
-   - Nurse: nurse_johnson@hospital.com / secure_password
-   - Admin: admin_wilson@hospital.com / secure_password
+   - Nurse: nurse_johnson / secure_password
+   - Admin: admin_wilson / secure_password
 ✅ Sample patients created
 ✅ Demo data seeding complete
 ```
@@ -297,11 +303,11 @@ curl -X POST "http://localhost:8003/api/v1/chat/ask" \
 - **Oso Authorization:** http://localhost:8080
 
 **👥 Demo Accounts:**
-| Role | Email | Password | Department | Permissions |
-|------|--------|----------|------------|-------------|
+| Role | Username | Password | Department | Permissions |
+|------|----------|----------|------------|-------------|
 | Doctor | `dr_smith` | `secure_password` | Cardiology | Full access to cardiology docs |
-| Nurse | `nurse_johnson@hospital.com` | `secure_password` | Emergency | Access to procedures & protocols |
-| Admin | `admin_wilson@hospital.com` | `secure_password` | Administration | System-wide access |
+| Nurse | `nurse_johnson` | `secure_password` | Emergency | Access to procedures & protocols |
+| Admin | `admin_wilson` | `secure_password` | Administration | System-wide access |
 
 **🛑 To Stop Services:**
 ```bash

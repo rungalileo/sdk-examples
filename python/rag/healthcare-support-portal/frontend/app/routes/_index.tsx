@@ -127,19 +127,30 @@ export default function Dashboard() {
   };
 
   const formatDisplayName = (username: string, role: string) => {
-    // Convert username like 'dr_smith' to 'Smith' for display
+    // Handle known demo users
     if (username === 'dr_smith') return 'Smith';
     if (username === 'nurse_johnson') return 'Johnson';
     if (username === 'admin_wilson') return 'Wilson';
     
-    // For other usernames, extract last part after underscore and capitalize
-    const parts = username.split('_');
-    if (parts.length > 1) {
-      return parts[parts.length - 1].charAt(0).toUpperCase() + parts[parts.length - 1].slice(1);
+    // Remove role prefixes to avoid duplication (dr_, nurse_, admin_)
+    let cleanUsername = username;
+    if (username.startsWith('dr_')) {
+      cleanUsername = username.substring(3); // Remove 'dr_'
+    } else if (username.startsWith('nurse_')) {
+      cleanUsername = username.substring(6); // Remove 'nurse_'
+    } else if (username.startsWith('admin_')) {
+      cleanUsername = username.substring(6); // Remove 'admin_'
     }
     
-    // Fallback: capitalize the whole username
-    return username.charAt(0).toUpperCase() + username.slice(1);
+    // For other usernames, extract last part after underscore and capitalize
+    const parts = cleanUsername.split('_');
+    if (parts.length > 1) {
+      const lastName = parts[parts.length - 1];
+      return lastName.charAt(0).toUpperCase() + lastName.slice(1);
+    }
+    
+    // Fallback: capitalize the clean username
+    return cleanUsername.charAt(0).toUpperCase() + cleanUsername.slice(1);
   };
 
   const getDocumentIcon = (type: string) => {

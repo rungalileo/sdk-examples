@@ -339,8 +339,8 @@ uv run python -m common.seed_data
 
 **You now have three types of users:**
 - **Dr. Smith** (`dr_smith` / `secure_password`) - Cardiologist
-- **Nurse Johnson** (`nurse_johnson@hospital.com` / `secure_password`) - Emergency Department
-- **Admin Wilson** (`admin_wilson@hospital.com` / `secure_password`) - Hospital Administrator
+- **Nurse Johnson** (`nurse_johnson` / `secure_password`) - Emergency Department
+- **Admin Wilson** (`admin_wilson` / `secure_password`) - Hospital Administrator
 
 ### Your First Login
 
@@ -425,7 +425,7 @@ In a real hospital:
 ```
 
 #### Switch to Nurse Johnson:
-1. **Logout** and **login as**: `nurse_johnson@hospital.com` / `secure_password`
+1. **Logout** and **login as**: `nurse_johnson` / `secure_password`
 2. **Upload a nursing procedure** document
 3. **Ask**: *"What's the protocol for medication administration?"*
 
@@ -435,7 +435,7 @@ In a real hospital:
 - Access patterns follow role-based permissions
 
 #### Switch to Admin Wilson:
-1. **Login as**: `admin_wilson@hospital.com` / `secure_password`  
+1. **Login as**: `admin_wilson` / `secure_password`
 2. **Upload a hospital policy** document
 3. **Ask**: *"What are our HIPAA compliance requirements?"*
 
@@ -922,8 +922,8 @@ curl http://localhost:8003/health  # RAG service
 
 ### Demo Accounts
 - **Doctor:** `dr_smith` / `secure_password`
-- **Nurse:** `nurse_johnson@hospital.com` / `secure_password`
-- **Admin:** `admin_wilson@hospital.com` / `secure_password`
+- **Nurse:** `nurse_johnson` / `secure_password`
+- **Admin:** `admin_wilson` / `secure_password`
 
 ### Getting Help
 - **GitHub Issues:** [sdk-examples/issues](https://github.com/rungalileo/sdk-examples/issues)

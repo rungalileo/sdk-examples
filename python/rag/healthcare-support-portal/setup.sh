@@ -1,11 +1,22 @@
 #!/bin/bash
-# setup.sh - Initial setup for Healthcare Support Portal
+# setup.sh - Cross-platform initial setup for Healthcare Support Portal
+# Compatible with macOS, Linux, and Windows (via Git Bash or WSL)
 
 # Exit on any error
 set -e
 
-echo "🏥 Healthcare Support Portal - Initial Setup"
-echo "============================================="
+# Detect operating system
+OS="Unknown"
+case "$(uname -s)" in
+    Darwin*)    OS="macOS";;
+    Linux*)     OS="Linux";;
+    CYGWIN*)    OS="Windows";;
+    MINGW*)     OS="Windows";;
+    MSYS*)      OS="Windows";;
+esac
+
+echo "🏥 Healthcare Support Portal - Initial Setup ($OS)"
+echo "================================================="
 
 # Function to check if a command exists
 command_exists() {
@@ -92,14 +103,18 @@ for service in auth patient rag; do
     fi
 done
 
-# Make scripts executable
-echo "🔧 Making scripts executable..."
-chmod +x run_all.sh
-chmod +x stop_all.sh
-chmod +x packages/auth/run.sh
-chmod +x packages/patient/run.sh
-chmod +x packages/rag/run.sh
-chmod +x frontend/run.sh
+# Make scripts executable (Unix/Linux/macOS only)
+if [ "$OS" != "Windows" ]; then
+    echo "🔧 Making scripts executable..."
+    chmod +x run_all.sh
+    chmod +x stop_all.sh
+    chmod +x packages/auth/run.sh
+    chmod +x packages/patient/run.sh
+    chmod +x packages/rag/run.sh
+    chmod +x frontend/run.sh
+else
+    echo "🔧 Scripts ready (Windows detected - no chmod needed)..."
+fi
 
 # Install frontend dependencies
 echo "📦 Installing frontend dependencies..."
@@ -149,8 +164,17 @@ echo ""
 echo "📝 Next steps:"
 echo "1. 🔑 Add your OpenAI API key to packages/rag/.env (REQUIRED)"
 echo "   - Get your key at: https://platform.openai.com/api-keys"
-echo "   - Replace 'sk-your-openai-api-key-here' with your actual key"
-echo "2. 🚀 Start all services: ./run_all.sh"
+echo "   - Replace '***************************' with your actual key"
+
+if [ "$OS" = "Windows" ]; then
+    echo "2. 🚀 Start all services:"
+    echo "   - Using Docker: docker-compose up -d"
+    echo "   - Or manually: Start each service in separate terminals"
+    echo "   - Windows users: Use 'bash run_all.sh' or run services individually"
+else
+    echo "2. 🚀 Start all services: ./run_all.sh"
+fi
+
 echo "3. 🌱 Seed demo data: $UV_CMD run python -m common.seed_data"
 echo "4. 🌐 Open http://localhost:3000 in your browser"
 echo ""

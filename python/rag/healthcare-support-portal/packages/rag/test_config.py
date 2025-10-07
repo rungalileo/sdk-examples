@@ -34,8 +34,9 @@ def test_environment_variables() -> Dict[str, Any]:
         "DEBUG": "Debug mode (default: false)",
         "EMBEDDING_MODEL": "OpenAI embedding model (default: text-embedding-3-small)",
         "CHAT_MODEL": "OpenAI chat model (default: gpt-4o-mini)",
-        "GALILEO_ENABLED": "Enable Galileo observability (default: false)",
-        "GALILEO_API_KEY": "Galileo API key (optional)",
+        "GALILEO_API_KEY": "Galileo API key for observability",
+        "GALILEO_PROJECT_NAME": "Galileo project name (default: healthcare-rag)",
+        "GALILEO_ENVIRONMENT": "Galileo environment tag (default: development)",
         "CHUNK_SIZE": "Document chunk size (default: 1000)",
         "SIMILARITY_THRESHOLD": "Vector search threshold (default: 0.7)",
     }
@@ -149,16 +150,13 @@ def test_database_connection() -> bool:
 
 
 def test_galileo_connection() -> bool:
-    """Test Galileo API connection if enabled."""
-    if not os.getenv("GALILEO_ENABLED", "").lower() == "true":
-        print("⚪ Galileo observability disabled")
-        return True
-
+    """Test Galileo API connection."""
     try:
         api_key = os.getenv("GALILEO_API_KEY")
-        if not api_key:
-            print("❌ Galileo API key not found (GALILEO_ENABLED=true but no API key)")
-            return False
+        if not api_key or api_key == "your-galileo-api-key-here":
+            print("⚠️ Galileo API key not configured (using default placeholder)")
+            print("   Get your API key from: https://app.galileo.ai/sign-up")
+            return True  # Don't fail the config test, just warn
 
         # For now, just check that the key exists
         # A full test would require the galileo package and network call
