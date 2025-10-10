@@ -47,11 +47,8 @@ def create_galileo_session():
     try:
         # Initialize Galileo context first
         galileo_context.init()
-
         # Start Galileo session with unique session name
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        session_name = f"Telecom Agent - {current_time}"
-        galileo_context.start_session(name=session_name, external_id=cl.context.session.id)
+        galileo_context.start_session(name="Telecom Agent", external_id=cl.context.session.id)
 
         # Create the callback. This needs to be created in the same thread as the session
         # so that it uses the same session context.
@@ -60,9 +57,6 @@ def create_galileo_session():
 
         # Store session info in user session for later use
         cl.user_session.set("galileo_session_started", True)
-        cl.user_session.set("session_name", session_name)
-
-        print(f"✅ Galileo session started: {session_name}")
 
     except Exception as e:
         print(f"❌ Failed to start Galileo session: {str(e)}")
@@ -80,9 +74,6 @@ async def main(msg: cl.Message) -> None:
     # Create a config using the current Chainlit session ID. This is linked to the memory saver in the graph
     # to allow you to continue the conversation with the same context.
     config: dict[str, Any] = {"configurable": {"thread_id": cl.context.session.id}}
-
-    # Send initial processing message
-    # await cl.Message(content="🔄 Processing your request...").send()
 
     # Prepare the final answer message to stream the response back to the user
     final_answer = cl.Message(content="")
