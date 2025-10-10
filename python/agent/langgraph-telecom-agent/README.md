@@ -9,7 +9,7 @@ This app is a customer service chatbot for the fictional telecom provider, **Con
 ### Key Features
 
 - **Multi-Agent Architecture**: Specialized agents for different telecom domains
-- **Mock Data System**: No live APIs required - perfect for demos and testing
+- **Mock Data System**: No live APIs required except Pinecone - perfect for demos and testing
 - **Realistic Scenarios**: Simulates real telecom support interactions
 - **Comprehensive Coverage**: Handles network, billing, technical, and service issues
 
@@ -181,7 +181,7 @@ langgraph-telecom-agent/
 ```
 
 ## Monitoring with Galileo
-
-View traces at [app.galileo.ai](https://app.galileo.ai) after running conversations.
-
-Read our [blog](https://galileo.ai/blog/evaluate-langgraph-multi-agent-telecom) to learn more on how to setup metrics and use Galileo in the console.
+- View traces at [app.galileo.ai](https://app.galileo.ai) after running conversations.
+- Setup agent metrics like Action Completion, Tool Selection Quality and Tool Error Rate
+- You can also add a [custom metric](https://galileo.ai/blog/evaluate-langgraph-multi-agent-telecom#performance-benchmarks-for-production) as per your bespoke requirements
+- Read our [blog](https://galileo.ai/blog/evaluate-langgraph-multi-agent-telecom) for a detailed guide on metrics and debugging agent with the insights.
