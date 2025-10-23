@@ -27,7 +27,9 @@ headers = {
 }
 
 # Store the headers in the appropriate environment variable
-os.environ['OTEL_EXPORTER_OTLP_HEADERS'] = ",".join([f"{k}={v}" for k, v in headers.items()])
+os.environ['OTEL_EXPORTER_OTLP_HEADERS'] = ",".join([
+    f"{k}={v}" for k, v in headers.items()]
+)
 
 # Create and configure the OTLP span exporter
 exporter = OTLPSpanExporter()
