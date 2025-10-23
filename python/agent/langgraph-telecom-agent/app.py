@@ -45,8 +45,6 @@ def create_galileo_session():
     This session is then stored in the Chainlit user session for later use.
     """
     try:
-        # Initialize Galileo context first
-        galileo_context.init()
         # Start Galileo session with unique session name
         galileo_context.start_session(name="Telecom Agent", external_id=cl.context.session.id)
 
