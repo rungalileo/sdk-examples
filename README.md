@@ -42,6 +42,7 @@ You can read more about these in our [Get started with sample projects documenta
 #### Python Agents 🐍
 - **[LangChain Agent](/python/agent/langchain-agent/)** - Basic LangChain agent with Galileo integration
 - **[LangGraph FSI Agent](/python/agent/langgraph-fsi-agent/)** - Financial services agent with before/after implementations  
+- **[LangGraph Telecom Agent](/python/agent/langgraph-telecom-agent/)** - Telecom services agent with Galileo integration  
 - **[LangGraph + OpenTelemetry](/python/agent/langgraph-otel/)** - 🎆 **Featured** - Comprehensive observability with OpenTelemetry and Galileo
 - **[CrewAI Agent](/python/agent/crew-ai/)** - Multi-agent collaboration using CrewAI framework
 - **[Startup Simulator 3000](/python/agent/startup-simulator-3000/)** - Advanced agent with startup business simulation
@@ -158,6 +159,7 @@ sdk-examples/
 │   ├── agent/                 # AI Agents with tool usage
 │   │   ├── langchain-agent/
 │   │   ├── langgraph-fsi-agent/
+│   │   ├── langgraph-telecom-agent/
 │   │   ├── langgraph-otel/    # ⭐ Featured: OpenTelemetry integration
 │   │   ├── crew-ai/
 │   │   ├── startup-simulator-3000/
