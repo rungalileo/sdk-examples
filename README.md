@@ -48,6 +48,7 @@ You can read more about these in our [Get started with sample projects documenta
 - **[Startup Simulator 3000](/python/agent/startup-simulator-3000/)** - Advanced agent with startup business simulation
 - **[Weather Vibes Agent](/python/agent/weather-vibes-agent/)** - Multi-function agent for weather, recommendations, and YouTube videos
 - **[Minimal Agent Example](/python/agent/minimal-agent-example/)** - Simple agent with basic tool usage
+- **[Google ADK + OpenTelemetry](/python/agent/google-adk/)** - The Google SDK quickstart app with logging to Galileo using OpenTelemetry and OpenInference
 
 #### TypeScript Agents 📜  
 - **[LangGraph FSI Agent](/typescript/agent/langgraph-fsi-agent/)** - Financial services agent in TypeScript
