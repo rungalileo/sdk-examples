@@ -1,0 +1,5 @@
+crewai
+crewai-tools
+exa_py
+galileo
+python-dotenv
