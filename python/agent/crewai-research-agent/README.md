@@ -6,17 +6,35 @@ This guide will serve as a demonstration of how to use the **planning** feature 
 
 ## Install dependencies
 
-Install the required packages:
+This project uses UV for Python dependency management. UV is a fast Python package and project manager that replaces pip, pip-tools, pipx, poetry, pyenv, virtualenv, and more.
+
+### Install UV (if not already installed)
 
 ```bash
-uv pip install -U crewai crewai-tools exa_py galileo
-uv pip install --upgrade ipywidgets
+curl -LsSf https://astral.sh/uv/install.sh | sh
 ```
 
-Or use the requirements.txt file:
+Or on macOS with Homebrew:
+```bash
+brew install uv
+```
+
+### Install project dependencies
 
 ```bash
-pip install -r requirements.txt
+# Install all dependencies
+uv sync
+
+# Or install with dev dependencies
+uv sync --all-groups
+```
+
+### Running the application
+
+Use `uv run` to execute Python scripts:
+
+```bash
+uv run python main.py
 ```
 
 ## Configure API keys
@@ -35,7 +53,20 @@ See `.env.example` for reference.
 Run the research agent:
 
 ```bash
-python main.py
+uv run python main.py
+```
+
+Or with specific arguments:
+
+```bash
+# Research a specific topic
+uv run python main.py "AI trends in 2025"
+
+# Specify date context
+uv run python main.py "Quantum computing breakthroughs" --date "December 1, 2025"
+
+# Clear todo list before starting
+uv run python main.py "LLM reasoning" --clear-todos
 ```
 
 The crew will:

@@ -2,28 +2,23 @@
 
 import os
 import warnings
+import argparse
+from datetime import datetime
 from crewai import LLM, Agent, Task, Crew
 from crewai_tools import EXASearchTool
 from dotenv import load_dotenv
-from galileo.handlers.crewai.handler import CrewAIEventListener
 from tools import TodoListTool
-
-# Filter out deprecation warnings
-warnings.filterwarnings("ignore", category=DeprecationWarning)
-warnings.filterwarnings("ignore", message="Pydantic serializer warnings")
-
-# Initialize Galileo event listener
-CrewAIEventListener()
+from galileo.handlers.crewai.handler import CrewAIEventListener
 
 # Load environment variables
 load_dotenv("../.env")
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-EXA_API_KEY = os.getenv("EXA_API_KEY")
+CrewAIEventListener()
+
 
 # Initialize tools and models
-openai_model = LLM(model="openai/gpt-4.1-mini", api_key=OPENAI_API_KEY)
-exa_tool = EXASearchTool(api_key=EXA_API_KEY)
+openai_model = LLM(model="openai/gpt-4.1-mini", temperature=0.1, api_key=os.getenv("OPENAI_API_KEY"))
+exa_tool = EXASearchTool(api_key=os.getenv("EXA_API_KEY"))
 todo_tool = TodoListTool()
 
 # Create agents
@@ -73,7 +68,7 @@ analysis_task = Task(
     description="""Research and analyze the recent trends on {topic}.""",
     expected_output="Comprehensive research findings with key insights, trends, and technical details.",
     agent=analyst,
-    async_execution=True,
+    # async_execution=True,  # Disabled to ensure proper sequential execution
     # verbose=True
 )
 
@@ -145,11 +140,73 @@ crew = Crew(
 )
 
 if __name__ == "__main__":
+    # Set up argument parser
+    parser = argparse.ArgumentParser(
+        description="CrewAI Research Agent - Generate comprehensive research reports on any topic",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python main.py "AI trends in 2025"
+  python main.py "Quantum computing breakthroughs" --date "December 1, 2025"
+  python main.py --topic "Climate change solutions"
+  python main.py "LLM reasoning" --clear-todos  # Clear todo list before starting
+        """,
+    )
+
+    parser.add_argument(
+        "topic",
+        nargs="?",  # Make positional argument optional
+        help="The topic to research and generate a report about",
+    )
+
+    parser.add_argument(
+        "--topic",
+        "-t",
+        dest="topic_flag",
+        help="Alternative way to specify the topic using a flag",
+    )
+
+    parser.add_argument(
+        "--date",
+        "-d",
+        default=datetime.now().strftime("%B %d, %Y"),
+        help="The date context for the research (default: today's date)",
+    )
+
+    parser.add_argument(
+        "--clear-todos",
+        action="store_true",
+        help="Clear the todo list before starting (useful for fresh runs)",
+    )
+
+    # Parse arguments
+    args = parser.parse_args()
+
+    # Determine which topic to use (positional or flag)
+    topic = args.topic or args.topic_flag
+
+    if not topic:
+        print("Error: Please provide a topic to research.")
+        print("\nUsage examples:")
+        print('  python main.py "AI trends in 2025"')
+        print('  python main.py --topic "Quantum computing"')
+        parser.print_help()
+        exit(1)
+
+    # Clear todos if requested
+    if args.clear_todos:
+        TodoListTool.clear_all_todos()
+        print("✨ Todo list cleared for fresh start")
+
+    print(f"\nStarting research on: {topic}")
+    print(f"Date context: {args.date}")
+    print("-" * 80)
+
     # Run the crew
     result = crew.kickoff(
         inputs={
-            "topic": "ARC AGI v1 and v2 top solutions and how do they differ",
-            "todays_date": "October 9, 2025",
+            "topic": topic,
+            "todays_date": args.date,
         }
     )
 
