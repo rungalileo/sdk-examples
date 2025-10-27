@@ -29,7 +29,8 @@ strands_telemetry.setup_otlp_exporter()
 # strands_telemetry.setup_console_exporter()
 
 
-# This agent code is from the simple quickstart from the Strands documentation
+# This agent code is from the simple quickstart from the
+# Strands Agents documentation
 # https://strandsagents.com/latest/documentation/docs/user-guide/quickstart/
 
 
