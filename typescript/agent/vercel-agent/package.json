@@ -1,0 +1,30 @@
+{
+  "name": "weather-agent",
+  "version": "1.0.0",
+  "description": "A simple weather agent that can get the weather in a location and convert the temperature from Fahrenheit to Celsius using tools.",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "start": "npx tsx src/index.ts",
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@ai-sdk/openai": "^2.0.53",
+    "@opentelemetry/api-logs": "^0.207.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.207.0",
+    "@opentelemetry/instrumentation": "^0.207.0",
+    "@opentelemetry/resources": "^2.2.0",
+    "@opentelemetry/sdk-logs": "^0.207.0",
+    "@opentelemetry/sdk-node": "^0.207.0",
+    "@opentelemetry/sdk-trace-node": "^2.2.0",
+    "@opentelemetry/semantic-conventions": "^1.37.0",
+    "@vercel/otel": "^2.1.0",
+    "ai": "^5.0.76",
+    "openai": "^6.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.9.1",
+    "tsx": "^4.20.6"
+  },
+  "type": "module"
+}
