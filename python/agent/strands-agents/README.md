@@ -1,6 +1,6 @@
-# AWS Strands + OpenTelemetry Example Project
+# Strands Agents + OpenTelemetry Example Project
 
-This is an example project demonstrating how to use Galileo with the AWS Strands SDK, using AWS Bedrock as the LLM provider. This uses the simple [quickstart from the Strands documentation](https://strandsagents.com/latest/documentation/docs/user-guide/quickstart/), and adds Galileo logging.
+This is an example project demonstrating how to use Galileo with the [Strands Agent SDK](https://strandsagents.com/latest/), using AWS Bedrock as the LLM provider. This uses the simple [quickstart from the Strands Agents documentation](https://strandsagents.com/latest/documentation/docs/user-guide/quickstart/), and adds Galileo logging.
 
 ## Getting Started
 
@@ -42,7 +42,7 @@ Traces will be captured and logged to Galileo.
 The project structure is as follows:
 
 ```folder
-strands/
+strands-agents/
 ├─ env.example         # List of environment variables
 ├── agent.py           # The main agent application
 ├── requirements.txt   # Python project requirements
