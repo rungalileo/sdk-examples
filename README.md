@@ -55,6 +55,7 @@ You can read more about these in our [Get started with sample projects documenta
 - **[Stripe Agent Tool](/typescript/agent/stripe-agent-tool/)** - 💳 Agent with Stripe payment processing integration
 - **[Mastra Template CSV to Questions](/typescript/agent/mastra-template-csv-to-questions/)** - Galileo tracing with Mastra framework and OpenInference
 - **[Minimal Agent Example](/typescript/agent/minimal-agent-example/)** - Basic TypeScript agent implementation
+- **[Vercel AI Agent](/typescript/agent/vercel-agent/)** - Vercel AI agent with Galileo Tracing using OpenTelemetry
 
 ### 💬 Chatbot Examples
 
