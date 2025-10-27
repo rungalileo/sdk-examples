@@ -6,12 +6,11 @@ from strands_tools import calculator, current_time
 
 # Load environment variables from the .env file
 from dotenv import load_dotenv
+
 load_dotenv(override=True)
 
 # Export the Galileo OTel API endpoint for OTel
-os.environ["OTEL_EXPORTER_OTLP_TRACES_ENDPOINT"] = os.environ.get(
-    "GALILEO_API_ENDPOINT", "https://api.galileo.ai/otel/traces"
-)
+os.environ["OTEL_EXPORTER_OTLP_TRACES_ENDPOINT"] = os.environ.get("GALILEO_API_ENDPOINT", "https://api.galileo.ai/otel/traces")
 
 # Export the Galileo OTel headers pointing to the correct API key, project, and log stream
 headers = {
@@ -20,9 +19,7 @@ headers = {
     "logstream": os.environ["GALILEO_LOG_STREAM"],
 }
 
-os.environ["OTEL_EXPORTER_OTLP_HEADERS"] = ",".join(
-    [f"{k}={v}" for k, v in headers.items()]
-)
+os.environ["OTEL_EXPORTER_OTLP_HEADERS"] = ",".join([f"{k}={v}" for k, v in headers.items()])
 
 # Setup telemetry for the Strands agent using Galileo as the OTel backend
 strands_telemetry = StrandsTelemetry()
@@ -34,6 +31,7 @@ strands_telemetry.setup_otlp_exporter()
 
 # This agent code is from the simple quickstart from the Strands documentation
 # https://strandsagents.com/latest/documentation/docs/user-guide/quickstart/
+
 
 # Define a custom tool as a Python function using the @tool decorator
 @tool
