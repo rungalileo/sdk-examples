@@ -1,0 +1,6 @@
+opentelemetry-api
+opentelemetry-exporter-otlp
+opentelemetry-sdk
+python-dotenv
+strands-agents
+strands-agents-tools
