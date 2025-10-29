@@ -1,7 +1,11 @@
 import { openai } from '@ai-sdk/openai';
 import { Experimental_Agent as Agent, stepCountIs, tool } from 'ai';
+import dotenv from "dotenv";
 import { z } from 'zod';
 import { setupOtel } from './setupOtel';
+
+// Load the environment variables
+dotenv.config();
 
 setupOtel();
 

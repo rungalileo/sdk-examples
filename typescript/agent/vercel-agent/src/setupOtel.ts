@@ -10,8 +10,7 @@ diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.DEBUG); // set diaglog leve
  * Setup the OpenTelemetry SDK for the application.
  */
 export function setupOtel() {
-  const galileoConsoleUrl = env.GALILEO_CONSOLE_URL || "https://app.galileo.ai";
-  const galileoEndpoint = `${galileoConsoleUrl}/api/galileo/otel/traces`;
+  const galileoConsoleUrl = env.GALILEO_CONSOLE_URL || "http://api.galileo.ai/otel/traces";
   const galileoHeaders = {
     "Galileo-API-Key": env.GALILEO_API_KEY || "your-galileo-api-key", // your galileo api key
     "project": env.GALILEO_PROJECT || "your-galileo-project", // your galileo project
@@ -20,7 +19,7 @@ export function setupOtel() {
 
   const sdk = new NodeSDK({
     spanProcessors: [new SimpleSpanProcessor(new OTLPHttpProtoTraceExporter({
-      url: galileoEndpoint,
+      url: galileoConsoleUrl,
       headers: galileoHeaders,
     }))],
     sampler: new AlwaysOnSampler(),
