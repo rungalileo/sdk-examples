@@ -20,6 +20,7 @@
     "@opentelemetry/semantic-conventions": "^1.37.0",
     "@vercel/otel": "^2.1.0",
     "ai": "^5.0.76",
+    "dotenv": "^17.2.3",
     "openai": "^6.6.0"
   },
   "devDependencies": {
