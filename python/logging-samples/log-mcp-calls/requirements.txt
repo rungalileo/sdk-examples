@@ -1,0 +1,4 @@
+anthropic
+galileo
+mcp
+python-dotenv

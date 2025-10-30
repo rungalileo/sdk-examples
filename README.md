@@ -31,6 +31,7 @@ You can read more about these in our [Get started with sample projects documenta
   - [Simple chatbot using OpenAI/Ollama](/python/chatbot/sample-project-chatbot/openai-ollama/) - Simple chatbot using the OpenAI SDK to interact with OpenAI or Ollama
   - [Simple chatbot using Anthropic](/python/chatbot/sample-project-chatbot/anthropic/) - Simple chatbot using the Anthropic SDK
   - [Simple chatbot using Azure AI Inference](/python/chatbot/sample-project-chatbot/azure-inference/) - Simple chatbot using the Azure AI Inference SDK to interact with models deployed to Azure AI Foundry
+  - [Log MCP calls](/python/logging-samples/log-mcp-calls/) - Log MCP calls as tool spans
 
 #### Typescript
   - [Simple chatbot using OpenAI/Ollama](/typescript/chatbot/sample-project-chatbot/openai-ollama/) - Simple chatbot using the OpenAI SDK to interact with OpenAI or Ollama
