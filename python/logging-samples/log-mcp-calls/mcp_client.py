@@ -25,9 +25,7 @@ class MCPClient:
         # Establish streamable HTTP connection
         read, write, _ = await self._exit_stack.enter_async_context(
             streamablehttp_client(
-                url=os.environ.get(
-                    "MCP_SERVER_URL", "https://api.galileo.ai/mcp/http/mcp"
-                ),
+                url=os.environ.get("MCP_SERVER_URL", "https://api.galileo.ai/mcp/http/mcp"),
                 headers={
                     "Galileo-API-Key": os.environ["GALILEO_API_KEY"],
                     "Accept": "text/event-stream",
@@ -36,9 +34,7 @@ class MCPClient:
         )
 
         # Create the MCP client session
-        self._session = await self._exit_stack.enter_async_context(
-            ClientSession(read, write)
-        )
+        self._session = await self._exit_stack.enter_async_context(ClientSession(read, write))
 
         # Initialize the session
         await self._session.initialize()
