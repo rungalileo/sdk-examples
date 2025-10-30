@@ -52,11 +52,8 @@ def call_llm(messages, use_tools: bool = True) -> Message:
             model=os.environ["ANTHROPIC_MODEL"],
             num_input_tokens=response.usage.input_tokens,
             num_output_tokens=response.usage.output_tokens,
-            total_tokens=response.usage.input_tokens
-            + response.usage.output_tokens,
-            duration_ns=int(
-                (datetime.now().timestamp() * 1_000_000_000) - start_time_ns
-            ),
+            total_tokens=response.usage.input_tokens + response.usage.output_tokens,
+            duration_ns=int((datetime.now().timestamp() * 1_000_000_000) - start_time_ns),
         )
 
     return response
@@ -85,9 +82,7 @@ async def process_query(query: str) -> str:
     for content in response.content:
         if content.type == "text":
             # Save the text response to the message history
-            message_history.append(
-                {"role": "assistant", "content": content.text}
-            )
+            message_history.append({"role": "assistant", "content": content.text})
             final_text.append(content.text)
         elif content.type == "tool_use":
             # Get the tool start time
@@ -102,15 +97,10 @@ async def process_query(query: str) -> str:
                 output=result.content[0].text,
                 name=content.name,
                 tool_call_id=content.id,
-                duration_ns=int(
-                    (datetime.now().timestamp() * 1_000_000_000)
-                    - tool_start_time_ns
-                ),
+                duration_ns=int((datetime.now().timestamp() * 1_000_000_000) - tool_start_time_ns),
             )
 
-            final_text.append(
-                f"[Calling tool {content.name}" + f"with args {content.input}]"
-            )
+            final_text.append(f"[Calling tool {content.name}" + f"with args {content.input}]")
 
             # Create a copy of the messages
             # And add the tool response
@@ -123,18 +113,14 @@ async def process_query(query: str) -> str:
             response = call_llm(messages, use_tools=False)
 
             # Add the response to the original message history
-            message_history.append(
-                {"role": "assistant", "content": response.content[0].text}
-            )
+            message_history.append({"role": "assistant", "content": response.content[0].text})
 
             final_text.append(response.content[0].text)
 
     # Conclude and flush the trace
     galileo_logger.conclude(
         output="\n".join(final_text),
-        duration_ns=int(
-            (datetime.now().timestamp() * 1_000_000_000) - start_time_ns
-        ),
+        duration_ns=int((datetime.now().timestamp() * 1_000_000_000) - start_time_ns),
     )
     galileo_logger.flush()
 
