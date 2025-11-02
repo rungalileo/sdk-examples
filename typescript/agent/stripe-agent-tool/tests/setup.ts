@@ -1,8 +1,5 @@
 // Global test setup
-import { config } from 'dotenv';
-
-// Load environment variables for testing
-config();
+import "./config/environment";  // side-effect: loads env va
 
 // Mock environment variables if not set
 process.env.STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || 'sk_test_mock_key';

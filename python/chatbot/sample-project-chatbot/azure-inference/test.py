@@ -10,7 +10,7 @@ import json
 import os
 import time
 
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 
 from galileo import GalileoScorers
 from galileo.datasets import create_dataset, get_dataset
@@ -27,8 +27,11 @@ def setup_module():
     """
     print("Setting up test environment...")
 
-    # Load the environment variables from the .env file
-    load_dotenv()
+    # Load environment variables
+    # 1) load global/shared first
+    load_dotenv(os.path.expanduser("~/.config/secrets/myapps.env"), override=False)
+    # 2) then load per-app .env (if present) to override selectively
+    load_dotenv(find_dotenv(usecwd=True), override=True)
 
     # Verify required environment variables are set
     # You will also need to set up the environment variables for your OpenAI API connection.
