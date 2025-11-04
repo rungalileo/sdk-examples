@@ -6,9 +6,14 @@ from pydantic import BaseModel, Field
 import uuid
 from datetime import datetime
 
+# Module-level storage for todos to avoid Pydantic attribute conflicts
+# This ensures all instances share the same todo list
+SHARED_TODOS: Dict[str, "TodoItem"] = {}
+
 
 class TodoItem(BaseModel):
     """Todo item model"""
+
     id: str
     title: str
     description: Optional[str] = ""
@@ -19,7 +24,11 @@ class TodoItem(BaseModel):
 
 class TodoListInput(BaseModel):
     """Input schema for TodoListTool operations"""
-    operation: str = Field(..., description="Operation to perform: get_list, add, remove, update, mark_complete, mark_uncomplete")
+
+    operation: str = Field(
+        ...,
+        description="Operation to perform: get_list, add, remove, update, mark_complete, mark_uncomplete",
+    )
 
     # For add operation
     title: Optional[str] = Field(None, description="Title for new todo item")
@@ -41,11 +50,30 @@ class TodoListTool(BaseTool):
     Use this tool to manage tasks, track progress, and organize work items.
     """
     args_schema: Type[BaseModel] = TodoListInput
-    todos: Dict[str, TodoItem] = Field(default_factory=dict)
 
-    def _run(self, operation: str, title: Optional[str] = None, description: Optional[str] = None,
-             todo_id: Optional[str] = None, new_title: Optional[str] = None,
-             new_description: Optional[str] = None) -> str:
+    @property
+    def todos(self) -> Dict[str, TodoItem]:
+        """Access the shared todo list"""
+        # Use the module-level variable
+        global SHARED_TODOS
+        return SHARED_TODOS
+
+    @todos.setter
+    def todos(self, value: Dict[str, TodoItem]):
+        """Update the shared todo list"""
+        # Update the module-level variable
+        global SHARED_TODOS
+        SHARED_TODOS = value
+
+    def _run(
+        self,
+        operation: str,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        todo_id: Optional[str] = None,
+        new_title: Optional[str] = None,
+        new_description: Optional[str] = None,
+    ) -> str:
         """Execute todo list operations"""
 
         try:
@@ -116,7 +144,7 @@ class TodoListTool(BaseTool):
             description=description,
             completed=False,
             created_at=current_time,
-            updated_at=current_time
+            updated_at=current_time,
         )
 
         self.todos[todo_id] = new_todo
@@ -192,3 +220,10 @@ class TodoListTool(BaseTool):
 
         result += self._get_list()
         return result
+
+    @classmethod
+    def clear_all_todos(cls):
+        """Clear all todos from the shared storage (useful for testing)"""
+        global SHARED_TODOS
+        SHARED_TODOS = {}
+        return "✨ All todos have been cleared"

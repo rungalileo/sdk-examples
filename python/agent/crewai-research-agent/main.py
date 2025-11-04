@@ -1,7 +1,6 @@
 """CrewAI Research Agent with Planning Feature"""
 
 import os
-import warnings
 import argparse
 from datetime import datetime
 from crewai import LLM, Agent, Task, Crew
@@ -13,11 +12,11 @@ from galileo.handlers.crewai.handler import CrewAIEventListener
 # Load environment variables
 load_dotenv("../.env")
 
-CrewAIEventListener()
-
 
 # Initialize tools and models
-openai_model = LLM(model="openai/gpt-4.1-mini", temperature=0.1, api_key=os.getenv("OPENAI_API_KEY"))
+openai_model = LLM(
+    model="openai/gpt-4.1-mini", temperature=0.1, api_key=os.getenv("OPENAI_API_KEY")
+)
 exa_tool = EXASearchTool(api_key=os.getenv("EXA_API_KEY"))
 todo_tool = TodoListTool()
 
@@ -201,6 +200,8 @@ Examples:
     print(f"\nStarting research on: {topic}")
     print(f"Date context: {args.date}")
     print("-" * 80)
+
+    CrewAIEventListener()
 
     # Run the crew
     result = crew.kickoff(

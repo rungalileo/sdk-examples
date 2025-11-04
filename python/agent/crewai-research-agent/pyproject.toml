@@ -1,14 +1,14 @@
 [project]
 name = "galileo-crewai-research-agent"
 version = "0.1.0"
-description = "A CrewAI Research Agent with Planning Feature and Galileo evaluations"
+description = "A CrewAI Research Agent with Planning and Galileo evaluations"
 license = "MIT"
 requires-python = "<3.14,>=3.11"
 dependencies = [
-  "crewai~=1.2.0",
-  "crewai-tools~=1.2.0",
+  "galileo==1.28.0",
+  "crewai==0.203.1",
+  "crewai-tools==0.76.0",  
   "exa-py~=1.16.1",
-  "galileo>=1.28.0",
   "python-dotenv>=1.1.0",
   "openai~=1.109.1",
 ]
