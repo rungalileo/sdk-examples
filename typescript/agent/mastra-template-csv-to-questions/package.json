@@ -24,7 +24,7 @@
     "@mastra/libsql": "latest",
     "@mastra/loggers": "latest",
     "@mastra/memory": "latest",
-    "ai": "^4.0.56",
+    "ai": "^5.0.52",
     "zod": "^3.25.67"
   },
   "devDependencies": {
