@@ -6,10 +6,10 @@ This code is used in the [Run an experiment against a RAG app](http://v2docs.gal
 
 ## Get Started
 
-To get started with this project, you'll need to have Python 3.9 or later installed. You can then install the required dependencies in a virtual environment:
+Install the dependencies:
 
 ```bash
-pip install -r requirements.txt
+npm i
 ```
 
 ## Configure environment variables
@@ -33,7 +33,7 @@ This sample contains both an application that generates a fake horoscope using a
 To run the application, run:
 
 ```bash
-python app.py
+npx tsx app.ts
 ```
 
 Traces will be captured and logged to Galileo.
@@ -41,7 +41,7 @@ Traces will be captured and logged to Galileo.
 To run the experiment, run:
 
 ```bash
-python experiment.py
+npx tsx experiment.ts
 ```
 
 A link to the results of the experiment will be written to the console.
@@ -53,8 +53,9 @@ The project structure is as follows:
 ```folder
 rag-and-tools/
 ├── env.example        # List of environment variables
-├── requirements.txt   # Python project requirements
-├── app.py             # The main python application
-├── experiment.py      # Code to run the main application as an experiment
+├── package.json       # NPM project requirements
+├── package-lock.json  # NPM project requirements
+├── app.ts             # The main python application
+├── experiment.ts      # Code to run the main application as an experiment
 └── README.md          # Project documentation
 ```
