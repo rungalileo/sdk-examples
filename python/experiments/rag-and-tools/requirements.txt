@@ -1,0 +1,2 @@
+galileo[openai]
+python-dotenv
