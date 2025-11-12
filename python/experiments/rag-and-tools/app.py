@@ -113,9 +113,7 @@ def get_users_horoscope(sign: str) -> str:
                     "type": "function",
                     "function": {
                         "name": response.choices[0].message.tool_calls[0].function.name,
-                        "arguments": response.choices[0]
-                        .message.tool_calls[0]
-                        .function.arguments,
+                        "arguments": response.choices[0].message.tool_calls[0].function.arguments,
                     },
                 }
             ],
@@ -157,10 +155,7 @@ def main():
     # Start a session and trace
     galileo_logger = galileo_context.get_logger_instance()
     galileo_logger.start_session("RAG with Tools Example")
-    galileo_logger.start_trace(
-        input="What is my horoscope? I am Aquarius.",
-        name="Calling LLM with Tool"
-    )
+    galileo_logger.start_trace(input="What is my horoscope? I am Aquarius.", name="Calling LLM with Tool")
 
     response = get_users_horoscope("Aquarius")
 
@@ -169,6 +164,7 @@ def main():
     galileo_logger.flush()
 
     print(response)
+
 
 if __name__ == "__main__":
     main()
