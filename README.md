@@ -88,9 +88,15 @@ You can read more about these in our [Get started with sample projects documenta
 ### 📊 Dataset & Experiment Examples
 
 #### Python Datasets 🐍
+
 - **[Dataset Experiments](/python/dataset-experiments/)** - Managing test data and running controlled experiments
 
+#### Python Experiments
+
+- **[Experiments with RAG and tools](/python/experiments/rag-and-tools/)** - Using RAG and tools in an experiment
+
 #### TypeScript Datasets 📜
+
 - **[Dataset Experiments](/typescript/datasets-experiments/)** - Dataset management and experimentation in TypeScript
 
 #### 📚 Additional Resources
