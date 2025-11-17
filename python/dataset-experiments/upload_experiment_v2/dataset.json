@@ -1,0 +1,47 @@
+[
+    {
+      "question": "What's the protocol for solar panel deployment failure on the Mars orbiter?",
+      "context": [
+        "Mission Log 2847: Solar panel deployment issue on Mars Reconnaissance Orbiter resolved by cycling the deployment mechanism three times with 30-second intervals. Panel fully extended on third attempt. Battery levels stabilized after successful deployment.",
+        "Mission Log 2891: Similar deployment anomaly on Europa Clipper. Ground control sent emergency power sequence to release locking mechanism. Manual override successful, all systems nominal."
+      ],
+      "llm_answer": "For solar panel deployment failures on orbital spacecraft, the standard protocol involves cycling the deployment mechanism 2-3 times with 30-second intervals between attempts. If this fails, initiate emergency power sequence to manually override the locking mechanism. Monitor battery levels throughout and ensure spacecraft orientation maintains power to critical systems. After successful deployment, verify all panel segments are locked and power generation is within expected parameters.",
+      "ground_truth_answer": "Cycle the deployment mechanism up to three times with 30-second intervals. If unsuccessful, send emergency power sequence to override locking mechanism. Maintain spacecraft orientation for power stability."
+    },
+    {
+      "question": "How do we handle unexpected radiation spike warnings during ISS spacewalks?",
+      "context": [
+        "EVA Report 089: Radiation spike detected 45 minutes into EVA. Crew immediately moved to shadowed area behind station module. Spike subsided after 12 minutes, EVA resumed successfully.",
+        "EVA Report 094: Solar particle event warning triggered during routine maintenance. Crew returned to airlock within 8 minutes as per protocol. No radiation exposure exceeded safety limits."
+      ],
+      "llm_answer": "During ISS spacewalks, unexpected radiation spikes require immediate protective action. Crew should move to the shadowed side of the station, preferably behind large modules that provide shielding. If radiation levels remain elevated or continue rising, abort the EVA and return to the airlock immediately. All radiation warnings should be taken seriously as crew exposure time outside the Van Allen belts leaves them vulnerable to solar particle events. Mission Control will monitor the space weather data and provide clearance to resume activities.",
+      "ground_truth_answer": "Move immediately to shadowed area behind station modules. Monitor radiation levels and abort EVA if levels remain elevated. Wait for Mission Control clearance before resuming."
+    },
+    {
+      "question": "What's the recommended procedure for thruster fuel pressure anomaly on Artemis?",
+      "context": [
+        "Flight Report A-017: Thruster fuel pressure reading 5% below nominal on Artemis II capsule. Engineers verified sensor calibration and confirmed actual pressure was within spec. Sensor replaced during next maintenance window.",
+        "Flight Report A-023: Fuel pressure fluctuation detected during orbital maneuver. Switched to redundant fuel lines and pressure stabilized immediately. Primary line purged and tested, found debris in filter which was replaced."
+      ],
+      "llm_answer": "Thruster fuel pressure anomalies on Artemis spacecraft require systematic diagnosis. First, verify the sensor readings by cross-referencing with redundant pressure sensors if available. If pressure is genuinely low, switch to redundant fuel lines to maintain operational capability. Check fuel filters for debris or contamination that could restrict flow. If pressure continues to drop, prepare to use backup thrusters for critical maneuvers. Always notify Mission Control immediately and follow their guidance for mission-critical decisions.",
+      "ground_truth_answer": "Cross-reference with redundant sensors to verify reading. Switch to redundant fuel lines if pressure is confirmed low. Check and replace fuel filters if contaminated. Notify Mission Control immediately."
+    },
+    {
+      "question": "What coolant type is required for the James Webb Space Telescope sunshield?",
+      "context": [
+        "Technical Manual JWST-CS-001: The JWST sunshield uses passive cooling and does not require active coolant systems. The multi-layer sunshield reflects solar radiation while the cold side radiates heat to space.",
+        "Maintenance Log JWST-078: Cryocooler system for Mid-Infrared Instrument uses helium circulation at 6K. This is separate from sunshield thermal management."
+      ],
+      "llm_answer": "The James Webb Space Telescope sunshield actually uses passive cooling and does not require any active coolant fluid. The five-layer sunshield works by reflecting solar radiation while the cold side radiates infrared heat directly to space. The JWST instruments do use a helium cryocooler system to maintain temperatures around 6-7 Kelvin, but this is separate from the sunshield's passive thermal management system.",
+      "ground_truth_answer": "The JWST sunshield uses passive cooling with no active coolant. The multi-layer design reflects solar heat while radiating to space. Instruments use helium cryocooler separately."
+    },
+    {
+      "question": "Starship landing radar showing intermittent signal loss during descent",
+      "context": [
+        "Landing Report SS-045: Intermittent radar contact during final approach phase. Switched to backup optical landing system and landing completed successfully. Post-flight inspection revealed dust buildup on primary radar transceiver.",
+        "Landing Report SS-052: Radar altimeter dropout below 500 meters. Software automatically failed over to LIDAR system. Landing nominal. Root cause analysis showed electromagnetic interference from nearby ground equipment."
+      ],
+      "llm_answer": "Intermittent radar signal loss during Starship descent is addressed through redundant landing systems. The vehicle will automatically switch to backup optical or LIDAR systems if radar contact degrades. Common causes include dust or debris on the radar transceiver, electromagnetic interference, or terrain masking during certain descent angles. The flight computer is designed to handle sensor failures gracefully by fusing data from multiple sources. After landing, inspect radar hardware for contamination and check for sources of electromagnetic interference in the landing zone.",
+      "ground_truth_answer": "System will automatically fail over to backup optical/LIDAR systems. After landing, inspect radar transceiver for dust/debris and check for electromagnetic interference sources."
+    }
+  ]
