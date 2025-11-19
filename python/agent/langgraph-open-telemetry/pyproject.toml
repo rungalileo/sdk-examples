@@ -1,0 +1,20 @@
+[project]
+name = "langgraph-open-telemetry"
+version = "0.1.0"
+description = "LangGraph + OpenTelemetry + Galileo Integration"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "langgraph>=0.6.0",
+    "langgraph-prebuilt>=0.6.0",
+    "openai",
+    "python-dotenv>=1.1.0",
+    "galileo[otel]>=1.32.1",
+    "opentelemetry-instrumentation-langchain>=0.48.1",
+    "opentelemetry-instrumentation-openai-v2>=2.1b0",
+]
+
+[dependency-groups]
+dev = [
+    "black>=25.1.0",
+]
