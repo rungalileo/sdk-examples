@@ -1,26 +1,10 @@
-import json
 import logging
 import os
 from typing import TypedDict
 
-logging.basicConfig(level=logging.DEBUG)
-
-# Load environment variables first (contains API keys and project settings)
 import dotenv
-from galileo import otel
-
-dotenv.load_dotenv()
-
-# ============================================================================
-# OPENTELEMETRY & GALILEO IMPORTS
-# ============================================================================
-# OpenTelemetry (OTel) is an observability framework that helps you collect
-# traces, metrics, and logs from your applications. Think of it as a way to
-# "instrument" your code so you can see exactly what's happening during execution.
-
-# Core OpenTelemetry imports
-# OpenAI imports for LLM integration
 import openai
+from galileo import otel
 
 # LangGraph imports - this is what we're actually instrumenting
 from langgraph.graph import END, StateGraph
@@ -28,10 +12,11 @@ from opentelemetry import trace as trace_api  # API for interacting with traces
 from opentelemetry.instrumentation.langchain import LangchainInstrumentor
 from opentelemetry.instrumentation.openai_v2 import OpenAIInstrumentor
 from opentelemetry.sdk import trace as trace_sdk  # SDK for creating traces
+from opentelemetry.sdk.resources import Resource
 
-# ============================================================================
-# STEP 1: CONFIGURE API AUTHENTICATION
-# ============================================================================
+dotenv.load_dotenv()
+logging.basicConfig(level=logging.DEBUG)
+
 # Configure OpenAI API key
 openai_api_key = os.environ.get("OPENAI_API_KEY")
 if not openai_api_key:
@@ -41,21 +26,8 @@ if not openai_api_key:
 client = openai.OpenAI(api_key=openai_api_key)
 print("✓ OpenAI client configured")
 
-# Galileo is an AI observability platform that helps you monitor and debug
-# AI applications. It receives and visualizes the traces we'll generate.
-
 galileo_span_processor = otel.GalileoSpanProcessor()
 
-# ============================================================================
-# STEP 2: CONFIGURE OPENTELEMETRY TRACING
-# ============================================================================
-# OpenTelemetry works by creating "spans" - units of work that represent operations
-# in your application. Spans are organized into "traces" that show the full flow
-# of a request through your system.
-
-# Create a TracerProvider with descriptive resource information
-# This helps identify these traces as coming from OpenTelemetry in Galileo
-from opentelemetry.sdk.resources import Resource
 
 resource = Resource.create(
     {
@@ -68,10 +40,7 @@ tracer_provider = trace_sdk.TracerProvider(resource=resource)
 
 
 # Add a span processor that sends traces to Galileo
-# BatchSpanProcessor is more efficient than SimpleSpanProcessor for production
-# because it batches multiple spans together before sending
 otel.add_galileo_span_processor(tracer_provider, galileo_span_processor)
-# OTLP = OpenTelemetry Protocol
 
 # OPTIONAL: Console output disabled to reduce noise in Galileo
 # Uncomment the next 3 lines if you want local console debugging:
@@ -79,17 +48,7 @@ otel.add_galileo_span_processor(tracer_provider, galileo_span_processor)
 #     BatchSpanProcessor(ConsoleSpanExporter())
 # )
 
-# Register our tracer provider as the global one
-# This means all OpenTelemetry operations will use our configuration
 trace_api.set_tracer_provider(tracer_provider=tracer_provider)
-
-# ============================================================================
-# STEP 3: APPLY OPENTELEMETRY INSTRUMENTATION
-# ============================================================================
-# LangchainInstrumentor automatically instruments LangChain/LangGraph to create spans
-# for AI operations. This gives us detailed visibility into:
-# - LangGraph workflow execution
-# - Individual node processing, State transitions, Input/output data
 
 LangchainInstrumentor().instrument(tracer_provider=tracer_provider)
 OpenAIInstrumentor().instrument(tracer_provider=tracer_provider)
@@ -99,11 +58,6 @@ print("✓ LangGraph instrumentation applied - automatic spans will be created")
 tracer = trace_api.get_tracer(__name__)
 
 
-# ============================================================================
-# STEP 4: DEFINE THE LANGGRAPH STATE AND NODES
-# ============================================================================
-# LangGraph uses a shared state object (a dict) that flows through nodes. Each
-# node reads from the state and can write updates back to it.
 class AgentState(TypedDict, total=False):
     user_input: str  # The user's input question
     llm_response: str  # The raw response from the LLM
@@ -115,23 +69,6 @@ class AgentState(TypedDict, total=False):
 def validate_input(state: AgentState):
     user_input = state.get("user_input", "")
     print(f"📥 Validating input: '{user_input}'")
-
-    # Add span attributes for better observability
-    current_span = trace_api.get_current_span()
-    if current_span:
-        current_span.set_attribute(
-            "gen_ai.input.messages",
-            json.dumps(
-                [{"role": "user", "parts": [{"type": "json", "text": str(state)}]}]
-            ),
-        )
-        current_span.set_attribute(
-            "gen_ai.output.messages",
-            json.dumps(
-                [{"role": "assistant", "parts": [{"type": "json", "text": user_input}]}]
-            ),
-        )
-        current_span.set_attribute("node.type", "validation")
 
     return {"user_input": user_input}
 
@@ -156,7 +93,10 @@ def generate_response(state: AgentState):
         # Extract the response content
         llm_response = response.choices[0].message.content
 
-        print(f"✓ Received response: '{llm_response[:100]}...'")
+        if not llm_response:
+            print("❌ No response from OpenAI")
+        else:
+            print(f"✓ Received response: '{llm_response[:100]}...'")
 
         return {"llm_response": llm_response}
 
@@ -181,28 +121,6 @@ def format_answer(state: AgentState):
 
     print(f"✨ Parsed answer: '{parsed_answer}'")
 
-    # Add span attributes for better observability
-    current_span = trace_api.get_current_span()
-    if current_span:
-        current_span.set_attribute(
-            "gen_ai.input.messages",
-            json.dumps(
-                [{"role": "user", "parts": [{"type": "json", "text": llm_response}]}]
-            ),
-        )
-        current_span.set_attribute(
-            "gen_ai.output.messages",
-            json.dumps(
-                [
-                    {
-                        "role": "assistant",
-                        "parts": [{"type": "json", "text": parsed_answer}],
-                    }
-                ]
-            ),
-        )
-        current_span.set_attribute("node.type", "formatting")
-
     return {"parsed_answer": parsed_answer}
 
 
@@ -225,51 +143,13 @@ app = workflow.compile()
 
 # Run the app and observe traces in both console and Galileo
 if __name__ == "__main__":
-    # Create a session-level span to group all operations
-    with tracer.start_as_current_span("astronomy_qa_session") as session_span:
-        inputs = {"user_input": "what moons did galileo discover"}
+    inputs = {"user_input": "what moons did galileo discover"}
 
-        # Add attributes for proper input/output display
-        session_span.set_attribute(
-            "gen_ai.input.messages",
-            json.dumps(
-                [
-                    {
-                        "role": "user",
-                        "parts": [{"type": "json", "text": inputs["user_input"]}],
-                    }
-                ]
-            ),
-        )
-        session_span.set_attribute("session.type", "question_answering")
-        session_span.set_attribute("session.domain", "astronomy")
+    result = app.invoke(AgentState(**inputs))
 
-        result = app.invoke(AgentState(**inputs))
-
-        # Add result attributes with OpenInference-compatible format
-        if result.get("llm_response"):
-            final_answer = result.get("parsed_answer", result.get("llm_response"))
-            session_span.set_attribute(
-                "gen_ai.output.messages",
-                json.dumps(
-                    [
-                        {
-                            "role": "assistant",
-                            "parts": [{"type": "text", "text": final_answer}],
-                        }
-                    ]
-                ),
-            )
-            session_span.set_attribute("gen_ai.output.type", "text")
-            session_span.set_status(trace_api.Status(trace_api.StatusCode.OK))
-        else:
-            session_span.set_status(
-                trace_api.Status(trace_api.StatusCode.ERROR, "No response generated")
-            )
-
-        print("\n=== FINAL RESULT ===")
-        print(f"Question: {result.get('user_input', 'N/A')}")
-        print(f"LLM Response: {result.get('llm_response', 'N/A')}")
-        print(f"Parsed Answer: {result.get('parsed_answer', 'N/A')}")
+    print("\n=== FINAL RESULT ===")
+    print(f"Question: {result.get('user_input', 'N/A')}")
+    print(f"LLM Response: {result.get('llm_response', 'N/A')}")
+    print(f"Parsed Answer: {result.get('parsed_answer', 'N/A')}")
 
     print("✓ Execution complete - check Galileo for traces in your project/log stream")

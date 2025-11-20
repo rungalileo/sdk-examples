@@ -68,46 +68,6 @@ uv run python main.py
 
 This runs a question-answering LangGraph workflow with comprehensive OpenTelemetry tracing. Check your Galileo project for detailed traces!
 
-## Workflow Overview
-
-The example implements a 3-step question-answering workflow:
-
-1. **Input Validation** (`validate_input`) - Validates and prepares the user's question
-2. **Response Generation** (`generate_response`) - Calls OpenAI GPT-3.5-turbo to generate an answer
-3. **Answer Formatting** (`format_answer`) - Extracts and formats the final answer
-
-### Trace Hierarchy
-
-In Galileo, you'll see a clean trace structure:
-
-```
-└── astronomy_qa_session [Question → Final Answer]
-    ├── LangGraph [Workflow execution]
-    │   ├── validate_input [Input validation]
-    │   ├── generate_response [LLM processing]
-    │   └── format_answer [Answer formatting]
-    └── gpt-3.5-turbo [Detailed OpenAI API call]
-        ├── Token usage (prompt/completion/total)
-        ├── Model parameters (temperature, max_tokens)
-        └── Input/output messages
-```
-
-### Key Observability Benefits
-
-- **Complete Input/Output Visibility** - See data flowing through each step  
-- **LLM Call Details** - Token usage, model parameters, and timing
-- **Session Context** - Grouped operations with meaningful metadata
-- **Error Tracking** - Automatic error capture and status tracking
-- **Performance Insights** - Timing for each workflow step
-
-### Trace Attributes
-
-Each span includes rich metadata:
-
-- **Session Level**: Question, answer, domain (astronomy), type (Q&A)
-- **Node Level**: Input/output values, node type, processing details
-- **LLM Level**: Model name, tokens, temperature, messages, vendor
-
 ## What's included
 
 - **`main.py`** - Complete LangGraph workflow with OpenTelemetry tracing
