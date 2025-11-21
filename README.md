@@ -28,19 +28,22 @@ When you first sign up for Galileo, you will get 2 sample projects created, a si
 You can read more about these in our [Get started with sample projects documentation](https://v2docs.galileo.ai/getting-started/sample-projects/sample-projects).
 
 #### Python
-  - [Simple chatbot using OpenAI/Ollama](/python/chatbot/sample-project-chatbot/openai-ollama/) - Simple chatbot using the OpenAI SDK to interact with OpenAI or Ollama
-  - [Simple chatbot using Anthropic](/python/chatbot/sample-project-chatbot/anthropic/) - Simple chatbot using the Anthropic SDK
-  - [Simple chatbot using Azure AI Inference](/python/chatbot/sample-project-chatbot/azure-inference/) - Simple chatbot using the Azure AI Inference SDK to interact with models deployed to Azure AI Foundry
-  - [Log MCP calls](/python/logging-samples/log-mcp-calls/) - Log MCP calls as tool spans
+
+- [Simple chatbot using OpenAI/Ollama](/python/chatbot/sample-project-chatbot/openai-ollama/) - Simple chatbot using the OpenAI SDK to interact with OpenAI or Ollama
+- [Simple chatbot using Anthropic](/python/chatbot/sample-project-chatbot/anthropic/) - Simple chatbot using the Anthropic SDK
+- [Simple chatbot using Azure AI Inference](/python/chatbot/sample-project-chatbot/azure-inference/) - Simple chatbot using the Azure AI Inference SDK to interact with models deployed to Azure AI Foundry
+- [Log MCP calls](/python/logging-samples/log-mcp-calls/) - Log MCP calls as tool spans
 
 #### Typescript
-  - [Simple chatbot using OpenAI/Ollama](/typescript/chatbot/sample-project-chatbot/openai-ollama/) - Simple chatbot using the OpenAI SDK to interact with OpenAI or Ollama
-  - [Simple chatbot using Anthropic](/typescript/chatbot/sample-project-chatbot/anthropic/) - Simple chatbot using the Anthropic SDK
-  - [Simple chatbot using Azure AI Inference](/typescript/chatbot/sample-project-chatbot/azure-inference/) - Simple chatbot using the Azure AI Inference SDK to interact with models deployed to Azure AI Foundry
+
+- [Simple chatbot using OpenAI/Ollama](/typescript/chatbot/sample-project-chatbot/openai-ollama/) - Simple chatbot using the OpenAI SDK to interact with OpenAI or Ollama
+- [Simple chatbot using Anthropic](/typescript/chatbot/sample-project-chatbot/anthropic/) - Simple chatbot using the Anthropic SDK
+- [Simple chatbot using Azure AI Inference](/typescript/chatbot/sample-project-chatbot/azure-inference/) - Simple chatbot using the Azure AI Inference SDK to interact with models deployed to Azure AI Foundry
 
 ### 🤖 Agent Examples
 
 #### Python Agents 🐍
+
 - **[LangChain Agent](/python/agent/langchain-agent/)** - Basic LangChain agent with Galileo integration
 - **[LangGraph FSI Agent](/python/agent/langgraph-fsi-agent/)** - Financial services agent with before/after implementations  
 - **[LangGraph Telecom Agent](/python/agent/langgraph-telecom-agent/)** - Telecom services agent with Galileo integration  
@@ -51,8 +54,11 @@ You can read more about these in our [Get started with sample projects documenta
 - **[Minimal Agent Example](/python/agent/minimal-agent-example/)** - Simple agent with basic tool usage
 - **[Google ADK + OpenTelemetry](/python/agent/google-adk/)** - The Google SDK quickstart app with logging to Galileo using OpenTelemetry and OpenInference
 - **[Strands Agents + OpenTelemetry](/python/agent/strands-agents/)** - The Strands Agents quickstart app with logging to Galileo using OpenTelemetry
+- **[LangGraph + OpenTelemetry](/python/agent/langgraph-open-telemetry/)** - LangGraph with OpenTelemetry instrumentation for observability
+- **[LangGraph + Traceloop](/python/agent/langgraph-traceloop/)** - LangGraph with Traceloop for observability
 
 #### TypeScript Agents 📜  
+
 - **[LangGraph FSI Agent](/typescript/agent/langgraph-fsi-agent/)** - Financial services agent in TypeScript
 - **[Stripe Agent Tool](/typescript/agent/stripe-agent-tool/)** - 💳 Agent with Stripe payment processing integration
 - **[Mastra Template CSV to Questions](/typescript/agent/mastra-template-csv-to-questions/)** - Galileo tracing with Mastra framework and OpenInference
@@ -62,13 +68,15 @@ You can read more about these in our [Get started with sample projects documenta
 ### 💬 Chatbot Examples
 
 #### Python Chatbots 🐍
+
 - **[Basic Examples](/python/chatbot/basic-examples/)** - Simple conversational application with context management
 - **[Sample Project Chatbot](/python/chatbot/sample-project-chatbot/)** - Multi-LLM chatbot with experiment capabilities:
-  - [OpenAI/Ollama variant](/python/chatbot/sample-project-chatbot/openai-ollama/) 
+  - [OpenAI/Ollama variant](/python/chatbot/sample-project-chatbot/openai-ollama/)
   - [Anthropic variant](/python/chatbot/sample-project-chatbot/anthropic/)
   - [Azure AI Inference variant](/python/chatbot/sample-project-chatbot/azure-inference/)
 
 #### TypeScript Chatbots 📜
+
 - **[Basic Examples](/typescript/chatbot/basic-examples/)** - Fundamental chatbot patterns in TypeScript  
 - **[Sample Project Chatbot](/typescript/chatbot/sample-project-chatbot/)** - Multi-LLM chatbot implementations:
   - [OpenAI/Ollama variant](/typescript/chatbot/sample-project-chatbot/openai-ollama/)
@@ -78,16 +86,19 @@ You can read more about these in our [Get started with sample projects documenta
 ### 🔍 RAG (Retrieval-Augmented Generation) Examples
 
 #### Python RAG 🐍
+
 - **[CLI RAG Demo](/python/rag/cli-rag-demo/)** - Command-line RAG with chunk utilization challenges
 - **[Elastic Chatbot RAG App](/python/rag/elastic-chatbot-rag-app/)** - Full-stack RAG application with Elasticsearch
 - **[Healthcare Support Portal](/python/rag/healthcare-support-portal/)** - Domain-specific RAG for healthcare queries
 
 #### TypeScript RAG 📜
+
 - **[Basic RAG Implementation](/typescript/rag/)** - Fundamental RAG patterns in TypeScript
 
 ### 📊 Dataset & Experiment Examples
 
 #### Python Datasets 🐍
+
 - **[Dataset Experiments](/python/dataset-experiments/)** - Managing test data and running controlled experiments
 
 #### Python Experiments
@@ -95,6 +106,7 @@ You can read more about these in our [Get started with sample projects documenta
 - **[Upload Experiments](/python/experiments/upload_experiment/)** - Upload experiment results for an eval that's already ran
 
 #### TypeScript Datasets 📜
+
 - **[Dataset Experiments](/typescript/datasets-experiments/)** - Dataset management and experimentation in TypeScript
 
 #### 📚 Additional Resources
@@ -106,6 +118,7 @@ You can read more about these in our [Get started with sample projects documenta
 ## 📖 Read the Docs
 
 ### Core Documentation
+
 - **[Galileo.ai Documentation](https://v2docs.galileo.ai/what-is-galileo)** - Complete platform overview
 - **[Galileo Cookbooks](https://v2docs.galileo.ai/cookbooks/overview)** - 🔥 **Step-by-step tutorials and guides**
 - **[Python SDK Documentation](https://v2docs.galileo.ai/sdk-api/python/overview)** - Python SDK reference
@@ -121,6 +134,7 @@ You can read more about these in our [Get started with sample projects documenta
 ## 🎆 Key Features & Use Cases
 
 ### 🚀 What You'll Learn
+
 - **Agent Development** - Build AI systems that can use tools, make decisions, and collaborate
 - **Observability** - Comprehensive tracing with OpenTelemetry and Galileo integration  
 - **RAG Applications** - Combine knowledge bases with LLMs for enhanced responses
@@ -128,6 +142,7 @@ You can read more about these in our [Get started with sample projects documenta
 - **Production Patterns** - Error handling, evaluation, and monitoring best practices
 
 ### 🎯 Application Patterns Covered
+
 - **🤖 AI Agents** - Tool-using systems with decision-making capabilities
   - *Featured: LangGraph + OpenTelemetry* - Complete observability setup
   - *Stripe Agent* - Payment processing integration
