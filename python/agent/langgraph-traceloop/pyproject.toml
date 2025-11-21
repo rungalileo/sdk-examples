@@ -7,6 +7,8 @@ requires-python = ">=3.12"
 dependencies = [
     "langgraph>=0.6.0",
     "langgraph-prebuilt>=0.6.0",
+    "langchain-core>=0.3.0",
+    "langchain-openai>=0.2.0",
     "openai",
     "python-dotenv>=1.1.0",
     "traceloop-sdk>=0.30.0",
