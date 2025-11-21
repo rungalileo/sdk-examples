@@ -1,0 +1,9 @@
+# RAG Service Specific
+.env
+*.log
+logs/
+.pytest_cache/
+__pycache__/
+*.pyc
+uploads/
+.openai_cache/
