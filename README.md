@@ -104,6 +104,7 @@ You can read more about these in our [Get started with sample projects documenta
 #### Python Experiments
 
 - **[Experiments with RAG and tools](/python/experiments/rag-and-tools/)** - Using RAG and tools in an experiment
+- **[Upload Experiments](/python/experiments/upload_experiment/)** - Upload experiment results for an eval that's already ran
 
 #### TypeScript Datasets 📜
 
