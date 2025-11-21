@@ -255,7 +255,7 @@ def upload_experiment(
         metrics=metrics,
     )
 
-    print(f"✓ Experiment complete!")
+    print("✓ Experiment complete!")
 
     return results
 
@@ -303,7 +303,7 @@ def main():
     dataset = prepare_dataset_for_galileo(EVALUATION_DATA_PATH, DATASET_NAME)
 
     # Step 2: Upload experiment with full traces
-    print(f"\n🚀 Uploading experiment...")
+    print("\n🚀 Uploading experiment...")
     results = upload_experiment(
         dataset=dataset,
         evaluation_data_path=EVALUATION_DATA_PATH,
@@ -313,9 +313,8 @@ def main():
     )
 
     if results:
-        project = os.environ.get("GALILEO_PROJECT")
-        console_url = os.environ.get("GALILEO_CONSOLE_URL")
-        print(f"\n✅ Success! View your results in Galileo")
+        print("\n✅ Success! View your results in Galileo")
+        print(f"URL: {results['link']}")
 
 
 if __name__ == "__main__":

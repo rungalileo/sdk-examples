@@ -100,7 +100,7 @@ You can read more about these in our [Get started with sample projects documenta
 #### Python Datasets 🐍
 
 - **[Dataset Experiments](/python/dataset-experiments/)** - Managing test data and running controlled experiments
-- **[Uploading Experiments](/python/dataset-experiments/upload_experiment_v2/)** - Upload experiment results for an eval that's already ran
+- **[Upload Experiments](/python/experiments/upload_experiment/)** - Upload experiment results for an eval that's already ran
 
 #### TypeScript Datasets 📜
 

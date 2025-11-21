@@ -64,7 +64,7 @@ pip install -r requirements.txt
 
 ### 2. Configure Environment
 
-Copy `env.example` to `.env` and add your Galileo credentials:
+Copy `.env.example` to `.env` and add your Galileo credentials:
 
 ```bash
 cp env.example .env
