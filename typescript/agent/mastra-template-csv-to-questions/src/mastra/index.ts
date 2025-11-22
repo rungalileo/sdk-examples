@@ -1,3 +1,4 @@
+import "../config/env";  // side-effect: loads env vars
 import {
   OpenInferenceOTLPTraceExporter,
   isOpenInferenceSpan,

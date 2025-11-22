@@ -10,14 +10,18 @@ from langchain.schema.runnable.config import RunnableConfig
 from langchain_core.callbacks import Callbacks
 from langchain_core.messages import HumanMessage, AIMessage
 
-from dotenv import load_dotenv
+import os
+from pathlib import Path
+from dotenv import load_dotenv, find_dotenv
 
 from src.galileo_langgraph_fsi_agent.agents.supervisor_agent import (
     create_supervisor_agent,
 )
 
-# Load environment variables from .env file
-load_dotenv()
+# 1) load global/shared first
+load_dotenv(os.path.expanduser("~/.config/secrets/myapps.env"), override=False)
+# 2) then load per-app .env (if present) to override selectively
+load_dotenv(find_dotenv(usecwd=True), override=True)
 
 
 # Build the agent graph
