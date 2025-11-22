@@ -64,6 +64,8 @@ async function getHoroscope({ sign }: { sign: string }): Promise<string> {
         durationNs: getNanoSecTime() - startTimeNs,
     });
 
+    await sleep(100); // Simulate tool latency
+
     return response;
 }
 
