@@ -1,13 +1,24 @@
 import dotenv from "dotenv";
 import { OpenAI } from "openai";
 import { getLogger, wrapOpenAI } from "galileo";
-import { sleep } from "openai/core.mjs";
 
 // Load environment variables from .env
 dotenv.config();
 
+async function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// Capture the current time in nanoseconds for logging
+function getNanoSecTime(): number {
+    var hrTime = process.hrtime();
+    return hrTime[0] * 1000000000 + hrTime[1];
+};
+
 // A mock RAG retriever function
 async function retrieveHoroscopeData(sign: string): Promise<string[]> {
+    const startTimeNs = getNanoSecTime();
+
     const horoscopes: Record<string, string[]> = {
         Aquarius: [
             "Next Tuesday you will befriend a baby otter.",
@@ -26,14 +37,32 @@ async function retrieveHoroscopeData(sign: string): Promise<string[]> {
 
     await sleep(100); // Simulate RAG latency
 
+    const galileoLogger = getLogger();
+    galileoLogger.addRetrieverSpan({
+        name: "get_horoscope",
+        input: sign,
+        output: response,
+        durationNs: getNanoSecTime() - startTimeNs,
+    });
+
     return response;
 }
 
 // Tool function to get today's horoscope for a given astrological sign
 async function getHoroscope({ sign }: { sign: string }): Promise<string> {
+    const startTimeNs = getNanoSecTime();
+
     const response = (await retrieveHoroscopeData(sign)).join("\n");
 
     await sleep(100); // Simulate tool latency
+
+    const galileoLogger = getLogger();
+    galileoLogger.addToolSpan({
+        name: "get_horoscope",
+        input: sign,
+        output: response,
+        durationNs: getNanoSecTime() - startTimeNs,
+    });
 
     return response;
 }

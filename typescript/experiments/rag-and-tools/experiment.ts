@@ -27,5 +27,5 @@ dotenv.config();
     });
 
     console.log("Experiment Results:");
-    console.log(experiment);
+    console.log(experiment.link);
 })();
