@@ -9,4 +9,17 @@ python/agent/langgraph-fsi-agent/after/script.py
 python/chatbot/sample-project-chatbot/openai-ollama/script.py
 */dist
 *dist
+application.properties
+*.pdf
 
+# Next.js
+.next/
+
+# Java / Maven
+target/
+
+# Node
+node_modules/
+
+# MacOS
+.DS_Store
