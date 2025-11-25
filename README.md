@@ -109,6 +109,10 @@ You can read more about these in our [Get started with sample projects documenta
 
 - **[Dataset Experiments](/typescript/datasets-experiments/)** - Dataset management and experimentation in TypeScript
 
+#### TypeScript Experiments
+
+- **[Experiments with RAG and tools](/typescript/experiments/rag-and-tools/)** - Using RAG and tools in an experiment
+
 #### 📚 Additional Resources
 
 - [Galileo SDK Documentation](https://v2docs.galileo.ai/sdk-api/overview) - SDK documentation
