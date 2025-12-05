@@ -1,0 +1,9 @@
+# Dependencies for quickstart-protect
+# Pin versions if you need reproducibility; these are minimal names commonly used
+# with the Galileo SDK. If install fails, check the package names used by your org.
+
+galileo
+galileo-core
+python-dotenv
+phonenumbers>=8.12.0
+email-validator>=1.1.3
