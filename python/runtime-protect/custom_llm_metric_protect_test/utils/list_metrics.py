@@ -26,13 +26,13 @@ except Exception as e:
 
 try:
     # Try galileo.scorers.Scorers().list()
-    if hasattr(galileo, 'scorers'):
+    if hasattr(galileo, "scorers"):
         try:
             sc_client = galileo.scorers.Scorers()
             resp = sc_client.list()
-            if hasattr(resp, 'scorers'):
+            if hasattr(resp, "scorers"):
                 items = resp.scorers
-            elif hasattr(resp, 'items'):
+            elif hasattr(resp, "items"):
                 items = resp.items
             elif isinstance(resp, list):
                 items = resp
@@ -44,8 +44,8 @@ try:
 
             print(f"✅ Found {len(items)} registered scorers (showing names where available):")
             for it in items[:50]:
-                name = getattr(it, 'name', None) or getattr(it, 'scorer_name', None) or getattr(it, 'title', None)
-                sid = getattr(it, 'id', None) or getattr(it, 'scorer_id', None)
+                name = getattr(it, "name", None) or getattr(it, "scorer_name", None) or getattr(it, "title", None)
+                sid = getattr(it, "id", None) or getattr(it, "scorer_id", None)
                 print(f" - {name} (id={sid})")
 
             print("\nIf you see 'pii_detection' in the list above, the metric is registered.")
@@ -54,18 +54,18 @@ try:
             print(f"⚠️  scorers.Scorers().list() failed: {e}")
 
     # Try galileo.metrics.list_scorers()
-    if hasattr(galileo, 'metrics'):
+    if hasattr(galileo, "metrics"):
         try:
             metrics_mod = galileo.metrics
             print("ℹ️  Using galileo.metrics to list registered scorers (if supported)...")
-            if hasattr(metrics_mod, 'list_scorers'):
+            if hasattr(metrics_mod, "list_scorers"):
                 try:
                     resp = metrics_mod.list_scorers()
-                    items = getattr(resp, 'scorers', None) or getattr(resp, 'items', None) or resp
+                    items = getattr(resp, "scorers", None) or getattr(resp, "items", None) or resp
                     print(f"✅ metrics.list_scorers() returned {len(items) if items else 0} items (showing up to 50):")
                     for it in (items or [])[:50]:
-                        name = getattr(it, 'name', None)
-                        sid = getattr(it, 'id', None)
+                        name = getattr(it, "name", None)
+                        sid = getattr(it, "id", None)
                         print(f" - {name} (id={sid})")
                     print("\nIf you see 'pii_detection' in the list above, the metric is registered.")
                     exit(0)
@@ -77,8 +77,8 @@ try:
     # Fallback: print likely-relevant attributes on the galileo package
     print("\n⚠️  Could not enumerate scorers programmatically with this SDK version.")
     print("Available top-level attributes on the 'galileo' package that may be useful:")
-    for a in sorted([m for m in dir(galileo) if not m.startswith('_')]):
-        if 'scor' in a.lower() or 'metric' in a.lower() or 'metrics' in a.lower():
+    for a in sorted([m for m in dir(galileo) if not m.startswith("_")]):
+        if "scor" in a.lower() or "metric" in a.lower() or "metrics" in a.lower():
             print(f" - {a}")
 
     print("\nManual verification steps:")

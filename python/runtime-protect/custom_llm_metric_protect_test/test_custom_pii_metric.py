@@ -27,32 +27,25 @@ action = OverrideAction(
     choices=[
         "This input contains sensitive information and cannot be processed.",
         "Please remove any personal information before resubmitting.",
-        "We cannot process personal information. Please rephrase your request."
+        "We cannot process personal information. Please rephrase your request.",
     ]
 )
 
 # Create rule for PII detection
 # Metric name comes from env var GALILEO_METRIC
 
-METRIC_NAME = os.getenv('GALILEO_METRIC')
-rule = Rule(
-    metric=METRIC_NAME,  # Our custom metric name
-    operator=RuleOperator.eq,
-    target_value="true"  # Trigger when PII is detected (true)
-)
+METRIC_NAME = os.getenv("GALILEO_METRIC")
+rule = Rule(metric=METRIC_NAME, operator=RuleOperator.eq, target_value="true")  # Our custom metric name  # Trigger when PII is detected (true)
 
 ruleset = Ruleset(rules=[rule])
 
 # Create the stage - explicitly pass project_name if env var not working
-project_name = os.getenv('GALILEO_PROJECT') or "MyFirstRuntimeProtect"
+project_name = os.getenv("GALILEO_PROJECT") or "MyFirstRuntimeProtect"
 
 # Create the stage with the custom PII detection metric
 try:
     stage = create_protect_stage(
-        name="PII_Detection_Test_Stage",
-        stage_type=StageType.central,
-        prioritized_rulesets=[ruleset],
-        description="Test the custom PII detection metric"
+        name="PII_Detection_Test_Stage", stage_type=StageType.central, prioritized_rulesets=[ruleset], description="Test the custom PII detection metric"
     )
     print(f"✅ Stage created: {stage}")
 except Exception as e:
@@ -66,10 +59,7 @@ time.sleep(2)
 
 # Verify by retrieving it
 try:
-    verified_stage = get_protect_stage(
-        project_name=project_name,
-        stage_name="PII_Detection_Test_Stage"
-    )
+    verified_stage = get_protect_stage(project_name=project_name, stage_name="PII_Detection_Test_Stage")
 
     if verified_stage:
         print(f"✅ Stage verified: {verified_stage.name}")
@@ -79,21 +69,18 @@ try:
 except Exception as e:
     print(f"⚠️  Could not verify stage: {e}")
 
+
 # Create workflow with Protect
 def run_workflow(user_input, description=""):
     # Invoke Protect
     payload = Payload(input=user_input, output="")
     try:
-        response = invoke_protect(
-            payload=payload,
-            project_name=project_name,
-            stage_name="PII_Detection_Test_Stage",
-            prioritized_rulesets=[ruleset]
-        )
+        response = invoke_protect(payload=payload, project_name=project_name, stage_name="PII_Detection_Test_Stage", prioritized_rulesets=[ruleset])
         return response
     except Exception as e:
         print(f"   ❌ ERROR invoking protect: {e}")
         return None
+
 
 # Test cases with and without PII
 test_cases = [
@@ -109,36 +96,36 @@ test_cases = [
     ("My credit card is 1234-5678-9012-3456", "Contains card number - HAS PII"),
 ]
 
-print("\n" + "="*80)
+print("\n" + "=" * 80)
 print("🧪 Testing Custom PII Detection Metric")
-print("="*80 + "\n")
+print("=" * 80 + "\n")
 
 for i, (test_input, description) in enumerate(test_cases, 1):
     print(f"Test {i}: {description}")
     print(f"   Input: '{test_input}'")
-    
+
     response = run_workflow(test_input, description)
-    
+
     if response:
         print(f"   Status: {response.status}")
         print(f"   Action: {response.action_result.get('type', 'N/A')}")
-        
-        if response.status.value == 'triggered':
+
+        if response.status.value == "triggered":
             print(f"   ✅ PII DETECTED - Rule triggered!")
-            if response.action_result.get('value'):
+            if response.action_result.get("value"):
                 print(f"   Override: {response.action_result['value']}")
-        elif response.status.value == 'not_triggered':
+        elif response.status.value == "not_triggered":
             print(f"   ✅ No PII detected - Rule not triggered")
-        elif response.status.value == 'skipped':
+        elif response.status.value == "skipped":
             print(f"   ⏳ Status: skipped (metric evaluation may be pending)")
         else:
             print(f"   Status: {response.status.value}")
-        
-        if hasattr(response, 'metric_results') and response.metric_results:
+
+        if hasattr(response, "metric_results") and response.metric_results:
             print(f"   Metric Results: {response.metric_results}")
-    
+
     print()
 
-print("="*80)
+print("=" * 80)
 print("✅ PII Detection Tests Completed!")
-print("="*80)
+print("=" * 80)

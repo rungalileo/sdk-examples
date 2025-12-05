@@ -44,21 +44,22 @@ Respond with ONLY "true" if PII is detected, "false" if no PII is detected.
         num_judges=1,  # Can increase for more robust evaluation
         description="Detects Personally Identifiable Information (PII) in text using LLM evaluation",
         tags=["pii", "security", "protect"],
-        output_type=OutputTypeEnum.BOOLEAN
+        output_type=OutputTypeEnum.BOOLEAN,
     )
-    
+
     print(f"✅ Metric created successfully!")
     print(f"Metric ID: {metric_response.id if hasattr(metric_response, 'id') else 'N/A'}")
     print(f"Metric Name: {METRIC_NAME}")
     # print(f"Response: {metric_response}")
-    
+
 except Exception as e:
     print(f"❌ Error creating metric: {e}")
     exit(1)
 
 print("\n📝 Next steps:")
 print("1. Use this metric in your Protect rules:")
-print("""
+print(
+    """
 from galileo_core.schemas.protect.rule import Rule, RuleOperator
 
 rule = Rule(
@@ -66,4 +67,5 @@ rule = Rule(
     operator=RuleOperator.eq,
     target_value="true"
 )
-""")
+"""
+)
