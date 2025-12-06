@@ -8,7 +8,8 @@ import os
 import json
 from typing import Dict, Any, List, Optional
 from datetime import datetime
-from dotenv import load_dotenv
+from pathlib import Path
+from dotenv import load_dotenv, find_dotenv 
 from galileo import GalileoLogger
 from galileo.openai import openai
 
@@ -27,8 +28,10 @@ from tools.news_api_tool import NewsAPITool
 from tools.text_analysis import TextAnalyzerTool
 from tools.keyword_extraction import KeywordExtractorTool
 
-# Load environment variables
-load_dotenv()
+# 1) load global/shared first
+load_dotenv(os.path.expanduser("~/.config/secrets/myapps.env"), override=False)
+# 2) then load per-app .env (if present) to override selectively
+load_dotenv(find_dotenv(usecwd=True), override=True)
 
 # Use the Galileo-wrapped OpenAI client
 client = openai.OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
