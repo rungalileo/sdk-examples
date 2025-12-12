@@ -13,7 +13,7 @@ This example demonstrates distributed tracing across two services using Galileo'
 
 ```bash
 # Navigate to the distributed_tracing_example directory
-cd /path/to/distributed_tracing_example
+cd /.../sdk-examples/python/logging-samples/distributed-tracing
 
 # Create virtual environment
 python -m venv venv
@@ -23,13 +23,8 @@ source venv/bin/activate
 ```
 
 ### 2. Install Dependencies
+Run
 
-This example uses a specific branch of the Galileo SDK with decorator support:
-Change your requirements.txt -> replace `galileo[openai]` with this line
-```
-galileo[openai] @ git+https://github.com/rungalileo/galileo-python.git@adding_decorator_support
-```
-then run ->
 ```bash
 pip install -r requirements.txt
 ```
@@ -37,11 +32,8 @@ pip install -r requirements.txt
 
 
 ### 3. Configure Environment Variables
-
-Create a `.env` file in the **root `distributed_tracing_example` directory** (one level up from this folder):
-
+Your `.env` should look like this. Feel free to follow the `.env.example` and enter your credentials
 ```bash
-# /path/to/distributed_tracing_example/.env
 
 # Required: Your Galileo API key
 GALILEO_API_KEY=your_api_key_here
@@ -65,7 +57,7 @@ You need to run both services in **separate terminal processes**.
 
 ```bash
 # Make sure you're in the galileo-dt-decorator directory
-cd /path/to/distributed_tracing_example/galileo-dt-decorator
+cd /.../sdk-examples/python/logging-samples/distributed-tracing
 
 # Activate venv (if not already activated)
 source ../venv/bin/activate
@@ -87,13 +79,13 @@ INFO:     Application startup complete.
 
 ```bash
 # In a NEW terminal, navigate to the galileo-dt-decorator directory
-cd /path/to/distributed_tracing_example/galileo-dt-decorator
+cd /.../sdk-examples/python/logging-samples/distributed-tracing
 
 # Activate venv
 source ../venv/bin/activate
 
 # Run the orchestrator
-python main_distributed_tracing.py
+python main_run.py
 ```
 
 ## Expected Output
