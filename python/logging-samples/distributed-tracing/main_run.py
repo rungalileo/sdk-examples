@@ -28,9 +28,8 @@ RETRIEVAL_SERVICE_URL = "http://localhost:8000"
 
 
 # ============================================================================
-# ORCHESTRATOR SERVICE 
+# ORCHESTRATOR SERVICE
 # ============================================================================
-
 
 
 @log
@@ -44,7 +43,7 @@ async def orchestrator_agent(question: str) -> str:
     """
     # Step 1: Determine what information we need
     context_analysis = analyze_question(question)
-    
+
     # Step 2: Call retrieval service via HTTP with distributed tracing
     # Get current trace and span IDs to pass to the retrieval service
     # Similar to LangSmith's get_current_run_tree().to_headers()
@@ -53,7 +52,7 @@ async def orchestrator_agent(question: str) -> str:
     except Exception as e:
         print(f"Error getting tracing headers: {e}")
         headers = {}
-    
+
     async with httpx.AsyncClient(base_url=RETRIEVAL_SERVICE_URL, timeout=100.0) as client:
         try:
             response = await client.post(
@@ -65,24 +64,27 @@ async def orchestrator_agent(question: str) -> str:
             retrieved_docs = response.json()["results"]
         except httpx.HTTPError as e:
             retrieved_docs = []
-    
+
     # Step 3: Format context for LLM
     context = format_context(context_analysis, retrieved_docs)
-    
+
     # Step 4: Call LLM with retrieved context
     # The galileo wrapped OpenAI client automatically logs LLM spans
     response = openai_client.chat.completions.create(
         messages=[
-            {"role": "system", "content": f"""Answer the user's question using only the provided context below.
+            {
+                "role": "system",
+                "content": f"""Answer the user's question using only the provided context below.
 If the context doesn't contain enough information, say so.
 
 Context:
-{context}"""},
+{context}""",
+            },
             {"role": "user", "content": question},
         ],
         model="gpt-4o-mini",
     )
-    
+
     return response.choices[0].message.content
 
 
@@ -92,14 +94,14 @@ def analyze_question(question: str) -> dict:
     Analyzes the question to determine what type of information is needed.
     """
     question_lower = question.lower()
-    
+
     analysis = {
         "needs_company_info": any(word in question_lower for word in ["company", "work", "employer"]),
         "needs_location_info": any(word in question_lower for word in ["location", "where", "city", "live"]),
         "needs_education_info": any(word in question_lower for word in ["education", "school", "degree", "study"]),
-        "question_type": "factual"
+        "question_type": "factual",
     }
-    
+
     return analysis
 
 
@@ -116,22 +118,22 @@ def format_context(analysis: dict, docs: list[str]) -> str:
 # MAIN EXECUTION
 # ============================================================================
 
+
 async def main():
     """Run the distributed tracing example"""
-    
+
     questions = [
         "What did Galileo Galilei research?",
         "Where did Galileo Galilei work?",
     ]
-    
+
     for question in questions:
         print(f"\n{'='*60}")
         print(f"Question: {question}")
         print(f"{'='*60}")
         answer = await orchestrator_agent(question)
         print(f"Answer: {answer}\n")
-    
+
 
 if __name__ == "__main__":
     asyncio.run(main())
-

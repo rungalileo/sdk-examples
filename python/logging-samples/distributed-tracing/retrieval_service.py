@@ -38,16 +38,18 @@ def retrieval_service(query: str) -> list[str]:
     knowledge_base = {
         "birthplace": ["Galileo Galilei was born in Pisa, Italy in 1564"],
         "profession": ["Galileo Galilei taught geometry, mechanics, and astronomy at the University of Padua for many years"],
-        "research": ["Using improved telescopes that he built, Galileo Galilei made scientific observations that transformed our understanding of the universe."],
+        "research": [
+            "Using improved telescopes that he built, Galileo Galilei made scientific observations that transformed our understanding of the universe."
+        ],
     }
-    
+
     # Simple keyword-based retrieval (in production, use vector search)
     results = []
     query_lower = query.lower()
     for category, facts in knowledge_base.items():
         if category in query_lower or any(word in query_lower for word in ["work", "company", "location", "education"]):
             results.extend(facts)
-    
+
     return results[:3]  # Return top 3 results
 
 
@@ -71,5 +73,5 @@ async def health():
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
 
+    uvicorn.run(app, host="0.0.0.0", port=8000)
