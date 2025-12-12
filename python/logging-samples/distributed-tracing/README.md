@@ -12,8 +12,8 @@ This example demonstrates distributed tracing across two services using Galileo'
 ### 1. Create and Activate Virtual Environment
 
 ```bash
-# Navigate to the distributed_tracing_example directory
-cd /.../sdk-examples/python/logging-samples/distributed-tracing
+# Navigate to the distributed-tracing example directory
+cd python/logging-samples/distributed-tracing
 
 # Create virtual environment
 python -m venv venv
@@ -56,11 +56,11 @@ You need to run both services in **separate terminal processes**.
 #### Terminal 1: Start the Retrieval Service
 
 ```bash
-# Make sure you're in the galileo-dt-decorator directory
-cd /.../sdk-examples/python/logging-samples/distributed-tracing
+# Make sure you're in the distributed-tracing example directory
+# cd python/logging-samples/distributed-tracing
 
 # Activate venv (if not already activated)
-source ../venv/bin/activate
+# source venv/bin/activate
 
 # Start the retrieval service on port 8000
 uvicorn retrieval_service:app --reload --port 8000
@@ -78,11 +78,11 @@ INFO:     Application startup complete.
 #### Terminal 2: Run the Orchestrator
 
 ```bash
-# In a NEW terminal, navigate to the galileo-dt-decorator directory
-cd /.../sdk-examples/python/logging-samples/distributed-tracing
+# In a NEW terminal, navigate to the distributed-tracing example directory
+cd python/logging-samples/distributed-tracing
 
 # Activate venv
-source ../venv/bin/activate
+source venv/bin/activate
 
 # Run the orchestrator
 python main_run.py

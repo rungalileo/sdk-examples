@@ -82,7 +82,7 @@ Context:
             },
             {"role": "user", "content": question},
         ],
-        model="gpt-4o-mini",
+        model="gpt-5-mini",
     )
 
     return response.choices[0].message.content
