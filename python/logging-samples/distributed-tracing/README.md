@@ -41,8 +41,8 @@ GALILEO_API_KEY=your_api_key_here
 # Required: OpenAI API key
 OPENAI_API_KEY=your_openai_api_key_here
 
-# Required: Enable streaming mode for distributed tracing
-GALILEO_MODE=streaming
+# Required: Enable distributed mode for distributed tracing
+GALILEO_MODE=distributed
 
 # Optional: Galileo project and log stream names
 GALILEO_PROJECT=your_project_name
