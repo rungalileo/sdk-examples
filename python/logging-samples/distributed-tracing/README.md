@@ -36,17 +36,20 @@ Your `.env` should look like this. Feel free to follow the `.env.example` and en
 ```bash
 
 # Required: Your Galileo API key
-GALILEO_API_KEY=your_api_key_here
+GALILEO_API_KEY="your-galileo-api-key"
 
 # Required: OpenAI API key
-OPENAI_API_KEY=your_openai_api_key_here
+OPENAI_API_KEY="your-openai-api-key"
 
 # Required: Enable distributed mode for distributed tracing
 GALILEO_MODE=distributed
 
 # Optional: Galileo project and log stream names
-GALILEO_PROJECT=your_project_name
-GALILEO_LOG_STREAM=decorator_example
+GALILEO_PROJECT="your-galileo-project"
+GALILEO_LOG_STREAM=distributed-tracing-example
+
+# Provide the console url below if you are not using app.galileo.ai
+# GALILEO_CONSOLE_URL="your-galileo-console-url"
 ```
 
 ### 4. Run the Services
