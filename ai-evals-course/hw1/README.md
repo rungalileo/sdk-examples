@@ -4,7 +4,7 @@ This folder contains a solution to [homework assignment 1](https://github.com/ai
 
 ## Original homework assignment
 
-The original homework assignment has 3 parts:
+The original homework assignment has three parts:
 
 - Creating a well-crafted system prompt inside the Recipe Chatbot application, and testing the results
 - Creating more queries in a dataset for use with this chatbot
