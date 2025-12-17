@@ -70,7 +70,7 @@ A full-stack chatbot application with a Java Spring Boot backend and Next.js fro
      2. Navigate to your project
      3. Create or select a log stream
      4. Copy the project ID and log stream ID from the URLs or project settings
-   - To configure Protect, create a stage in the Galileo console and copy the stage name and ID
+   - To configure Protect, create a stage in the Galileo console and copy the stage name and ID using the protect_stage_setup/create_stage, making sure to update the project id.
 
 2. Build and run the backend:
    ```bash
