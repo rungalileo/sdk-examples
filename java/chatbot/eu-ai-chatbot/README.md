@@ -15,10 +15,10 @@ A full-stack chatbot application with a Java Spring Boot backend and Next.js fro
 
 ## Prerequisites
 
-- Java 17 or higher
-- Maven 3.6+
-- Node.js 18+ and npm
-- Azure OpenAI account with GPT-5-nano deployment (for Azure provider)
+- Java 17
+- Maven 3.6
+- Node.js 18 and npm
+- Azure OpenAI account with deployment, such as for GPT-5-nano (for Azure provider)
 - Mistral AI API key (for Mistral provider) - Get one at [https://console.mistral.ai/](https://console.mistral.ai/)
 - Galileo AI account with API key, project ID, and log stream ID (for observability) - Get one at [https://console.galileo.ai/](https://console.galileo.ai/)
 
