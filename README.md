@@ -247,3 +247,7 @@ The Python examples show how to use the Galileo.ai Python SDK in your applicatio
 ```bash
 pip install galileo
 ```
+
+## Java Examples
+
+The Java examples show how to use Galileo.ai API in a Java application.
