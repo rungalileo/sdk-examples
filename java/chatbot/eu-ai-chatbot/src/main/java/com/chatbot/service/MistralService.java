@@ -125,7 +125,7 @@ public class MistralService {
                         JsonNode content = message.get("content");
                         if (content != null) {
                             String responseText = content.asText();
-                            return new com.chatbot.dto.ChatCompletionResult(responseText, retrieverSpan);
+                            return new com.chatbot.dto.ChatCompletionResult(responseText, retrieverSpan, messages);
                         }
                     }
                 }

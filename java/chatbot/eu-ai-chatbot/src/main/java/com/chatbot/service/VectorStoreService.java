@@ -52,11 +52,19 @@ public class VectorStoreService {
         }
         
         // Sort by similarity (descending) and return top K
-        return results.stream()
+        List<String> topResults = results.stream()
                 .sorted((a, b) -> Double.compare(b.similarity, a.similarity))
                 .limit(topK)
                 .map(r -> r.text)
                 .collect(Collectors.toList());
+        
+        System.out.println("🗄️  [VectorStoreService] Returning " + topResults.size() + " results");
+        for (int i = 0; i < topResults.size(); i++) {
+            System.out.println("  Result " + (i+1) + " preview: " + 
+                topResults.get(i).substring(0, Math.min(80, topResults.get(i).length())) + "...");
+        }
+        
+        return topResults;
     }
     
     private double cosineSimilarity(List<Float> vec1, List<Float> vec2) {

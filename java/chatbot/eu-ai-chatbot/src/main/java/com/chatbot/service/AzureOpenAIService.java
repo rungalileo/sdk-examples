@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -100,7 +101,25 @@ public class AzureOpenAIService {
             }
             
             String response = chatCompletions.getChoices().get(0).getMessage().getContent();
-            return new com.chatbot.dto.ChatCompletionResult(response, retrieverSpan);
+            
+            // Convert Azure messages to common format for Galileo logging
+            List<Map<String, String>> messagesForGalileo = new ArrayList<>();
+            for (com.azure.ai.openai.models.ChatRequestMessage msg : messages) {
+                Map<String, String> msgMap = new HashMap<>();
+                if (msg instanceof com.azure.ai.openai.models.ChatRequestSystemMessage) {
+                    msgMap.put("role", "system");
+                    msgMap.put("content", ((com.azure.ai.openai.models.ChatRequestSystemMessage) msg).getContent().toString());
+                } else if (msg instanceof com.azure.ai.openai.models.ChatRequestUserMessage) {
+                    msgMap.put("role", "user");
+                    msgMap.put("content", ((com.azure.ai.openai.models.ChatRequestUserMessage) msg).getContent().toString());
+                } else if (msg instanceof com.azure.ai.openai.models.ChatRequestAssistantMessage) {
+                    msgMap.put("role", "assistant");
+                    msgMap.put("content", ((com.azure.ai.openai.models.ChatRequestAssistantMessage) msg).getContent().toString());
+                }
+                messagesForGalileo.add(msgMap);
+            }
+            
+            return new com.chatbot.dto.ChatCompletionResult(response, retrieverSpan, messagesForGalileo);
         } catch (Exception e) {
             throw new RuntimeException("Error calling Azure OpenAI: " + e.getMessage(), e);
         }

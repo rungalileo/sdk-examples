@@ -205,7 +205,7 @@ public class GalileoService {
     
     public void logChatInteraction(String userInput, String assistantOutput, String provider, String model,
                                    long durationNs, String traceId, Map<String, Object> retrieverSpan, String originalLlmResponse, Double protectProbability,
-                                   Map<String, Object> protectInputSpan, Map<String, Object> protectOutputSpan) {
+                                   Map<String, Object> protectInputSpan, Map<String, Object> protectOutputSpan, List<Map<String, String>> fullMessages) {
         System.out.println("Galileo: logChatInteraction called");
         System.out.println("Galileo: isLoggingEnabled() = " + isLoggingEnabled());
         
@@ -259,7 +259,8 @@ public class GalileoService {
             System.out.println("Galileo: Calling logTraceWithSpans with:");
             System.out.println("  - retrieverSpan: " + (retrieverSpan != null ? "present" : "null"));
             System.out.println("  - protectOutputSpan: " + (protectOutputSpan != null ? "present" : "null"));
-            logTraceWithSpans("chat_interaction", traceMetadata, inputData, outputData, retrieverSpan, traceId, protectInputSpan, protectOutputSpan);
+            System.out.println("  - fullMessages: " + (fullMessages != null ? fullMessages.size() + " messages" : "null"));
+            logTraceWithSpans("chat_interaction", traceMetadata, inputData, outputData, retrieverSpan, traceId, protectInputSpan, protectOutputSpan, fullMessages);
             System.out.println("Galileo: logTraceWithSpans completed");
             
         } catch (Exception e) {
@@ -414,7 +415,8 @@ public class GalileoService {
     private void logTraceWithSpans(String eventType, Map<String, Object> metadata, 
                                    Map<String, Object> input, Map<String, Object> output,
                                    Map<String, Object> retrieverSpan, String traceId,
-                                   Map<String, Object> protectInputSpan, Map<String, Object> protectOutputSpan) {
+                                   Map<String, Object> protectInputSpan, Map<String, Object> protectOutputSpan,
+                                   List<Map<String, String>> fullMessages) {
         if (!isLoggingEnabled()) {
             return;
         }
@@ -473,7 +475,20 @@ public class GalileoService {
             llmSpan.put("type", "llm");
             llmSpan.put("created_at", Instant.now().toString());
             llmSpan.put("name", "Chat Completion");
-            if (input != null && input.containsKey("content")) {
+            
+            // Use the full messages array if available (includes system message with RAG context!)
+            if (fullMessages != null && !fullMessages.isEmpty()) {
+                System.out.println("📊 [GalileoService] Using full messages array for LLM span (" + fullMessages.size() + " messages)");
+                // Convert to List<Map<String, Object>> for Galileo
+                List<Map<String, Object>> inputMessages = new ArrayList<>();
+                for (Map<String, String> msg : fullMessages) {
+                    Map<String, Object> msgCopy = new HashMap<>(msg);
+                    inputMessages.add(msgCopy);
+                }
+                llmSpan.put("input", inputMessages);
+            } else if (input != null && input.containsKey("content")) {
+                // Fallback to just the user message if full messages not available
+                System.out.println("⚠️  [GalileoService] Full messages not available, using fallback (user message only)");
                 List<Map<String, Object>> inputMessages = new ArrayList<>();
                 Map<String, Object> userMsg = new HashMap<>();
                 userMsg.put("role", "user");
@@ -624,15 +639,16 @@ public class GalileoService {
     
     /**
      * Invoke Galileo Protect to check input/output for security issues
-     * @param input The input text to check
+     * @param input The input text to check (user message only)
      * @param output The output text to check (can be null for input-only checks)
      * @param context The context/documents retrieved from RAG (can be null)
      * @param originalLlmResponse The original LLM response to include in metadata (can be null)
      * @param checkType "input" or "output" to identify the type of check
      * @param traceId The trace ID to link the tool span to
+     * @param fullMessages The complete messages array sent to the LLM (includes system message with RAG context)
      * @return ProtectInvocationResult containing both the result and tool span, or null if protect is disabled
      */
-    public ProtectInvocationResult invokeProtect(String input, String output, String context, String originalLlmResponse, String checkType, String traceId) {
+    public ProtectInvocationResult invokeProtect(String input, String output, String context, String originalLlmResponse, String checkType, String traceId, List<Map<String, String>> fullMessages) {
         System.out.println("Galileo Protect: Starting invocation check...");
         System.out.println("  stageName: " + (stageName != null ? stageName : "NULL"));
         System.out.println("  stageId: " + (stageId != null ? stageId : "NULL"));
@@ -649,9 +665,26 @@ public class GalileoService {
             // Build the protect request payload matching the example format
             Map<String, Object> requestBody = new HashMap<>();
             
+            // Build the complete input from fullMessages if available (includes system message with RAG context)
+            String fullInput = input;
+            if (fullMessages != null && !fullMessages.isEmpty()) {
+                StringBuilder sb = new StringBuilder();
+                for (Map<String, String> msg : fullMessages) {
+                    String role = msg.get("role");
+                    String content = msg.get("content");
+                    if (content != null) {
+                        sb.append("[").append(role).append("]: ").append(content).append("\n\n");
+                    }
+                }
+                fullInput = sb.toString();
+                System.out.println("Galileo Protect: Using full messages array (" + fullMessages.size() + " messages, total length: " + fullInput.length() + " chars)");
+            } else {
+                System.out.println("Galileo Protect: Using simple input (no full messages available)");
+            }
+            
             // Payload with input, output, and context
             Map<String, Object> payload = new HashMap<>();
-            payload.put("input", input);
+            payload.put("input", fullInput);
             if (output != null) {
                 payload.put("output", output);
             }
