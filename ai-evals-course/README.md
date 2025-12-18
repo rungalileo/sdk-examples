@@ -19,4 +19,3 @@ To run these homework assignments, you will need:
 | :---------------------------- | :------------ |
 | 1 - Write a Starting Prompt   | [hw1](./hw1/) |
 | 2 - Recipe Bot Error Analysis | [hw2](./hw2/) |
-
