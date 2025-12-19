@@ -4,9 +4,12 @@ This folder contains a solution to [homework assignment 3](https://github.com/ai
 
 ## Original homework assignment
 
+The original homework assignment has optional start points, and this version starts at step 2 using the already labelled data.
+This assignment involves writing an LLM-as-a-judge prompt using training data, testing it with dev data, then running it against test data to evaluate how effective it is.
 
 ## Using Galileo for this assignment
 
+Galileo has built in capabilities for you to define custom metrics using your own LLM-as-a-judge prompt, then use these metrics in experiments or for observability. In this case, you will create a metric, then use this to evaluate datasets created from the already labelled data.
 
 This folder contains a sample notebook showing all these steps in code, along with instructions on using the Galileo console to perform some tasks.
 
