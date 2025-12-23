@@ -30,7 +30,7 @@
         "dotenv": "^16.0.0",
         "express": "^4.21.2",
         "galileo": "^1.24.1",
-        "langchain": "^0.3.29",
+        "langchain": "^0.3.37",
         "openai": "^4.0.0",
         "stripe": "^18.3.0",
         "zod": "^3.22.0"
