@@ -22,7 +22,7 @@
     ],
     "author": "Erin Mikail Staples",
     "dependencies": {
-        "@langchain/core": "^0.3.0",
+        "@langchain/core": "^0.3.80",
         "@langchain/openai": "^0.5.18",
         "@stripe/agent-toolkit": "^0.1.21",
         "axios": "^1.6.0",
