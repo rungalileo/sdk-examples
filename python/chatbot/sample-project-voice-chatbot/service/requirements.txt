@@ -1,0 +1,11 @@
+# FastAPI and server
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+
+# Galileo SDK
+galileo>=1.0.0
+galileo-core>=0.1.0
+
+# Python environment
+python-dotenv>=1.0.0
+pydantic>=2.0.0
