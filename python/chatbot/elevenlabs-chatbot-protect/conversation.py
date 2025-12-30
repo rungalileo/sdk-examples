@@ -20,7 +20,7 @@ from galileo_handler import get_galileo_handler
 
 # Initialize Galileo handler
 _galileo = None
-_conversation = None 
+_conversation = None
 
 
 def _get_galileo():
@@ -50,49 +50,50 @@ def on_user_transcript(transcript: str) -> None:
     result = galileo.log_user_turn(transcript)
     if result.get("blocked"):
         print(f"\n[GALILEO PROTECT] *** INPUT BLOCKED *** {result.get('reason')}")
-        
+
         # Get the override message from Galileo Protect
         override_message = result.get("override_message")
-        
+
         if override_message:
             # End current conversation session first
             if _conversation:
                 print(f"[GALILEO PROTECT] Ending conversation session...")
                 _conversation.end_session()
-            
+
             # Pause briefly to let audio system settle
             import time
+
             time.sleep(1.5)
-            
+
             # Print the override message
             print(f"\n[AGENT] {override_message}")
-            
+
             # Generate and play the override message audio
             try:
                 import tempfile
                 import subprocess
                 import platform
-                
+
                 settings = get_settings()
-                
+
                 # Get the ElevenLabs client
                 client = ElevenLabs(api_key=settings.elevenlabs_api_key)
-                
+
                 # Generate audio using the text_to_speech module
                 print(f"[GALILEO PROTECT] Generating audio for override message...")
                 audio_generator = client.text_to_speech.convert(
                     text=override_message,
                     voice_id="cjVigY5qzO86Huf0OWal",  # Eric voice ID
                     model_id="eleven_turbo_v2",
-                    output_format="mp3_22050_32"  # Lower quality to match conversational audio
+                    output_format="mp3_22050_32",  # Lower quality to match conversational audio
                 )
-                
+
                 # Save audio to a temporary file
                 with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as f:
                     for chunk in audio_generator:
                         f.write(chunk)
                     temp_file = f.name
-                
+
                 # Play using system's default audio player
                 print(f"[GALILEO PROTECT] Playing override message...")
                 system = platform.system()
@@ -102,22 +103,23 @@ def on_user_transcript(transcript: str) -> None:
                     os.startfile(temp_file)
                 else:  # Linux
                     subprocess.run(["xdg-open", temp_file], check=True)
-                
+
                 # Clean up
                 os.unlink(temp_file)
-                
+
                 print(f"[GALILEO PROTECT] Override message delivered via audio")
-                
+
             except Exception as e:
                 print(f"[GALILEO PROTECT] Failed to generate or play audio: {e}")
                 print(f"[GALILEO PROTECT] Message was displayed as text above")
                 import traceback
+
                 traceback.print_exc()
-            
+
             # Log the override message to Galileo as an agent turn
             # This ensures it shows up in the trace
             galileo.log_agent_turn(override_message)
-            
+
             # End the conversation
             print("[GALILEO PROTECT] Ending conversation session...")
             galileo.end_conversation()
@@ -172,10 +174,8 @@ def run_voice_conversation(use_headphones: bool = True):
         client=client,
         agent_id=settings.elevenlabs_agent_id,
         requires_auth=True,  # We're using API key auth
-
         # Required: audio interface for mic/speaker
         audio_interface=DefaultAudioInterface(),
-
         # Callbacks for monitoring - connected to Galileo
         callback_agent_response=on_agent_response,
         callback_user_transcript=on_user_transcript,

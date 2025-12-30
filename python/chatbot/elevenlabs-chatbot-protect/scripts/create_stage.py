@@ -5,10 +5,7 @@ import logging
 from pathlib import Path
 
 # Enable HTTP request logging
-logging.basicConfig(
-    level=logging.DEBUG,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
+logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 # Show HTTP details
 logging.getLogger("httpx").setLevel(logging.DEBUG)
 logging.getLogger("httpcore").setLevel(logging.DEBUG)
@@ -48,19 +45,12 @@ from galileo import (
 # These are not re-exported in galileo.__init__, so keep them as-is
 from galileo_core.schemas.protect.action import OverrideAction
 from galileo_core.schemas.protect.rule import Rule, RuleOperator
-#Create a rule
-rule = Rule(
-    metric=GalileoScorers.input_toxicity,
-    operator=RuleOperator.gt,
-    target_value=0.2
-)
+
+# Create a rule
+rule = Rule(metric=GalileoScorers.input_toxicity, operator=RuleOperator.gt, target_value=0.2)
 
 # Create an override action
-action = OverrideAction(
-    choices=[
-        "We're sorry, we can't process your request."
-    ]
-)
+action = OverrideAction(choices=["We're sorry, we can't process your request."])
 
 # Add this rule to a ruleset, using the default passthrough action
 ruleset = Ruleset(rules=[rule], action=action)

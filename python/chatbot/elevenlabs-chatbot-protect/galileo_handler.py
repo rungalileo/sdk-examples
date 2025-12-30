@@ -24,6 +24,7 @@ BLOCKED_KEYWORDS = ["uss enterprise"]
 @dataclass
 class ConversationTrace:
     """Tracks a single conversation session for Galileo logging."""
+
     session_id: str
     start_time: datetime = field(default_factory=datetime.now)
     start_timestamp: float = field(default_factory=time.time)
@@ -67,9 +68,9 @@ class GalileoHandler:
 
             init_kwargs = {}
             if self.settings.galileo_project_name:
-                init_kwargs['project'] = self.settings.galileo_project_name
+                init_kwargs["project"] = self.settings.galileo_project_name
             if self.settings.galileo_log_stream:
-                init_kwargs['log_stream'] = self.settings.galileo_log_stream
+                init_kwargs["log_stream"] = self.settings.galileo_log_stream
 
             self._galileo_client = GalileoLogger(**init_kwargs)
             print(f"[GALILEO] Logger initialized - Project: {self.settings.galileo_project_name}, Stream: {self.settings.galileo_log_stream}")
@@ -95,7 +96,7 @@ class GalileoHandler:
         if not self.settings.galileo_protect_stage_id:
             print("[GALILEO] Protect disabled - no stage_id configured")
             return
-        
+
         if not self.settings.galileo_project_name:
             print("[GALILEO] Protect disabled - no project_name configured")
             return
@@ -151,6 +152,7 @@ class GalileoHandler:
             except Exception as e:
                 print(f"[GALILEO] Failed to start session: {e}")
                 import traceback
+
                 traceback.print_exc()
 
         print(f"[GALILEO] Started conversation: {session_id}")
@@ -179,7 +181,7 @@ class GalileoHandler:
                 print(f'[GALILEO PROTECT] Response: status=TRIGGERED, action=BLOCK, rule="keyword:{keyword}"')
                 return result
 
-        print(f'[GALILEO PROTECT] Response: status=ALLOWED')
+        print(f"[GALILEO PROTECT] Response: status=ALLOWED")
 
         if self._current_trace:
             # If there's an active trace, conclude it first
@@ -196,6 +198,7 @@ class GalileoHandler:
                 except Exception as e:
                     print(f"[GALILEO] Failed to conclude previous trace: {e}")
                     import traceback
+
                     traceback.print_exc()
 
             # Track metrics
@@ -203,16 +206,15 @@ class GalileoHandler:
             self._current_trace.last_user_turn_time = current_time
 
             # Add to conversation context
-            self._current_trace.turns.append({
-                "role": "user",
-                "content": transcript,
-                "timestamp": datetime.now().isoformat(),
-                "char_count": len(transcript),
-            })
-            self._current_trace.conversation_context.append({
-                "role": "user",
-                "content": transcript
-            })
+            self._current_trace.turns.append(
+                {
+                    "role": "user",
+                    "content": transcript,
+                    "timestamp": datetime.now().isoformat(),
+                    "char_count": len(transcript),
+                }
+            )
+            self._current_trace.conversation_context.append({"role": "user", "content": transcript})
 
             # Start a new trace for this user turn
             if self._galileo_client:
@@ -229,29 +231,27 @@ class GalileoHandler:
                             "source": "elevenlabs-stt",
                             "char_count": str(len(transcript)),
                             "timestamp": datetime.now().isoformat(),
-                        }
+                        },
                     )
                     self._current_trace.active_trace = True
                     print(f"[GALILEO] Started trace {trace_num} in session {self._galileo_client.session_id}")
                 except Exception as e:
                     print(f"[GALILEO] Failed to start trace: {e}")
                     import traceback
+
                     traceback.print_exc()
 
         # Run input guardrails if enabled
         if self._protect_enabled:
             try:
-                payload = Payload(
-                    input=transcript,
-                    metadata={"role": "user"}
-                )
-                
+                payload = Payload(input=transcript, metadata={"role": "user"})
+
                 protect_result = invoke_protect(
                     payload=payload,
                     stage_id=self.settings.galileo_protect_stage_id,
                     project_name=self.settings.galileo_project_name,
                 )
-                
+
                 # Log the protect span to Galileo
                 if self._galileo_client and self._current_trace.active_trace and protect_result:
                     try:
@@ -269,30 +269,30 @@ class GalileoHandler:
                         print(f"[GALILEO] Logged Protect span for input guardrail")
                     except Exception as e:
                         print(f"[GALILEO] Failed to log Protect span: {e}")
-                
+
                 if protect_result and protect_result.status == ExecutionStatus.triggered:
                     result["blocked"] = True
-                    
+
                     # Extract the override message to send to the user
                     override_message = None
-                    if hasattr(protect_result, 'action_result') and protect_result.action_result:
+                    if hasattr(protect_result, "action_result") and protect_result.action_result:
                         action_result = protect_result.action_result
-                        if isinstance(action_result, dict) and action_result.get('type') == 'OVERRIDE':
-                            override_message = action_result.get('value')
-                    
+                        if isinstance(action_result, dict) and action_result.get("type") == "OVERRIDE":
+                            override_message = action_result.get("value")
+
                     # Also extract triggered metrics for logging
                     triggered_info = []
-                    if hasattr(protect_result, 'ruleset_results') and protect_result.ruleset_results:
+                    if hasattr(protect_result, "ruleset_results") and protect_result.ruleset_results:
                         for ruleset_result in protect_result.ruleset_results:
-                            if 'rule_results' in ruleset_result:
-                                for rule_result in ruleset_result['rule_results']:
-                                    if rule_result.get('status') == 'TRIGGERED':
-                                        metric_name = rule_result.get('metric', 'unknown')
-                                        value = rule_result.get('value', 'N/A')
-                                        threshold = rule_result.get('target_value', 'N/A')
-                                        operator = rule_result.get('operator', 'N/A')
+                            if "rule_results" in ruleset_result:
+                                for rule_result in ruleset_result["rule_results"]:
+                                    if rule_result.get("status") == "TRIGGERED":
+                                        metric_name = rule_result.get("metric", "unknown")
+                                        value = rule_result.get("value", "N/A")
+                                        threshold = rule_result.get("target_value", "N/A")
+                                        operator = rule_result.get("operator", "N/A")
                                         triggered_info.append(f"{metric_name}={value:.3f} (threshold: {operator} {threshold})")
-                    
+
                     result["reason"] = ", ".join(triggered_info) if triggered_info else "Unknown rule triggered"
                     result["override_message"] = override_message
                     print(f"[GALILEO PROTECT] Input blocked by: {result['reason']}")
@@ -324,17 +324,16 @@ class GalileoHandler:
             # Track metrics
             self._current_trace.agent_char_count += len(response)
 
-            self._current_trace.turns.append({
-                "role": "assistant",
-                "content": response,
-                "timestamp": datetime.now().isoformat(),
-                "char_count": len(response),
-                "latency_ms": latency_ms,
-            })
-            self._current_trace.conversation_context.append({
-                "role": "assistant",
-                "content": response
-            })
+            self._current_trace.turns.append(
+                {
+                    "role": "assistant",
+                    "content": response,
+                    "timestamp": datetime.now().isoformat(),
+                    "char_count": len(response),
+                    "latency_ms": latency_ms,
+                }
+            )
+            self._current_trace.conversation_context.append({"role": "assistant", "content": response})
 
             # Add LLM span for this response
             if self._galileo_client and self._current_trace.active_trace:
@@ -342,10 +341,7 @@ class GalileoHandler:
                     from galileo import Message, MessageRole
 
                     # Create output message
-                    output_message = Message(
-                        content=response,
-                        role=MessageRole.assistant
-                    )
+                    output_message = Message(content=response, role=MessageRole.assistant)
 
                     turn_num = sum(1 for t in self._current_trace.turns if t["role"] == "assistant")
 
@@ -360,7 +356,7 @@ class GalileoHandler:
                             "latency_ms": f"{latency_ms:.0f}",
                             "char_count": str(len(response)),
                             "timestamp": datetime.now().isoformat(),
-                        }
+                        },
                     )
 
                     # Flush immediately so logs appear in real-time in Galileo
@@ -372,17 +368,14 @@ class GalileoHandler:
         # Run output guardrails if enabled
         if self._protect_enabled:
             try:
-                payload = Payload(
-                    output=response,
-                    metadata={"role": "assistant"}
-                )
-                
+                payload = Payload(output=response, metadata={"role": "assistant"})
+
                 protect_result = invoke_protect(
                     payload=payload,
                     stage_id=self.settings.galileo_protect_stage_id,
                     project_name=self.settings.galileo_project_name,
                 )
-                
+
                 # Log the protect span to Galileo
                 if self._galileo_client and self._current_trace.active_trace and protect_result:
                     try:
@@ -400,23 +393,23 @@ class GalileoHandler:
                         print(f"[GALILEO] Logged Protect span for output guardrail")
                     except Exception as e:
                         print(f"[GALILEO] Failed to log Protect span: {e}")
-                
+
                 if protect_result and protect_result.status == ExecutionStatus.triggered:
                     result["blocked"] = True
-                    
+
                     # Extract triggered metrics and values from ruleset_results
                     triggered_info = []
-                    if hasattr(protect_result, 'ruleset_results') and protect_result.ruleset_results:
+                    if hasattr(protect_result, "ruleset_results") and protect_result.ruleset_results:
                         for ruleset_result in protect_result.ruleset_results:
-                            if 'rule_results' in ruleset_result:
-                                for rule_result in ruleset_result['rule_results']:
-                                    if rule_result.get('status') == 'TRIGGERED':
-                                        metric_name = rule_result.get('metric', 'unknown')
-                                        value = rule_result.get('value', 'N/A')
-                                        threshold = rule_result.get('target_value', 'N/A')
-                                        operator = rule_result.get('operator', 'N/A')
+                            if "rule_results" in ruleset_result:
+                                for rule_result in ruleset_result["rule_results"]:
+                                    if rule_result.get("status") == "TRIGGERED":
+                                        metric_name = rule_result.get("metric", "unknown")
+                                        value = rule_result.get("value", "N/A")
+                                        threshold = rule_result.get("target_value", "N/A")
+                                        operator = rule_result.get("operator", "N/A")
                                         triggered_info.append(f"{metric_name}={value:.3f} (threshold: {operator} {threshold})")
-                    
+
                     result["reason"] = ", ".join(triggered_info) if triggered_info else "Unknown rule triggered"
                     print(f"[GALILEO PROTECT] Output flagged by: {result['reason']}")
             except Exception as e:
@@ -445,6 +438,7 @@ class GalileoHandler:
             except Exception as e:
                 print(f"[GALILEO] Failed to conclude trace: {e}")
                 import traceback
+
                 traceback.print_exc()
 
         # Flush all logs to Galileo
@@ -456,14 +450,19 @@ class GalileoHandler:
             except Exception as e:
                 print(f"[GALILEO] Failed to flush: {e}")
                 import traceback
+
                 traceback.print_exc()
 
         # Print metrics summary
         print(f"[GALILEO] Session metrics:")
         print(f"  - Duration: {metrics.get('duration_sec', '0')}s")
         print(f"  - Turns: {metrics.get('total_turns', '0')} (user: {metrics.get('user_turns', '0')}, agent: {metrics.get('agent_turns', '0')})")
-        print(f"  - Avg latency: {metrics.get('avg_latency_ms', '0')}ms (min: {metrics.get('min_latency_ms', '0')}ms, max: {metrics.get('max_latency_ms', '0')}ms)")
-        print(f"  - Characters: {metrics.get('total_char_count', '0')} (user: {metrics.get('user_char_count', '0')}, agent: {metrics.get('agent_char_count', '0')})")
+        print(
+            f"  - Avg latency: {metrics.get('avg_latency_ms', '0')}ms (min: {metrics.get('min_latency_ms', '0')}ms, max: {metrics.get('max_latency_ms', '0')}ms)"
+        )
+        print(
+            f"  - Characters: {metrics.get('total_char_count', '0')} (user: {metrics.get('user_char_count', '0')}, agent: {metrics.get('agent_char_count', '0')})"
+        )
 
         # Clear the session to properly end it
         if self._galileo_client and self._galileo_client.session_id:
@@ -474,6 +473,7 @@ class GalileoHandler:
             except Exception as e:
                 print(f"[GALILEO] Failed to clear session: {e}")
                 import traceback
+
                 traceback.print_exc()
 
         self._current_trace = None
