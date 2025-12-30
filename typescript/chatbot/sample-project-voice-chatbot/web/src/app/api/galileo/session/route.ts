@@ -3,7 +3,7 @@ import { startGalileoSession, endGalileoSession } from "@/lib/galileo/logger";
 
 export async function POST(request: Request) {
   try {
-    const { sessionId, name } = await request.json();
+    const { sessionId } = await request.json();
 
     if (!sessionId) {
       return NextResponse.json(
@@ -12,7 +12,7 @@ export async function POST(request: Request) {
       );
     }
 
-    await startGalileoSession(sessionId, name);
+    await startGalileoSession(sessionId);
 
     return NextResponse.json({
       success: true,
