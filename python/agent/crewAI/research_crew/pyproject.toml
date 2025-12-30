@@ -5,8 +5,16 @@ description = "research_crew using crewAI"
 authors = [{ name = "Your Name", email = "you@example.com" }]
 requires-python = ">=3.10,<3.14"
 dependencies = [
-    "crewai[tools]>=0.203.1,<1.0.0"
+    "crewai[tools]>=0.203.1,<1.0.0",
+    "galileo[otel]>=1.35.1",
+    "python-dotenv>=0.21.0",
 ]
+
+# Project-level runtime dependencies used by the Crew (added so users can
+# install them via the project's pyproject workflow instead of a separate
+# manual pip step)
+[project.optional-dependencies]
+extras = []
 
 [project.scripts]
 research_crew = "research_crew.main:run"
