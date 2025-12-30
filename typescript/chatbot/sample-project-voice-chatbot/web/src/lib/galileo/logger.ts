@@ -36,13 +36,13 @@ export async function startGalileoSession(sessionId: string): Promise<string> {
 
 /**
  * Log a conversation turn to Galileo with optional guardrail checks.
+ * Guardrails are configured via env vars in the Python service.
  * @param sessionId - The session ID for this conversation
  * @param userTranscript - The user's transcribed speech input
  * @param agentResponse - The agent's response text
  * @param turnNumber - Sequential turn number in the conversation
  * @param latencyMs - Response latency in milliseconds
  * @param conversationContext - Array of conversation messages for context
- * @param options - Optional configuration (checkGuardrails: enable input/output filtering)
  * @returns Promise with logging status and guardrail results
  */
 export async function logConversationTurn(
@@ -51,17 +51,13 @@ export async function logConversationTurn(
   agentResponse: string,
   turnNumber: number,
   latencyMs: number,
-  conversationContext: Array<{ role: string; content: string }>,
-  options: { checkGuardrails?: boolean } = {}
+  conversationContext: Array<{ role: string; content: string }>
 ): Promise<ConversationTurnResult> {
   if (!PYTHON_SERVICE_URL) {
     console.error("[Galileo] GALILEO_PYTHON_SERVICE_URL not configured");
     return { logged: false, blocked: false };
   }
 
-  const { checkGuardrails = false } = options;
-  const protectEnabled = process.env.GALILEO_PROTECT_ENABLED === "true";
-  const stageId = process.env.GALILEO_PROTECT_STAGE_ID;
   const projectName = process.env.GALILEO_PROJECT_NAME || "voice-chatbot";
 
   console.log("[Galileo] Logging turn via Python service");
@@ -77,8 +73,6 @@ export async function logConversationTurn(
         turn_number: turnNumber,
         latency_ms: latencyMs,
         conversation_context: conversationContext,
-        check_guardrails: checkGuardrails && protectEnabled,
-        stage_id: stageId,
         project_name: projectName,
       }),
     });

@@ -45,10 +45,11 @@ Required variables:
 - `GALILEO_PROJECT_NAME` - Your Galileo project name
 Optional:
 - `GALILEO_LOG_STREAM` - Log stream name (default: `voice-conversations`)
+- `GALILEO_PROTECT_ENABLED` - Set to `true` to enable guardrails
 - `GALILEO_PROTECT_STAGE_ID` - Protect stage ID (required for guardrails) - see below on how to get one
 - `PORT` - Service port (default: `8000`)
 
-To enable guardrails, you need a Protect stage ID. Use the script in the `scripts/` directory:
+To enable guardrails, set `GALILEO_PROTECT_ENABLED=true` and provide a Protect stage ID. Use the script in the `scripts/` directory:
 
 ```bash
 cd ../scripts

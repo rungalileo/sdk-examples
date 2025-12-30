@@ -11,7 +11,6 @@ export async function POST(request: Request) {
       turnNumber,
       latencyMs,
       conversationContext,
-      checkGuardrails,
     } = body;
 
     if (!sessionId) {
@@ -34,8 +33,7 @@ export async function POST(request: Request) {
       agentResponse,
       turnNumber || 1,
       latencyMs || 0,
-      conversationContext || [],
-      { checkGuardrails: checkGuardrails ?? true }
+      conversationContext || []
     );
 
     return NextResponse.json({
@@ -43,7 +41,6 @@ export async function POST(request: Request) {
       message: "Conversation turn logged",
       turnNumber: turnNumber || 1,
       guardrails: {
-        checked: checkGuardrails ?? true,
         blocked: result.blocked,
         overrideMessage: result.overrideMessage,
         inputResult: result.inputGuardrail ? {

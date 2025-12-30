@@ -59,8 +59,6 @@ class ConversationTurnRequest(BaseModel):
     turn_number: int
     latency_ms: float
     conversation_context: List[Dict[str, str]] = []
-    check_guardrails: bool = True
-    stage_id: Optional[str] = None
     project_name: str
 
 
@@ -266,12 +264,16 @@ async def log_conversation_turn(request: ConversationTurnRequest):
     5. Concluding and flushing the trace
     """
     try:
+        # Get protect config from environment (not from request)
+        protect_enabled = os.environ.get("GALILEO_PROTECT_ENABLED", "").lower() == "true"
+        stage_id = os.environ.get("GALILEO_PROTECT_STAGE_ID")
+        check_guardrails = protect_enabled and stage_id is not None
+
         # Debug logging
         print(f"[DEBUG] Request received:")
         print(f"  session_id: {request.session_id}")
         print(f"  user_transcript: {request.user_transcript[:50] if request.user_transcript else 'None'}...")
-        print(f"  check_guardrails: {request.check_guardrails}")
-        print(f"  stage_id: {request.stage_id}")
+        print(f"  check_guardrails: {check_guardrails} (protect_enabled={protect_enabled}, stage_id={'set' if stage_id else 'None'})")
         print(f"  project_name: {request.project_name}")
 
         log_stream = os.environ.get("GALILEO_LOG_STREAM", "voice-conversations")
@@ -306,11 +308,11 @@ async def log_conversation_turn(request: ConversationTurnRequest):
         output_guardrail_response = None
 
         # Check input guardrail
-        if request.check_guardrails and request.stage_id:
+        if check_guardrails and stage_id:
             payload, protect_result, input_guardrail_response = _invoke_and_parse_protect(
                 text=request.user_transcript,
                 is_input=True,
-                stage_id=request.stage_id,
+                stage_id=stage_id,
                 project_name=request.project_name,
                 metadata={"role": "user"},
             )
@@ -353,11 +355,11 @@ async def log_conversation_turn(request: ConversationTurnRequest):
         )
 
         # Check output guardrail (only if input wasn't blocked)
-        if request.check_guardrails and request.stage_id and not blocked:
+        if check_guardrails and stage_id and not blocked:
             payload, protect_result, output_guardrail_response = _invoke_and_parse_protect(
                 text=request.agent_response,
                 is_input=False,
-                stage_id=request.stage_id,
+                stage_id=stage_id,
                 project_name=request.project_name,
                 metadata={"role": "assistant"},
             )
