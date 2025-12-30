@@ -50,7 +50,6 @@ Required environment variables: Note for ElevenLabs `ELEVENLABS_API_KEY` and `EL
 
 - `ELEVENLABS_API_KEY` - 
 - `ELEVENLABS_AGENT_ID` - Your ElevenLabs agent ID
-- `GALILEO_PROJECT_NAME` - Project name in Galileo
 - `GALILEO_PYTHON_SERVICE_URL` - Python service URL (default: http://localhost:8000)
 
 Note: Galileo API credentials are configured in the Python service's `.env` file.
