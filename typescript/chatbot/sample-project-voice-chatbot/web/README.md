@@ -35,6 +35,7 @@ The Python service handles all Galileo logging because the TypeScript SDK doesn'
 
 ```bash
 # Web app
+cd web
 npm install
 ```
 

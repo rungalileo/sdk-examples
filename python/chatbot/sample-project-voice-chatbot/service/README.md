@@ -24,6 +24,7 @@ The Galileo TypeScript SDK doesn't support `add_protect_span()`, which means Pro
 
 ```bash
 # Create virtual environment
+cd service
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 ```
