@@ -63,6 +63,6 @@ npm run dev
 Open [http://localhost:3000](http://localhost:3000) to use the voice agent.
 
 # 📚 Learn More
-[Galielo Protect Overview](https://v2docs.galileo.ai/concepts/protect/overview)
-[Galileo Runtime Rrotection](https://v2docs.galileo.ai/sdk-api/protect/invoke-protect)
-[Defining Rules for Runtime Protection](https://v2docs.galileo.ai/sdk-api/protect/rules)
+- [Galielo Protect Overview](https://v2docs.galileo.ai/concepts/protect/overview)
+- [Galileo Runtime Rrotection](https://v2docs.galileo.ai/sdk-api/protect/invoke-protect)
+- [Defining Rules for Runtime Protection](https://v2docs.galileo.ai/sdk-api/protect/rules)

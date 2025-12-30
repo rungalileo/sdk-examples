@@ -72,6 +72,6 @@ python main.py
 Service starts on ` http://0.0.0.0:8000` and also you must have followed the setup and deployment of this service's frontend Nextjs web app under `typescript/chatbot/sample-project-voice-chatbot/web`
 
 # 📚 Learn More
-[Galielo Protect Overview](https://v2docs.galileo.ai/concepts/protect/overview)
-[Galileo Runtime Rrotection](https://v2docs.galileo.ai/sdk-api/protect/invoke-protect)
-[Defining Rules for Runtime Protection](https://v2docs.galileo.ai/sdk-api/protect/rules)
+- [Galielo Protect Overview](https://v2docs.galileo.ai/concepts/protect/overview)
+- [Galileo Runtime Rrotection](https://v2docs.galileo.ai/sdk-api/protect/invoke-protect)
+- [Defining Rules for Runtime Protection](https://v2docs.galileo.ai/sdk-api/protect/rules)
