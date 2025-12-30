@@ -58,8 +58,6 @@ export async function logConversationTurn(
     return { logged: false, blocked: false };
   }
 
-  const projectName = process.env.GALILEO_PROJECT_NAME || "voice-chatbot";
-
   console.log("[Galileo] Logging turn via Python service");
 
   try {
@@ -73,7 +71,6 @@ export async function logConversationTurn(
         turn_number: turnNumber,
         latency_ms: latencyMs,
         conversation_context: conversationContext,
-        project_name: projectName,
       }),
     });
 

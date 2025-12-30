@@ -32,8 +32,6 @@ class ProtectRequest(BaseModel):
     session_id: str
     input_text: Optional[str] = None
     output_text: Optional[str] = None
-    stage_id: str
-    project_name: str
     metadata: Optional[Dict[str, Any]] = None
 
 
@@ -59,7 +57,6 @@ class ConversationTurnRequest(BaseModel):
     turn_number: int
     latency_ms: float
     conversation_context: List[Dict[str, str]] = []
-    project_name: str
 
 
 class ConversationTurnResponse(BaseModel):
@@ -264,7 +261,9 @@ async def log_conversation_turn(request: ConversationTurnRequest):
     5. Concluding and flushing the trace
     """
     try:
-        # Get protect config from environment (not from request)
+        # Get Galileo config from environment (not from request)
+        project_name = os.environ.get("GALILEO_PROJECT_NAME", "voice-chatbot")
+        log_stream = os.environ.get("GALILEO_LOG_STREAM", "voice-conversations")
         protect_enabled = os.environ.get("GALILEO_PROTECT_ENABLED", "").lower() == "true"
         stage_id = os.environ.get("GALILEO_PROTECT_STAGE_ID")
         check_guardrails = protect_enabled and stage_id is not None
@@ -274,12 +273,11 @@ async def log_conversation_turn(request: ConversationTurnRequest):
         print(f"  session_id: {request.session_id}")
         print(f"  user_transcript: {request.user_transcript[:50] if request.user_transcript else 'None'}...")
         print(f"  check_guardrails: {check_guardrails} (protect_enabled={protect_enabled}, stage_id={'set' if stage_id else 'None'})")
-        print(f"  project_name: {request.project_name}")
+        print(f"  project_name: {project_name}")
 
-        log_stream = os.environ.get("GALILEO_LOG_STREAM", "voice-conversations")
         logger = session_manager.get_or_create_logger(
             session_id=request.session_id,
-            project_name=request.project_name,
+            project_name=project_name,
             log_stream=log_stream,
         )
 
@@ -313,7 +311,7 @@ async def log_conversation_turn(request: ConversationTurnRequest):
                 text=request.user_transcript,
                 is_input=True,
                 stage_id=stage_id,
-                project_name=request.project_name,
+                project_name=project_name,
                 metadata={"role": "user"},
             )
 
@@ -360,7 +358,7 @@ async def log_conversation_turn(request: ConversationTurnRequest):
                 text=request.agent_response,
                 is_input=False,
                 stage_id=stage_id,
-                project_name=request.project_name,
+                project_name=project_name,
                 metadata={"role": "assistant"},
             )
 
@@ -414,15 +412,24 @@ async def invoke_protect_endpoint(request: ProtectRequest):
     Use /log-conversation-turn for full logging with protect spans.
     """
     try:
+        # Use environment variables for Galileo config
+        project_name = os.environ.get("GALILEO_PROJECT_NAME", "voice-chatbot")
+        stage_id = os.environ.get("GALILEO_PROTECT_STAGE_ID")
+
+        if not stage_id:
+            raise HTTPException(status_code=400, detail="GALILEO_PROTECT_STAGE_ID not configured")
+
         _, _, response = _invoke_and_parse_protect(
             text=request.input_text or request.output_text or "",
             is_input=bool(request.input_text),
-            stage_id=request.stage_id,
-            project_name=request.project_name,
+            stage_id=stage_id,
+            project_name=project_name,
             metadata=request.metadata,
         )
         return response
 
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"[ERROR] invoke_protect failed: {e}")
         raise HTTPException(status_code=500, detail=str(e))
