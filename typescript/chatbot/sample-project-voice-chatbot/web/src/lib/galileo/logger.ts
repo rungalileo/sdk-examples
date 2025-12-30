@@ -1,6 +1,5 @@
-// Server-side only - this module should only be imported in API routes
-
-// Python service URL (required for Galileo logging)
+// Thin wrapper that forwards logging calls to the Python service.
+// python service handles all Galileo SDK calls (logging, traces, protect spans).
 const PYTHON_SERVICE_URL = process.env.GALILEO_PYTHON_SERVICE_URL;
 
 export interface GuardrailResult {
