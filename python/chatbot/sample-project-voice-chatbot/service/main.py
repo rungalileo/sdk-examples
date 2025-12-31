@@ -11,6 +11,7 @@ as conversation turns, which is required for Protect Status to display correctly
 
 # Load environment variables from .env file (must be before other imports)
 from dotenv import load_dotenv
+
 load_dotenv()
 
 import os
@@ -177,7 +178,7 @@ def _invoke_and_parse_protect(
     is_input: bool,
     stage_id: str,
     project_name: str,
-    metadata: Optional[Dict[str, Any]] = None
+    metadata: Optional[Dict[str, Any]] = None,
 ) -> tuple[Any, Optional[Any], "ProtectResponse"]:
     """Helper to invoke protect and parse the result."""
     # Always use 'input' field for toxicity checks since input_toxicity metric
@@ -202,10 +203,13 @@ def _invoke_and_parse_protect(
         print(f"[DEBUG] Protect result type: {type(protect_result)}")
         if protect_result:
             print(f"[DEBUG] Protect result status: {protect_result.status}")
-            print(f"[DEBUG] Protect result dir: {[attr for attr in dir(protect_result) if not attr.startswith('_')]}")
+            print(
+                f"[DEBUG] Protect result dir: {[attr for attr in dir(protect_result) if not attr.startswith('_')]}"
+            )
     except Exception as e:
         print(f"[ERROR] invoke_protect failed: {e}")
         import traceback
+
         traceback.print_exc()
         protect_result = None
 
@@ -219,31 +223,43 @@ def _invoke_and_parse_protect(
             blocked = True
             status = "triggered"
 
-        if hasattr(protect_result, 'action_result') and protect_result.action_result:
+        if hasattr(protect_result, "action_result") and protect_result.action_result:
             action_result = protect_result.action_result
-            if isinstance(action_result, dict) and action_result.get('type') == 'OVERRIDE':
-                override_message = action_result.get('value')
+            if (
+                isinstance(action_result, dict)
+                and action_result.get("type") == "OVERRIDE"
+            ):
+                override_message = action_result.get("value")
 
-        if hasattr(protect_result, 'ruleset_results') and protect_result.ruleset_results:
+        if (
+            hasattr(protect_result, "ruleset_results")
+            and protect_result.ruleset_results
+        ):
             for ruleset_result in protect_result.ruleset_results:
-                if 'rule_results' in ruleset_result:
-                    for rule_result in ruleset_result['rule_results']:
-                        if rule_result.get('status') == 'TRIGGERED':
+                if "rule_results" in ruleset_result:
+                    for rule_result in ruleset_result["rule_results"]:
+                        if rule_result.get("status") == "TRIGGERED":
                             # Handle different value types (float for toxicity, list for PII)
-                            raw_value = rule_result.get('value', 0)
-                            raw_threshold = rule_result.get('target_value', 0)
-                            triggered_rules.append(TriggeredRule(
-                                metric=rule_result.get('metric', 'unknown'),
-                                value=raw_value,
-                                threshold=raw_threshold,
-                                operator=rule_result.get('operator', 'N/A'),
-                            ))
+                            raw_value = rule_result.get("value", 0)
+                            raw_threshold = rule_result.get("target_value", 0)
+                            triggered_rules.append(
+                                TriggeredRule(
+                                    metric=rule_result.get("metric", "unknown"),
+                                    value=raw_value,
+                                    threshold=raw_threshold,
+                                    operator=rule_result.get("operator", "N/A"),
+                                )
+                            )
 
-    return payload, protect_result, ProtectResponse(
-        blocked=blocked,
-        status=status,
-        triggered_rules=triggered_rules,
-        override_message=override_message,
+    return (
+        payload,
+        protect_result,
+        ProtectResponse(
+            blocked=blocked,
+            status=status,
+            triggered_rules=triggered_rules,
+            override_message=override_message,
+        ),
     )
 
 
@@ -264,15 +280,21 @@ async def log_conversation_turn(request: ConversationTurnRequest):
         # Get Galileo config from environment (not from request)
         project_name = os.environ.get("GALILEO_PROJECT_NAME", "voice-chatbot")
         log_stream = os.environ.get("GALILEO_LOG_STREAM", "voice-conversations")
-        protect_enabled = os.environ.get("GALILEO_PROTECT_ENABLED", "").lower() == "true"
+        protect_enabled = (
+            os.environ.get("GALILEO_PROTECT_ENABLED", "").lower() == "true"
+        )
         stage_id = os.environ.get("GALILEO_PROTECT_STAGE_ID")
         check_guardrails = protect_enabled and stage_id is not None
 
         # Debug logging
         print(f"[DEBUG] Request received:")
         print(f"  session_id: {request.session_id}")
-        print(f"  user_transcript: {request.user_transcript[:50] if request.user_transcript else 'None'}...")
-        print(f"  check_guardrails: {check_guardrails} (protect_enabled={protect_enabled}, stage_id={'set' if stage_id else 'None'})")
+        print(
+            f"  user_transcript: {request.user_transcript[:50] if request.user_transcript else 'None'}..."
+        )
+        print(
+            f"  check_guardrails: {check_guardrails} (protect_enabled={protect_enabled}, stage_id={'set' if stage_id else 'None'})"
+        )
         print(f"  project_name: {project_name}")
 
         logger = session_manager.get_or_create_logger(
@@ -307,12 +329,14 @@ async def log_conversation_turn(request: ConversationTurnRequest):
 
         # Check input guardrail
         if check_guardrails and stage_id:
-            payload, protect_result, input_guardrail_response = _invoke_and_parse_protect(
-                text=request.user_transcript,
-                is_input=True,
-                stage_id=stage_id,
-                project_name=project_name,
-                metadata={"role": "user"},
+            payload, protect_result, input_guardrail_response = (
+                _invoke_and_parse_protect(
+                    text=request.user_transcript,
+                    is_input=True,
+                    stage_id=stage_id,
+                    project_name=project_name,
+                    metadata={"role": "user"},
+                )
             )
 
             # Add protect span to THIS trace
@@ -325,10 +349,13 @@ async def log_conversation_turn(request: ConversationTurnRequest):
                         metadata={"stage": "input_guardrail"},
                         status_code=200,
                     )
-                    print(f"[GALILEO] Added input protect span: {input_guardrail_response.status}")
+                    print(
+                        f"[GALILEO] Added input protect span: {input_guardrail_response.status}"
+                    )
                 except Exception as e:
                     print(f"[ERROR] Failed to add input protect span: {e}")
                     import traceback
+
                     traceback.print_exc()
 
             if input_guardrail_response.blocked:
@@ -342,7 +369,11 @@ async def log_conversation_turn(request: ConversationTurnRequest):
         )
 
         logger.add_llm_span(
-            input=request.conversation_context if request.conversation_context else request.user_transcript,
+            input=(
+                request.conversation_context
+                if request.conversation_context
+                else request.user_transcript
+            ),
             output=output_message,
             model="elevenlabs-agent",
             name="Agent_Response",
@@ -354,12 +385,14 @@ async def log_conversation_turn(request: ConversationTurnRequest):
 
         # Check output guardrail (only if input wasn't blocked)
         if check_guardrails and stage_id and not blocked:
-            payload, protect_result, output_guardrail_response = _invoke_and_parse_protect(
-                text=request.agent_response,
-                is_input=False,
-                stage_id=stage_id,
-                project_name=project_name,
-                metadata={"role": "assistant"},
+            payload, protect_result, output_guardrail_response = (
+                _invoke_and_parse_protect(
+                    text=request.agent_response,
+                    is_input=False,
+                    stage_id=stage_id,
+                    project_name=project_name,
+                    metadata={"role": "assistant"},
+                )
             )
 
             # Add protect span to THIS trace
@@ -372,10 +405,13 @@ async def log_conversation_turn(request: ConversationTurnRequest):
                         metadata={"stage": "output_guardrail"},
                         status_code=200,
                     )
-                    print(f"[GALILEO] Added output protect span: {output_guardrail_response.status}")
+                    print(
+                        f"[GALILEO] Added output protect span: {output_guardrail_response.status}"
+                    )
                 except Exception as e:
                     print(f"[ERROR] Failed to add output protect span: {e}")
                     import traceback
+
                     traceback.print_exc()
 
             if output_guardrail_response.blocked:
@@ -401,6 +437,7 @@ async def log_conversation_turn(request: ConversationTurnRequest):
     except Exception as e:
         print(f"[ERROR] log_conversation_turn failed: {e}")
         import traceback
+
         traceback.print_exc()
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -417,7 +454,9 @@ async def invoke_protect_endpoint(request: ProtectRequest):
         stage_id = os.environ.get("GALILEO_PROTECT_STAGE_ID")
 
         if not stage_id:
-            raise HTTPException(status_code=400, detail="GALILEO_PROTECT_STAGE_ID not configured")
+            raise HTTPException(
+                status_code=400, detail="GALILEO_PROTECT_STAGE_ID not configured"
+            )
 
         _, _, response = _invoke_and_parse_protect(
             text=request.input_text or request.output_text or "",
@@ -444,5 +483,6 @@ async def end_session(session_id: str):
 
 if __name__ == "__main__":
     import uvicorn
+
     port = int(os.environ.get("PORT", 8000))
     uvicorn.run(app, host="0.0.0.0", port=port)

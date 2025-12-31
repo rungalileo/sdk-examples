@@ -50,6 +50,7 @@ from pathlib import Path
 # Load environment from service/.env (sibling directory)
 try:
     from dotenv import load_dotenv
+
     # Scripts are in scripts/, env is in service/.env
     env_path = Path(__file__).parent.parent / "service" / ".env"
     if env_path.exists():
@@ -59,7 +60,9 @@ try:
         print(f"[WARNING] Environment file not found: {env_path}")
         print("         Please create it from service/.env.example")
 except ImportError:
-    print("[WARNING] python-dotenv not installed. Using system environment variables only.")
+    print(
+        "[WARNING] python-dotenv not installed. Using system environment variables only."
+    )
     print("         Install with: pip install python-dotenv")
 
 # =============================================================================
@@ -84,7 +87,9 @@ print("=" * 70)
 
 print(f"\n[CONFIGURATION]")
 print(f"  GALILEO_CONSOLE_URL:  {GALILEO_CONSOLE_URL or 'NOT SET'}")
-print(f"  GALILEO_API_KEY:      {'***' + GALILEO_API_KEY[-4:] if GALILEO_API_KEY else 'NOT SET'}")
+print(
+    f"  GALILEO_API_KEY:      {'***' + GALILEO_API_KEY[-4:] if GALILEO_API_KEY else 'NOT SET'}"
+)
 print(f"  GALILEO_PROJECT_NAME: {GALILEO_PROJECT_NAME or 'NOT SET'}")
 print(f"  PROTECT_STAGE_NAME:   {PROTECT_STAGE_NAME}")
 print(f"  TOXICITY_THRESHOLD:   {TOXICITY_THRESHOLD}")
@@ -147,7 +152,7 @@ print("\n[STEP 2] Creating guardrail rules...")
 toxicity_rule = Rule(
     metric=GalileoScorers.input_toxicity,
     operator=RuleOperator.gt,
-    target_value=TOXICITY_THRESHOLD
+    target_value=TOXICITY_THRESHOLD,
 )
 print(f"  Ruleset 1 - Toxicity: {GalileoScorers.input_toxicity} > {TOXICITY_THRESHOLD}")
 
@@ -155,7 +160,7 @@ toxicity_action = OverrideAction(
     choices=[
         "I'm sorry, but I can't respond to that kind of language. Let's keep our conversation respectful.",
         "That's not appropriate. I'm here to help, but I need you to communicate respectfully.",
-        "I don't respond to toxic language. Please rephrase your question politely."
+        "I don't respond to toxic language. Please rephrase your question politely.",
     ]
 )
 
@@ -165,7 +170,7 @@ toxicity_ruleset = Ruleset(rules=[toxicity_rule], action=toxicity_action)
 pii_rule = Rule(
     metric=GalileoScorers.input_pii,
     operator=RuleOperator.any,
-    target_value=["ssn", "address", "credit_card", "phone_number"]
+    target_value=["ssn", "address", "credit_card", "phone_number"],
 )
 print(f"  Ruleset 2 - PII: {GalileoScorers.input_pii} contains sensitive data")
 
@@ -188,7 +193,7 @@ try:
         name=PROTECT_STAGE_NAME,
         stage_type=StageType.central,
         prioritized_rulesets=[toxicity_ruleset, pii_ruleset],
-        description=f"Guardrails for {GALILEO_PROJECT_NAME} - blocks toxic input and PII."
+        description=f"Guardrails for {GALILEO_PROJECT_NAME} - blocks toxic input and PII.",
     )
 
     # Handle case where create_protect_stage returns None (stage may already exist)
@@ -216,28 +221,49 @@ except Exception as e:
     try:
         existing_stage = get_protect_stage(stage_name=PROTECT_STAGE_NAME)
         if existing_stage:
-            print(f"  Found existing stage: {existing_stage.name} (ID: {existing_stage.id})")
+            print(
+                f"  Found existing stage: {existing_stage.name} (ID: {existing_stage.id})"
+            )
 
             # Show key stage properties
             print(f"\n  [DEBUG] Stage properties:")
-            for attr in ['id', 'name', 'type', 'version', 'description', 'paused', 'project_id', 'created_by']:
+            for attr in [
+                "id",
+                "name",
+                "type",
+                "version",
+                "description",
+                "paused",
+                "project_id",
+                "created_by",
+            ]:
                 if hasattr(existing_stage, attr):
                     print(f"    {attr}: {getattr(existing_stage, attr)}")
 
             # Show existing rulesets info
-            if hasattr(existing_stage, 'prioritized_rulesets') and existing_stage.prioritized_rulesets:
+            if (
+                hasattr(existing_stage, "prioritized_rulesets")
+                and existing_stage.prioritized_rulesets
+            ):
                 print(f"  Current rulesets: {len(existing_stage.prioritized_rulesets)}")
                 for i, rs in enumerate(existing_stage.prioritized_rulesets, 1):
-                    if hasattr(rs, 'rules') and rs.rules:
-                        rule_metrics = [r.metric if hasattr(r, 'metric') else 'unknown' for r in rs.rules]
+                    if hasattr(rs, "rules") and rs.rules:
+                        rule_metrics = [
+                            r.metric if hasattr(r, "metric") else "unknown"
+                            for r in rs.rules
+                        ]
                         print(f"    - Ruleset {i}: {rule_metrics}")
             else:
                 print(f"  Current rulesets: None or not accessible")
 
             print(f"\n[STEP 5] Updating existing stage with current rulesets...")
             print(f"  New rulesets:")
-            print(f"    - Ruleset 1: {GalileoScorers.input_toxicity} > {TOXICITY_THRESHOLD}")
-            print(f"    - Ruleset 2: {GalileoScorers.input_pii} (ssn, address, credit_card, phone_number)")
+            print(
+                f"    - Ruleset 1: {GalileoScorers.input_toxicity} > {TOXICITY_THRESHOLD}"
+            )
+            print(
+                f"    - Ruleset 2: {GalileoScorers.input_pii} (ssn, address, credit_card, phone_number)"
+            )
 
             # Update the existing stage with the new rulesets
             # Note: update_protect_stage doesn't accept description parameter
