@@ -60,9 +60,7 @@ try:
         print(f"[WARNING] Environment file not found: {env_path}")
         print("         Please create it from service/.env.example")
 except ImportError:
-    print(
-        "[WARNING] python-dotenv not installed. Using system environment variables only."
-    )
+    print("[WARNING] python-dotenv not installed. Using system environment variables only.")
     print("         Install with: pip install python-dotenv")
 
 # =============================================================================
@@ -87,9 +85,7 @@ print("=" * 70)
 
 print(f"\n[CONFIGURATION]")
 print(f"  GALILEO_CONSOLE_URL:  {GALILEO_CONSOLE_URL or 'NOT SET'}")
-print(
-    f"  GALILEO_API_KEY:      {'***' + GALILEO_API_KEY[-4:] if GALILEO_API_KEY else 'NOT SET'}"
-)
+print(f"  GALILEO_API_KEY:      {'***' + GALILEO_API_KEY[-4:] if GALILEO_API_KEY else 'NOT SET'}")
 print(f"  GALILEO_PROJECT_NAME: {GALILEO_PROJECT_NAME or 'NOT SET'}")
 print(f"  PROTECT_STAGE_NAME:   {PROTECT_STAGE_NAME}")
 print(f"  TOXICITY_THRESHOLD:   {TOXICITY_THRESHOLD}")
@@ -221,9 +217,7 @@ except Exception as e:
     try:
         existing_stage = get_protect_stage(stage_name=PROTECT_STAGE_NAME)
         if existing_stage:
-            print(
-                f"  Found existing stage: {existing_stage.name} (ID: {existing_stage.id})"
-            )
+            print(f"  Found existing stage: {existing_stage.name} (ID: {existing_stage.id})")
 
             # Show key stage properties
             print(f"\n  [DEBUG] Stage properties:")
@@ -241,29 +235,19 @@ except Exception as e:
                     print(f"    {attr}: {getattr(existing_stage, attr)}")
 
             # Show existing rulesets info
-            if (
-                hasattr(existing_stage, "prioritized_rulesets")
-                and existing_stage.prioritized_rulesets
-            ):
+            if hasattr(existing_stage, "prioritized_rulesets") and existing_stage.prioritized_rulesets:
                 print(f"  Current rulesets: {len(existing_stage.prioritized_rulesets)}")
                 for i, rs in enumerate(existing_stage.prioritized_rulesets, 1):
                     if hasattr(rs, "rules") and rs.rules:
-                        rule_metrics = [
-                            r.metric if hasattr(r, "metric") else "unknown"
-                            for r in rs.rules
-                        ]
+                        rule_metrics = [r.metric if hasattr(r, "metric") else "unknown" for r in rs.rules]
                         print(f"    - Ruleset {i}: {rule_metrics}")
             else:
                 print(f"  Current rulesets: None or not accessible")
 
             print(f"\n[STEP 5] Updating existing stage with current rulesets...")
             print(f"  New rulesets:")
-            print(
-                f"    - Ruleset 1: {GalileoScorers.input_toxicity} > {TOXICITY_THRESHOLD}"
-            )
-            print(
-                f"    - Ruleset 2: {GalileoScorers.input_pii} (ssn, address, credit_card, phone_number)"
-            )
+            print(f"    - Ruleset 1: {GalileoScorers.input_toxicity} > {TOXICITY_THRESHOLD}")
+            print(f"    - Ruleset 2: {GalileoScorers.input_pii} (ssn, address, credit_card, phone_number)")
 
             # Update the existing stage with the new rulesets
             # Note: update_protect_stage doesn't accept description parameter

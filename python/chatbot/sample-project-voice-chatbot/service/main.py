@@ -203,9 +203,7 @@ def _invoke_and_parse_protect(
         print(f"[DEBUG] Protect result type: {type(protect_result)}")
         if protect_result:
             print(f"[DEBUG] Protect result status: {protect_result.status}")
-            print(
-                f"[DEBUG] Protect result dir: {[attr for attr in dir(protect_result) if not attr.startswith('_')]}"
-            )
+            print(f"[DEBUG] Protect result dir: {[attr for attr in dir(protect_result) if not attr.startswith('_')]}")
     except Exception as e:
         print(f"[ERROR] invoke_protect failed: {e}")
         import traceback
@@ -225,16 +223,10 @@ def _invoke_and_parse_protect(
 
         if hasattr(protect_result, "action_result") and protect_result.action_result:
             action_result = protect_result.action_result
-            if (
-                isinstance(action_result, dict)
-                and action_result.get("type") == "OVERRIDE"
-            ):
+            if isinstance(action_result, dict) and action_result.get("type") == "OVERRIDE":
                 override_message = action_result.get("value")
 
-        if (
-            hasattr(protect_result, "ruleset_results")
-            and protect_result.ruleset_results
-        ):
+        if hasattr(protect_result, "ruleset_results") and protect_result.ruleset_results:
             for ruleset_result in protect_result.ruleset_results:
                 if "rule_results" in ruleset_result:
                     for rule_result in ruleset_result["rule_results"]:
@@ -280,21 +272,15 @@ async def log_conversation_turn(request: ConversationTurnRequest):
         # Get Galileo config from environment (not from request)
         project_name = os.environ.get("GALILEO_PROJECT_NAME", "voice-chatbot")
         log_stream = os.environ.get("GALILEO_LOG_STREAM", "voice-conversations")
-        protect_enabled = (
-            os.environ.get("GALILEO_PROTECT_ENABLED", "").lower() == "true"
-        )
+        protect_enabled = os.environ.get("GALILEO_PROTECT_ENABLED", "").lower() == "true"
         stage_id = os.environ.get("GALILEO_PROTECT_STAGE_ID")
         check_guardrails = protect_enabled and stage_id is not None
 
         # Debug logging
         print(f"[DEBUG] Request received:")
         print(f"  session_id: {request.session_id}")
-        print(
-            f"  user_transcript: {request.user_transcript[:50] if request.user_transcript else 'None'}..."
-        )
-        print(
-            f"  check_guardrails: {check_guardrails} (protect_enabled={protect_enabled}, stage_id={'set' if stage_id else 'None'})"
-        )
+        print(f"  user_transcript: {request.user_transcript[:50] if request.user_transcript else 'None'}...")
+        print(f"  check_guardrails: {check_guardrails} (protect_enabled={protect_enabled}, stage_id={'set' if stage_id else 'None'})")
         print(f"  project_name: {project_name}")
 
         logger = session_manager.get_or_create_logger(
@@ -329,14 +315,12 @@ async def log_conversation_turn(request: ConversationTurnRequest):
 
         # Check input guardrail
         if check_guardrails and stage_id:
-            payload, protect_result, input_guardrail_response = (
-                _invoke_and_parse_protect(
-                    text=request.user_transcript,
-                    is_input=True,
-                    stage_id=stage_id,
-                    project_name=project_name,
-                    metadata={"role": "user"},
-                )
+            payload, protect_result, input_guardrail_response = _invoke_and_parse_protect(
+                text=request.user_transcript,
+                is_input=True,
+                stage_id=stage_id,
+                project_name=project_name,
+                metadata={"role": "user"},
             )
 
             # Add protect span to THIS trace
@@ -349,9 +333,7 @@ async def log_conversation_turn(request: ConversationTurnRequest):
                         metadata={"stage": "input_guardrail"},
                         status_code=200,
                     )
-                    print(
-                        f"[GALILEO] Added input protect span: {input_guardrail_response.status}"
-                    )
+                    print(f"[GALILEO] Added input protect span: {input_guardrail_response.status}")
                 except Exception as e:
                     print(f"[ERROR] Failed to add input protect span: {e}")
                     import traceback
@@ -369,11 +351,7 @@ async def log_conversation_turn(request: ConversationTurnRequest):
         )
 
         logger.add_llm_span(
-            input=(
-                request.conversation_context
-                if request.conversation_context
-                else request.user_transcript
-            ),
+            input=(request.conversation_context if request.conversation_context else request.user_transcript),
             output=output_message,
             model="elevenlabs-agent",
             name="Agent_Response",
@@ -385,14 +363,12 @@ async def log_conversation_turn(request: ConversationTurnRequest):
 
         # Check output guardrail (only if input wasn't blocked)
         if check_guardrails and stage_id and not blocked:
-            payload, protect_result, output_guardrail_response = (
-                _invoke_and_parse_protect(
-                    text=request.agent_response,
-                    is_input=False,
-                    stage_id=stage_id,
-                    project_name=project_name,
-                    metadata={"role": "assistant"},
-                )
+            payload, protect_result, output_guardrail_response = _invoke_and_parse_protect(
+                text=request.agent_response,
+                is_input=False,
+                stage_id=stage_id,
+                project_name=project_name,
+                metadata={"role": "assistant"},
             )
 
             # Add protect span to THIS trace
@@ -405,9 +381,7 @@ async def log_conversation_turn(request: ConversationTurnRequest):
                         metadata={"stage": "output_guardrail"},
                         status_code=200,
                     )
-                    print(
-                        f"[GALILEO] Added output protect span: {output_guardrail_response.status}"
-                    )
+                    print(f"[GALILEO] Added output protect span: {output_guardrail_response.status}")
                 except Exception as e:
                     print(f"[ERROR] Failed to add output protect span: {e}")
                     import traceback
@@ -454,9 +428,7 @@ async def invoke_protect_endpoint(request: ProtectRequest):
         stage_id = os.environ.get("GALILEO_PROTECT_STAGE_ID")
 
         if not stage_id:
-            raise HTTPException(
-                status_code=400, detail="GALILEO_PROTECT_STAGE_ID not configured"
-            )
+            raise HTTPException(status_code=400, detail="GALILEO_PROTECT_STAGE_ID not configured")
 
         _, _, response = _invoke_and_parse_protect(
             text=request.input_text or request.output_text or "",
