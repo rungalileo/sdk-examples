@@ -28,7 +28,7 @@
         "axios": "^1.6.0",
         "cors": "^2.8.5",
         "dotenv": "^16.0.0",
-        "express": "^4.21.2",
+        "express": "^4.22.1",
         "galileo": "^1.24.1",
         "langchain": "^0.3.29",
         "openai": "^4.0.0",
