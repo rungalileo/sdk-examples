@@ -1,7 +1,5 @@
 # CrewAI and Galileo Cookbook
 
-This folder demonstrates how to build and run a small research crew using crewAI and how to instrument the application with Galileo for observability and evaluation engineering.  
-
 This tutorial is a completed version of the [CrewAI quickstart](https://docs.crewai.com/en/quickstart) and adds the
 Galileo's [CrewAIEventListener](https://v2docs.galileo.ai/sdk-api/python/reference/handlers/crewai/handler),
 an event handler implemented on top of OpenTelemetry (OTel). For more information, see
