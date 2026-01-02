@@ -1,20 +1,19 @@
-# Homework Assignment 1: Write a Starting Prompt
+# Homework Assignment 2: Recipe Bot Error Analysis
 
-This folder contains a solution to [homework assignment 1](https://github.com/ai-evals-course/recipe-chatbot/tree/main/homeworks/hw1) using Galileo.
+This folder contains a solution to [homework assignment 2](https://github.com/ai-evals-course/recipe-chatbot/tree/main/homeworks/hw2) using Galileo.
 
 ## Original homework assignment
 
-The original homework assignment has three parts:
+The original homework assignment has two parts:
 
-- Creating a well-crafted system prompt inside the Recipe Chatbot application, and testing the results
-- Creating more queries in a dataset for use with this chatbot
-- Running the dataset in bulk to test the system prompt
+- Generate test queries
+- Find and categorize errors
 
 ## Using Galileo for this assignment
 
-Galileo has built-in capabilities to perform these tasks, allowing you to create prompts, build datasets or queries, and test and tune the prompts using those dataset. These capabilities are available both in code using [experiments](https://v2docs.galileo.ai/sdk-api/experiments/experiments), or through the Galileo console using [Playgrounds](https://v2docs.galileo.ai/concepts/experiments/running-experiments-in-console).
+Galileo has built-in capabilities to perform these tasks, allowing you to save your generated test queries as a dataset, then run this dataset against a simulation of the recipe chatbot (or you could run against the actual recipe bot if required). Once you have generated data using your queries, you can then annotate these to identify failures, then export these annotations to alow you to build a taxonomy of failure modes using an LLM, then annotate the traces using your failure modes.
 
-This folder contains a sample notebook showing all these steps in code.
+This folder contains a sample notebook showing all these steps in code, along with instructions on using the Galileo console to perform some tasks.
 
 ## Configuration
 
