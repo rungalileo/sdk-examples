@@ -50,7 +50,7 @@ You can read more about these in our [Get started with sample projects documenta
 - **[LangGraph FSI Agent](/python/agent/langgraph-fsi-agent/)** - Financial services agent with before/after implementations  
 - **[LangGraph Telecom Agent](/python/agent/langgraph-telecom-agent/)** - Telecom services agent with Galileo integration  
 - **[LangGraph + OpenTelemetry](/python/agent/langgraph-otel/)** - 🎆 **Featured** - Comprehensive observability with OpenTelemetry and Galileo
-- **[CrewAI Agent](/python/agent/crew-ai/)** - Multi-agent collaboration using CrewAI framework
+- **[CrewAI Agent](/python/agent/crewAI/)** - Multi-agent collaboration using CrewAI framework
 - **[Startup Simulator 3000](/python/agent/startup-simulator-3000/)** - Advanced agent with startup business simulation
 - **[Weather Vibes Agent](/python/agent/weather-vibes-agent/)** - Multi-function agent for weather, recommendations, and YouTube videos
 - **[Minimal Agent Example](/python/agent/minimal-agent-example/)** - Simple agent with basic tool usage
