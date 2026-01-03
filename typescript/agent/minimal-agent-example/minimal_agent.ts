@@ -1,4 +1,4 @@
-import * as dotenv from 'dotenv';
+import "./config/env";  // side-effect: loads env vars
 import * as fs from 'fs';
 import * as path from 'path';
 import { OpenAI } from 'openai';
@@ -6,8 +6,6 @@ import { log, wrapOpenAI, init, flush } from 'galileo';
 import chalk from 'chalk';
 import inquirer from 'inquirer';
 
-// Load environment variables
-dotenv.config();
 
 // Suppress any warnings if needed
 // process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
