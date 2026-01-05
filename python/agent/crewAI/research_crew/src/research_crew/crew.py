@@ -5,8 +5,9 @@ from crewai_tools import SerperDevTool
 from crewai.agents.agent_builder.base_agent import BaseAgent
 from typing import List
 
+
 @CrewBase
-class ResearchCrew():
+class ResearchCrew:
     """Research crew for comprehensive topic analysis and reporting"""
 
     agents: List[BaseAgent]
@@ -14,31 +15,19 @@ class ResearchCrew():
 
     @agent
     def researcher(self) -> Agent:
-        return Agent(
-            config=self.agents_config['researcher'], # type: ignore[index]
-            verbose=True,
-            tools=[SerperDevTool()]
-        )
+        return Agent(config=self.agents_config["researcher"], verbose=True, tools=[SerperDevTool()])  # type: ignore[index]
 
     @agent
     def analyst(self) -> Agent:
-        return Agent(
-            config=self.agents_config['analyst'], # type: ignore[index]
-            verbose=True
-        )
+        return Agent(config=self.agents_config["analyst"], verbose=True)  # type: ignore[index]
 
     @task
     def research_task(self) -> Task:
-        return Task(
-            config=self.tasks_config['research_task'] # type: ignore[index]
-        )
+        return Task(config=self.tasks_config["research_task"])  # type: ignore[index]
 
     @task
     def analysis_task(self) -> Task:
-        return Task(
-            config=self.tasks_config['analysis_task'], # type: ignore[index]
-            output_file='output/report.md'
-        )
+        return Task(config=self.tasks_config["analysis_task"], output_file="output/report.md")  # type: ignore[index]
 
     @crew
     def crew(self) -> Crew:
