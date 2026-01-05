@@ -6,7 +6,7 @@ The MCP server used by default is the [Galileo MCP server](https://v2docs.galile
 
 ## Getting Started
 
-To get started with this project, you'll need to have Python 3.9 or later installed. You can then install the required dependencies in a virtual environment:
+To get started with this project, you'll need to have Python 3.10 or later installed. You can then install the required dependencies in a virtual environment:
 
 ```bash
 pip install -r requirements.txt

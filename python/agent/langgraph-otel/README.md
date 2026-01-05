@@ -11,7 +11,7 @@ For detailed explanations and advanced patterns, see the [LangGraph OpenTelemetr
 ## Quick start
 
 ### Prerequisites
-- Python 3.9+
+- Python 3.10+
 - [UV package manager](https://docs.astral.sh/uv/getting-started/installation/)
 - [Galileo account](https://app.galileo.ai) (free)
 - OpenAI API key

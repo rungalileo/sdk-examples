@@ -431,7 +431,7 @@ gunicorn -w 4 -b 0.0.0.0:2021 app:app
 
 3. **Docker Deployment**
 ```dockerfile
-FROM python:3.9-slim
+FROM python:3.10-slim
 WORKDIR /app
 COPY requirements.txt .
 RUN pip install -r requirements.txt
