@@ -5,7 +5,7 @@ Its main purpose is to showcase how to set up a project with open-inference and 
 
 ## Getting Started
 
-To get started with this project, you'll need to have Python 3.9 or later installed. You can then install the required dependencies using Poetry:
+To get started with this project, you'll need to have Python 3.10 or later installed. You can then install the required dependencies using Poetry:
 
 ```sync
 uv sync
