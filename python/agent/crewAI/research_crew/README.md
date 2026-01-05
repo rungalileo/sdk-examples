@@ -87,7 +87,7 @@ def run():
     # The rest of your existing code goes here
 ```
 
-This is insturmented in [main.py](research_crew/src/research_crew/main.py).
+This is instrumented in [main.py](research_crew/src/research_crew/main.py).
 
 ### What this does
 
