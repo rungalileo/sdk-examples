@@ -1,0 +1,18 @@
+[project]
+name = "elevenlabs-chatbot"
+version = "0.1.0"
+description = "ElevenLabs Voice Chatbot with Galileo logging and tracing"
+requires-python = ">=3.9"
+dependencies = [
+    "python-dotenv>=1.0.0",
+    "elevenlabs>=1.0.0",
+    "galileo>=1.34.0",
+    "pyaudio>=0.2.14",
+]
+
+[project.scripts]
+voice-chatbot = "main:run_voice_conversation"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
