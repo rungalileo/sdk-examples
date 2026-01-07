@@ -8,7 +8,7 @@ A terminal-based voice chatbot that lets you have real-time voice conversations 
 
 - Interactive voice chat in your terminal (speak via microphone, hear responses via speakers)
 - Conversation logging and tracing with Galileo
-- Session metrics tracking (latency, turn counts, character counts)
+- Session tracking with turn counts
 - Integration pattern for logging voice-based AI interactions
 
 ## Quick Start
