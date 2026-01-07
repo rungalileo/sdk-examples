@@ -76,6 +76,7 @@ You can read more about these in our [Get started with sample projects documenta
   - [OpenAI/Ollama variant](/python/chatbot/sample-project-chatbot/openai-ollama/)
   - [Anthropic variant](/python/chatbot/sample-project-chatbot/anthropic/)
   - [Azure AI Inference variant](/python/chatbot/sample-project-chatbot/azure-inference/)
+- **[ElevenLabs Voice Chatbot](/python/chatbot/elevenlabs-chatbot-protect/)** - Voice chatbot using ElevenLabs with Galileo Protect - macOS only
 
 #### TypeScript Chatbots 📜
 

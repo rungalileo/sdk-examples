@@ -16,6 +16,7 @@ def main() -> None:
         print("\nMake sure you have a .env file with:")
         print("  ELEVENLABS_API_KEY=your-api-key")
         print("  ELEVENLABS_AGENT_ID=your-agent-id")
+        print("  GALILEO_API_KEY=your-galileo-api-key")
         sys.exit(1)
 
     # Create monitor instance
@@ -24,21 +25,6 @@ def main() -> None:
         agent_id=settings.elevenlabs_agent_id,
         ws_url=settings.elevenlabs_ws_url,
     )
-
-    # Set up optional callbacks for Phase 2 Galileo integration
-    # These will be connected to galileo_handler.py later
-    def on_transcript(transcript: str) -> None:
-        # Placeholder for Galileo logging
-        # galileo_handler.log_user_turn(transcript)
-        pass
-
-    def on_response(response: str) -> None:
-        # Placeholder for Galileo logging
-        # galileo_handler.log_agent_turn(response)
-        pass
-
-    monitor.on_user_transcript = on_transcript
-    monitor.on_agent_response = on_response
 
     # Run the interactive session
     try:

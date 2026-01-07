@@ -14,12 +14,12 @@ class Settings(BaseSettings):
     elevenlabs_ws_url: str = "wss://api.elevenlabs.io/v1/convai/conversation"
 
     # Galileo Configuration
-    galileo_api_key: str = ""
-    galileo_console_url: str = "http://localhost:3000"  # Local Galileo instance
-    galileo_project_name: str = "elevenlabs-voice-poc"
-    galileo_log_stream: str = "voice-conversations"
+    galileo_api_key: str
+    galileo_console_url: str
+    galileo_project_name: str
+    galileo_log_stream: str
 
-    galileo_protect_enabled: bool = True
+    galileo_protect_enabled: bool = False
     galileo_protect_stage_id: str = ""
 
     class Config:

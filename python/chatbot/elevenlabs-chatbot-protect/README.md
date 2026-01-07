@@ -1,5 +1,7 @@
 # ElevenLabs Voice Chatbot with Galileo Protect
 
+> **Note:** This example has been tested on macOS only.
+
 A terminal-based voice chatbot that lets you have real-time voice conversations with an ElevenLabs AI agent, with Galileo Protect guardrails for content moderation.
 
 ## What This Example Shows
@@ -11,9 +13,9 @@ A terminal-based voice chatbot that lets you have real-time voice conversations 
 
 ## Quick Start
 
-1. Install system dependencies:
+1. Install system dependencies (macOS):
    ```bash
-   brew install portaudio  # Required for audio support on macOS
+   brew install portaudio
    ```
 
 2. Create and activate a virtual environment:
@@ -42,7 +44,7 @@ A terminal-based voice chatbot that lets you have real-time voice conversations 
 
 ## Configuration
 
-Edit `.env` with your credentials. Note for `ELEVENLABS_*` variables you can signup with a free tier of elevenlabs and use their Agents Platform to create a voice agent to obtain the required API key and Agent Id:
+Edit `.env` with your credentials. Note for `ELEVENLABS_*` variables you can [signup with a free tier](https://elevenlabs.io/app/sign-up?platform=agents) of elevenlabs and use their Agents Platform to create a voice agent to obtain the required API key and Agent Id:
 
 | Variable | Description |
 |----------|-------------|
@@ -67,6 +69,7 @@ This will create a protect stage with an input toxicity rule and output the stag
 
 - Python 3.9+
 - Microphone and headphones (to avoid audio feedback)
+
 
 ## Learn More
 
