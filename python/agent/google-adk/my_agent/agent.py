@@ -1,15 +1,12 @@
-# Load env vars FIRST, before any other imports that depend on them
+"""Agent logic for the Google ADK example."""
+
 from dotenv import load_dotenv
-load_dotenv()
-
-# OpenTelemetry imports
 from opentelemetry.sdk import trace as trace_sdk
-
-# Galileo span processor (auto-configures OTLP headers & endpoint from env vars)
 from galileo import otel
-
-# OpenInference instrumentation for Google ADK (captures inputs/outputs)
 from openinference.instrumentation.google_adk import GoogleADKInstrumentor
+from google.adk.agents.llm_agent import Agent
+
+load_dotenv()
 
 # Create tracer provider and register Galileo span processor
 tracer_provider = trace_sdk.TracerProvider()
@@ -22,9 +19,6 @@ GoogleADKInstrumentor().instrument(tracer_provider=tracer_provider)
 # ---------------------------------------------------------------------------
 # ADK agent definition (import after instrumentation is configured)
 # ---------------------------------------------------------------------------
-
-from google.adk.agents.llm_agent import Agent
-
 
 # Tool implementation
 def get_current_time(city: str) -> dict:
