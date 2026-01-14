@@ -1,6 +1,5 @@
 # Load env vars FIRST, before any other imports that depend on them
 from dotenv import load_dotenv
-
 load_dotenv()
 
 # OpenTelemetry imports
@@ -22,8 +21,6 @@ GoogleADKInstrumentor().instrument(tracer_provider=tracer_provider)
 
 # ---------------------------------------------------------------------------
 # ADK agent definition (import after instrumentation is configured)
-# This exapple is from the Google ADK Python Quickstart documentation:
-# https://google.github.io/adk-docs/get-started/python/
 # ---------------------------------------------------------------------------
 
 from google.adk.agents.llm_agent import Agent
@@ -39,6 +36,9 @@ root_agent = Agent(
     model="gemini-3-flash-preview",
     name="root_agent",
     description="Tells the current time in a specified city.",
-    instruction=("You are a helpful assistant that tells the current time in cities. " "Use the 'get_current_time' tool for this purpose."),
+    instruction=(
+        "You are a helpful assistant that tells the current time in cities. "
+        "Use the 'get_current_time' tool for this purpose."
+    ),
     tools=[get_current_time],
 )
