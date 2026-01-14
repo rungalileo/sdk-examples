@@ -20,6 +20,7 @@ GoogleADKInstrumentor().instrument(tracer_provider=tracer_provider)
 # ADK agent definition (import after instrumentation is configured)
 # ---------------------------------------------------------------------------
 
+
 # Tool implementation
 def get_current_time(city: str) -> dict:
     """Returns the current time in a specified city."""
