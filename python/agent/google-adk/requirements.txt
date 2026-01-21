@@ -1,3 +1,4 @@
 google-adk
 openinference-instrumentation-google-adk
 python-dotenv
+galileo
