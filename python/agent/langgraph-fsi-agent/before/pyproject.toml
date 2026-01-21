@@ -5,7 +5,7 @@ description = "A demo langgraph Financial Services agent with Galileo evaluation
 license = "MIT"
 requires-python = "<3.14,>=3.11"
 dependencies = [
-  "chainlit~=2.5.5",
+  "chainlit~=2.9.4",
   "grandalf>=0.8",
   "langchain-community>=0.3.24",
   "langchain-pinecone>=0.2.6",
