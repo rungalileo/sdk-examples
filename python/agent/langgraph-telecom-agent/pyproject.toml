@@ -5,7 +5,7 @@ description = "A demo langgraph Telecom Services agent with Galileo evaluations"
 license = "MIT"
 requires-python = "<3.14,>=3.11"
 dependencies = [
-  "chainlit~=2.5.5",
+  "chainlit~=2.9.4",
   "galileo (>=1.20.0,<2.0.0)",
   "grandalf>=0.8",
   "langchain-community>=0.3.24",
