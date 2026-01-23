@@ -12,7 +12,7 @@ This project also has a unit test that runs the chatbot using the Galileo experi
 
 To run this project you will need:
 
-- Python 3.9 or higher installed
+- Python 3.10 or higher installed
 - A model deployed to Azure AI Foundry using the AI inference API
 - A [Galileo account](https://app.galileo.ai/sign-up) with a project and Log stream set up
 

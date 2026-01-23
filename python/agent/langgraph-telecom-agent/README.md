@@ -95,7 +95,7 @@ Since this is a demo system without live telecom APIs, all tools use mock data g
 
 ### Prerequisites
 
-- Python 3.9+
+- Python 3.10+
 - [OpenAI API Key](https://platform.openai.com/api-keys)
 - [Pinecone Account](https://www.pinecone.io) 
 - [Galileo Account](https://app.galileo.ai/sign-up) 

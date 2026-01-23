@@ -10,3 +10,6 @@ python/chatbot/sample-project-chatbot/openai-ollama/script.py
 */dist
 *dist
 
+ai-evals-course/hw1/sample_queries.csv
+ai-evals-course/hw2/failure_mode_taxonomy.md
+ai-evals-course/hw2/export.csv

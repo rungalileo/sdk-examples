@@ -22,7 +22,7 @@ If you submit a PR to the SDK examples repo — please make sure to either open 
 1. **Galileo.ai Account**: You'll need a free account on [Galileo.ai](https://app.galileo.ai/sign-up)
 2. **API Key**: Obtain your API key from the [Galileo.ai dashboard](https://app.galileo.ai/settings/api-keys)
 3. **Development Environment**: 
-   - For Python examples: Preferred Python 3.8+ (Galileo supports Python <3.14, >=3.9) 
+   - For Python examples: Preferred Python 3.10+ (Galileo supports Python <3.14, >=3.10)
    - For TypeScript examples: Node.js 16+ and npm/yarn
 
 ### Setup
@@ -152,7 +152,7 @@ Explain any configuration options or settings.
 
 ### Python Standards
 
-- **Python Version**: Target Python <3.14, >=3.9
+- **Python Version**: Target Python <3.14, >=3.10
 - **Code Style**: Follow PEP 8 guidelines
 - **Dependencies**: Use `requirements.txt` 
 - **Type Hints**: Include type hints for function parameters and return values

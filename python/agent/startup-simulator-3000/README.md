@@ -46,7 +46,7 @@ run immediately!
 
 Make sure you have:
 
-- **Python 3.9+** installed on your system
+- **Python 3.10+** installed on your system
 - **Git** (optional, for cloning)
 - **A code editor** (VS Code, PyCharm, etc.)
 
@@ -280,7 +280,7 @@ If you run into issues:
 1. Check the troubleshooting section above
 2. Look at the terminal logs for error messages
 3. Verify your API keys are correct
-4. Make sure you're using Python 3.9+
+4. Make sure you're using Python 3.10+
 
 ---
 
