@@ -83,13 +83,14 @@ You can add Galileo to your own Mastra app using Otel.
   ```typescript
   ...
   import {
-    OtelExporter,
-    SamplingStrategyType,
-  } from "@mastra/otel-exporter";
+    Observability,
+    SamplingStrategyType
+  } from '@mastra/observability';
+  import { OtelExporter } from "@mastra/otel-exporter";
 
   export const mastra = new Mastra({
     ...,
-    observability: {
+    observability: new Observability({
       configs: {
         otel: {
           sampling: { type: SamplingStrategyType.ALWAYS },
@@ -98,7 +99,7 @@ You can add Galileo to your own Mastra app using Otel.
             new OtelExporter({
               provider: {
                 custom: {
-                  endpoint: env.GALILEO_CONSOLE_URL,
+                  endpoint: `${ObservabilityEndpoint}/otel/v1/traces`,
                   headers: {
                     'Galileo-API-Key': process.env.GALILEO_API_KEY ?? '',
                     'project': env.GALILEO_PROJECT ?? '',
@@ -111,6 +112,6 @@ You can add Galileo to your own Mastra app using Otel.
           ]
         }
       }
-    },
+    }),
   })
   ```

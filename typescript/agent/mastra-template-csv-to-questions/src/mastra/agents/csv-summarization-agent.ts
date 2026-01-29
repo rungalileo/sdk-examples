@@ -6,11 +6,13 @@ import { Memory } from '@mastra/memory';
 const memory = new Memory({
   storage: new LibSQLStore({
     url: process.env.MASTRA_DB_URL || 'file:../mastra.db',
+    id: 'csv-summarization-agent-memory',
   }),
 });
 
 export const csvSummarizationAgent = new Agent({
   name: 'CSV Summarization Agent',
+  id: 'csv-summarization-agent',
   description: 'An agent that summarizes and analyzes CSV data using a large context window model',
   instructions: `
 You are a CSV data summarization specialist with access to a large context window model. Your role is to create concise, comprehensive summaries of CSV datasets that capture the essence of the data while being significantly more digestible than the raw data.
