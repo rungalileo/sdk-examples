@@ -60,12 +60,8 @@ CUSTOMERS_DB: dict[str, Customer] = {
         "enterprise",
         datetime(2022, 1, 15),
     ),
-    "C002": Customer(
-        "C002", "Bob Smith", "bob@example.com", "premium", datetime(2023, 6, 20)
-    ),
-    "C003": Customer(
-        "C003", "Carol White", "carol@example.com", "standard", datetime(2024, 3, 10)
-    ),
+    "C002": Customer("C002", "Bob Smith", "bob@example.com", "premium", datetime(2023, 6, 20)),
+    "C003": Customer("C003", "Carol White", "carol@example.com", "standard", datetime(2024, 3, 10)),
 }
 
 ORDERS_DB: dict[str, Order] = {
@@ -133,10 +129,7 @@ async def get_customer_info(ctx: RunContext[SupportDeps]) -> str:
     if not customer:
         return "Customer not found."
     return (
-        f"Customer: {customer.name}\n"
-        f"Email: {customer.email}\n"
-        f"Tier: {customer.tier}\n"
-        f"Account since: {customer.account_created.strftime('%Y-%m-%d')}"
+        f"Customer: {customer.name}\n" f"Email: {customer.email}\n" f"Tier: {customer.tier}\n" f"Account since: {customer.account_created.strftime('%Y-%m-%d')}"
     )
 
 
@@ -164,23 +157,17 @@ async def get_order_status(ctx: RunContext[SupportDeps], order_id: str) -> str:
 @support_agent.tool
 async def list_customer_orders(ctx: RunContext[SupportDeps]) -> str:
     """List all orders for the current customer."""
-    customer_orders = [
-        o for o in ORDERS_DB.values() if o.customer_id == ctx.deps.customer_id
-    ]
+    customer_orders = [o for o in ORDERS_DB.values() if o.customer_id == ctx.deps.customer_id]
     if not customer_orders:
         return "No orders found for this customer."
     lines = ["Your orders:"]
     for order in customer_orders:
-        lines.append(
-            f"  - {order.id}: {order.product} (${order.amount:.2f}) - {order.status}"
-        )
+        lines.append(f"  - {order.id}: {order.product} (${order.amount:.2f}) - {order.status}")
     return "\n".join(lines)
 
 
 @support_agent.tool
-async def create_support_ticket(
-    ctx: RunContext[SupportDeps], subject: str, priority: str = "medium"
-) -> str:
+async def create_support_ticket(ctx: RunContext[SupportDeps], subject: str, priority: str = "medium") -> str:
     """Create a new support ticket for the customer.
 
     Args:
@@ -208,9 +195,7 @@ async def create_support_ticket(
 
 
 @support_agent.tool
-async def process_refund(
-    ctx: RunContext[SupportDeps], order_id: str, reason: str
-) -> str:
+async def process_refund(ctx: RunContext[SupportDeps], order_id: str, reason: str) -> str:
     """Process a refund for an order. Only available for delivered or shipped orders.
 
     Args:
