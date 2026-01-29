@@ -34,7 +34,7 @@ python main.py
 The agent will:
 
 1. Create a LangChain agent with two tools (weather and stock price)
-2. Invoke the agent with a question requiring both tools
+2. Invoke the agent with a question requiring both tools. Specifically, ""What's the weather like in San Francisco and what's the current stock price of Apple?"
 3. Automatically log all interactions to Galileo using middleware
 
 ## What Gets Logged
