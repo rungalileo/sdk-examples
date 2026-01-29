@@ -58,6 +58,7 @@ You can read more about these in our [Get started with sample projects documenta
 - **[Strands Agents + OpenTelemetry](/python/agent/strands-agents/)** - The Strands Agents quickstart app with logging to Galileo using OpenTelemetry
 - **[LangGraph + OpenTelemetry](/python/agent/langgraph-open-telemetry/)** - LangGraph with OpenTelemetry instrumentation for observability
 - **[LangGraph + Traceloop](/python/agent/langgraph-traceloop/)** - LangGraph with Traceloop for observability
+- **[PydanticAI Support Agent](/python/agent/pydantic-ai-support-agent/)** - Enterprise customer support agent with Galileo observability
 
 #### TypeScript Agents 📜  
 
