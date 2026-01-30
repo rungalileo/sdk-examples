@@ -14,7 +14,7 @@ load_dotenv()
 
 # Initialize the OpenAI chat model that the agent will use for reasoning
 model = ChatOpenAI(
-    name="gpt-4",
+    name="gpt-5",
     api_key=os.getenv("OPENAI_API_KEY"),  # type: ignore
 )
 
@@ -42,8 +42,7 @@ def get_stock_price(symbol: str) -> str:
 def main() -> None:
     # Use the Galileo context manager to specify project and log stream
     # All traces created within this context will be associated with this project
-    with galileo_context(project=os.getenv("GALILEO_PROJECT", "langchain-middleware"), 
-                         log_stream=os.getenv("GALILEO_LOG_STREAM", "agent_execution")):
+    with galileo_context(project=os.getenv("GALILEO_PROJECT", "langchain-middleware"), log_stream=os.getenv("GALILEO_LOG_STREAM", "agent_execution")):
         # Create an agent with GalileoMiddleware for automatic logging
         # GalileoMiddleware automatically captures:
         # - Agent lifecycle events (start/completion)
