@@ -1,0 +1,5 @@
+openai
+langchain
+langchain-openai
+galileo
+python-dotenv

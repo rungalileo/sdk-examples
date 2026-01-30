@@ -35,7 +35,6 @@ You can read more about these in our [Get started with sample projects documenta
 - [Log MCP calls](/python/logging-samples/log-mcp-calls/) - Log MCP calls as tool spans
 - [Distributed Tracing](/python/logging-samples/distributed-tracing/) - Log distributed traces
 
-
 #### Typescript
 
 - [Simple chatbot using OpenAI/Ollama](/typescript/chatbot/sample-project-chatbot/openai-ollama/) - Simple chatbot using the OpenAI SDK to interact with OpenAI or Ollama
@@ -59,6 +58,7 @@ You can read more about these in our [Get started with sample projects documenta
 - **[LangGraph + OpenTelemetry](/python/agent/langgraph-open-telemetry/)** - LangGraph with OpenTelemetry instrumentation for observability
 - **[LangGraph + Traceloop](/python/agent/langgraph-traceloop/)** - LangGraph with Traceloop for observability
 - **[PydanticAI Support Agent](/python/agent/pydantic-ai-support-agent/)** - Enterprise customer support agent with Galileo observability
+- **[LangChain Agent with Middleware](/python/agent/langchain-middleware/)** - LangChain agent with custom middleware for enhanced functionality
 
 #### TypeScript Agents 📜  
 
