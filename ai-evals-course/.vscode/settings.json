@@ -1,8 +1,10 @@
 {
     "cSpell.words": [
+        "aggregatable",
         "dotenv",
         "Evals",
         "litellm",
-        "Muppets"
+        "Muppets",
+        "scorable"
     ]
 }

@@ -20,3 +20,4 @@ To run these homework assignments, you will need:
 | 1 - Write a Starting Prompt                | [hw1](./hw1/) |
 | 2 - Recipe Bot Error Analysis              | [hw2](./hw2/) |
 | 3 - LLM-as-Judge for Recipe Bot Evaluation | [hw3](./hw3/) |
+| 4 - Recipe Bot Retrieval Evaluation        | [hw4](./hw4/) |
