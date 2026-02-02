@@ -36,6 +36,8 @@ jiter==0.12.0
     # via openai
 openai==2.15.0
     # via openai-responses (pyproject.toml)
+packaging==26.0
+    # via openai-responses (pyproject.toml)
 pydantic==2.12.5
     # via
     #   galileo
