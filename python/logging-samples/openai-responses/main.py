@@ -2,9 +2,13 @@ import json
 import logging
 from typing import Any
 
+from dotenv import load_dotenv
+
 # Use Galileo's wrapped OpenAI client to automatically log all API calls.
 # This is a drop-in replacement for the standard `openai` module.
 from galileo import openai
+
+load_dotenv()
 
 logging.basicConfig(level=logging.INFO)
 
