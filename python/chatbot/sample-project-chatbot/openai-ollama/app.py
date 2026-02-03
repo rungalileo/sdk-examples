@@ -44,14 +44,6 @@ load_dotenv(override=True)
 # If this is not set, raise an exception
 MODEL_NAME = os.environ["MODEL_NAME"]
 
-# Start a new session named using the current date and time
-# This way every time you run the application, it will create a new session in Galileo
-# with the entire conversation inside the same session, with each message back and forth
-# logged as different traces within that session.
-SESSION_NAME = f"LLM Chatbot session - {datetime.now().isoformat()}"
-galileo_context.start_session(SESSION_NAME)
-
-
 # Create a collection of messages with a system prompt
 # The default system prompt encourages the assistant to be helpful, but can lead to hallucinations.
 chat_history = [
@@ -147,6 +139,13 @@ def main() -> None:
     It continuously prompts the user for input, sends it to the LLM,
     and prints the response until the user types "exit", "bye", or "quit".
     """
+    # Start a new session named using the current date and time
+    # This way every time you run the application, it will create a new session in Galileo
+    # with the entire conversation inside the same session, with each message back and forth
+    # logged as different traces within that session.
+    SESSION_NAME = f"LLM Chatbot session - {datetime.now().isoformat()}"
+    galileo_context.start_session(SESSION_NAME)
+
     # Get the Galileo logger instance
     logger = galileo_context.get_logger_instance()
 
