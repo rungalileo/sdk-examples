@@ -263,7 +263,8 @@ Important:
     info_callback("Assembling the final plan...")
     travel_budget = f"Travel budget: {budget}" if budget else ""
     weather_forecast = f"Weather forecast: {weather}" if weather else ""
-    assembly_prompt = f"""
+    assembly_prompt = (
+        f"""
 You are an expert travel planner.
 
 My original request was: \"{query}\"
@@ -272,7 +273,11 @@ You have generated the following outputs:
 
 Destination overview: {destination_overview}
 Itinerary: {itinerary}
-""" + travel_budget + weather_forecast + f"\n\nPlease package the information above into a plan that I can use for my next trip."
+"""
+        + travel_budget
+        + weather_forecast
+        + f"\n\nPlease package the information above into a plan that I can use for my next trip."
+    )
 
     response = client.chat.completions.create(
         model="gpt-4o",

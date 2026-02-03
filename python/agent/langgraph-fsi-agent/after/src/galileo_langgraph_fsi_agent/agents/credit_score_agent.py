@@ -24,9 +24,11 @@ def create_credit_score_agent() -> CompiledGraph:
     agent = create_react_agent(
         model=ChatOpenAI(model=os.environ["MODEL_NAME"], name="Credit Score Agent"),
         tools=[credit_score_tool],
-        prompt=("""
+        prompt=(
+            """
             You are an expert on credit score. Provide the user with their credit score from the credit_score_tool.
-            """),
+            """
+        ),
         name="credit-score-agent",
     )
 

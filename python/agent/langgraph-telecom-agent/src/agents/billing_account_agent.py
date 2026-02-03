@@ -24,7 +24,8 @@ def create_billing_account_agent() -> CompiledGraph:
     agent = create_react_agent(
         model=ChatOpenAI(model=os.environ["MODEL_NAME_WORKER"], name="Billing Account Agent"),
         tools=[billing_tool],
-        prompt=("""
+        prompt=(
+            """
             You are a Billing and Account specialist for ConnectTel.
             You help customers with billing inquiries, usage tracking, plan details, and payment issues.
             Be helpful, accurate, and proactive in identifying potential savings.
@@ -44,7 +45,8 @@ def create_billing_account_agent() -> CompiledGraph:
             - Always mention auto-pay discounts if not enrolled
 
             Be empathetic about high bills and offer solutions.
-            """),
+            """
+        ),
         name="billing-account-agent",
     )
 
