@@ -28,7 +28,6 @@ from elevenlabs.conversational_ai.default_audio_interface import DefaultAudioInt
 # Galileo handler for logging and tracing
 from galileo_handler import get_galileo_handler
 
-
 # =============================================================================
 # ELEVENLABS CONVERSATION CALLBACKS
 # =============================================================================

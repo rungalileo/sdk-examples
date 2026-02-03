@@ -24,14 +24,12 @@ def create_credit_card_information_agent() -> CompiledGraph:
     agent = create_react_agent(
         model=ChatOpenAI(model=os.environ["MODEL_NAME"], name="Credit Card Agent"),
         tools=[credit_card_information_retrieval_tool],
-        prompt=(
-            """
+        prompt=("""
             You are an expert on Brahe Bank credit card products. Provide clear, accurate,
             and concise information. Only answer with known facts from provided documentation,
             and information about the requestor such as their credit score.
             If unsure, state "I don't know."
-            """
-        ),
+            """),
         name="credit-card-agent",
     )
 

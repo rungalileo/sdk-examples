@@ -11,7 +11,6 @@ import json
 from abc import ABC, abstractmethod
 from agent_framework.utils.hooks import ToolHooks, ToolSelectionHooks
 
-
 # Create a custom theme for our logger
 theme = Theme(
     {

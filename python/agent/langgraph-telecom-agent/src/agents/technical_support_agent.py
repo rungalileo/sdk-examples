@@ -28,8 +28,7 @@ def create_technical_support_agent() -> CompiledGraph:
     agent = create_react_agent(
         model=ChatOpenAI(model=os.environ["MODEL_NAME_WORKER"], name="Technical Support Agent"),
         tools=[technical_support_tool, plan_information_retrieval_tool],
-        prompt=(
-            """
+        prompt=("""
             You are a Technical Support specialist for ConnectTel.
             You help customers troubleshoot connectivity issues, configure devices, and resolve technical problems.
             Be patient, thorough, and provide step-by-step guidance.
@@ -50,8 +49,7 @@ def create_technical_support_agent() -> CompiledGraph:
 
             If basic troubleshooting fails, escalate to Level 2 support.
             Document all attempted solutions for future reference.
-            """
-        ),
+            """),
         name="technical-support-agent",
     )
 

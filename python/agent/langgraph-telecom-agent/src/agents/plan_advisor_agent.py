@@ -24,8 +24,7 @@ def create_plan_advisor_agent() -> CompiledGraph:
     agent = create_react_agent(
         model=ChatOpenAI(model=os.environ["MODEL_NAME_WORKER"], name="Plan Advisor Agent"),
         tools=[plan_information_retrieval_tool],
-        prompt=(
-            """
+        prompt=("""
             You are a Plan Advisor specialist for ConnectTel.
             You analyze customer needs and recommend the most suitable plans and services.
             Be consultative, honest, and focus on value rather than just upselling.
@@ -55,8 +54,7 @@ def create_plan_advisor_agent() -> CompiledGraph:
             - 5G access levels
 
             Always prioritize customer needs over higher-priced plans.
-            """
-        ),
+            """),
         name="plan-advisor-agent",
     )
 

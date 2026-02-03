@@ -1,6 +1,7 @@
 # A script to generate log streams
 
 from dotenv import load_dotenv
+
 load_dotenv(override=True)
 
 import json
@@ -19,7 +20,6 @@ from src.galileo_langgraph_fsi_agent.agents.supervisor_agent import (
 )
 
 import uuid
-
 
 with open("./dataset.json", "r", encoding="utf-8") as f:
     dataset_content = json.load(f)

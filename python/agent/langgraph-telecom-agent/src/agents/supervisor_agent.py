@@ -31,8 +31,7 @@ def create_supervisor_agent():
             technical_support_agent,
             plan_advisor_agent,
         ],
-        prompt=(
-            """
+        prompt=("""
             You are a supervisor managing a team of specialized telecom service agents at ConnectTel.
 
             Route customer queries to the appropriate agent based on their needs:
@@ -49,8 +48,7 @@ def create_supervisor_agent():
             - For general greetings, respond warmly before asking how you can help
 
             If a query doesn't fit any agent's expertise, politely explain our service limitations.
-            """
-        ),
+            """),
         add_handoff_back_messages=True,
         output_mode="full_history",
         supervisor_name="connecttel-supervisor-agent",
