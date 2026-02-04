@@ -62,5 +62,6 @@ Edit `.env` with your credentials. Note for `ELEVENLABS_*` variables you can [si
 
 ## Learn More
 
+- [Video tutorial](https://youtu.be/1QNEhDV2r5U)
 - [Galileo Documentation](https://v2docs.galileo.ai/what-is-galileo)
 - [ElevenLabs Conversational AI](https://elevenlabs.io/docs/conversational-ai)
