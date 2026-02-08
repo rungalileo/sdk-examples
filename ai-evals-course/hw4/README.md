@@ -1,20 +1,16 @@
-# Homework Assignment 1: Write a Starting Prompt
+# Homework Assignment 4: Recipe Bot Retrieval Evaluation
 
-This folder contains a solution to [homework assignment 1](https://github.com/ai-evals-course/recipe-chatbot/tree/main/homeworks/hw1) using Galileo.
+This folder contains a solution to [homework assignment 4](https://github.com/ai-evals-course/recipe-chatbot/tree/main/homeworks/hw4) using Galileo.
 
 ## Original homework assignment
 
-The original homework assignment has three parts:
-
-- Creating a well-crafted system prompt inside the Recipe Chatbot application, and testing the results
-- Creating more queries in a dataset for use with this chatbot
-- Running the dataset in bulk to test the system prompt
+The original homework assignment creates a BM25 retriever for a RAG component, and your goal is to score this using a metric.
 
 ## Using Galileo for this assignment
 
-Galileo has built-in capabilities to perform these tasks, allowing you to create prompts, build datasets or queries, and test and tune the prompts using those dataset. These capabilities are available both in code using [experiments](https://v2docs.galileo.ai/sdk-api/experiments/experiments), or through the Galileo console using [Playgrounds](https://v2docs.galileo.ai/concepts/experiments/running-experiments-in-console).
+Galileo has built in capabilities for you to define custom metrics in code, then use these metrics in experiments or for observability. In this case, you will create a metric, then use this to evaluate a retriever span created using the BM25 retriever.
 
-This folder contains a sample notebook showing all these steps in code.
+This folder contains a sample notebook showing all these steps in code, along with instructions on using the Galileo console to perform some tasks.
 
 ## Configuration
 
@@ -28,4 +24,4 @@ To be able to run this notebook, you need to have a Galileo account set up, alon
 
 ## Video walkthrough
 
-[![Video walkthrough of homework 1](https://img.youtube.com/vi/WDRC155RT30/0.jpg)](https://youtu.be/WDRC155RT30)
+[![Video walkthrough of homework 4](https://img.youtube.com/vi/RiN8eHzA9eM/0.jpg)](https://youtu.be/RiN8eHzA9eM)
