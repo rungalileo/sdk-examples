@@ -52,7 +52,7 @@ To run the app, you need the following:
 
 1. Select the agent you want to use
 
-1. Ask the agent questions. These agents can handle CSV files, so you can ask questions like "Summarize the CSV file at https://raw.githubusercontent.com/plotly/datasets/master/2014_world_gdp_with_codes.csv"
+1. Ask the agent questions. These agents can handle CSV files, so you can ask questions like "Summarize the CSV file at <https://raw.githubusercontent.com/plotly/datasets/master/2014_world_gdp_with_codes.csv>"
 
     For testing, you can use these public CSV files:
 
@@ -68,12 +68,12 @@ To run the app, you need the following:
 
 You can add Galileo to your own Mastra app using Otel.
 
-1. Install OpenInference
+1. Install Otel Exporter
 
-    Install the OpenInference package in your project:
+    Install the Otel Exporter package in your project:
 
     ```bash
-    npm install @arizeai/openinference-mastra
+    npm install @mastra/otel-exporter @opentelemetry/exporter-trace-otlp-proto
     ```
 
 2. Configure Galileo in your Mastra project
@@ -83,30 +83,35 @@ You can add Galileo to your own Mastra app using Otel.
   ```typescript
   ...
   import {
-    OpenInferenceOTLPTraceExporter,
-    isOpenInferenceSpan,
-  } from "@arizeai/openinference-mastra";
+    Observability,
+    SamplingStrategyType
+  } from '@mastra/observability';
+  import { OtelExporter } from "@mastra/otel-exporter";
 
   export const mastra = new Mastra({
     ...,
-    telemetry: {
-      serviceName: "openinference-mastra-agent",
-      enabled: true,
-      sampling: {
-        type: "always_on",
-      },
-      export: {
-        type: "custom",
-        exporter: new OpenInferenceOTLPTraceExporter({
-          url: env.GALILEO_CONSOLE_URL,
-          headers: {
-            "Galileo-API-Key": env.GALILEO_API_KEY ?? "your-galileo-api-key",
-            "project": env.GALILEO_PROJECT ?? "your-galileo-project",
-            "logstream": env.GALILEO_LOG_STREAM ?? "default",
-          },
-          spanFilter: isOpenInferenceSpan,
-        }),
-      },
-    },
+    observability: new Observability({
+      configs: {
+        otel: {
+          sampling: { type: SamplingStrategyType.ALWAYS },
+          serviceName: 'galileo-mastra-agent',
+          exporters: [
+            new OtelExporter({
+              provider: {
+                custom: {
+                  endpoint: `${ObservabilityEndpoint}/otel/v1/traces`,
+                  headers: {
+                    'Galileo-API-Key': process.env.GALILEO_API_KEY ?? '',
+                    'project': env.GALILEO_PROJECT ?? '',
+                    'logstream': env.GALILEO_LOG_STREAM ?? '',
+                  },
+                  protocol: 'http/protobuf',
+                }
+              },
+            }),
+          ]
+        }
+      }
+    }),
   })
   ```
