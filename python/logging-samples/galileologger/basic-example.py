@@ -1,8 +1,9 @@
 from galileo import GalileoLogger
-from galileo.config import GalileoPythonConfig # For displaying the log stream URL 
+from galileo.config import GalileoPythonConfig  # For displaying the log stream URL
 
 # Load environment variables from .env file
 from dotenv import load_dotenv
+
 load_dotenv()
 
 # Create a logger instance
