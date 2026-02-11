@@ -14,7 +14,7 @@
         "upload-docs": "tsx scripts/upload-docs.ts"
     },
     "dependencies": {
-        "@langchain/community": "^0.3.48",
+        "@langchain/community": "^1.1.14",
         "@langchain/core": "^0.3.62",
         "@langchain/langgraph": "^0.3.7",
         "@langchain/langgraph-supervisor": "^0.0.15",
