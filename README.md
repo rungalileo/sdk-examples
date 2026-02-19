@@ -56,6 +56,7 @@ You can read more about these in our [Get started with sample projects documenta
 - **[Minimal Agent Example](/python/agent/minimal-agent-example/)** - Simple agent with basic tool usage
 - **[Google ADK + OpenTelemetry](/python/agent/google-adk/)** - The Google SDK quickstart app with logging to Galileo using OpenTelemetry and OpenInference
 - **[Strands Agents + OpenTelemetry](/python/agent/strands-agents/)** - The Strands Agents quickstart app with logging to Galileo using OpenTelemetry
+- **[Microsoft Agent Framework](/python/agent/microsoft-agent-framework/)** - Microsoft Agent Framework with Galileo logging using the built-in OpenTelemetry instrumentation
 - **[LangGraph + OpenTelemetry](/python/agent/langgraph-open-telemetry/)** - LangGraph with OpenTelemetry instrumentation for observability
 - **[LangGraph + Traceloop](/python/agent/langgraph-traceloop/)** - LangGraph with Traceloop for observability
 - **[PydanticAI Support Agent](/python/agent/pydantic-ai-support-agent/)** - Enterprise customer support agent with Galileo observability

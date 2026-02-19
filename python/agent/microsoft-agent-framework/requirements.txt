@@ -1,0 +1,3 @@
+agent-framework>=1.0.0b251120
+galileo[otel]>=1.46.2
+pydantic
