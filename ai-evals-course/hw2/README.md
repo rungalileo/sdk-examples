@@ -24,3 +24,7 @@ To be able to run this notebook, you need to have a Galileo account set up, alon
 1. Create a Galileo API key from the [API keys page](https://app.galileo.ai/settings/api-keys)
 1. In this folder is an example `.env` file called `.env.example`. Copy this file to `.env`, and set the value of `GALILEO_API_KEY` to the API key you just created.
 1. If you are using a custom Galileo deployment inside your organization, then set the `GALILEO_CONSOLE_URL` environment variable to your console URL. If you are using [app.galileo.ai](https://app.galileo.ai), such as with the free tier, then you can leave this commented out.
+
+## Video walkthrough
+
+[![Video walkthrough of homework 2](https://img.youtube.com/vi/xh79H3rFsSY/0.jpg)](https://youtu.be/xh79H3rFsSY)
