@@ -1,4 +1,3 @@
-import { openai } from '@ai-sdk/openai';
 import { Agent } from '@mastra/core/agent';
 import { LibSQLStore } from '@mastra/libsql';
 import { Memory } from '@mastra/memory';
@@ -9,6 +8,7 @@ import { generateQuestionsFromTextTool } from '../tools/generate-questions-from-
 const memory = new Memory({
   storage: new LibSQLStore({
     url: 'file:../mastra.db', // Or your database URL
+    id: 'csv-question-agent-memory',
   }),
 });
 
@@ -73,10 +73,11 @@ Generate questions that cover:
 
 Always be helpful and provide clear feedback about the process and results, with emphasis on the analytical aspects of the CSV data.
   `,
-  model: openai('gpt-4o'),
+  model: 'openai/gpt-4o',
   tools: {
     csvFetcherTool,
     generateQuestionsFromTextTool,
   },
   memory,
+  id: 'csv-question-agent',
 });
