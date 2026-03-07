@@ -1,0 +1,42 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+exporters:
+  # Export to Galileo via OTLP/HTTP (protobuf)
+  otlphttp/galileo:
+    traces_endpoint: "${GALILEO_CONSOLE_URL}/api/galileo/otel/v1/traces"
+    headers:
+      Galileo-API-Key: "${GALILEO_API_KEY}"
+      project: "${GALILEO_PROJECT}"
+      logstream: "${GALILEO_LOG_STREAM}"
+
+  # Export to local Jaeger via OTLP/gRPC
+  otlp/jaeger:
+    endpoint: jaeger:4317
+    tls:
+      insecure: true
+
+  # Debug exporter — prints span summaries to collector stdout
+  debug:
+    verbosity: basic
+
+processors:
+  batch:
+    timeout: 5s
+    send_batch_size: 512
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp/galileo, otlp/jaeger, debug]
+
+  telemetry:
+    logs:
+      level: info

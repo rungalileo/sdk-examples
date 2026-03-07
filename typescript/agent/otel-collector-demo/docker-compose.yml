@@ -1,0 +1,27 @@
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.115.1
+    container_name: otel-collector
+    command: ["--config=/etc/otelcol/config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP (app sends traces here)
+      - "8888:8888"   # Collector metrics
+    environment:
+      - GALILEO_CONSOLE_URL=${GALILEO_CONSOLE_URL}
+      - GALILEO_API_KEY=${GALILEO_API_KEY}
+      - GALILEO_PROJECT=${GALILEO_PROJECT}
+      - GALILEO_LOG_STREAM=${GALILEO_LOG_STREAM}
+    depends_on:
+      - jaeger
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.62.0
+    container_name: jaeger
+    ports:
+      - "16686:16686"  # Jaeger UI
+      - "4317"         # OTLP gRPC (internal, collector connects here)
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true

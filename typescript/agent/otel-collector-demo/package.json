@@ -1,0 +1,28 @@
+{
+  "name": "otel-ts-collector-demo",
+  "version": "1.0.0",
+  "description": "TypeScript OpenTelemetry demo: GenAI telemetry → OTEL Collector → Galileo + Jaeger",
+  "type": "module",
+  "scripts": {
+    "start": "npx tsx src/index.ts",
+    "start:real": "USE_REAL_LLM=true npx tsx src/index.ts",
+    "infra:up": "docker compose up -d",
+    "infra:down": "docker compose down",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.57.0",
+    "@opentelemetry/resources": "^1.30.0",
+    "@opentelemetry/sdk-trace-base": "^1.30.0",
+    "@opentelemetry/sdk-trace-node": "^1.30.0",
+    "@opentelemetry/semantic-conventions": "^1.28.0",
+    "dotenv": "^16.4.5",
+    "openai": "^4.73.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.8.0"
+  }
+}
