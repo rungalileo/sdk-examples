@@ -49,7 +49,7 @@ python basic-example.py
 
 This example's expected output includes the Galileo URL of the log stream. 
 
-Go to this link in your browser and click on the session to confirm the logged data.
+Go to this URL in your browser to confirm the logged data.
 
 Screenshot of the logged data:
 
@@ -67,7 +67,7 @@ python retriever-example.py
 
 This example logs a more complex trace with multiple spans, including a retriever span.
 
-The expected output includes the Galileo URL of the log stream. Go to this link in your browser and click on the session to confirm the logged data.
+The example's expected output includes the Galileo URL of the log stream. Go to this URL in your browser to confirm the logged data.
 
 
 Screenshot of the logged data:
@@ -76,3 +76,24 @@ Screenshot of the logged data:
 ![Screenshot from running the retriever example](screenshot-retriever-example.png)
 
 
+
+## Redaction Example
+
+Run the redaction example:
+
+```bash
+python redaction-example.py
+```
+
+This example logs traces with `redacted_input` (input excluding sensitive info such as social security numbers or email adddresses). 
+
+The optional parameters `redacted_input` and `redacted_output` can be provided to [`GalileoLogger`](https://v2docs.galileo.ai/sdk-api/python/reference/logger/logger) methods such as [`start_trace`](https://v2docs.galileo.ai/sdk-api/python/reference/logger/logger#start_trace) and [`add_retriever_span`](https://v2docs.galileo.ai/sdk-api/python/reference/logger/logger#add_retriever_span).
+
+The example's expected output includes an export of logged traces, as well as the Galileo URL of the log stream. Go to this URL in your browser to confirm the logged data.
+
+
+Screenshots of the logged data with sensitive info redacted:
+
+![Screenshot from redaction: ssn example](screenshot-redaction-example-ssn.png)
+
+![Screenshot from redaction: email example](screenshot-redaction-example-email.png)
