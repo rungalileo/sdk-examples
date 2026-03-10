@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-logger = GalileoLogger() # Create a logger instance
+logger = GalileoLogger()  # Create a logger instance
 
 # Example of how to create "redacted_input", matching "SSN" as sensitive info
 # ---------------------------------------------------------------------------
@@ -24,11 +24,11 @@ logger.flush()  # send the trace to Galileo
 # Example of how to create "redacted_input", matching email as sensitive info
 # ---------------------------------------------------------------------------
 
-import re # regular expression 
+import re  # regular expression
 
 user_input = "This is the email: example@example.com"
 
-email_match = re.search(r'[\w.-]+@[\w.-]+\.\w+', user_input)
+email_match = re.search(r"[\w.-]+@[\w.-]+\.\w+", user_input)
 sensitive_info = email_match.group() if email_match else None
 
 if sensitive_info:
@@ -37,7 +37,7 @@ if sensitive_info:
 else:
     trace = logger.start_trace(input=user_input)
 
-logger.flush() # send the trace to Galileo
+logger.flush()  # send the trace to Galileo
 
 # It's also possible to use a service such as https://www.private-ai.com/ to create the redacted_input
 
@@ -64,4 +64,3 @@ log_stream_url = f"{project_url}/log-streams/{logger.log_stream_id}"
 
 print("🚀 Galileo Log Stream:")
 print(log_stream_url)
-
