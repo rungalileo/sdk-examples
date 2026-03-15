@@ -25,7 +25,7 @@
         "@langchain/core": "^0.3.0",
         "@langchain/openai": "^0.5.18",
         "@stripe/agent-toolkit": "^0.1.21",
-        "axios": "^1.6.0",
+        "axios": "^1.13.5",
         "cors": "^2.8.5",
         "dotenv": "^16.0.0",
         "express": "^4.21.2",
