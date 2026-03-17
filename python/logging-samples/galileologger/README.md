@@ -97,3 +97,29 @@ Screenshots of the logged data with sensitive info redacted:
 ![Screenshot from redaction: ssn example](screenshot-redaction-example-ssn.png)
 
 ![Screenshot from redaction: email example](screenshot-redaction-example-email.png)
+
+
+
+## Metadata Example
+
+Run the metadata example:
+
+```bash
+python metadata-example.py
+```
+
+This example logs a session, trace, and span with metadata (optional key-value attributes).
+
+The optional parameter `metadata` can be provided to [`GalileoLogger`](https://v2docs.galileo.ai/sdk-api/python/reference/logger/logger) methods such as [`start_session`](https://v2docs.galileo.ai/sdk-api/python/reference/logger/logger#start_session), [`start_trace`](https://v2docs.galileo.ai/sdk-api/python/reference/logger/logger#start_trace) and [`add_llm_span`](https://v2docs.galileo.ai/sdk-api/python/reference/logger/logger#add_llm_span).
+
+The example's expected output includes the Galileo URL of the log stream. Go to this URL in your browser to confirm the logged data.
+
+
+Screenshots of the logged data with metadata:
+
+
+
+![Screenshot from logs with metadata](screenshot-metadata-logs-view.png)
+
+![Screenshot from logs with metadata: messages view](screenshot-metadata-messages-view.png)
+
