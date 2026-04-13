@@ -74,8 +74,15 @@ print(f"OTEL Headers: {os.environ['OTEL_EXPORTER_OTLP_TRACES_HEADERS']}")
 # in your application. Spans are organized into "traces" that show the full flow
 # of a request through your system.
 
-# Define where to send the traces - Galileo's OpenTelemetry endpoint
-endpoint = "https://app.galileo.ai/api/galileo/otel/traces"
+# Define where to send the traces - Galileo's OpenTelemetry endpoint.
+# Galileo's OTel ingest lives on the `api.` subdomain (not the `console.`/`app.`
+# one you log into). We derive it from GALILEO_CONSOLE_URL so custom deployments
+# (e.g. https://console.demo-v2.galileocloud.io/) route to their own ingest
+# (https://api.demo-v2.galileocloud.io/otel/traces) instead of app.galileo.ai.
+console_url = os.environ.get("GALILEO_CONSOLE_URL", "https://app.galileo.ai").rstrip("/")
+api_url = console_url.replace("://console.", "://api.").replace("://app.", "://api.")
+endpoint = f"{api_url}/otel/traces"
+print(f"OTEL endpoint: {endpoint}")
 
 # Create a TracerProvider with descriptive resource information
 # This helps identify these traces as coming from OpenTelemetry in Galileo
