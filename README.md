@@ -10,7 +10,7 @@ This repository contains example implementations and reference code for using th
 
 ## 🍳 Cookbooks & Tutorials
 
-For comprehensive guides and step-by-step tutorials, check out our **[Galileo Cookbooks](https://v2docs.galileo.ai/cookbooks/overview)** featuring:
+For comprehensive guides and step-by-step tutorials, check out our **[Galileo Cookbooks](https://docs.galileo.ai/cookbooks/overview)** featuring:
 
 - **Agent Development** - Multi-agent systems, LangGraph workflows, and OpenTelemetry integration
 - **RAG Applications** - MongoDB Atlas, Elasticsearch, and vector search implementations
@@ -25,7 +25,7 @@ For comprehensive guides and step-by-step tutorials, check out our **[Galileo Co
 
 When you first sign up for Galileo, you will get 2 sample projects created, a simple chatbot, and a multi-agent banking chatbot. The code for these projects is in this repo.
 
-You can read more about these in our [Get started with sample projects documentation](https://v2docs.galileo.ai/getting-started/sample-projects/sample-projects).
+You can read more about these in our [Get started with sample projects documentation](https://docs.galileo.ai/getting-started/sample-projects/sample-projects).
 
 #### Python
 
@@ -47,8 +47,8 @@ You can read more about these in our [Get started with sample projects documenta
 #### Python Agents 🐍
 
 - **[LangChain Agent](/python/agent/langchain-agent/)** - Basic LangChain agent with Galileo integration
-- **[LangGraph FSI Agent](/python/agent/langgraph-fsi-agent/)** - Financial services agent with before/after implementations  
-- **[LangGraph Telecom Agent](/python/agent/langgraph-telecom-agent/)** - Telecom services agent with Galileo integration  
+- **[LangGraph FSI Agent](/python/agent/langgraph-fsi-agent/)** - Financial services agent with before/after implementations
+- **[LangGraph Telecom Agent](/python/agent/langgraph-telecom-agent/)** - Telecom services agent with Galileo integration
 - **[LangGraph + OpenTelemetry](/python/agent/langgraph-otel/)** - 🎆 **Featured** - Comprehensive observability with OpenTelemetry and Galileo
 - **[CrewAI Agent](/python/agent/crewAI/)** - Multi-agent collaboration using CrewAI framework
 - **[Startup Simulator 3000](/python/agent/startup-simulator-3000/)** - Advanced agent with startup business simulation
@@ -62,7 +62,7 @@ You can read more about these in our [Get started with sample projects documenta
 - **[PydanticAI Support Agent](/python/agent/pydantic-ai-support-agent/)** - Enterprise customer support agent with Galileo observability
 - **[LangChain Agent with Middleware](/python/agent/langchain-middleware/)** - LangChain agent with custom middleware for enhanced functionality
 
-#### TypeScript Agents 📜  
+#### TypeScript Agents 📜
 
 - **[LangGraph FSI Agent](/typescript/agent/langgraph-fsi-agent/)** - Financial services agent in TypeScript
 - **[Stripe Agent Tool](/typescript/agent/stripe-agent-tool/)** - 💳 Agent with Stripe payment processing integration
@@ -83,7 +83,7 @@ You can read more about these in our [Get started with sample projects documenta
 
 #### TypeScript Chatbots 📜
 
-- **[Basic Examples](/typescript/chatbot/basic-examples/)** - Fundamental chatbot patterns in TypeScript  
+- **[Basic Examples](/typescript/chatbot/basic-examples/)** - Fundamental chatbot patterns in TypeScript
 - **[Sample Project Chatbot](/typescript/chatbot/sample-project-chatbot/)** - Multi-LLM chatbot implementations:
   - [OpenAI/Ollama variant](/typescript/chatbot/sample-project-chatbot/openai-ollama/)
   - [Anthropic variant](/typescript/chatbot/sample-project-chatbot/anthropic/)
@@ -121,20 +121,20 @@ You can read more about these in our [Get started with sample projects documenta
 
 #### 📚 Additional Resources
 
-- [Galileo SDK Documentation](https://v2docs.galileo.ai/sdk-api/overview) - SDK documentation
-- [Galileo API Reference](https://v2docs.galileo.ai/api-reference/health/healthcheck) - TypeScript SDK package
-- [Galileo Release Notes](https://v2docs.galileo.ai/release-notes)
+- [Galileo SDK Documentation](https://docs.galileo.ai/sdk-api/overview) - SDK documentation
+- [Galileo API Reference](https://docs.galileo.ai/api-reference/health/healthcheck) - TypeScript SDK package
+- [Galileo Release Notes](https://docs.galileo.ai/release-notes)
 
 ## 📖 Read the Docs
 
 ### Core Documentation
 
-- **[Galileo.ai Documentation](https://v2docs.galileo.ai/what-is-galileo)** - Complete platform overview
-- **[Galileo Cookbooks](https://v2docs.galileo.ai/cookbooks/overview)** - 🔥 **Step-by-step tutorials and guides**
-- **[Python SDK Documentation](https://v2docs.galileo.ai/sdk-api/python/overview)** - Python SDK reference
-- **[TypeScript SDK Documentation](https://v2docs.galileo.ai/sdk-api/typescript/overview)** - TypeScript SDK reference
-- **[API Reference](https://v2docs.galileo.ai/api-reference/health/healthcheck)** - REST API documentation
-- **[Release Notes](https://v2docs.galileo.ai/release-notes)** - Latest updates and features
+- **[Galileo.ai Documentation](https://docs.galileo.ai/what-is-galileo)** - Complete platform overview
+- **[Galileo Cookbooks](https://docs.galileo.ai/cookbooks/overview)** - 🔥 **Step-by-step tutorials and guides**
+- **[Python SDK Documentation](https://docs.galileo.ai/sdk-api/python/overview)** - Python SDK reference
+- **[TypeScript SDK Documentation](https://docs.galileo.ai/sdk-api/typescript/overview)** - TypeScript SDK reference
+- **[API Reference](https://docs.galileo.ai/api-reference/health/healthcheck)** - REST API documentation
+- **[Release Notes](https://docs.galileo.ai/release-notes)** - Latest updates and features
 
 ## 📦 Requirements
 
@@ -146,7 +146,7 @@ You can read more about these in our [Get started with sample projects documenta
 ### 🚀 What You'll Learn
 
 - **Agent Development** - Build AI systems that can use tools, make decisions, and collaborate
-- **Observability** - Comprehensive tracing with OpenTelemetry and Galileo integration  
+- **Observability** - Comprehensive tracing with OpenTelemetry and Galileo integration
 - **RAG Applications** - Combine knowledge bases with LLMs for enhanced responses
 - **Multi-LLM Support** - Work with OpenAI, Anthropic, Azure, and local models like Ollama
 - **Production Patterns** - Error handling, evaluation, and monitoring best practices
@@ -154,9 +154,9 @@ You can read more about these in our [Get started with sample projects documenta
 ### 🎯 Application Patterns Covered
 
 - **🤖 AI Agents** - Tool-using systems with decision-making capabilities
-  - *Featured: LangGraph + OpenTelemetry* - Complete observability setup
-  - *Stripe Agent* - Payment processing integration
-  - *Weather Vibes* - Multi-function agent with external APIs
+  - _Featured: LangGraph + OpenTelemetry_ - Complete observability setup
+  - _Stripe Agent_ - Payment processing integration
+  - _Weather Vibes_ - Multi-function agent with external APIs
 - **💬 Chatbots** - Conversational applications with context management
 - **🔍 RAG Systems** - Knowledge retrieval and generation pipelines
 - **📊 Data & Experiments** - Testing, evaluation, and dataset management
@@ -175,7 +175,7 @@ Each directory contains standalone examples with their own setup instructions an
 ## 🤝 Contributing
 
 Have a great example of how to use Galileo? Or rather — have something you'd like to see how it works with Galileo?
- Please see our [Contributing Guide](CONTRIBUTING.md) for detailed information on how to:
+Please see our [Contributing Guide](CONTRIBUTING.md) for detailed information on how to:
 
 - Open an issue to discuss your idea
 - Add new examples

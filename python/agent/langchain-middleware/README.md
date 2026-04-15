@@ -54,10 +54,10 @@ The middleware creates a hierarchical trace with:
 
 ## Comparison with Callbacks
 
-| Feature | GalileoMiddleware | GalileoCallback |
-|---------|------------------|-----------------|
-| Setup | Add to middleware list | Pass to each component |
-| Complexity | Simple | Manual setup required |
-| Best for | LangGraph agents | Complex LangChain apps |
+| Feature    | GalileoMiddleware      | GalileoCallback        |
+| ---------- | ---------------------- | ---------------------- |
+| Setup      | Add to middleware list | Pass to each component |
+| Complexity | Simple                 | Manual setup required  |
+| Best for   | LangGraph agents       | Complex LangChain apps |
 
-For more details, see the [middleware documentation](https://v2docs.galileo.ai/sdk-api/third-party-integrations/langchain/middleware).
+For more details, see the [middleware documentation](https://docs.galileo.ai/sdk-api/third-party-integrations/langchain/middleware).

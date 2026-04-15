@@ -28,7 +28,7 @@ GALILEO_LOG_STREAM=
 
 For the `GALILEO_API_ENDPOINT`, this is different to the console URL that you would normally use. If you are using `app.galileo.ai` for example, the endpoint is `https://api.galileo.ai/otel/traces`.
 
-See the [Galileo OTel and OpenInference documentation](https://v2docs.galileo.ai/sdk-api/third-party-integrations/opentelemetry-and-openinference) for more details.
+See the [Galileo OTel and OpenInference documentation](https://docs.galileo.ai/sdk-api/third-party-integrations/opentelemetry-and-openinference) for more details.
 
 ## Usage
 

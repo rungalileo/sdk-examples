@@ -11,6 +11,7 @@ Sometimes you've already run evaluations—whether with a different tool, offlin
 - ✅ Compute Galileo metrics on existing results
 
 This is particularly useful when:
+
 - You have legacy evaluation data to migrate to Galileo
 - You ran evaluations with custom tooling and want unified visualization
 - You need to analyze past model behavior with Galileo's evaluation metrics
@@ -22,6 +23,7 @@ This is particularly useful when:
 **The Solution:** This example takes your pre-existing evaluation data (questions, contexts, LLM responses, ground truth) and uploads it to Galileo as a completed experiment with full tracing.
 
 **How it Works:**
+
 1. Your JSON file contains complete evaluation records (question, context chunks array, LLM answer, ground truth)
 2. A Galileo dataset is created with inputs and expected outputs
 3. An experiment "replays" your results, reconstructing execution traces with proper chunk attribution
@@ -35,20 +37,22 @@ Your evaluation data should be in JSON format with the following structure:
 [
   {
     "question": "Your input/question text",
-    "context": ["chunk1", "chunk2", "chunk3"],  // Array of context chunks
+    "context": ["chunk1", "chunk2", "chunk3"], // Array of context chunks
     "llm_answer": "The response your model generated",
     "ground_truth_answer": "The expected correct answer",
-    "model": "gpt-4o"  // Optional: specify the model used
+    "model": "gpt-4o" // Optional: specify the model used
   }
 ]
 ```
 
 **Required fields:**
+
 - `question` - The input to your system
 - `llm_answer` - The response your system generated
 - `ground_truth_answer` - The expected/correct answer
 
 **Optional fields:**
+
 - `context` - Array of retrieved context chunks (for RAG systems).
 - `model` - Model identifier (defaults to "gpt-4o" if not specified)
 
@@ -71,6 +75,7 @@ cp .env.example .env
 ```
 
 Edit `.env`:
+
 ```
 GALILEO_API_KEY=your_api_key_here
 GALILEO_CONSOLE_URL=https://app.galileo.ai
@@ -78,6 +83,7 @@ GALILEO_PROJECT=your_project_name
 ```
 
 **Getting your Galileo credentials:**
+
 1. Log in to [Galileo Console](https://app.galileo.ai)
 2. Navigate to Settings → API Keys
 3. Create a new API key or copy an existing one
@@ -94,6 +100,7 @@ python upload_existing_results.py
 ```
 
 The script will:
+
 1. ✅ Load your evaluation data from `dataset.json`
 2. ✅ Create or retrieve a Galileo dataset
 3. ✅ Upload an experiment with full trace reconstruction
@@ -142,25 +149,28 @@ After running the script, your Galileo project will contain:
 ## Troubleshooting
 
 ### "Missing environment variables"
+
 - Make sure you've created a `.env` file with your Galileo credentials
 - Verify all three required variables are set: `GALILEO_API_KEY`, `GALILEO_CONSOLE_URL`, `GALILEO_PROJECT`
 
 ### "Question not found in evaluation data"
+
 - Ensure your JSON file has unique questions
 - Check that there are no extra whitespace or formatting differences
 
 ### Import errors
+
 - Make sure you've activated your virtual environment
 - Run `pip install -r requirements.txt` to install all dependencies
 
 ### "Dataset already exists"
+
 - The script will automatically use existing datasets with the same name
 - To create a fresh dataset, change `DATASET_NAME` in the script
 
 ## Learn More
 
-- [Galileo Documentation](https://v2docs.galileo.ai/what-is-galileo)
-- [Galileo SDK Reference](https://v2docs.galileo.ai/sdk-api/overview)
-- [Creating Custom Metrics](https://v2docs.galileo.ai/concepts/metrics/custom-metrics/custom-metrics-ui-llm)
-- [Understanding Experiments](https://v2docs.galileo.ai/sdk-api/experiments/experiments)
-
+- [Galileo Documentation](https://docs.galileo.ai/what-is-galileo)
+- [Galileo SDK Reference](https://docs.galileo.ai/sdk-api/overview)
+- [Creating Custom Metrics](https://docs.galileo.ai/concepts/metrics/custom-metrics/custom-metrics-ui-llm)
+- [Understanding Experiments](https://docs.galileo.ai/sdk-api/experiments/experiments)

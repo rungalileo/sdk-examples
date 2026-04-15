@@ -14,28 +14,33 @@ A terminal-based voice chatbot that lets you have real-time voice conversations 
 ## Quick Start
 
 1. Install system dependencies (macOS):
+
    ```bash
    brew install portaudio
    ```
 
 2. Create and activate a virtual environment:
+
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
 3. Install Python dependencies:
+
    ```bash
    pip install -r requirements.txt
    ```
 
 4. Set up environment variables:
+
    ```bash
    cp .env.example .env
    # Edit .env with your API keys
    ```
 
 5. Run the voice chat:
+
    ```bash
    python main.py
    ```
@@ -46,22 +51,21 @@ A terminal-based voice chatbot that lets you have real-time voice conversations 
 
 Edit `.env` with your credentials. Note for `ELEVENLABS_*` variables you can [signup with a free tier](https://elevenlabs.io/app/sign-up?platform=agents) of ElevenLabs and use their Agents Platform to create a voice agent to obtain the required API key and Agent Id:
 
-| Variable | Description |
-|----------|-------------|
-| `ELEVENLABS_API_KEY` | Your ElevenLabs API key |
-| `ELEVENLABS_AGENT_ID` | Your ElevenLabs Agent ID |
-| `GALILEO_API_KEY` | Your Galileo API key |
-| `GALILEO_CONSOLE_URL` | Galileo console URL (optional) |
-| `GALILEO_PROJECT_NAME` | Project name for logging |
+| Variable               | Description                    |
+| ---------------------- | ------------------------------ |
+| `ELEVENLABS_API_KEY`   | Your ElevenLabs API key        |
+| `ELEVENLABS_AGENT_ID`  | Your ElevenLabs Agent ID       |
+| `GALILEO_API_KEY`      | Your Galileo API key           |
+| `GALILEO_CONSOLE_URL`  | Galileo console URL (optional) |
+| `GALILEO_PROJECT_NAME` | Project name for logging       |
 
 ## Requirements
 
 - Python 3.10+
 - Microphone and headphones (to avoid audio feedback)
 
-
 ## Learn More
 
 - [Video tutorial](https://youtu.be/1QNEhDV2r5U)
-- [Galileo Documentation](https://v2docs.galileo.ai/what-is-galileo)
+- [Galileo Documentation](https://docs.galileo.ai/what-is-galileo)
 - [ElevenLabs Conversational AI](https://elevenlabs.io/docs/conversational-ai)

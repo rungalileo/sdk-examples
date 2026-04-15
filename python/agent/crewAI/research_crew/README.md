@@ -1,9 +1,9 @@
 # CrewAI and Galileo Cookbook
 
 This tutorial is a completed version of the [CrewAI quickstart](https://docs.crewai.com/en/quickstart) and adds the
-Galileo [CrewAIEventListener](https://v2docs.galileo.ai/sdk-api/python/reference/handlers/crewai/handler),
+Galileo [CrewAIEventListener](https://docs.galileo.ai/sdk-api/python/reference/handlers/crewai/handler),
 an event handler implemented on top of OpenTelemetry (OTel). For more information, see
-Galileo’s [Add Galileo to a CrewAI Application](https://v2docs.galileo.ai/how-to-guides/third-party-integrations/add-galileo-to-crewai/add-galileo-to-crewai)
+Galileo’s [Add Galileo to a CrewAI Application](https://docs.galileo.ai/how-to-guides/third-party-integrations/add-galileo-to-crewai/add-galileo-to-crewai)
 how-to guide.
 
 Below you'll find concise setup steps, configuration notes, and a short primer on Galileo so you know why we add it and what it provides.
@@ -12,7 +12,7 @@ Below you'll find concise setup steps, configuration notes, and a short primer o
 
 The relevant guides:
 
-- [Add Galileo to CrewAI](https://v2docs.galileo.ai/how-to-guides/third-party-integrations/add-galileo-to-crewai/add-galileo-to-crewai)
+- [Add Galileo to CrewAI](https://docs.galileo.ai/how-to-guides/third-party-integrations/add-galileo-to-crewai/add-galileo-to-crewai)
 - [CrewAI quickstart](https://docs.crewai.com/en/guides/crews/first-crew)
 
 ## What is Galileo?

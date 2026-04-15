@@ -6,17 +6,19 @@ This example demonstrates how to add comprehensive observability to your LangGra
 
 **OpenTelemetry** is an observability framework that creates traces showing what functions ran, their timing, and data flow through your application. **OpenInference** automatically instruments AI frameworks like LangChain and OpenAI. **Galileo** provides a sophisticated platform for visualizing and analyzing your AI application traces.
 
-For detailed explanations and advanced patterns, see the [LangGraph OpenTelemetry cookbook](https://v2docs.galileo.ai/cookbooks/features/integrations/langgraph-otel-cookbook)
+For detailed explanations and advanced patterns, see the [LangGraph OpenTelemetry cookbook](https://docs.galileo.ai/cookbooks/features/integrations/langgraph-otel-cookbook)
 
 ## Quick start
 
 ### Prerequisites
+
 - Python 3.10+
 - [UV package manager](https://docs.astral.sh/uv/getting-started/installation/)
 - [Galileo account](https://app.galileo.ai) (free)
 - OpenAI API key
 
 ### Installation
+
 ```bash
 # Clone and navigate
 git clone https://github.com/rungalileo/sdk-examples
@@ -51,14 +53,15 @@ GALILEO_CONSOLE_URL=https://app.galileo.ai
 OPENAI_API_KEY=your_openai_api_key_here
 ```
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `GALILEO_API_KEY` | Yes | Your Galileo API key from [settings](https://app.galileo.ai/settings/api-keys) |
-| `GALILEO_PROJECT` | Yes | Galileo project name (create one in your dashboard) |
-| `GALILEO_LOG_STREAM` | Yes | Log stream name for organizing traces (default: "default") |
-| `OPENAI_API_KEY` | Yes | Your OpenAI API key from [OpenAI](https://platform.openai.com/api-keys) |
+| Variable             | Required | Description                                                                    |
+| -------------------- | -------- | ------------------------------------------------------------------------------ |
+| `GALILEO_API_KEY`    | Yes      | Your Galileo API key from [settings](https://app.galileo.ai/settings/api-keys) |
+| `GALILEO_PROJECT`    | Yes      | Galileo project name (create one in your dashboard)                            |
+| `GALILEO_LOG_STREAM` | Yes      | Log stream name for organizing traces (default: "default")                     |
+| `OPENAI_API_KEY`     | Yes      | Your OpenAI API key from [OpenAI](https://platform.openai.com/api-keys)        |
 
 ### Run
+
 ```bash
 uv run python main.py
 ```
@@ -91,7 +94,7 @@ In Galileo, you'll see a clean trace structure:
 
 ### Key Observability Benefits
 
-- **Complete Input/Output Visibility** - See data flowing through each step  
+- **Complete Input/Output Visibility** - See data flowing through each step
 - **LLM Call Details** - Token usage, model parameters, and timing
 - **Session Context** - Grouped operations with meaningful metadata
 - **Error Tracking** - Automatic error capture and status tracking
@@ -114,8 +117,8 @@ Each span includes rich metadata:
 
 ## Learn more
 
-- [LangGraph OpenTelemetry cookbook](https://v2docs.galileo.ai/cookbooks/features/integrations/langgraph-otel-cookbook) 
+- [LangGraph OpenTelemetry cookbook](https://docs.galileo.ai/cookbooks/features/integrations/langgraph-otel-cookbook)
 - [LangGraph Documentation](https://langchain-ai.github.io/langgraph/)
 - [OpenTelemetry Python](https://opentelemetry.io/docs/instrumentation/python/)
-- [Galileo Documentation](https://v2docs.galileo.ai/)
+- [Galileo Documentation](https://docs.galileo.ai/)
 - [UV Package Manager](https://docs.astral.sh/uv/)
