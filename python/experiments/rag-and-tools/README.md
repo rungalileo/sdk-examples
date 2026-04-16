@@ -2,7 +2,7 @@
 
 This is an example project demonstrating how to use Galileo experiments with applications that use RAG and tools.
 
-This code is used in the [Run an experiment against a RAG app](http://v2docs.galileo.ai/how-to-guides/experiments/rag-app/rag-app) how-to guide in the Galileo documentation.
+This code is used in the [Run an experiment against a RAG app](http://docs.galileo.ai/how-to-guides/experiments/rag-app/rag-app) how-to guide in the Galileo documentation.
 
 ## Get Started
 

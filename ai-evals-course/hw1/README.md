@@ -12,7 +12,7 @@ The original homework assignment has three parts:
 
 ## Using Galileo for this assignment
 
-Galileo has built-in capabilities to perform these tasks, allowing you to create prompts, build datasets or queries, and test and tune the prompts using those dataset. These capabilities are available both in code using [experiments](https://v2docs.galileo.ai/sdk-api/experiments/experiments), or through the Galileo console using [Playgrounds](https://v2docs.galileo.ai/concepts/experiments/running-experiments-in-console).
+Galileo has built-in capabilities to perform these tasks, allowing you to create prompts, build datasets or queries, and test and tune the prompts using those dataset. These capabilities are available both in code using [experiments](https://docs.galileo.ai/sdk-api/experiments/experiments), or through the Galileo console using [Playgrounds](https://docs.galileo.ai/concepts/experiments/running-experiments-in-console).
 
 This folder contains a sample notebook showing all these steps in code.
 

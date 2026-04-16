@@ -11,10 +11,10 @@ A self-contained TypeScript agent using Stripe Agent Toolkit with Galileo monito
 - **Buffered Logging**: Galileo traces are buffered and flushed efficiently
 - **Galileo Agent Reliability**: Comprehensive logging and analytics
   - Recommended metrics to use in Galileo to track agent reliability:
-    - [Tool Error](https://v2docs.galileo.ai/concepts/metrics/agentic/tool-error): detects errors or failures during the execution of Tools.
-    - [Tool Selection Quality](https://v2docs.galileo.ai/concepts/metrics/agentic/tool-selection-quality#tool-selection-quality): determines whether the agent selected the correct tool and for each tool the correct arguments.
-    - [Context Adherence](https://v2docs.galileo.ai/concepts/metrics/response-quality/context-adherence): a measurement of closed-domain hallucinations: cases where your model said things that were not provided in the context.
-    - [See all metrics here](https://v2docs.galileo.ai/concepts/metrics/overview)
+    - [Tool Error](https://docs.galileo.ai/concepts/metrics/agentic/tool-error): detects errors or failures during the execution of Tools.
+    - [Tool Selection Quality](https://docs.galileo.ai/concepts/metrics/agentic/tool-selection-quality#tool-selection-quality): determines whether the agent selected the correct tool and for each tool the correct arguments.
+    - [Context Adherence](https://docs.galileo.ai/concepts/metrics/response-quality/context-adherence): a measurement of closed-domain hallucinations: cases where your model said things that were not provided in the context.
+    - [See all metrics here](https://docs.galileo.ai/concepts/metrics/overview)
 - **Interactive Modes**: CLI and web server options
 - **Self-contained**: All dependencies and assets included
 
@@ -52,7 +52,7 @@ stripe-agents-sdk-example/
 - npm or yarn
 - Stripe account with API keys
 - OpenAI API key
-- Galileo account 
+- Galileo account
 
 ## Setup
 
@@ -80,7 +80,7 @@ stripe-agents-sdk-example/
    # Galileo Configuration
    GALILEO_API_KEY=your_galileo_api_key_here           #Your Galileo API Key
    GALILEO_PROJECT=stripe-agent-demo                  #Your Galileo Project Name
-   GALILEO_LOG_STREAM=production                      #Your Galileo Log Stream Name    
+   GALILEO_LOG_STREAM=production                      #Your Galileo Log Stream Name
    # OPTIONAL
    # Provide the console URL below if you are using a custom deployment, and not using app.galileo.ai
    # This is most common with enterprise, or on prem deployments where you may have your own custom cluster
@@ -97,7 +97,7 @@ stripe-agents-sdk-example/
    npm run build
    ```
 
- ## Product Catalog Setup
+## Product Catalog Setup
 
 This project includes a comprehensive space-themed product catalog for "Galileo's Gizmos". To set up the product catalog:
 
@@ -153,7 +153,6 @@ This will create 20 space-themed products including:
 - Cosmic Wall Art
 - Astronaut Alarm Clock
 
-
 ## Usage
 
 ### Interactive CLI Mode
@@ -179,6 +178,7 @@ npm test
 ### Loop Prevention
 
 The agent now includes advanced circular tool usage detection that:
+
 - Monitors the last four tool calls for repeated patterns
 - Detects when tools are being called in loops (e.g., A → B → A → B)
 - Gracefully handles circular calls with appropriate error messages
@@ -187,6 +187,7 @@ The agent now includes advanced circular tool usage detection that:
 ### Conversation Memory
 
 Improved memory system with:
+
 - **five-minute caching** of product and price data
 - **Conversation history** maintained across interactions
 - **Context awareness** using the last 6 messages for better responses
@@ -195,6 +196,7 @@ Improved memory system with:
 ### Buffered Logging
 
 Galileo logging improvements:
+
 - **Buffered traces** are queued and flushed efficiently
 - **Developer override** command `!end` to force flush during testing
 - **Session management** with proper cleanup and error handling
@@ -212,14 +214,15 @@ When using interactive mode, these special commands are available:
 ### API Signature Changes
 
 **AgentExecutor Configuration:**
-```typescript
 
+```typescript
 // Updated configuration
-maxIterations: 8  // Increased to handle complex interactions
-earlyStoppingMethod: 'force'     // Stop when agent decides it's complete
+maxIterations: 8; // Increased to handle complex interactions
+earlyStoppingMethod: "force"; // Stop when agent decides it's complete
 ```
 
 **New Caching Methods:**
+
 ```typescript
 // Cache management
 private isCacheValid(): boolean
@@ -242,7 +245,6 @@ private readonly CACHE_DURATION = 5 * 60 * 1000 // 5 minutes
 - `npm run web` - Start web server mode
 - `npm run test` - Run test suite
 - `npm run setup-products` - Set up space-themed product catalog in Stripe
-
 
 ## BuildOutput
 

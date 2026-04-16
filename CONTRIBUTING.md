@@ -1,8 +1,8 @@
 # 🤝 Contributing to Galileo SDK Examples
 
-Thank you for your interest in contributing to the Galileo.ai SDK Examples repository! This guide will help you understand how to contribute effectively and maintain the quality of our examples. 
+Thank you for your interest in contributing to the Galileo.ai SDK Examples repository! This guide will help you understand how to contribute effectively and maintain the quality of our examples.
 
-If you submit a PR to the SDK examples repo — please make sure to either open an issue in the [Galileo Docs Official](https://github.com/rungalileo/docs-official) repo with details on how to use the application, or open a pull request with the completed cookbook so the feature can be added to the [Galileo Documentation](https://v2docs.galileo.ai/what-is-galileo) as well. 
+If you submit a PR to the SDK examples repo — please make sure to either open an issue in the [Galileo Docs Official](https://github.com/rungalileo/docs-official) repo with details on how to use the application, or open a pull request with the completed cookbook so the feature can be added to the [Galileo Documentation](https://docs.galileo.ai/what-is-galileo) as well.
 
 ## 📋 Table of contents
 
@@ -21,7 +21,7 @@ If you submit a PR to the SDK examples repo — please make sure to either open 
 
 1. **Galileo.ai Account**: You'll need a free account on [Galileo.ai](https://app.galileo.ai/sign-up)
 2. **API Key**: Obtain your API key from the [Galileo.ai dashboard](https://app.galileo.ai/settings/api-keys)
-3. **Development Environment**: 
+3. **Development Environment**:
    - For Python examples: Preferred Python 3.10+ (Galileo supports Python <3.14, >=3.10)
    - For TypeScript examples: Node.js 16+ and npm/yarn
 
@@ -62,6 +62,7 @@ sdk-examples/
 ### 1. Choose Your Category
 
 Examples should fit into one of these categories:
+
 - **Agent**: LLM systems that use tools and make decisions
 - **Chatbot**: Simple conversational applications
 - **RAG**: Retrieval-Augmented Generation applications
@@ -70,6 +71,7 @@ Examples should fit into one of these categories:
 ### 2. Create Your Example Directory
 
 Create a new directory following this naming convention:
+
 - Use kebab-case: `my-awesome-example`
 - Be descriptive but concise
 - Place in the appropriate language folder (`python/` or `typescript/`)
@@ -79,6 +81,7 @@ Create a new directory following this naming convention:
 Every example should include:
 
 #### For Python Examples:
+
 ```
 your-example/
 ├── README.md              # Documentation and setup instructions
@@ -89,6 +92,7 @@ your-example/
 ```
 
 #### For TypeScript Examples:
+
 ```
 your-example/
 ├── README.md              # Documentation and setup instructions
@@ -101,7 +105,7 @@ your-example/
 
 ### 4. Example README.md Template
 
-```markdown
+````markdown
 # Example Name
 
 Brief description of what this example demonstrates.
@@ -115,25 +119,29 @@ Brief description of what this example demonstrates.
 ## 🚀 Quick Start
 
 1. Install dependencies:
+
    ```bash
    # For Python
    pip install -r requirements.txt
-   
+
    # For TypeScript
    npm install
    ```
+````
 
 2. Set up environment variables:
+
    ```bash
    cp .env.example .env
    # Edit .env with your Galileo API key
    ```
 
 3. Run the example:
+
    ```bash
    # For Python
    python main.py
-   
+
    # For TypeScript
    npm start
    ```
@@ -144,9 +152,10 @@ Explain any configuration options or settings.
 
 ## 📚 Learn More
 
-- [Galileo.ai Documentation](https://v2docs.galileo.ai/)
+- [Galileo.ai Documentation](https://docs.galileo.ai/)
 - [Any Related Example Link](/path/to/related/example)
-```
+
+````
 
 ## 📝 Code Standards
 
@@ -154,7 +163,7 @@ Explain any configuration options or settings.
 
 - **Python Version**: Target Python <3.14, >=3.10
 - **Code Style**: Follow PEP 8 guidelines
-- **Dependencies**: Use `requirements.txt` 
+- **Dependencies**: Use `requirements.txt`
 - **Type Hints**: Include type hints for function parameters and return values
 - **Docstrings**: Add docstrings to functions and classes
 
@@ -165,28 +174,28 @@ from galileo import Galileo
 def process_data(data: List[str], config: Optional[dict] = None) -> dict:
     """
     Process the input data with Galileo integration.
-    
+
     Args:
         data: List of strings to process
         config: Optional configuration dictionary
-        
+
     Returns:
         Dictionary containing processed results
     """
     # Your code here
     pass
-```
+````
 
 ### TypeScript Standards
 
 - **Node.js Version**: Target Node.js 16+
 - **Code Style**: Use ESLint and Prettier
-- **Dependencies**: Use `package.json` 
+- **Dependencies**: Use `package.json`
 - **TypeScript**: Use strict mode and proper typing
 - **Comments**: Add JSDoc comments for functions
 
 ```typescript
-import { Galileo } from 'galileo';
+import { Galileo } from "galileo";
 
 interface ProcessConfig {
   enabled: boolean;
@@ -200,8 +209,8 @@ interface ProcessConfig {
  * @returns Promise resolving to processed results
  */
 async function processData(
-  data: string[], 
-  config?: ProcessConfig
+  data: string[],
+  config?: ProcessConfig,
 ): Promise<Record<string, any>> {
   // Your code here
 }
@@ -303,29 +312,35 @@ npm test
 
 ```markdown
 ## Description
+
 Brief description of what this example demonstrates.
 
 ## Type of Example
+
 - [ ] Agent
 - [ ] Chatbot
 - [ ] RAG
 - [ ] Dataset & Experiments
 
 ## Language
+
 - [ ] Python
 - [ ] TypeScript
 
 ## Key Features
+
 - Feature 1
 - Feature 2
 - Feature 3
 
 ## Testing
+
 - [ ] Example runs successfully
 - [ ] README instructions work
 - [ ] Galileo integration tested
 
 ## Screenshots/Demo
+
 (If applicable)
 ```
 
@@ -334,12 +349,14 @@ Brief description of what this example demonstrates.
 ### Agent Examples
 
 Agent examples should demonstrate:
+
 - Tool usage and decision-making
 - Multi-step workflows
 - Error handling and recovery
 - Galileo's agent monitoring features
 
 **Good Examples:**
+
 - Weather agent with multiple tools
 - Financial services agent with document processing
 - Customer support agent with knowledge base
@@ -347,12 +364,14 @@ Agent examples should demonstrate:
 ### Chatbot Examples
 
 Chatbot examples should show:
+
 - Conversation management
 - Context handling
 - Response generation
 - Galileo's conversation tracking
 
 **Good Examples:**
+
 - Simple Q&A chatbot
 - Context-aware conversations
 - Multi-turn dialogue systems
@@ -360,12 +379,14 @@ Chatbot examples should show:
 ### RAG Examples
 
 RAG examples should demonstrate:
+
 - Document retrieval
 - Context augmentation
 - Source attribution
 - Galileo's RAG monitoring
 
 **Good Examples:**
+
 - Document Q&A systems
 - Knowledge base chatbots
 - Research assistants
@@ -373,12 +394,14 @@ RAG examples should demonstrate:
 ### Dataset & Experiment Examples
 
 Dataset examples should show:
+
 - Data management
 - Experiment tracking
 - Evaluation metrics
 - Galileo's dataset features
 
 **Good Examples:**
+
 - A/B testing frameworks
 - Evaluation pipelines
 - Data versioning
@@ -386,12 +409,11 @@ Dataset examples should show:
 ## 🆘 Getting Help
 
 - **Issues**: Use GitHub Issues for bugs or feature requests
-- **Documentation**: Check the [Galileo.ai docs](https://v2docs.galileo.ai/)
-- **Version Control**: use Git for version control and submit a PR when you are ready for review. Tag @jimbobbennett, @erinmikailstaples or @rschwabco for code review. 
-
+- **Documentation**: Check the [Galileo.ai docs](https://docs.galileo.ai/)
+- **Version Control**: use Git for version control and submit a PR when you are ready for review. Tag @jimbobbennett, @erinmikailstaples or @rschwabco for code review.
 
 ---
 
-Thank you for contributing to the Galileo.ai SDK Examples! 
+Thank you for contributing to the Galileo.ai SDK Examples!
 
-Your examples help the community learn and build better AI applications. 🚀 
+Your examples help the community learn and build better AI applications. 🚀
