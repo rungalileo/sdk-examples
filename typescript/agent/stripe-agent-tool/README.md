@@ -86,6 +86,11 @@ stripe-agents-sdk-example/
    # This is most common with enterprise, or on prem deployments where you may have your own custom cluster
    # GALILEO_CONSOLE_URL=https://console.galileo.ai
 
+   # OPTIONAL
+   # Set the verbosity level of the Galileo SDK (from most to least verbose):
+   # debug, info, warn, error, silent (default)
+   # GALILEO_LOG_LEVEL=debug
+
    # Agent Configuration
    AGENT_NAME=StripePaymentAgent
    AGENT_DESCRIPTION=An AI agent that helps with Stripe payment operations
