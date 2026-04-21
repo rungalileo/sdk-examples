@@ -1,15 +1,3 @@
-/** Enable what level of logging is desirable,
- *  from most to least verbose:
- * 
- *  debug
- *  info
- *  warn
- *  error
- *  silent (default)
- * 
- *  */ 
-process.env.GALILEO_LOG_LEVEL = 'debug';
-
 import { StripeAgent } from './agents/StripeAgent';
 
 async function main() {
