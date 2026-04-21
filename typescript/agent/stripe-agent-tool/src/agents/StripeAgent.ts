@@ -23,64 +23,6 @@
  * - Galileo: AI observability platform
  */
 
-// Enable LangChain callbacks for Galileo integration
-// These environment variables tell LangChain to send tracing data to Galileo
-process.env.LANGCHAIN_LOGGING = 'info';     // Log informational messages
-process.env.LANGCHAIN_VERBOSE = 'false';    // Don't show verbose debug output
-process.env.LANGCHAIN_CALLBACKS = 'true';   // Enable callback handlers (like Galileo)
-
-// Suppress Galileo SDK internal messages to reduce console noise
-// These messages come from the Galileo SDK when it flushes traces to the server
-const originalConsoleError = console.error;
-const originalConsoleLog = console.log;
-const originalConsoleDebug = console.debug;
-const originalConsoleWarn = console.warn;
-const originalConsoleInfo = console.info;
-
-console.error = (...args: any[]) => {
-  const message = args.join(' ');
-  if (message.includes('No node exists for run_id') ||
-      message.includes('Flushing') ||
-      message.includes('Traces ingested') ||
-      message.includes('Successfully flushed') ||
-      message.includes('Setting root node') ||
-      message.includes('No traces to flush')) {
-    return; // Suppress Galileo SDK internal messages
-  }
-  originalConsoleError(...args);
-};
-
-console.log = (...args: any[]) => {
-  const message = args.join(' ');
-  if (message.includes('Flushing') ||
-      message.includes('Traces ingested') ||
-      message.includes('Successfully flushed') ||
-      message.includes('Setting root node') ||
-      message.includes('No traces to flush')) {
-    return; // Suppress Galileo SDK internal messages
-  }
-  originalConsoleLog(...args);
-};
-
-// Override console methods to respect VERBOSE environment variable
-console.debug = (...args: any[]) => {
-  if (process.env.VERBOSE !== 'false') {
-    originalConsoleDebug(...args);
-  }
-};
-
-console.warn = (...args: any[]) => {
-  if (process.env.VERBOSE !== 'false') {
-    originalConsoleWarn(...args);
-  }
-};
-
-console.info = (...args: any[]) => {
-  if (process.env.VERBOSE !== 'false') {
-    originalConsoleInfo(...args);
-  }
-};
-
 import { StripeAgentToolkit } from '@stripe/agent-toolkit/langchain';
 import { ChatOpenAI } from '@langchain/openai';
 import { AgentExecutor, createStructuredChatAgent } from 'langchain/agents';
@@ -327,9 +269,6 @@ export class StripeAgent {
   }
 
 
-
-
-
   /**
    * INITIALIZATION - Must be called before using the agent
    * 
@@ -346,7 +285,7 @@ export class StripeAgent {
     this.galileoCallback = new GalileoCallback(
       undefined, // Use default logger
       true,      // Enable tool tracking
-      true      // Disable detailed logging to reduce noise
+      false      // Avoid repeated flushes across chain/tool callbacks
     );
     
   } catch (error: any) {
@@ -1269,10 +1208,15 @@ ${paymentLinkUrl}
 
   // Add method to explicitly end conversation
   async endConversation(): Promise<void> {
+    // Make teardown idempotent because CLI/server paths can call this multiple times.
+    if (this.conversationEnded) {
+      return;
+    }
+
     this.conversationEnded = true;
     
           // End the session and flush any remaining traces
-      if (this.sessionContext && this.galileoCallback) {
+      if (this.sessionContext?.isActive && this.galileoCallback) {
         try {
           this.sessionContext = await this.endSession(this.sessionContext);
           // console.log(`📊 Session ${this.sessionContext?.sessionId} ended and traces flushed`);
