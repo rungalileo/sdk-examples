@@ -57,7 +57,7 @@ pyjwt==2.10.1
     #   galileo-core
 python-dateutil==2.9.0.post0
     # via galileo
-python-dotenv==1.2.1
+python-dotenv==1.2.2
     # via pydantic-settings
 six==1.17.0
     # via python-dateutil
