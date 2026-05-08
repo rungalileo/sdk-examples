@@ -1,0 +1,19 @@
+{
+    "type": "module",
+    "scripts": {
+        "start": "tsx index.js"
+    },
+    "dependencies": {
+        "@opentelemetry/api": "latest",
+        "@opentelemetry/exporter-trace-otlp-proto": "latest",
+        "@opentelemetry/sdk-node": "latest",
+        "@opentelemetry/sdk-trace-node": "latest",
+        "dotenv": "latest",
+        "galileo": "latest"
+      },
+      "devDependencies": {
+        "@types/node": "latest",
+        "tsx": "latest",
+        "typescript": "latest"
+      }
+}
