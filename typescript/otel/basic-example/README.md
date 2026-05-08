@@ -1,5 +1,7 @@
 # OpenTelemetry Typescript example
 
+This example sets up the `GalileoSpanProcessor` with OpenTelemetry. You can run this example to see traces appear in the Galileo console.
+
 ## Configure Environment Variables
 
 Your `.env` should look like this. Feel free to follow the `.env.example` and enter your credentials
