@@ -7,7 +7,7 @@ import { setupOtel } from './setupOtel';
 // Load the environment variables
 dotenv.config();
 
-setupOtel();
+const sdk = setupOtel();
 
 /**
  * The weather agent is a simple agent that can get the weather in a location and convert the temperature from Fahrenheit to Celsius using tools.
@@ -46,3 +46,5 @@ const result = await weatherAgent.generate({
 });
 
 console.log(result.text);
+
+await sdk.shutdown();
