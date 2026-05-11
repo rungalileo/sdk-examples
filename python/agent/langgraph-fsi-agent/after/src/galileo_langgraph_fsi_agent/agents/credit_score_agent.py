@@ -9,7 +9,6 @@ from langgraph.prebuilt import create_react_agent
 
 from ..tools.credit_score_tool import CreditScoreTool
 
-
 # Create the tools
 credit_score_tool = CreditScoreTool()
 

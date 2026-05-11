@@ -1,6 +1,6 @@
 # Elastic Chatbot RAG App + Galileo
 
-Read more on how to leverage [Galileo for your chat app](https://v2docs.galileo.ai/cookbooks/use-cases/rag-elastic-langchain-integration)
+Read more on how to leverage [Galileo for your chat app](https://docs.galileo.ai/cookbooks/use-cases/rag-elastic-langchain-integration)
 
 This is a sample app that combines Elasticsearch, Langchain and a number of different LLMs to create a chatbot experience with ELSER with your own private data.
 
@@ -10,9 +10,10 @@ This is a sample app that combines Elasticsearch, Langchain and a number of diff
 
 ## Setup a Galileo project:
 
-On your cluster or [https://app.galileo.ai](https://app.galileo.ai) create an account, a logstream project and api keys. You can follow [this guide](https://v2docs.galileo.ai/concepts/projects#whats-in-a-project).
+On your cluster or [https://app.galileo.ai](https://app.galileo.ai) create an account, a logstream project and api keys. You can follow [this guide](https://docs.galileo.ai/concepts/projects#whats-in-a-project).
 
 Make sure to set your Galileo logging env variables
+
 ```bash
 # Galileo Environment Variables
 GALILEO_API_KEY=your-galileo-api-key             # Your Galileo API key.
@@ -22,7 +23,6 @@ GALILEO_LOG_STREAM=your-galileo-log-stream       # The name of the log stream yo
 # Provide the console url below if you are using a custom deployment, and not using app.galileo.ai
 # GALILEO_CONSOLE_URL=your-galileo-console-url   # Optional if you are using a hosted version of Galileo
 ```
-
 
 ## Download the Project
 
@@ -52,19 +52,20 @@ We support several LLM providers, but only one is used at runtime, and selected
 by the `LLM_TYPE` entry in your `.env` file. Edit that file to choose an LLM,
 and configure its templated connection settings:
 
-* azure: [Azure OpenAI Service](https://learn.microsoft.com/azure/ai-services/openai/)
-* bedrock: [Amazon Bedrock](https://docs.aws.amazon.com/bedrock/)
-* openai: [OpenAI Platform](https://platform.openai.com/docs/overview) and
+- azure: [Azure OpenAI Service](https://learn.microsoft.com/azure/ai-services/openai/)
+- bedrock: [Amazon Bedrock](https://docs.aws.amazon.com/bedrock/)
+- openai: [OpenAI Platform](https://platform.openai.com/docs/overview) and
   services compatible with its API.
-* vertex: [Google Vertex AI](https://cloud.google.com/vertex-ai/docs)
-* mistral: [Mistral AI](https://docs.mistral.ai/)
-* cohere: [Cohere](https://docs.cohere.com/)
+- vertex: [Google Vertex AI](https://cloud.google.com/vertex-ai/docs)
+- mistral: [Mistral AI](https://docs.mistral.ai/)
+- cohere: [Cohere](https://docs.cohere.com/)
 
 ## Running the App
 
 This application contains two services:
-* create-index: Installs ELSER and ingests data into elasticsearch
-* api-frontend: Hosts the chatbot-rag-app application on http://localhost:4000
+
+- create-index: Installs ELSER and ingests data into elasticsearch
+- api-frontend: Hosts the chatbot-rag-app application on http://localhost:4000
 
 There are two ways to run the app: via Docker or locally. Docker is advised for
 ease while locally is advised if you are making changes to the application.
@@ -80,7 +81,7 @@ working Python environment.
 docker compose up --pull always --force-recreate
 ```
 
-*Note*: The first run may take several minutes to become available.
+_Note_: The first run may take several minutes to become available.
 
 Clean up when finished, like this:
 
@@ -100,12 +101,14 @@ copied to a file name `.env` and updated with `ELASTICSEARCH_URL` and
 
 For example, if you started your Elastic Stack with [k8s-manifest-elastic.yml][k8s-manifest-elastic],
 you would update these values:
+
 ```
 ELASTICSEARCH_URL=http://elasticsearch:9200
 OTEL_EXPORTER_OTLP_ENDPOINT=http://apm-server:8200
 ```
 
 Then, import your `.env` file as a configmap like this:
+
 ```bash
 kubectl create configmap chatbot-rag-app-env --from-env-file=.env
 ```
@@ -115,6 +118,7 @@ kubectl create configmap chatbot-rag-app-env --from-env-file=.env
 
 The `api-frontend container` needs access to your Google Cloud credentials.
 Share your `application_default_credentials.json` as a Kubernetes secret:
+
 ```bash
 # Logs you into Google Cloud and creates application_default_credentials.json
 gcloud auth application-default login
@@ -122,31 +126,37 @@ gcloud auth application-default login
 kubectl create secret generic gcloud-credentials \
   --from-file=application_default_credentials.json=$HOME/.config/gcloud/application_default_credentials.json
 ```
+
 </details>
 
 Now that your configuration is applied, create the `chatbot-rag-app` deployment
 and service by applying this manifest:
+
 ```bash
 kubectl apply -f k8s-manifest.yml
 ```
 
 Next, block until `chatbot-rag-app` is available.
+
 ```bash
 kubectl wait --for=condition=available --timeout=20m  deployment/chatbot-rag-app
 ```
 
-*Note*: The first run may take several minutes to become available. Here's how
+_Note_: The first run may take several minutes to become available. Here's how
 to follow logs on this stage:
+
 ```bash
 kubectl logs deployment.apps/chatbot-rag-app -c create-index -f
 ```
 
 Next, forward the web UI port:
+
 ```bash
 kubectl port-forward deployment.apps/chatbot-rag-app 4000:4000 &
 ```
 
 Clean up when finished, like this:
+
 ```bash
 kubectl delete -f k8s-manifest.yml
 ```
@@ -187,15 +197,17 @@ pip install -r requirements.txt
 #### Create your Elasticsearch index
 
 First, ingest the data into elasticsearch:
+
 ```bash
 dotenv run -- flask create-index
 ```
 
-*Note*: This may take several minutes to complete
+_Note_: This may take several minutes to complete
 
 #### Run the application
 
 Now, run the app, which listens on http://localhost:4000
+
 ```bash
 dotenv run -- python api/app.py
 ```
@@ -274,6 +286,7 @@ docker compose up --build --force-recreate
 ```
 
 ---
+
 [loader-docs]: https://python.langchain.com/docs/how_to/#document-loaders
 [install-es]: https://www.elastic.co/search-labs/tutorials/install-elasticsearch
 [docker-compose-elastic]: ../../docker/docker-compose-elastic.yml

@@ -9,7 +9,7 @@ In this folder you will find 2 versions of the app:
 - A [before version](./before/) that contains the app without any evaluations
 - An [after version](./after/) that contains the app with evaluations
 
-To learn how to add evaluations, check out the [Add evaluations to a multi-agent LangGraph application cookbook](https://v2docs.galileo.ai/cookbooks/use-cases/multi-agent-langgraph/multi-agent-langgraph) in the Galileo documentation.
+To learn how to add evaluations, check out the [Add evaluations to a multi-agent LangGraph application cookbook](https://docs.galileo.ai/cookbooks/use-cases/multi-agent-langgraph/multi-agent-langgraph) in the Galileo documentation.
 
 ## Overview of this app
 
@@ -124,7 +124,7 @@ To run the app, you need the following:
 1. Copy the `.env.example` file to `.env`
 1. Fill in the values
 
-    For the Galileo values, you MUST create the project up front, but the log stream does not need to be created, it will be created automatically
+   For the Galileo values, you MUST create the project up front, but the log stream does not need to be created, it will be created automatically
 
 ### Install the dependencies
 
@@ -172,7 +172,7 @@ From there you can configure the metrics you are interested in. Once metrics are
 
 This project also includes a unit test to run the chatbot with a set of defined prompts, evaluating the prompts for action advancement, action completion, tool selection quality, and tool errors, only passing the test if both metrics score an average of 100% (or 0% for tool errors) over all the entries in the dataset.
 
-This is run using the [Galileo experiments framework](https://v2docs.galileo.ai/concepts/experiments/overview) - allowing you to run any code as an experiment against a fixed dataset of prompts. This mechanism allows you to run AI applications, from simple to complex, under test conditions with a defined set of inputs. You can then use the results of evaluations run against your app to help with model selection or prompt engineering, as well as validating your application as part of a CI/CD pipeline.
+This is run using the [Galileo experiments framework](https://docs.galileo.ai/concepts/experiments/overview) - allowing you to run any code as an experiment against a fixed dataset of prompts. This mechanism allows you to run AI applications, from simple to complex, under test conditions with a defined set of inputs. You can then use the results of evaluations run against your app to help with model selection or prompt engineering, as well as validating your application as part of a CI/CD pipeline.
 
 You can run the unit test by running the following command inside your virtual environment:
 

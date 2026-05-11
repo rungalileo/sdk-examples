@@ -4476,7 +4476,7 @@ tenacity = ">=8.2.3,<10.0"
 [[package]]
 name = "typing-extensions"
 version = "4.14.1"
-description = "Backported and Experimental Type Hints for Python 3.9+"
+description = "Backported and Experimental Type Hints for Python 3.10+"
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]

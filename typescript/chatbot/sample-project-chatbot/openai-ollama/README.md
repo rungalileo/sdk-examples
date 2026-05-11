@@ -20,25 +20,24 @@ To set up this project:
 
 1. Install the required node modules:
 
-    ```bash
-    npm i
-    ```
+   ```bash
+   npm i
+   ```
 
 ### Set up the environment
 
 1. Create a `.env` file by copying the `.env.example` file.
 
 1. Set the `LLM` to the LLM you are using:
-    - `OpenAI`: Use the OpenAI or Ollama client.
-    - `Anthropic`: Use the Anthropic client.
-    - `Azure`: Use the Azure AI Inference client.
+   - `OpenAI`: Use the OpenAI or Ollama client.
+   - `Anthropic`: Use the Anthropic client.
+   - `Azure`: Use the Azure AI Inference client.
 
 1. Fill in the required values for your LLM in the `.env` file:
-
-    - For OpenAI or other compatible API, set `OPENAI_API_KEY` to your API key.
-    - If you are using a custom OpenAI API deployment or compatible API, set `OPENAI_BASE_URL` to the relevant URL.
-    - For Ollama, set `OPENAI_API_KEY` to `ollama`, set `OPENAI_BASE_URL` to `http://localhost:11434/v1`
-    - Set the `MODEL_NAME` to the name of the model you want to use.
+   - For OpenAI or other compatible API, set `OPENAI_API_KEY` to your API key.
+   - If you are using a custom OpenAI API deployment or compatible API, set `OPENAI_BASE_URL` to the relevant URL.
+   - For Ollama, set `OPENAI_API_KEY` to `ollama`, set `OPENAI_BASE_URL` to `http://localhost:11434/v1`
+   - Set the `MODEL_NAME` to the name of the model you want to use.
 
 ## Run the chatbot
 
@@ -66,7 +65,7 @@ These moons are significant for their unique geological features and potential f
 
 Every run of the app is logged as a new session in Galileo, with each prompt and response a separate trace.
 
-To evaluate the chatbot, head to your project and Log stream in the Galileo console. Turn on [instruction adherence](https://v2docs.galileo.ai/concepts/metrics/response-quality/instruction-adherence) and [correctness](https://v2docs.galileo.ai/concepts/metrics/response-quality/correctness) for your Log stream.
+To evaluate the chatbot, head to your project and Log stream in the Galileo console. Turn on [instruction adherence](https://docs.galileo.ai/concepts/metrics/response-quality/instruction-adherence) and [correctness](https://docs.galileo.ai/concepts/metrics/response-quality/correctness) for your Log stream.
 
 Then when you run the chatbot, these metrics will be evaluated.
 

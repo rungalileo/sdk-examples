@@ -21,7 +21,6 @@ from utils import State
 
 from llm_integrations import get_llm
 
-
 # Make sure to set your Galileo logging env variables
 callback = GalileoCallback()
 

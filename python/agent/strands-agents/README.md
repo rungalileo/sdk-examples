@@ -4,7 +4,7 @@ This is an example project demonstrating how to use Galileo with the [Strands Ag
 
 ## Getting Started
 
-To get started with this project, you'll need to have Python 3.9 or later installed. You can then install the required dependencies in a virtual environment:
+To get started with this project, you'll need to have Python 3.10 or later installed. You can then install the required dependencies in a virtual environment:
 
 ```bash
 pip install -r requirements.txt
@@ -25,7 +25,7 @@ GALILEO_PROJECT=
 GALILEO_LOG_STREAM=
 ```
 
-For the `GALILEO_API_ENDPOINT`, you only need to set this if you are using a custom Galileo deployment. There is no need to set this if you ae using [app.galileo.ai](https://app.galileo.ai). This endpoint is different to the console URL that you would normally use. See the [Galileo OpenTelemetry documentation](https://v2docs.galileo.ai/sdk-api/third-party-integrations/opentelemetry-and-openinference#self-hosted-deployments) for more details.
+For the `GALILEO_API_ENDPOINT`, you only need to set this if you are using a custom Galileo deployment. There is no need to set this if you ae using [app.galileo.ai](https://app.galileo.ai). This endpoint is different to the console URL that you would normally use. See the [Galileo OpenTelemetry documentation](https://docs.galileo.ai/sdk-api/third-party-integrations/opentelemetry-and-openinference#self-hosted-deployments) for more details.
 
 ## Usage
 

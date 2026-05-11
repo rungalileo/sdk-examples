@@ -6,7 +6,7 @@ This example demonstrates how to add comprehensive observability to your LangGra
 
 **OpenTelemetry** is an observability framework that creates traces showing what functions ran, their timing, and data flow through your application. The **OpenTelemetry instrumentation libraries** automatically instrument AI frameworks like LangChain and OpenAI. **Galileo** provides a sophisticated platform for visualizing and analyzing your AI application traces.
 
-For detailed explanations and advanced patterns, see the [LangGraph OpenTelemetry cookbook](https://v2docs.galileo.ai/cookbooks/features/integrations/langgraph-otel-cookbook)
+For detailed explanations and advanced patterns, see the [LangGraph OpenTelemetry cookbook](https://docs.galileo.ai/cookbooks/features/integrations/langgraph-otel-cookbook)
 
 ## Quick start
 
@@ -53,12 +53,12 @@ GALILEO_CONSOLE_URL=https://app.galileo.ai
 OPENAI_API_KEY=your_openai_api_key_here
 ```
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `GALILEO_API_KEY` | Yes | Your Galileo API key from [settings](https://app.galileo.ai/settings/api-keys) |
-| `GALILEO_PROJECT` | Yes | Galileo project name (create one in your dashboard) |
-| `GALILEO_LOGSTREAM` | Yes | Log stream name for organizing traces (default: "default") |
-| `OPENAI_API_KEY` | Yes | Your OpenAI API key from [OpenAI](https://platform.openai.com/api-keys) |
+| Variable            | Required | Description                                                                    |
+| ------------------- | -------- | ------------------------------------------------------------------------------ |
+| `GALILEO_API_KEY`   | Yes      | Your Galileo API key from [settings](https://app.galileo.ai/settings/api-keys) |
+| `GALILEO_PROJECT`   | Yes      | Galileo project name (create one in your dashboard)                            |
+| `GALILEO_LOGSTREAM` | Yes      | Log stream name for organizing traces (default: "default")                     |
+| `OPENAI_API_KEY`    | Yes      | Your OpenAI API key from [OpenAI](https://platform.openai.com/api-keys)        |
 
 ### Run
 
@@ -77,8 +77,8 @@ This runs a question-answering LangGraph workflow with comprehensive OpenTelemet
 
 ## Learn more
 
-- [LangGraph OpenTelemetry cookbook](https://v2docs.galileo.ai/cookbooks/features/integrations/langgraph-otel-cookbook)
+- [LangGraph OpenTelemetry cookbook](https://docs.galileo.ai/cookbooks/features/integrations/langgraph-otel-cookbook)
 - [LangGraph Documentation](https://langchain-ai.github.io/langgraph/)
 - [OpenTelemetry Python](https://opentelemetry.io/docs/instrumentation/python/)
-- [Galileo Documentation](https://v2docs.galileo.ai/)
+- [Galileo Documentation](https://docs.galileo.ai/)
 - [UV Package Manager](https://docs.astral.sh/uv/)

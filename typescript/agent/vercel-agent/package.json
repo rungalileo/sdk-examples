@@ -18,7 +18,9 @@
     "@opentelemetry/sdk-node": "^0.207.0",
     "@opentelemetry/sdk-trace-node": "^2.2.0",
     "@opentelemetry/semantic-conventions": "^1.37.0",
+    "@opentelemetry/sdk-trace-base": "^2.2.0",
     "@vercel/otel": "^2.1.0",
+    "galileo": "^2.1.0",
     "ai": "^5.0.76",
     "dotenv": "^17.2.3",
     "openai": "^6.6.0"

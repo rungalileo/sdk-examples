@@ -2,11 +2,11 @@
 
 This is an example project demonstrating how to use Galileo experiments with applications that use RAG and tools.
 
-This code is used in the [Run an experiment against a RAG app](http://v2docs.galileo.ai/how-to-guides/experiments/rag-app/rag-app) how-to guide in the Galileo documentation.
+This code is used in the [Run an experiment against a RAG app](http://docs.galileo.ai/how-to-guides/experiments/rag-app/rag-app) how-to guide in the Galileo documentation.
 
 ## Get Started
 
-To get started with this project, you'll need to have Python 3.9 or later installed. You can then install the required dependencies in a virtual environment:
+To get started with this project, you'll need to have Python 3.10 or later installed. You can then install the required dependencies in a virtual environment:
 
 ```bash
 pip install -r requirements.txt

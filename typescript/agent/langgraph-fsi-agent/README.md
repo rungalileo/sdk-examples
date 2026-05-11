@@ -112,7 +112,7 @@ To run the app, you need the following:
 1. Copy the `.env.example` file to `.env`
 1. Fill in the values
 
-    For the Galileo values, you MUST create the project up front, but the log stream does not need to be created, it will be created automatically
+   For the Galileo values, you MUST create the project up front, but the log stream does not need to be created, it will be created automatically
 
 ### Install the dependencies
 
@@ -144,15 +144,15 @@ The app runs as a simple terminal chatbot.
 
 1. Install the dependencies:
 
-    ```bash
-    npm i
-    ```
+   ```bash
+   npm i
+   ```
 
 1. Run the app
 
-    ```bash
-    npm run start
-    ```
+   ```bash
+   npm run start
+   ```
 
 You can then chat with the terminal:
 
@@ -174,7 +174,7 @@ From there you can configure the metrics you are interested in. Once metrics are
 
 This project also includes a unit test to run the chatbot with a set of defined prompts, evaluating the prompts for action advancement, action completion, tool selection quality, and tool errors, only passing the test if both metrics score an average of 100% (or 0% for tool errors) over all the entries in the dataset.
 
-This is run using the [Galileo experiments framework](https://v2docs.galileo.ai/concepts/experiments/overview) - allowing you to run any code as an experiment against a fixed dataset of prompts. This mechanism allows you to run AI applications, from simple to complex, under test conditions with a defined set of inputs. You can then use the results of evaluations run against your app to help with model selection or prompt engineering, as well as validating your application as part of a CI/CD pipeline.
+This is run using the [Galileo experiments framework](https://docs.galileo.ai/concepts/experiments/overview) - allowing you to run any code as an experiment against a fixed dataset of prompts. This mechanism allows you to run AI applications, from simple to complex, under test conditions with a defined set of inputs. You can then use the results of evaluations run against your app to help with model selection or prompt engineering, as well as validating your application as part of a CI/CD pipeline.
 
 You can run the unit test by running the following command inside your virtual environment:
 

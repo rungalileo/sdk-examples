@@ -20,29 +20,26 @@ To set up this project:
 
 1. Install the required node modules:
 
-    ```bash
-    npm i
-    ```
+   ```bash
+   npm i
+   ```
 
 ### Set up the environment
 
 1. Create a `.env` file by copying the `.env.example` file.
 
 1. Fill in the required values for the Galileo environment variables in the `.env` file:
+   - `GALILEO_API_KEY` - Set this to your Galileo API key
+   - `GALILEO_PROJECT` - Set this to your Galileo Project name
+   - `GALILEO_LOG_STREAM` - Set this to your Galileo Log stream name
 
-    - `GALILEO_API_KEY` - Set this to your Galileo API key
-    - `GALILEO_PROJECT` - Set this to your Galileo Project name
-    - `GALILEO_LOG_STREAM` - Set this to your Galileo Log stream name
-
-    There are also some optional values:
-
-    - `GALILEO_CONSOLE_URL` - If you are using a hosted version of Galileo, set the console URL here. For the free version, remove or comment out this value
+   There are also some optional values:
+   - `GALILEO_CONSOLE_URL` - If you are using a hosted version of Galileo, set the console URL here. For the free version, remove or comment out this value
 
 1. Fill in the required values for your LLM in the `.env` file:
-
-    - Set `AZURE_AI_INFERENCE_ENDPOINT` to your endpoint from AI Foundry
-    - Set `AZURE_AI_INFERENCE_API_KEY` to your API key
-    - Set `MODEL_NAME` to the name of the model deployment you want to use.
+   - Set `AZURE_AI_INFERENCE_ENDPOINT` to your endpoint from AI Foundry
+   - Set `AZURE_AI_INFERENCE_API_KEY` to your API key
+   - Set `MODEL_NAME` to the name of the model deployment you want to use.
 
 ## Run the chatbot
 
@@ -70,7 +67,7 @@ These moons are significant for their unique geological features and potential f
 
 Every run of the app is logged as a new session in Galileo, with each prompt and response a separate trace.
 
-To evaluate the chatbot, head to your project and Log stream in the Galileo console. Turn on [instruction adherence](https://v2docs.galileo.ai/concepts/metrics/response-quality/instruction-adherence) and [correctness](https://v2docs.galileo.ai/concepts/metrics/response-quality/correctness) for your Log stream.
+To evaluate the chatbot, head to your project and Log stream in the Galileo console. Turn on [instruction adherence](https://docs.galileo.ai/concepts/metrics/response-quality/instruction-adherence) and [correctness](https://docs.galileo.ai/concepts/metrics/response-quality/correctness) for your Log stream.
 
 Then when you run the chatbot, these metrics will be evaluated.
 

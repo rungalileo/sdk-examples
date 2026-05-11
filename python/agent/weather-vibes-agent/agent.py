@@ -7,6 +7,7 @@ Usage:
     python galileo_agent.py [location]
     python galileo_agent.py -l "Tokyo" -u imperial -m relaxing
 """
+
 import asyncio
 import argparse
 import json

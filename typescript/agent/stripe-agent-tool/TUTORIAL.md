@@ -5,6 +5,7 @@ This cookbook demonstrates how to set up and run a complete AI agent that integr
 ## Overview
 
 By the end of this tutorial, you'll have a fully functional AI agent that can:
+
 - List products and prices from Stripe
 - Create payment links for customers
 - Manage customer data
@@ -12,6 +13,7 @@ By the end of this tutorial, you'll have a fully functional AI agent that can:
 - Track all interactions with Galileo observability
 
 ## Prerequisites
+
 - Basic familiarity with TypeScript, Node.js, and the command line
 - Node.js 18+
 - npm or yarn
@@ -21,11 +23,12 @@ By the end of this tutorial, you'll have a fully functional AI agent that can:
   - Galileo (free [developer account](https://app.galileo.ai/sign-up) available)
   - OpenAI API Key (this app should cost less that $5.00 total to run)
 
-Before you start, you'll need to create a new project in Galileo, as well as create Stripe developer sandbox account. 
+Before you start, you'll need to create a new project in Galileo, as well as create Stripe developer sandbox account.
 
-Instructions are below on how to do each of these actions. 
+Instructions are below on how to do each of these actions.
 
-### Create a Galileo [Project](https://v2docs.galileo.ai/concepts/projects)
+### Create a Galileo [Project](https://docs.galileo.ai/concepts/projects)
+
 1. Go to [Galileo Dashboard](https://app.galileo.ai)
 2. Click on "New Project"
 3. Name your project "Stripe Agent"
@@ -34,6 +37,7 @@ Instructions are below on how to do each of these actions.
 6. Paste it into the .env file as GALILEO_PROJECT
 
 ### Create a Stripe Developer Sandbox Account
+
 1. Go to [Stripe Dashboard](https://dashboard.stripe.com/register)
 2. Sign up for a free account
 3. Navigate to the Developers section
@@ -101,11 +105,13 @@ npm run interactive
 ```
 
 This will:
+
 - Initialize the agent with Galileo agent reliability.
 - Start a conversation session
 - Allow you to interact with the agent using natural language
 
 **Example interactions:**
+
 ```
 🚀 You: Show me your products
 🤖 Assistant: Here are some of our products...
@@ -115,6 +121,7 @@ This will:
 ```
 
 **Available Commands:**
+
 - `help` - Show available commands and examples
 - `quit` or `exit` - Exit the application
 - `clear` - Clear the terminal screen
@@ -131,6 +138,7 @@ npm run web
 The application will run on `http://localhost:3000`
 
 **API Endpoint:**
+
 ```bash
 POST /chat
 Content-Type: application/json
@@ -142,13 +150,15 @@ Content-Type: application/json
 ```
 
 ### Automated Demo Mode
-Run the automated demo script to see the agent in action: 
+
+Run the automated demo script to see the agent in action:
 
 ```bash
 npm run dev
 ```
 
 This demonstrates:
+
 - Payment link creation
 - Customer creation
 - Product listing
@@ -211,7 +221,7 @@ private detectCircularToolUsage(intermediateSteps: any[]): void {
     .filter(tool => tool);
 
   const [tool1, tool2, tool3, tool4] = recentTools;
-  
+
   if (tool1 === tool3 && tool2 === tool4 && tool1 !== tool2) {
     const pattern = [tool1, tool2];
     throw new CircularToolError(
@@ -265,11 +275,11 @@ interface SessionContext {
 ### What's Tracked
 
 Your agent automatically tracks:
+
 - All conversations and tool usage
 - Performance metrics and response times
 - Error rates and failure patterns
-- Session information and user interactions
--[Tool selection quality](https://v2docs.galileo.ai/concepts/metrics/agentic/tool-selection-quality) and accuracy
+- Session information and user interactions -[Tool selection quality](https://docs.galileo.ai/concepts/metrics/agentic/tool-selection-quality) and accuracy
 
 ### Viewing Your Data
 
@@ -280,11 +290,11 @@ Your agent automatically tracks:
 
 ### Recommended Metrics
 
-Based on the [Galileo documentation](https://v2docs.galileo.ai/concepts/metrics/overview), consider tracking:
+Based on the [Galileo documentation](https://docs.galileo.ai/concepts/metrics/overview), consider tracking:
 
-- **[Tool Error](https://v2docs.galileo.ai/concepts/metrics/agentic/tool-error)**: Detects errors during tool execution
-- **[Tool Selection Quality](https://v2docs.galileo.ai/concepts/metrics/agentic/tool-selection-quality)**: Determines if the agent selected the correct tool and arguments
-- **[Context Adherence](https://v2docs.galileo.ai/concepts/metrics/response-quality/context-adherence)**: Measures closed-domain hallucinations
+- **[Tool Error](https://docs.galileo.ai/concepts/metrics/agentic/tool-error)**: Detects errors during tool execution
+- **[Tool Selection Quality](https://docs.galileo.ai/concepts/metrics/agentic/tool-selection-quality)**: Determines if the agent selected the correct tool and arguments
+- **[Context Adherence](https://docs.galileo.ai/concepts/metrics/response-quality/context-adherence)**: Measures closed-domain hallucinations
 
 ## Customization
 
@@ -296,7 +306,7 @@ To add new Stripe tools, modify the agent initialization:
 private async initializeAgent(): Promise<void> {
   // Get tools from Stripe toolkit
   const tools = await this.stripeToolkit.getTools();
-  
+
   // Add custom tools if needed
   const customTool = new DynamicTool({
     name: 'custom_tool',
@@ -306,12 +316,12 @@ private async initializeAgent(): Promise<void> {
       return 'Custom tool result';
     },
   });
-  
+
   const allTools = [...tools, customTool];
-  
+
   // Create the agent
   const prompt = await pull("hwchase17/structured-chat-zero-shot-react");
-  
+
   this.agentExecutor = await createStructuredChatAgent({
     llm: this.llm,
     tools: allTools,
@@ -326,7 +336,10 @@ To customize the agent's behavior, modify the prompt template:
 
 ```typescript
 const customPrompt = ChatPromptTemplate.fromMessages([
-  ["system", "You are a helpful Stripe assistant. Always be polite and professional."],
+  [
+    "system",
+    "You are a helpful Stripe assistant. Always be polite and professional.",
+  ],
   ["human", "{input}"],
   ["human", "Chat History: {chat_history}"],
 ]);
@@ -353,6 +366,7 @@ AGENT_DESCRIPTION=Custom agent description
 ### Common Issues
 
 #### 1. "Missing environment variables"
+
 ```bash
 # Check your .env file exists
 ls -la .env
@@ -362,6 +376,7 @@ cat .env | grep -E "(STRIPE|OPENAI|GALILEO)"
 ```
 
 #### 2. "Galileo initialization failed"
+
 ```bash
 # Check your Galileo API key
 echo $GALILEO_API_KEY
@@ -371,6 +386,7 @@ curl -I https://app.galileo.ai
 ```
 
 #### 3. "Stripe API errors"
+
 ```bash
 # Verify your Stripe key format
 echo $STRIPE_SECRET_KEY | grep "sk_test_"
@@ -380,6 +396,7 @@ curl -u $STRIPE_SECRET_KEY: https://api.stripe.com/v1/account
 ```
 
 #### 4. "Agent not responding"
+
 ```bash
 # Check OpenAI API key
 echo $OPENAI_API_KEY
@@ -409,6 +426,7 @@ Force flush Galileo traces:
 ## Next Steps
 
 ### 1. Extend Functionality
+
 - Add more Stripe operations (refunds, subscriptions, etc.)
 - Implement user authentication
 - Add payment webhook handling
@@ -417,7 +435,7 @@ Force flush Galileo traces:
 
 - [Stripe API Documentation](https://stripe.com/docs/api)
 - [LangChain Documentation](https://js.langchain.com/)
-- [Galileo Documentation](https://v2docs.galileo.ai/)
+- [Galileo Documentation](https://docs.galileo.ai/)
 - [OpenAI API Documentation](https://platform.openai.com/docs)
 - [TypeScript Documentation](https://www.typescriptlang.org/docs/)
 
@@ -426,8 +444,8 @@ Force flush Galileo traces:
 If you encounter issues:
 
 1. Check the troubleshooting section above
-2. Review the [Galileo documentation](https://v2docs.galileo.ai/)
+2. Review the [Galileo documentation](https://docs.galileo.ai/)
 3. Open an issue in the repository
 4. Reach out to the Galileo developer team at [devrel@galileo.ai](mailto:devrel@galileo.ai)
 
-Happy building! 🚀 
+Happy building! 🚀

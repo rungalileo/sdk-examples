@@ -1,4 +1,3 @@
-import { openai } from '@ai-sdk/openai';
 import { Agent } from '@mastra/core/agent';
 import { LibSQLStore } from '@mastra/libsql';
 import { Memory } from '@mastra/memory';
@@ -7,11 +6,13 @@ import { Memory } from '@mastra/memory';
 const memory = new Memory({
   storage: new LibSQLStore({
     url: process.env.MASTRA_DB_URL || 'file:../mastra.db',
+    id: 'csv-summarization-agent-memory',
   }),
 });
 
 export const csvSummarizationAgent = new Agent({
   name: 'CSV Summarization Agent',
+  id: 'csv-summarization-agent',
   description: 'An agent that summarizes and analyzes CSV data using a large context window model',
   instructions: `
 You are a CSV data summarization specialist with access to a large context window model. Your role is to create concise, comprehensive summaries of CSV datasets that capture the essence of the data while being significantly more digestible than the raw data.
@@ -97,6 +98,6 @@ Format your summaries with:
 
 Always provide summaries that would allow someone to understand the dataset's core value and potential applications without analyzing the raw data.
   `,
-  model: openai('gpt-4.1-mini'), // Large context window model for summarization
+  model: 'openai/gpt-4o-mini', // Large context window model for summarization
   memory,
 });

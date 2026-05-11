@@ -1,0 +1,4 @@
+python-dotenv>=1.0.0
+elevenlabs>=1.0.0
+galileo>=1.34.0
+pyaudio>=0.2.14
