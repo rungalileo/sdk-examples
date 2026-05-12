@@ -1,19 +1,19 @@
 {
     "type": "module",
     "scripts": {
-        "start": "tsx index.js"
+        "start": "tsx index.ts"
     },
     "dependencies": {
-        "@opentelemetry/api": "latest",
-        "@opentelemetry/exporter-trace-otlp-proto": "latest",
-        "@opentelemetry/sdk-node": "latest",
-        "@opentelemetry/sdk-trace-node": "latest",
-        "dotenv": "latest",
-        "galileo": "latest"
+        "@opentelemetry/api": "^1.9.0",
+        "@opentelemetry/exporter-trace-otlp-proto": "^0.207.0",
+        "@opentelemetry/sdk-node": "^0.207.0",
+        "@opentelemetry/sdk-trace-node": "^2.2.0",
+        "dotenv": "^17.2.3",
+        "galileo": "^2.1.0"
       },
       "devDependencies": {
-        "@types/node": "latest",
-        "tsx": "latest",
-        "typescript": "latest"
+        "@types/node": "^24.9.1",
+        "tsx": "^4.20.6",
+        "typescript": "^5.8.3"
       }
 }
