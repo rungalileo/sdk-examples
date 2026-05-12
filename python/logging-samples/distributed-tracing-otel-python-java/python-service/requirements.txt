@@ -1,0 +1,12 @@
+fastapi==0.115.6
+uvicorn==0.34.0
+openai==1.82.0
+langgraph==0.4.1
+chromadb-client==0.6.3
+galileo[otel]
+opentelemetry-api
+opentelemetry-sdk
+opentelemetry-exporter-otlp-proto-http
+opentelemetry-instrumentation-fastapi
+openinference-instrumentation-langchain
+openinference-instrumentation-openai

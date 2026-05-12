@@ -1,0 +1,60 @@
+services:
+
+  chromadb:
+    image: chromadb/chroma:0.6.3
+    ports:
+      - "8299:8000"
+    volumes:
+      - chroma-data:/chroma/chroma
+    environment:
+      - ANONYMIZED_TELEMETRY=false
+
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.120.0
+    command: ["--config", "/etc/otel-collector/config.yaml"]
+    volumes:
+      - ./otel-collector/config.yaml:/etc/otel-collector/config.yaml:ro
+    environment:
+      - GALILEO_API_URL=${GALILEO_API_URL}
+      - GALILEO_API_KEY=${GALILEO_API_KEY}
+      - GALILEO_PROJECT=${GALILEO_PROJECT}
+      - GALILEO_LOG_STREAM=${GALILEO_LOG_STREAM}
+    ports:
+      - "4317:4317"  # OTLP gRPC
+      - "4318:4318"  # OTLP HTTP
+
+  python-service:
+    build: ./python-service
+    ports:
+      - "8099:8099"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OTEL_SERVICE_NAME=python-rag-service
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+      - CHROMADB_HOST=chromadb
+      - CHROMADB_PORT=8000
+      # Silences a harmless posthog telemetry error in chromadb-client.
+      - ANONYMIZED_TELEMETRY=False
+    depends_on:
+      - chromadb
+      - otel-collector
+
+  java-service:
+    build: ./java-service
+    ports:
+      - "8089:8089"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OTEL_SERVICE_NAME=java-gateway
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://otel-collector:4318
+      - OTEL_EXPORTER_OTLP_PROTOCOL=http/protobuf
+      - OTEL_TRACES_EXPORTER=otlp
+      - OTEL_METRICS_EXPORTER=none
+      - OTEL_LOGS_EXPORTER=none
+      - PYTHON_SERVICE_URL=http://python-service:8099
+    depends_on:
+      - python-service
+      - otel-collector
+
+volumes:
+  chroma-data:

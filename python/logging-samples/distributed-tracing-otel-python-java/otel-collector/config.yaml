@@ -1,0 +1,57 @@
+# OpenTelemetry Collector config used by the docker-compose demo.
+#
+# In production, point OTEL_EXPORTER_OTLP_ENDPOINT at your own collector
+# instead — copy the `otlphttp/galileo` exporter block below into its config
+# and add it to your traces pipeline.
+#
+# Pipeline: receive OTLP from both services, batch, forward to Galileo.
+# Galileo credentials live here, not in the application services.
+
+receivers:
+  otlp:
+    protocols:
+      http:
+        endpoint: 0.0.0.0:4318
+      grpc:
+        endpoint: 0.0.0.0:4317
+
+processors:
+  # Keep batches small and frequent so the Galileo UI fills in quickly during
+  # demos. Tune up for real workloads.
+  batch:
+    timeout: 1s
+    send_batch_size: 512
+
+exporters:
+  otlphttp/galileo:
+    endpoint: ${env:GALILEO_API_URL}/otel
+    headers:
+      Galileo-API-Key: ${env:GALILEO_API_KEY}
+      project: ${env:GALILEO_PROJECT}
+      logstream: ${env:GALILEO_LOG_STREAM}
+    # Retry on transient failures so a blip to Galileo doesn't drop half a trace.
+    retry_on_failure:
+      enabled: true
+      initial_interval: 1s
+      max_interval: 10s
+      max_elapsed_time: 60s
+    sending_queue:
+      enabled: true
+      num_consumers: 4
+      queue_size: 1000
+
+  # Prints every received span to the collector's stdout. Useful for demos and
+  # debugging — remove this exporter (and its reference in the pipeline below)
+  # for production.
+  debug:
+    verbosity: detailed
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlphttp/galileo, debug]
+  telemetry:
+    logs:
+      level: info

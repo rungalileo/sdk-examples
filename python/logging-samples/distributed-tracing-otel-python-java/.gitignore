@@ -1,0 +1,17 @@
+# Secrets
+.env
+
+# Python
+python-service/__pycache__/
+python-service/*.py[cod]
+python-service/.venv/
+
+# Java / Maven
+java-service/target/
+java-service/*.class
+
+# ChromaDB local data
+chroma-data/
+
+# OS
+.DS_Store
