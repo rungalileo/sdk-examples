@@ -5,15 +5,16 @@
     },
     "dependencies": {
         "@opentelemetry/api": "^1.9.1",
+        "@opentelemetry/exporter-trace-otlp-http": "^0.207.0",
         "@opentelemetry/exporter-trace-otlp-proto": "^0.207.0",
         "@opentelemetry/sdk-node": "^0.207.0",
         "@opentelemetry/sdk-trace-node": "^1.9.1",
         "dotenv": "^17.2.3",
         "galileo": "^2.1.1"
-      },
-      "devDependencies": {
+    },
+    "devDependencies": {
         "@types/node": "^24.9.1",
         "tsx": "^4.20.6",
         "typescript": "^5.8.3"
-      }
+    }
 }
