@@ -19,19 +19,23 @@ async function main() {
   const tracer = trace.getTracer("my-app");
 
   tracer.startActiveSpan("my-workflow", async (span) => {
-    span.setAttribute("input", "What is the capital of France?");
 
     // Simulate some work (e.g., an LLM call)
-    const result = "The capital of France is Paris.";
 
-    span.setAttribute("output", result);
+    span.setAttribute("gen_ai.operation.name", "execute_tool")
+    span.setAttribute("gen_ai.tool.name", "get_weather")
+    span.setAttribute("gen_ai.tool.type", "function")
+
+    span.setAttribute("gen_ai.tool.call.arguments", '{"city":"SF"}')
+    span.setAttribute("gen_ai.tool.call.result", '{"temp_f":68}')
+
     span.end();
   });
 
   // 3. Shut down to ensure all traces are exported
   await sdk.shutdown();
 
-  console.log("Traces sent to Galileo!");
+  console.log("Trace sent to Galileo!");
 }
 
 main();
