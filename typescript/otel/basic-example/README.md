@@ -27,3 +27,12 @@ Run the basic example:
 npm install
 npm start run
 ```
+
+## View in the Galileo console
+
+Confirm that you're able to view logged traces in the Galileo console.
+
+![Logged traces in Galileo](screenshot-traces-table.png)
+
+![Messages page in Galileo](screenshot-messages-page.png)
+
