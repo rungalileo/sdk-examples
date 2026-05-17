@@ -23,7 +23,7 @@ langgraph==0.4.8
 langgraph-checkpoint==2.0.26
 langgraph-prebuilt==0.2.2
 langgraph-sdk==0.1.70
-langsmith==0.3.44
+langsmith==0.7.31
 markupsafe==3.0.2
 openai==1.84.0
 orjson==3.10.18
