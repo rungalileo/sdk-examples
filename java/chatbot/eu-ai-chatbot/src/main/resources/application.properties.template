@@ -1,0 +1,30 @@
+server.port=8080
+
+# Azure OpenAI Configuration
+# IMPORTANT: The deployment-name must match EXACTLY the deployment name in Azure Portal
+azure.openai.endpoint=
+azure.openai.api-key=
+azure.openai.deployment-name=
+azure.openai.embedding-deployment-name=
+
+# Mistral AI Configuration
+# Get your API key from: https://console.mistral.ai/
+# Available models:
+# - mistral-tiny (fastest, cheapest)
+# - mistral-small
+# - mistral-medium (default)
+# - mistral-large-latest (most capable)
+mistral.api-key=
+mistral.model=
+
+# Galileo AI Configuration
+# Get your API key from: https://console.galileo.ai/
+galileo.api-key=
+galileo.api-url=
+galileo.project-name=
+galileo.log-stream=
+galileo.project-id=
+galileo.log-stream-id=
+galileo.stage-name=
+galileo.stage-id=
+
