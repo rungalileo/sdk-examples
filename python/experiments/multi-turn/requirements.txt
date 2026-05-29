@@ -1,3 +1,2 @@
-galileo[openai]
+galileo
 python-dotenv
-packaging
