@@ -4,22 +4,25 @@ from galileo.projects import get_project
 from galileo.search import get_sessions
 from galileo.utils.metrics import create_metric_configs
 
-# Provide the name of a session-level metric 
+# Provide the name of a session-level metric
 METRIC_NAME = GalileoMetrics.conversation_quality
 
 # Load environment variables from the .env file
 from dotenv import load_dotenv
+
 load_dotenv()
 
 # Get the Galileo project
 import os
+
 project_name = os.getenv("GALILEO_PROJECT")
 project_obj = get_project(name=project_name)
 print(f"Project name: {project_obj.name}, Project ID: {project_obj.id}")
 
 # Create a unique experiment
 import time
-time_suffix = time.strftime('%m%d-%H%M')
+
+time_suffix = time.strftime("%m%d-%H%M")
 
 experiment = create_experiment(
     experiment_name=f"multi-turn-experiment-{time_suffix}",
@@ -28,7 +31,9 @@ print(f"Experiment name: {experiment.name}")
 
 # Enable a session-level metric in the created experiment
 create_metric_configs(
-    project_id=project_obj.id, run_id=experiment.id, metrics=[METRIC_NAME],
+    project_id=project_obj.id,
+    run_id=experiment.id,
+    metrics=[METRIC_NAME],
 )
 
 # Log a multi-turn convo using Galileo context and logger
@@ -49,13 +54,13 @@ session_id = galileo_context.start_session()
 
 for turn in multi_turn_convo:
 
-    logger.start_trace(input=turn['user'], name="User turn")
+    logger.start_trace(input=turn["user"], name="User turn")
     logger.add_llm_span(
-        input=turn['user'],
-        output=turn['assistant'],
+        input=turn["user"],
+        output=turn["assistant"],
         model="gpt-5.4-mini",
     )
-    logger.conclude(output=turn['assistant'])
+    logger.conclude(output=turn["assistant"])
 
 
 galileo_context.flush()
