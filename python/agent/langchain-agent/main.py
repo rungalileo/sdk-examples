@@ -1,14 +1,16 @@
-from dotenv import load_dotenv
-from langchain.agents import initialize_agent, Tool
-from langchain.agents.agent_types import AgentType
-from langchain_openai import ChatOpenAI
-from langchain.tools import tool
-from galileo import galileo_context
-from galileo.handlers.langchain import GalileoCallback
 import os
 
-# Load environment variables (e.g., API keys)
+from dotenv import load_dotenv
+
+# Load environment variables before anything imports galileo so the env vars
+# are present when pydantic-settings initialises GalileoConfig.
 load_dotenv()
+
+from langchain.agents import create_agent
+from langchain.tools import tool
+from langchain_openai import ChatOpenAI
+from galileo import galileo_context
+from galileo.handlers.langchain import GalileoCallback
 
 
 # Define a tool for the agent to use
@@ -19,14 +21,26 @@ def greet(name: str) -> str:
 
 
 # Use the Galileo context manager to specify project and log stream
-with galileo_context(project="langchain-docs", log_stream="my_log_stream"):
-    agent = initialize_agent(
+with galileo_context(
+    project=os.environ["SPLUNK_AO_PROJECT"],
+    log_stream=os.environ["SPLUNK_AO_LOG_STREAM"],
+):
+    llm = ChatOpenAI(
+        model=os.environ.get("OPENAI_MODEL", "gpt-4o-mini"),
+        temperature=0.7,
+    )
+
+    agent = create_agent(
+        model=llm,
         tools=[greet],
-        llm=ChatOpenAI(model="gpt-4", temperature=0.7, callbacks=[GalileoCallback()]),
-        agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION,
-        verbose=True,
+        system_prompt="You are a helpful assistant.",
     )
 
     if __name__ == "__main__":
-        result = agent.invoke({"input": "Say hello to Erin"})
-        print(f"\nAgent Response:\n{result}")
+        result = agent.invoke(
+            {"messages": [{"role": "user", "content": "Say hello to Erin"}]},
+            config={"callbacks": [GalileoCallback()]},
+        )
+        # Extract the final assistant message
+        final = result["messages"][-1].content
+        print(f"\nAgent Response:\n{final}")

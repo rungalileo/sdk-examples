@@ -1,6 +1,7 @@
 import os
 
 from strands import Agent, tool
+from strands.models.openai import OpenAIModel
 from strands.telemetry import StrandsTelemetry
 from strands_tools import calculator, current_time
 
@@ -25,7 +26,7 @@ os.environ["OTEL_EXPORTER_OTLP_HEADERS"] = ",".join([f"{k}={v}" for k, v in head
 strands_telemetry = StrandsTelemetry()
 strands_telemetry.setup_otlp_exporter()
 
-# Uncomment this line to see the OTel output in the console
+# Uncomment to print spans to stdout for local debugging
 # strands_telemetry.setup_console_exporter()
 
 
@@ -56,9 +57,18 @@ def letter_counter(word: str, letter: str) -> int:
     return word.lower().count(letter.lower())
 
 
+# Use Azure OpenAI via the OpenAI-compatible endpoint
+model = OpenAIModel(
+    model_id=os.environ["OPENAI_MODEL"],
+    client_args={
+        "base_url": os.environ["OPENAI_BASE_URL"],
+        "api_key": os.environ["OPENAI_API_KEY"],
+    },
+)
+
 # Create an agent with tools from the community-driven strands-tools package
 # as well as our custom letter_counter tool
-agent = Agent(tools=[calculator, current_time, letter_counter])
+agent = Agent(model=model, tools=[calculator, current_time, letter_counter])
 
 # Ask the agent a question that uses the available tools
 message = """
