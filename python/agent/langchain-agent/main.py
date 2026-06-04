@@ -10,7 +10,7 @@ from langchain.agents import create_agent
 from langchain.tools import tool
 from langchain_openai import ChatOpenAI
 from galileo import galileo_context
-from galileo.handlers.langchain import GalileoCallback
+from galileo.handlers.langchain import SplunkAOCallback
 
 
 # Define a tool for the agent to use
@@ -39,7 +39,7 @@ with galileo_context(
     if __name__ == "__main__":
         result = agent.invoke(
             {"messages": [{"role": "user", "content": "Say hello to Erin"}]},
-            config={"callbacks": [GalileoCallback()]},
+            config={"callbacks": [SplunkAOCallback()]},
         )
         # Extract the final assistant message
         final = result["messages"][-1].content
