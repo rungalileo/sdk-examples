@@ -7,7 +7,7 @@ The example in this folder demonstrates how to use [create_experiment](https://d
 ### 1. Create and Activate Virtual Environment
 
 ```bash
-# Navigate to the "galileologger" example folder
+# Navigate to the example folder
 cd python/experiments/multi-turn
 
 # Create virtual environment
