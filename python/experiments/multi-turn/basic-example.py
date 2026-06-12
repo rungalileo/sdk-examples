@@ -3,7 +3,7 @@ import time
 
 from galileo import galileo_context, GalileoMetrics
 from galileo.experiments import create_experiment, get_experiment
-from galileo.projects import get_project
+from galileo.projects import get_project, create_project
 from galileo.search import get_sessions
 from galileo.utils.metrics import create_metric_configs
 from galileo.resources.models import MetricSuccess
