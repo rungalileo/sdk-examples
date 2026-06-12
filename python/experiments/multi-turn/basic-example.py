@@ -36,7 +36,7 @@ print(f"Experiment name: {experiment.name}")
 
 galileo_context.init(project=project_obj.name, experiment_id=experiment.id)
 
-# Enable a session-level metric in the created experiment, and get the metrid ID
+# Enable a session-level metric in the created experiment, and get the metric ID
 
 metric_configs, _ = create_metric_configs(
     project_id=project_obj.id, run_id=experiment.id, metrics=[METRIC_NAME],
