@@ -75,3 +75,13 @@ Optionally, you can define your own custom session-level metric in the Galileo C
 
 ![Example custom session-level boolean metric](screenshot-custom-session-level-boolean-metric.png)
 
+## Troubleshooting
+
+Visit the "Sessions" tab of the Experiment in the Galileo Console to confirm the status of the metric computation.
+
+![Troubleshooting auth error](screenshot-session-level-metric-auth-error.png)
+
+If you see an auth error, go to the metric details and make sure that a [valid integration](https://docs.galileo.ai/getting-started/evaluate-and-improve/evaluate-and-improve#configure-an-llm-integration) has been configured. 
+
+![Metric details](screenshot-session-level-metric-details.png)
+

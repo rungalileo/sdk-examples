@@ -9,7 +9,10 @@ from galileo.utils.metrics import create_metric_configs
 from galileo.resources.models import MetricSuccess
 
 # Provide the name of a session-level metric
-METRIC_NAME = GalileoMetrics.conversation_quality
+METRIC_NAME = GalileoMetrics.conversation_quality 
+
+# example custom metric name (must be set up in advance)
+# METRIC_NAME = "multi-turn-session-test-metric-apples"
 
 # Load environment variables from the .env file
 from dotenv import load_dotenv
@@ -31,6 +34,7 @@ time_suffix = time.strftime("%m%d-%H%M")
 
 experiment = create_experiment(
     experiment_name=f"multi-turn-experiment-{time_suffix}",
+    experiment_group="multi-turn examples"
 )
 print(f"Experiment name: {experiment.name}")
 
