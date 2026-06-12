@@ -41,6 +41,14 @@ GALILEO_PROJECT="your-galileo-project"
 # GALILEO_CONSOLE_URL="your-galileo-console-url"
 ```
 
+### 4. Add Integration in Galileo Console
+
+The session-level metric in this example uses an LLM. 
+
+Make sure that you've configured a valid LLM integration in the Galileo console.
+
+Related documentation: [Configure an LLM integration](https://docs.galileo.ai/getting-started/evaluate-and-improve/evaluate-and-improve#configure-an-llm-integration)
+
 ## Basic Example
 
 Run the basic example:
