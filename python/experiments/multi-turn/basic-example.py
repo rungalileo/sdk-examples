@@ -60,7 +60,7 @@ logger = galileo_context.get_logger_instance(project=project_obj.name, experimen
 
 # Create a session and log traces for each turn in the conversation
 
-session_id = logger.start_session()
+logger.start_session()
 
 for turn in multi_turn_convo:
 
