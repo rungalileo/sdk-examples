@@ -61,13 +61,12 @@ The `METRIC_NAME` variable in this script cites a session-level metric.
 
 Pre-defined session-level metrics include:
 
-- `GalileoMetrics.conversation_quality`
 - `GalileoMetrics.action_completion`
-- `GalileoMetrics.action_advancement`
 - `GalileoMetrics.agent_efficiency`
-- `GalileoMetrics.context_adherence`
-- `GalileoMetrics.context_relevance`
-- `GalileoMetrics.tool_error_rate`
+- `GalileoMetrics.agent_flow`
+- `GalileoMetrics.conversation_quality`
+- `GalileoMetrics.interruption_detection`
+- `GalileoMetrics.user_intent_change`
 
 Related documentation: [Metrics Comparison](https://docs.galileo.ai/concepts/metrics/metric-comparison)
 
