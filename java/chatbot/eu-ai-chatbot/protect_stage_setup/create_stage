@@ -1,0 +1,86 @@
+curl -X POST \
+  'https://api.{YOUR_APP_NAME}.galileocloud.io/projects/{PROJECT_ID}/stages' \
+  -H 'accept: application/json' \
+  -H 'Galileo-API-Key: API_KEY' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "project_id": "PROJECT_ID",
+    "name": "STAGE_NAME",
+    "description": "stage for adding protect",
+    "type": "central",
+    "paused": false,
+    "prioritized_rulesets": [
+      {
+        "description": "override on prompt injection: obfuscation",
+        "rules": [
+          {
+            "metric": "prompt_injection",
+            "operator": "eq",
+            "target_value": "obfuscation"
+          }
+        ],
+        "action": {
+          "type": "OVERRIDE",
+          "subscriptions": [
+            {
+              "statuses": ["triggered"],
+              "url": "https://example.com/",
+              "method": "POST"
+            }
+          ],
+          "choices": [
+            "Galileo Protect has detected suspicious content.",
+            "Galileo Protect has blocked this request."
+          ]
+        }
+      },
+      {
+        "description": "override on input PII: email",
+        "rules": [
+          {
+            "metric": "input_pii",
+            "operator": "any",
+            "target_value": ["email"]
+          }
+        ],
+        "action": {
+          "type": "OVERRIDE",
+          "subscriptions": [
+            {
+              "statuses": ["triggered"],
+              "url": "https://example.com/",
+              "method": "POST"
+            }
+          ],
+          "choices": [
+            "Galileo Protect has detected suspicious content.",
+            "Galileo Protect has blocked this request."
+          ]
+        }
+      },
+      {
+        "description": "override on low context adherence",
+        "rules": [
+          {
+            "metric": "context_adherence_luna",
+            "operator": "lt",
+            "target_value": 0.9
+          }
+        ],
+        "action": {
+          "type": "OVERRIDE",
+          "subscriptions": [
+            {
+              "statuses": ["triggered"],
+              "url": "https://example.com/",
+              "method": "POST"
+            }
+          ],
+          "choices": [
+            "Galileo Protect has detected suspicious content.",
+            "Galileo Protect has blocked this request."
+          ]
+        }
+      }
+    ]
+  }'

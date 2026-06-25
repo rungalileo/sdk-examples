@@ -9,6 +9,8 @@ python/agent/langgraph-fsi-agent/after/script.py
 python/chatbot/sample-project-chatbot/openai-ollama/script.py
 */dist
 *dist
+application.properties
+*.pdf
 
 ai-evals-course/hw1/sample_queries.csv
 ai-evals-course/hw2/failure_mode_taxonomy.md
