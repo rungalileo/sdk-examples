@@ -1,31 +1,33 @@
 import os
 
-from strands import Agent, tool
-from strands.telemetry import StrandsTelemetry
-from strands_tools import calculator, current_time
-
-# Load environment variables from the .env file
+# Load environment variables first so they're available before any OTel init
 from dotenv import load_dotenv
 
 load_dotenv(override=True)
 
-# Export the Galileo OTel API endpoint for OTel
-os.environ["OTEL_EXPORTER_OTLP_TRACES_ENDPOINT"] = os.environ.get("GALILEO_API_ENDPOINT", "https://api.galileo.ai/otel/traces")
+# Set OTLP endpoint from SPLUNK_AO_API_ENDPOINT before OTel initializes
+os.environ["OTEL_EXPORTER_OTLP_TRACES_ENDPOINT"] = os.environ.get(
+    "SPLUNK_AO_API_ENDPOINT", "https://api.galileo.ai/otel/traces"
+)
 
-# Export the Galileo OTel headers pointing to the correct API key, project, and log stream
+# Build OTLP headers from Splunk AO env vars
 headers = {
-    "Galileo-API-Key": os.environ["GALILEO_API_KEY"],
-    "project": os.environ["GALILEO_PROJECT"],
-    "logstream": os.environ["GALILEO_LOG_STREAM"],
+    "Galileo-API-Key": os.environ["SPLUNK_AO_API_KEY"],
+    "project": os.environ["SPLUNK_AO_PROJECT"],
+    "logstream": os.environ["SPLUNK_AO_LOG_STREAM"],
 }
-
 os.environ["OTEL_EXPORTER_OTLP_HEADERS"] = ",".join([f"{k}={v}" for k, v in headers.items()])
 
-# Setup telemetry for the Strands agent using Galileo as the OTel backend
+from strands import Agent, tool
+from strands.models.openai import OpenAIModel
+from strands.telemetry import StrandsTelemetry
+from strands_tools import calculator, current_time
+
+# Setup telemetry for the Strands agent using Splunk AO as the OTel backend
 strands_telemetry = StrandsTelemetry()
 strands_telemetry.setup_otlp_exporter()
 
-# Uncomment this line to see the OTel output in the console
+# Uncomment to print spans to stdout for local debugging
 # strands_telemetry.setup_console_exporter()
 
 
@@ -56,9 +58,18 @@ def letter_counter(word: str, letter: str) -> int:
     return word.lower().count(letter.lower())
 
 
+# Use Azure OpenAI via the OpenAI-compatible endpoint
+model = OpenAIModel(
+    model_id=os.environ["OPENAI_MODEL"],
+    client_args={
+        "base_url": os.environ["OPENAI_BASE_URL"],
+        "api_key": os.environ["OPENAI_API_KEY"],
+    },
+)
+
 # Create an agent with tools from the community-driven strands-tools package
 # as well as our custom letter_counter tool
-agent = Agent(tools=[calculator, current_time, letter_counter])
+agent = Agent(model=model, tools=[calculator, current_time, letter_counter])
 
 # Ask the agent a question that uses the available tools
 message = """
@@ -69,3 +80,8 @@ I have 4 requests:
 3. Tell me how many letter R's are in the word "strawberry" 🍓
 """
 agent(message)
+
+# Explicitly flush and shut down the OTel tracer provider.
+# BatchSpanProcessor uses a daemon thread — without shutdown() it may be
+# killed before pending spans are exported.
+strands_telemetry.tracer_provider.shutdown()

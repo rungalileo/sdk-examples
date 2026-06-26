@@ -1,4 +1,8 @@
-google-adk
+google-adk[extensions]
 openinference-instrumentation-google-adk
+opentelemetry-sdk
+opentelemetry-api
+opentelemetry-exporter-otlp
 python-dotenv
 galileo
+litellm>=1.75.5
