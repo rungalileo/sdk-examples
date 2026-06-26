@@ -13,7 +13,7 @@ dependencies = [
   "langgraph~=0.4.7",
   "langgraph-supervisor>=0.0.26",
   "pinecone[asyncio]>=6.0.2",
-  "python-dotenv>=1.1.0",
+  "python-dotenv>=1.2.2",
 ]
 
 [dependency-groups]
