@@ -44,7 +44,7 @@ GALILEO_API_KEY=your_galileo_api_key_here
 GALILEO_PROJECT=your_project_name
 
 # Log stream for organizing traces
-GALILEO_LOGSTREAM=langgraph
+GALILEO_LOG_STREAM=langgraph
 
 # Galileo console URL (if using a custom deployment is different than https://app.galileo.ai)
 GALILEO_CONSOLE_URL=https://app.galileo.ai
