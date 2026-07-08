@@ -94,6 +94,22 @@ Screenshots of the logged data with sensitive info redacted:
 
 ![Screenshot from redaction: email example](screenshot-redaction-example-email.png)
 
+## Redaction Demo (self-contained walkthrough)
+
+Run the redaction demo:
+
+```bash
+python redaction-demo.py
+```
+
+This is a fuller, self-contained demonstration of client-side redaction, written to be safe to run and read through in a customer/security-review setting. It:
+
+- Scrubs PII/NPI on the client side using your own patterns (regex here; swap in Presidio, Private AI, etc.) before anything leaves your network.
+- Sends BOTH the raw values (`input`/`output`) and the scrubbed values (`redacted_input`/`redacted_output`), so privileged users see the raw value and everyone else sees the redacted value (governed by org-level RBAC redaction rules), while evaluators still score the raw values.
+- Documents a strict data-minimization variant where raw sensitive data never reaches Galileo at all.
+
+The example prints exactly what gets scrubbed before sending, then logs the trace to your configured project and log stream.
+
 ## Metadata Example
 
 Run the metadata example:
